@@ -2,7 +2,7 @@ import 'lume'
 
 export default function DefaultScene() {
     return (
-        <lume-scene webgl physically-correct-lights perspective="800" fog-mode="linear" fog-color="#8338ec" fog-near="600" fog-far="900">
+        <lume-scene webgl physically-correct-lights perspective="800" fog-mode="linear" fog-color="#000000" fog-near="600" fog-far="900">
           <lume-camera-rig align-point="0.5 0.5" distance="800"></lume-camera-rig>
         
           <lume-point-light intensity="1200" align-point="0.5 0.5" position="300 -300 300" color="#ff006e">

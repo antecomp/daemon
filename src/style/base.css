@@ -1,6 +1,6 @@
 :root {
   color: rgba(255, 255, 255, 0.87);
-  background: #8338ec;
+  background: darkslategray;
 }
 
 body {
@@ -15,4 +15,5 @@ body {
   width: 750px; height: 500px; border: 1px solid teal;
   box-shadow: 1px 1px 5px black;
   border-radius: 5px;
+  background-color: black;
 }
