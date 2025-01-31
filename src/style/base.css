@@ -13,4 +13,6 @@ body {
 
 #scene-container {
   width: 750px; height: 500px; border: 1px solid teal;
+  box-shadow: 1px 1px 5px black;
+  border-radius: 5px;
 }

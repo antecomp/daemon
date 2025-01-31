@@ -1,9 +1,9 @@
-import { createSignal } from 'solid-js'
+import { createSignal, Show } from 'solid-js'
 import './style/base.css'
 import 'lume'
 
 function App() {
-//const [count, setCount] = createSignal(0)
+const [count, setCount] = createSignal(0)
 
 
 
@@ -28,7 +28,7 @@ function App() {
   <lume-point-light intensity="1200" align-point="0.5 0.5" position="300 -300 -300" color="#ff006e">
     <lume-sphere size="20" cast-shadow="false" receive-shadow="false" color="#ff006e" has="basic-material"></lume-sphere>
   </lume-point-light>
-
+  <Show when={count() % 2 == 1}>
   <lume-box 
     id="box" 
     cast-shadow="false" 
@@ -42,9 +42,11 @@ function App() {
     rotation={(x: number,y: number) => [x+0.5, y+0.5]}
     position={(x:number, y:number, z:number) => [x, y, 0.02 * (0 - z) + z]}
   ></lume-box>
+  </Show>
 </lume-scene>
 
 </div>
+<button onClick={() => setCount(count() +1)}>count is {count()}</button>
     </>
   )
 }
