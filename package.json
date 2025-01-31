@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/node": "^22.12.0",
     "lume": "^0.3.0-alpha.44",
     "solid-js": "^1.9.3"
   },
