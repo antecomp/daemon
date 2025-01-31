@@ -16,7 +16,7 @@ export default function AnotherScene() {
 			sidedness="back"
 			size="4000 4000 4000"
 			mount-point="0.5 0.5 0.5"
-			color="white"
+			color="black"
 		></lume-sphere>
 
 		
