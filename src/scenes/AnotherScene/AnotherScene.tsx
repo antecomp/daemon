@@ -21,10 +21,10 @@ export default function AnotherScene() {
 
 			{/* <WadsCam/> */}
 			<HeadCam
-				baseOrientation={{x: 10, y: 15}}
+				baseOrientation={{x: 45, y: 0}}
 				position="35 -128 144"
-				maxYaw={10}
-				maxPitch={10}
+				maxYaw={20}
+				maxPitch={20}
 			/>
 
             <lume-point-light intensity="1200" align-point="0.5 0.5" mount-point="0.5 0.5" position="-300 -550 -300" color="white">
