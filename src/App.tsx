@@ -1,4 +1,3 @@
-import { createSignal, Show } from 'solid-js'
 import './style/base.css'
 import 'lume'
 import SceneContainer, { setSceneName } from './components/SceneContainer'

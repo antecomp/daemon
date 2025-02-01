@@ -1,4 +1,7 @@
 import 'lume'
+import mapobj from './models/map.obj?url'
+import mapmtl from './models/map.mtl?url'
+import player_ref from '../shared_models/player_ref.fbx?url'
 
 export default function AnotherScene() {
     return(
@@ -14,8 +17,10 @@ export default function AnotherScene() {
 			>
 			</lume-camera-rig>
 
-			<lume-point-light intensity="1200" align-point="0.5 0.5" mount-point="0.5 0.5" position="300 -300 300" color="white">
-            	<lume-sphere size="20" cast-shadow="true" receive-shadow="false" color="#ff006e" has="basic-material"></lume-sphere>
+			<lume-point-light intensity="1200" align-point="0.5 0.5" mount-point="0.5 0.5" position="-300 -550 -300" color="white">
+            	<lume-sphere size="20" cast-shadow="true" receive-shadow="false" color="#ff006e" 
+				//@ts-ignore
+				has="basic-material"></lume-sphere>
           	</lume-point-light>
 
 			<lume-sphere
@@ -23,6 +28,7 @@ export default function AnotherScene() {
 				cast-shadow="true"
 				receive-shadow="false"
 				color="white"
+				//@ts-ignore
 				has="basic-material"
 				mount-point="0.5 0.5"
 				align-point="0.5 0.5"
@@ -33,6 +39,7 @@ export default function AnotherScene() {
 				cast-shadow="true"
 				receive-shadow="false"
 				color="green"
+				//@ts-ignore
 				has="basic-material"
 				mount-point="0.5 0.5"
 				align-point="0.5 0.5"
@@ -41,15 +48,16 @@ export default function AnotherScene() {
 
 		<lume-fbx-model 
 			id="playerRef" 
-			src="models/player_ref.fbx"
+			src={player_ref}
 			mount-point="0.5 0.5"
 			align-point="0.5 0.5"
 		></lume-fbx-model>
 
 		  <lume-ambient-light intensity={0.05} />
 			<lume-obj-model 
-				id="map" obj='models/testA.obj'
-				mtl='models/testA.mtl'
+				id="map" 
+				obj={mapobj}
+				mtl={mapmtl}
 				color="white"
 				recieve-shadow="true"
 				cast-shadow="true"

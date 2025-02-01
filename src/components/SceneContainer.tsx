@@ -1,5 +1,5 @@
 import {createSignal, Suspense} from "solid-js";
-import { scenes } from "./scenes/scenes";
+import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
 
 export const [currentScene, setSceneName] = createSignal("DefaultScene");

@@ -6,18 +6,22 @@ export default function DefaultScene() {
           <lume-camera-rig align-point="0.5 0.5" distance="800"></lume-camera-rig>
         
           <lume-point-light intensity="1200" align-point="0.5 0.5" position="300 -300 300" color="#ff006e">
+            {/* @ts-ignore */}
             <lume-sphere size="20" cast-shadow="false" receive-shadow="false" color="#ff006e" has="basic-material"></lume-sphere>
           </lume-point-light>
         
           <lume-point-light intensity="1200" align-point="0.5 0.5" position="-300 300 -300" color="#3a86ff">
+            {/* @ts-ignore */}
             <lume-sphere size="20" cast-shadow="false" receive-shadow="false" color="#3a86ff" has="basic-material"></lume-sphere>
           </lume-point-light>
         
           <lume-point-light intensity="1200" align-point="0.5 0.5" position="-300 300 300" color="#3a86ff">
+            {/* @ts-ignore */}
             <lume-sphere size="20" cast-shadow="false" receive-shadow="false" color="#3a86ff" has="basic-material"></lume-sphere>
           </lume-point-light>
         
           <lume-point-light intensity="1200" align-point="0.5 0.5" position="300 -300 -300" color="#ff006e">
+            {/* @ts-ignore */}
             <lume-sphere size="20" cast-shadow="false" receive-shadow="false" color="#ff006e" has="basic-material"></lume-sphere>
           </lume-point-light>
           <lume-box 
