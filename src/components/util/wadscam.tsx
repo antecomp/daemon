@@ -1,113 +1,114 @@
-import { onCleanup, onMount } from "solid-js";
-import { Quaternion, Vector3, Euler, MathUtils } from 'three';
+import { onMount, onCleanup, JSX, Ref, JSXElement } from 'solid-js';
+import * as THREE from 'three';
 
 /**
- * Basic WADs controlled camera component with pitch and yaw movement, avoiding gimbal lock.
+ * 
+ * @param speed - movement speed for WASD
+ * @param scene - ref to the containing scene for the camera
+ * @returns 
  */
-export default function WadsCam({ speed = 5, rotationSpeed = 1 }: { speed?: number; rotationSpeed?: number }) {
-    let camRef: any;
+export default function WadsCam({ speed = 5}: { speed?: number}) {
+  let bodyRef: any;
+  let camRef: any;
 
-    // Convert degrees to radians
-    const degToRad = MathUtils.degToRad;
-    const radToDeg = MathUtils.radToDeg;
+  const moveSpeed = speed;
+  const rotateSpeed = 0.1;
 
-    // Handle keydown events for movement and rotation
-    const handleKeyDown = (event: KeyboardEvent) => {
-        if (!camRef) return;
+  let pitch = 0;  // X-axis rotation for the camera (up/down)
+  let yaw = 0;    // Y-axis rotation for the body (left/right)
 
-        const { position, rotation } = camRef;
+  // Handle mouse movement for yaw and pitch
+  const handleMouseMove = (event: MouseEvent) => {
+    if (!bodyRef || !camRef) return;
 
-        // Handle movement
-        switch (event.key) {
-            case 'w': // Move forward (relative to yaw)
-                const forward = new Vector3(0, 0, -1).applyQuaternion(getCameraQuaternion());
-                position.add(forward.multiplyScalar(speed));
-                break;
-            case 's': // Move backward (relative to yaw)
-                const backward = new Vector3(0, 0, 1).applyQuaternion(getCameraQuaternion());
-                position.add(backward.multiplyScalar(speed));
-                break;
-            case 'a': // Move left (relative to yaw)
-                const left = new Vector3(-1, 0, 0).applyQuaternion(getCameraQuaternion());
-                position.add(left.multiplyScalar(speed));
-                break;
-            case 'd': // Move right (relative to yaw)
-                const right = new Vector3(1, 0, 0).applyQuaternion(getCameraQuaternion());
-                position.add(right.multiplyScalar(speed));
-                break;
-            case 'q': // Move up (global Y-axis)
-                position.y -= speed;
-                break;
-            case 'e': // Move down (global Y-axis)
-                position.y += speed;
-                break;
-            case 'ArrowUp': // Pitch up (look up)
-                rotateCamera(0, -rotationSpeed);
-                break;
-            case 'ArrowDown': // Pitch down (look down)
-                rotateCamera(0, rotationSpeed);
-                break;
-            case 'ArrowLeft': // Yaw left (look left)
-                rotateCamera(-rotationSpeed, 0);
-                break;
-            case 'ArrowRight': // Yaw right (look right)
-                rotateCamera(rotationSpeed, 0);
-                break;
-            default:
-                break;
-        }
+    yaw -= event.movementX * rotateSpeed;   // Yaw (rotate body left/right)
+    pitch += event.movementY * rotateSpeed; // Pitch (tilt camera up/down)
 
-        console.log('Camera Position:', position);
-        console.log('Camera Rotation:', rotation);
-    };
+    // Clamp pitch to prevent flipping
+    pitch = Math.max(-90, Math.min(90, pitch));
 
-    // Get the camera's current quaternion
-    const getCameraQuaternion = () => {
-        const { rotation } = camRef;
-        return new Quaternion().setFromEuler(
-            new Euler(degToRad(rotation.x), degToRad(rotation.y), degToRad(rotation.z), 'YXZ')
-        );
-    };
+    // Apply yaw to the body
+    bodyRef.rotation.y = yaw;
 
-    // Rotate the camera using quaternions to avoid gimbal lock
-    const rotateCamera = (yawDelta: number, pitchDelta: number) => {
-        if (!camRef) return;
+    // Apply pitch to the camera
+    camRef.rotation.x = pitch;
+  };
 
-        const { rotation } = camRef;
+  // Handle WASD movement relative to yaw
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (!bodyRef) return;
 
-        // Convert current rotation to a quaternion
-        const currentQuaternion = getCameraQuaternion();
+    const direction = new THREE.Vector3();
 
-        // Create quaternions for yaw and pitch deltas
-        const yawQuaternion = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), degToRad(yawDelta));
-        const pitchQuaternion = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), degToRad(pitchDelta));
+    // Convert yaw to radians for trigonometric calculations
+    const yawRad = THREE.MathUtils.degToRad(yaw);
 
-        // Apply yaw first, then pitch
-        const combinedQuaternion = currentQuaternion.multiply(yawQuaternion).multiply(pitchQuaternion);
+    // Calculate forward and right vectors using sine and cosine
+    const forward = new THREE.Vector3(Math.sin(yawRad), 0, Math.cos(yawRad));  // Inverted Z
+    const right = new THREE.Vector3(Math.cos(yawRad), 0, -Math.sin(yawRad));  // Adjusted right vector
 
-        // Convert the resulting quaternion back to Euler angles
-        const euler = new Euler().setFromQuaternion(combinedQuaternion, 'YXZ');
+    switch (event.key) {
+      case 'w':
+        direction.sub(forward); // Move forwardssssssssssss
+        break;
+      case 's':
+        direction.add(forward); // Move backward
+        break;
+      case 'a':
+        direction.sub(right);   // Move left
+        break;
+      case 'd':
+        direction.add(right);   // Move right
+        break;
+      case 'q':
+        direction.y += 1;       // Move up (world space)
+        break;
+      case 'e':
+        direction.y -= 1;       // Move down (world space)
+        break;
+        case ' ':
+            console.log("x y z, - yaw - pitch - -");
+            console.log(bodyRef.position.toString(), bodyRef.rotation.toString(), camRef.rotation.toString());
+        break;
+      default:
+        break;
+    }
 
-        // Update the camera's rotation property (in degrees)
-        rotation.x = radToDeg(euler.x);
-        rotation.y = radToDeg(euler.y);
-        rotation.z = radToDeg(euler.z);
-    };
+    direction.normalize().multiplyScalar(moveSpeed);
 
-    onMount(() => {
-        window.addEventListener('keydown', handleKeyDown);
-    });
+    // Apply movement to the body position
+    bodyRef.position.x += direction.x;
+    bodyRef.position.y += direction.y;
+    bodyRef.position.z += direction.z;
+  };
 
-    onCleanup(() => {
-        window.removeEventListener('keydown', handleKeyDown);
-    });
+  // Attach event listeners
+  onMount(() => {
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('keydown', handleKeyDown);
 
-    return (
-        <lume-perspective-camera
-            align-point="0.5 0.5"
-            id="SLOP"
-            ref={camRef}
-            active
-        ></lume-perspective-camera>
-    );
+    if(bodyRef.parentElement) {
+        bodyRef.parentElement.addEventListener("click", () => bodyRef.parentElement.requestPointerLock());
+    }
+  });
+
+  // Cleanup event listeners
+  onCleanup(() => {
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('keydown', handleKeyDown);
+    if(bodyRef.parentElement) {
+        bodyRef.parentElement.removeEventListener("click", () => bodyRef.parentElement.requestPointerLock());
+    }
+  });
+
+  // Render the body and camera
+  return (
+    <lume-element3d ref={bodyRef} 
+    id="test"
+    position="0 -192 5"
+    align-point="0.5 0.5"
+    >
+      <lume-perspective-camera ref={camRef} active />
+    </lume-element3d>
+  );
 }

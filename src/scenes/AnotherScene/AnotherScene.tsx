@@ -6,11 +6,7 @@ import { onCleanup, onMount } from 'solid-js'
 import { XYZNumberValues, XYZValues } from 'lume'
 import WadsCam from '../../components/util/wadscam'
 
-import { FirstPersonControls } from 'three/examples/jsm/Addons.js'
-window.FPC = FirstPersonControls;
-
 export default function AnotherScene() {
-
     return(
         <lume-scene webgl shadow-mode="pcfsoft" id='SCENE'>
             {/* <lume-camera-rig
