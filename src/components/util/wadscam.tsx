@@ -2,7 +2,9 @@ import { onMount, onCleanup, JSX, Ref, JSXElement } from 'solid-js';
 import * as THREE from 'three';
 
 /**
+ * Simple WASD and mouse controlled camera for testing camera position and orientation within a scene.
  * 
+ * Press spacebar to print the coordinates and orientation.
  * @param speed - movement speed for WASD
  * @param scene - ref to the containing scene for the camera
  * @returns 
@@ -12,7 +14,7 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
   let camRef: any;
 
   const moveSpeed = speed;
-  const rotateSpeed = 0.1;
+  const rotateSpeed = 0.05;
 
   let pitch = 0;  // X-axis rotation for the camera (up/down)
   let yaw = 0;    // Y-axis rotation for the body (left/right)

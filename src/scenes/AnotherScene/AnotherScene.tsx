@@ -2,9 +2,8 @@ import 'lume'
 import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
-import { onCleanup, onMount } from 'solid-js'
-import { XYZNumberValues, XYZValues } from 'lume'
-import WadsCam from '../../components/util/wadscam'
+//import WadsCam from '../../components/util/wadscam'
+import HeadCam from '../../components/util/HeadCam'
 
 export default function AnotherScene() {
     return(
@@ -20,7 +19,13 @@ export default function AnotherScene() {
             >
             </lume-camera-rig> */}
 
-			<WadsCam/>
+			{/* <WadsCam/> */}
+			<HeadCam
+				baseOrientation={{x: 10, y: 15}}
+				position="35 -128 144"
+				maxYaw={10}
+				maxPitch={10}
+			/>
 
             <lume-point-light intensity="1200" align-point="0.5 0.5" mount-point="0.5 0.5" position="-300 -550 -300" color="white">
                 <lume-sphere size="20" cast-shadow="true" receive-shadow="false" color="#ff006e" 
