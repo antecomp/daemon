@@ -1,4 +1,4 @@
-import { Element3D, XYZNumberValues } from "lume";
+import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
 import { createEffect, onCleanup, onMount } from "solid-js";
 import { Gimbal } from "../../extra.types";
 import lerp from "../../util/lerp";
@@ -14,6 +14,8 @@ interface HeadCamProps {
 
 /**
  * HeadCam is the main camera used for Scenes, it is positioned and orientated at some specified initial point. Then, it is rotated slightly within some small range corresponding with the mouse position over the containing scene canvas.
+ * 
+ * Headcam is also responsible for the raycasting and invoking Interactables onClick/onHover CBs.
  * @param baseOrientation - Gimbal (omitting "roll"), a yaw and pitch to use as the initial camera angle that the motion is added to.
  * @param position - initial position of the camera.
  * @param maxYaw - maximum yaw (in both directions) from the baseOrientation's yaw.
@@ -22,9 +24,11 @@ interface HeadCamProps {
  */
 export default function HeadCam(props: HeadCamProps) {
     // TODO: For some reason I get a use before assign error if I make these Element3D instead of any?
-    let camRef: any;
-    let bodyRef: any;
+    let camRef: PerspectiveCamera | undefined;
+    let bodyRef: Element3D | undefined;
     let parentScene: Element3D;
+
+    let animationFrameId: number;  // Store the ID for killing camera tween.
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
@@ -87,7 +91,7 @@ export default function HeadCam(props: HeadCamProps) {
 
     // Tweening function using requestAnimationFrame
     const updateCameraRotation = () => {
-        if (!camRef) return;
+        if (!camRef || !bodyRef) return;
 
         currentYaw = lerp(currentYaw, targetYaw, smoothingFactor);
         currentPitch = lerp(currentPitch, targetPitch, smoothingFactor);
@@ -95,7 +99,7 @@ export default function HeadCam(props: HeadCamProps) {
         bodyRef.rotation.y = currentYaw;
         camRef.rotation.x = currentPitch;
 
-        requestAnimationFrame(updateCameraRotation);
+        animationFrameId = requestAnimationFrame(updateCameraRotation);
     };
 
     // Reset target orientation when props.baseOrientation changes
@@ -106,17 +110,18 @@ export default function HeadCam(props: HeadCamProps) {
 
     onMount(() => {
         if (bodyRef && bodyRef.parentElement) {
-            parentScene = bodyRef.parentElement;
+            parentScene = bodyRef.parentElement as Element3D;
 
             parentScene.addEventListener('mousemove', handleMouseMove);
             parentScene.addEventListener('click', handleClick);
-            requestAnimationFrame(updateCameraRotation);
+            animationFrameId = requestAnimationFrame(updateCameraRotation);
         }
     });
 
     onCleanup(() => {
         parentScene?.removeEventListener('mousemove', handleMouseMove);
         parentScene?.removeEventListener('click', handleClick);
+        cancelAnimationFrame(animationFrameId); // kills updateCameraRotation.
     })
 
     return (

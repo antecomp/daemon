@@ -4,7 +4,7 @@ import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 //import WadsCam from '../../components/util/wadscam'
 import HeadCam from '@/components/util/HeadCam'
-import { createSignal } from 'lume'
+import { createSignal } from 'solid-js'
 import Interactable from '@/components/util/Interactable'
 
 export default function AnotherScene() {
@@ -16,6 +16,8 @@ export default function AnotherScene() {
             pitch: 10
         }
     })
+
+    const [humanYaw, setHumanYaw] = createSignal(0);
 
     // setTimeout(() => {
     //     setCamLayout({
@@ -68,12 +70,14 @@ export default function AnotherScene() {
                 ></lume-sphere>
             </Interactable>
 
-        <Interactable onClick={() => alert("Human Model Clicked")} onHover={() => console.log("Human model hover")}>
+        <Interactable 
+            onClick={() => setHumanYaw(prev => prev +5)} 
+            /* onHover={() => console.log(playerRef!)} // This works but obv TS has no way of knowing lume exposes a var by this name from id. */
+        >
             <lume-fbx-model
                 id="playerRef"
                 src={player_ref}
-                mount-point="0.5 0.5"
-                align-point="0.5 0.5"
+                rotation={`0 ${humanYaw()} 0`}
             ></lume-fbx-model>
         </Interactable>
 
