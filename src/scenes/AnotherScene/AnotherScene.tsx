@@ -4,25 +4,35 @@ import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 //import WadsCam from '../../components/util/wadscam'
 import HeadCam from '@/components/util/HeadCam'
+import { createSignal } from 'lume'
+import Interactable from '@/components/util/Interactable'
 
 export default function AnotherScene() {
+
+    const [camLayout, setCamLayout] = createSignal({
+        position: "35 -192 144",
+        orientation: {
+            yaw: 25,
+            pitch: 10
+        }
+    })
+
+    // setTimeout(() => {
+    //     setCamLayout({
+    //         position: "0, -128, -10",
+    //         orientation: {
+    //             yaw: 160,
+    //             pitch: 10
+    //         }
+    //     })
+    // }, 5000)
+
     return(
         <lume-scene webgl shadow-mode="pcfsoft" id='SCENE'>
-            {/* <lume-camera-rig
-                min-distance={-500}
-                max-distance={5000}
-                position="-100 -192 -100"
-                align-point="0.5 0.5"
-                interaction-type="orbit"
-                id='camera'
-                initial-distance={500}
-            >
-            </lume-camera-rig> */}
 
-			{/* <WadsCam/> */}
 			<HeadCam
-				baseOrientation={{yaw: 45, pitch: 0}}
-				position="35 -128 144"
+				baseOrientation={camLayout().orientation}
+				position={camLayout().position}
 				maxYaw={15}
 				maxPitch={15}
 			/>
@@ -44,24 +54,28 @@ export default function AnotherScene() {
                 align-point="0.5 0.5"
             ></lume-sphere>
 
-            <lume-sphere
-                size="20"
-                cast-shadow="true"
-                receive-shadow="false"
-                color="green"
-                //@ts-ignore
-                has="basic-material"
+            <Interactable onClick={() => alert("Sphere Clicked")}>
+                <lume-sphere
+                    size="20"
+                    cast-shadow="true"
+                    receive-shadow="false"
+                    color="green"
+                    //@ts-ignore
+                    has="basic-material"
+                    mount-point="0.5 0.5"
+                    align-point="0.5 0.5"
+                    position="0 0 -248"
+                ></lume-sphere>
+            </Interactable>
+
+        <Interactable onClick={() => alert("Human Model Clicked")} onHover={() => console.log("Human model hover")}>
+            <lume-fbx-model
+                id="playerRef"
+                src={player_ref}
                 mount-point="0.5 0.5"
                 align-point="0.5 0.5"
-                position="0 0 -248"
-            ></lume-sphere>
-
-        <lume-fbx-model 
-            id="playerRef" 
-            src={player_ref}
-            mount-point="0.5 0.5"
-            align-point="0.5 0.5"
-        ></lume-fbx-model>
+            ></lume-fbx-model>
+        </Interactable>
 
           <lume-ambient-light intensity={0.05} />
             <lume-obj-model 
