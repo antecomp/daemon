@@ -16,6 +16,12 @@ export interface Point3D {
     z: number
 }
 
+export interface Gimbal {
+    pitch: number
+    roll: number
+    yaw: number
+}
+
 export interface AssArray<T> { // Associative Array / Dictionary. I have the humour of a child.
     [key: string]: T
 }

@@ -1,27 +1,36 @@
 import { XYZNumberValues } from "lume";
 import { onCleanup, onMount } from "solid-js";
-import { Point } from "../../extra.types";
+import { Gimbal } from "../../extra.types";
 import lerp from "../../util/lerp";
 
 interface HeadCamProps {
     position: XYZNumberValues | string, 
-    baseOrientation: Point, // making strictly XYZ number values 
+    baseOrientation: Omit<Gimbal, "roll">, // making strictly XYZ number values 
     maxYaw: number, 
     maxPitch: number
 }
 
+
+/**
+ * HeadCam is the main camera used for Scenes, it is positioned and orientated at some specified initial point. Then, it is rotated slightly within some small range corresponding with the mouse position over the containing scene canvas.
+ * @param baseOrientation - Gimbal (omitting "roll"), a yaw and pitch to use as the initial camera angle that the motion is added to.
+ * @param position - initial position of the camera.
+ * @param maxYaw - maximum yaw (in both directions) from the baseOrientation's yaw.
+ * @param maxPitch - maximum pitch (in both directions) from the baseOrientation's pitch.
+ * @returns 
+ */
 export default function HeadCam(props: HeadCamProps) {
     let camRef: any; 
     let bodyRef: any;
     let parentScene: HTMLElement;
 
-    let currentPitch = props.baseOrientation.y;
-    let targetPitch = props.baseOrientation.y;
-    let currentYaw = props.baseOrientation.x;
-    let targetYaw = props.baseOrientation.x;
-    const smoothingFactor = 0.1;  // Adjust for more or less smoothness
+    // Purposefully breaking reactivity - we just want a clone of initial.
+    let currentPitch = props.baseOrientation.pitch;
+    let targetPitch = props.baseOrientation.pitch;
+    let currentYaw = props.baseOrientation.yaw;
+    let targetYaw = props.baseOrientation.yaw;
+    const smoothingFactor = 0.1;
     
-    // Handle mouse movement and set target rotations
     const handleMouseMove = (event: MouseEvent) => {
       if (!camRef || !parentScene) return;
     
@@ -31,26 +40,24 @@ export default function HeadCam(props: HeadCamProps) {
       const relativeX = event.clientX - left;
       const relativeY = event.clientY - top;
     
+      // Puts x,y in a [-1,1] range to easily use as pitch and yaw scale :)
       const normalizedX = (relativeX / width) * 2 - 1;
       const normalizedY = (relativeY / height) * 2 - 1;
     
-      targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.x;
-      targetPitch = normalizedY * props.maxPitch + props.baseOrientation.y;
+      targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.yaw;
+      targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
     };
     
     // Tweening function using requestAnimationFrame
     const updateCameraRotation = () => {
       if (!camRef) return;
     
-      // Apply linear interpolation to pitch and yaw
       currentYaw = lerp(currentYaw, targetYaw, smoothingFactor);
       currentPitch = lerp(currentPitch, targetPitch, smoothingFactor);
     
-      // Update the camera rotation
       bodyRef.rotation.y = currentYaw;
       camRef.rotation.x = currentPitch;
     
-      // Continue updating on each frame
       requestAnimationFrame(updateCameraRotation);
     };
 
@@ -73,12 +80,12 @@ export default function HeadCam(props: HeadCamProps) {
             ref={bodyRef}
             align-point="0.5 0.5"
             position={props.position}
-            rotation={`0 ${props.baseOrientation.x} 0`}
+            rotation={`0 ${props.baseOrientation.yaw} 0`}
         >
             <lume-perspective-camera 
                 ref={camRef} 
                 active
-                rotation={`${props.baseOrientation.y} 0 0`}
+                rotation={`${props.baseOrientation.pitch} 0 0`}
             ></lume-perspective-camera>
         </lume-element3d>
     )
