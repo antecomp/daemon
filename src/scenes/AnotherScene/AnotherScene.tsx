@@ -3,7 +3,7 @@ import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 //import WadsCam from '../../components/util/wadscam'
-import HeadCam from '../../components/util/HeadCam'
+import HeadCam from '@/components/util/HeadCam'
 
 export default function AnotherScene() {
     return(

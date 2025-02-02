@@ -5,14 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
    /* Path aliasing */
-   "compilerOptions": {
-    "baseUrl": ".",
-   },
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
+  
     // "compilerOptions": {
     //   "skipLibCheck": true
     // }
