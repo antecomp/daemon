@@ -4,10 +4,13 @@ import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 //import WadsCam from '../../components/util/wadscam'
 import HeadCam from '@/components/util/HeadCam'
-import { createSignal } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import Interactable from '@/components/util/Interactable'
+import { Scene } from 'lume'
+import applyShader from '@/util/applyShader'
 
 export default function AnotherScene() {
+    let sceneRef: Scene | undefined;
 
     const [camLayout, setCamLayout] = createSignal({
         position: "35 -192 144",
@@ -29,21 +32,54 @@ export default function AnotherScene() {
     //     })
     // }, 5000)
 
+    onMount(() => {
+        if (sceneRef) {
+            // TODO/NOTE
+            /* Using requestAnimationFrame to wait for
+             when the glRenderer is actually online.
+             Is there a eventListener for this instead? */
+            requestAnimationFrame(() => {
+                applyShader(sceneRef);
+            });
+        }
+    })
+
     return(
-        <lume-scene webgl shadow-mode="pcfsoft" id='SCENE'>
+        <lume-scene 
+            webgl
+            ref={sceneRef} 
+            shadow-mode="pcfsoft" 
+            id='SCENE'
+            physically-correct-lights 
+            perspective="800"
+            fog-mode="linear" 
+            fog-color="#000000" 
+            fog-near="100" 
+            fog-far="750"
+        >
 
 			<HeadCam
 				baseOrientation={camLayout().orientation}
 				position={camLayout().position}
-				maxYaw={15}
+				maxYaw={30}
 				maxPitch={15}
 			/>
 
-            <lume-point-light intensity="1200" align-point="0.5 0.5" mount-point="0.5 0.5" position="-300 -550 -300" color="white">
-                <lume-sphere size="20" cast-shadow="true" receive-shadow="false" color="#ff006e" 
-                //@ts-ignore
-                has="basic-material"></lume-sphere>
-              </lume-point-light>
+            <lume-point-light 
+                intensity="1200" 
+                align-point="0.5 0.5" 
+                mount-point="0.5 0.5" 
+                position="-300 -550 -300" 
+                color="white"
+            >
+                <lume-sphere size="20" 
+                    cast-shadow="true" 
+                    receive-shadow="false" 
+                    color="#ff006e" 
+                    //@ts-ignore
+                    has="basic-material"
+                ></lume-sphere>
+            </lume-point-light>
 
             <lume-sphere
                 size="20"
