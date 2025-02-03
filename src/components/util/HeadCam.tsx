@@ -31,13 +31,16 @@ export default function HeadCam(props: HeadCamProps) {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
+    // Side note, I probably won't do this for position
+    // Or ill make it optional by some prop. Often we may want to "snap" to a location,
+    // not interpolate there.
     let currentPitch = props.baseOrientation.pitch;
     let targetPitch = props.baseOrientation.pitch;
     let currentYaw = props.baseOrientation.yaw;
     let targetYaw = props.baseOrientation.yaw;
     const smoothingFactor = 0.1;
 
-    // Track the previously hovered object
+    // diff this for onHoverLeave check
     let previouslyHoveredObject: THREE.Object3D | null = null;
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -60,21 +63,18 @@ export default function HeadCam(props: HeadCamProps) {
         const hoveredObject = intersects.length > 0 ? intersects[0].object : null;
 
         if (hoveredObject !== previouslyHoveredObject) {
-            // Trigger onHoverLeave for the previous object
             if (previouslyHoveredObject) {
                 previouslyHoveredObject.traverseAncestors(a => {
                     if (a.userData.onHoverLeave) a.userData.onHoverLeave();
                 });
             }
 
-            // Trigger onHover for the new object
             if (hoveredObject) {
                 hoveredObject.traverseAncestors(a => {
                     if (a.userData.onHover) a.userData.onHover();
                 });
             }
 
-            // Update the reference to the currently hovered object
             previouslyHoveredObject = hoveredObject;
         }
     };

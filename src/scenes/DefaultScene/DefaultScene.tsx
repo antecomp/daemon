@@ -1,5 +1,3 @@
-import 'lume'
-
 export default function DefaultScene() {
     return (
         <lume-scene webgl physically-correct-lights perspective="800" fog-mode="linear" fog-color="#000000" fog-near="600" fog-far="900">

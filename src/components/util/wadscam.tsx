@@ -16,8 +16,8 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
   const moveSpeed = speed;
   const rotateSpeed = 0.05;
 
-  let pitch = 0;  // X-axis rotation for the camera (up/down)
-  let yaw = 0;    // Y-axis rotation for the body (left/right)
+  let pitch = 0;  // Pitch = abt X
+  let yaw = 0;    // Yaw = abt Y
 
   // Handle mouse movement for yaw and pitch
   const handleMouseMove = (event: MouseEvent) => {
@@ -29,10 +29,7 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
     // Clamp pitch to prevent flipping
     pitch = Math.max(-90, Math.min(90, pitch));
 
-    // Apply yaw to the body
     bodyRef.rotation.y = yaw;
-
-    // Apply pitch to the camera
     camRef.rotation.x = pitch;
   };
 
@@ -42,12 +39,10 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
 
     const direction = new THREE.Vector3();
 
-    // Convert yaw to radians for trigonometric calculations
+    // Tbh I just flipped around sin and cos and the signs until it lined up :^)
     const yawRad = THREE.MathUtils.degToRad(yaw);
-
-    // Calculate forward and right vectors using sine and cosine
-    const forward = new THREE.Vector3(Math.sin(yawRad), 0, Math.cos(yawRad));  // Inverted Z
-    const right = new THREE.Vector3(Math.cos(yawRad), 0, -Math.sin(yawRad));  // Adjusted right vector
+    const forward = new THREE.Vector3(Math.sin(yawRad), 0, Math.cos(yawRad)); 
+    const right = new THREE.Vector3(Math.cos(yawRad), 0, -Math.sin(yawRad)); 
 
     switch (event.key) {
       case 'w':
@@ -78,13 +73,13 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
 
     direction.normalize().multiplyScalar(moveSpeed);
 
-    // Apply movement to the body position
+    
     bodyRef.position.x += direction.x;
     bodyRef.position.y += direction.y;
     bodyRef.position.z += direction.z;
   };
 
-  // Attach event listeners
+  
   onMount(() => {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('keydown', handleKeyDown);
@@ -94,7 +89,7 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
     }
   });
 
-  // Cleanup event listeners
+  
   onCleanup(() => {
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('keydown', handleKeyDown);
@@ -103,7 +98,7 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
     }
   });
 
-  // Render the body and camera
+  
   return (
     <lume-element3d ref={bodyRef} 
     id="test"

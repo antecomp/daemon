@@ -1,0 +1,9 @@
+newmtl Brick/Brick_17-512x512
+map_Kd ../../../../tb/textures/Brick/Brick_17-512x512.png
+
+newmtl Dirt/Dirt_02-512x512
+map_Kd ../../../../tb/textures/Dirt/Dirt_02-512x512.png
+
+newmtl Wood/Wood_08-512x512
+map_Kd ../../../../tb/textures/Wood/Wood_08-512x512.png
+

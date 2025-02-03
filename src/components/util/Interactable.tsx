@@ -19,7 +19,6 @@ export default function Interactable(props: InteractiveElementProps) {
     onMount(() => {
         if(containerRef && containerRef.three) {
             containerRef.three.userData.onClick = props.onClick;
-            // Likely will add default behavior here too. e.g interactables will glow.
             containerRef.three.userData.onHover = () => {
                 if(props.onHover) props.onHover();
                 // We want to make the direct child of the interact container to be the receiver of the 
