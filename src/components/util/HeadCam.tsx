@@ -23,22 +23,22 @@ interface HeadCamProps {
  * @returns 
  */
 export default function HeadCam(props: HeadCamProps) {
-    // TODO: For some reason I get a use before assign error if I make these Element3D instead of any?
     let camRef: PerspectiveCamera | undefined;
     let bodyRef: Element3D | undefined;
     let parentScene: Element3D;
-
-    let animationFrameId: number;  // Store the ID for killing camera tween.
+    let animationFrameId: number;
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    // Purposefully breaking reactivity - we just want a clone of initial.
     let currentPitch = props.baseOrientation.pitch;
     let targetPitch = props.baseOrientation.pitch;
     let currentYaw = props.baseOrientation.yaw;
     let targetYaw = props.baseOrientation.yaw;
     const smoothingFactor = 0.1;
+
+    // Track the previously hovered object
+    let previouslyHoveredObject: THREE.Object3D | null = null;
 
     const handleMouseMove = (event: MouseEvent) => {
         if (!camRef || !parentScene) return;
@@ -46,50 +46,49 @@ export default function HeadCam(props: HeadCamProps) {
         const rect = parentScene.getBoundingClientRect();
         const { left, top, width, height } = rect;
 
-        const relativeX = event.clientX - left;
-        const relativeY = event.clientY - top;
-
-        // Puts x,y in a [-1,1] range to easily use as pitch and yaw scale :)
-        const normalizedX = (relativeX / width) * 2 - 1;
-        const normalizedY = (relativeY / height) * 2 - 1;
+        const normalizedX = ((event.clientX - left) / width) * 2 - 1;
+        const normalizedY = ((event.clientY - top) / height) * 2 - 1;
 
         targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.yaw;
         targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
 
-
-
         // Raycasting
-        mouse.x = normalizedX;
-        mouse.y = -normalizedY;
-
+        mouse.set(normalizedX, -normalizedY);
         raycaster.setFromCamera(mouse, camRef.three);
+
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
+        const hoveredObject = intersects.length > 0 ? intersects[0].object : null;
 
-        if(intersects.length > 0) {
-            let clickedObject: THREE.Object3D<THREE.Object3DEventMap> | null = intersects[0].object;
+        if (hoveredObject !== previouslyHoveredObject) {
+            // Trigger onHoverLeave for the previous object
+            if (previouslyHoveredObject) {
+                previouslyHoveredObject.traverseAncestors(a => {
+                    if (a.userData.onHoverLeave) a.userData.onHoverLeave();
+                });
+            }
 
-            clickedObject?.traverseAncestors(a => {
-                if (a.userData.onHover) {a.userData.onHover()}
-            })
+            // Trigger onHover for the new object
+            if (hoveredObject) {
+                hoveredObject.traverseAncestors(a => {
+                    if (a.userData.onHover) a.userData.onHover();
+                });
+            }
+
+            // Update the reference to the currently hovered object
+            previouslyHoveredObject = hoveredObject;
         }
-
     };
 
-    // Interaction Click
     const handleClick = () => {
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
-
-        if(intersects.length > 0) {
-            let clickedObject: THREE.Object3D<THREE.Object3DEventMap> | null = intersects[0].object;
-
-            // Need to bubble up to blank lume-element3d container.
-            clickedObject?.traverseAncestors(a => {
-                if (a.userData.onClick) {a.userData.onClick()}
+        if (intersects.length > 0) {
+            let clickedObject = intersects[0].object;
+            clickedObject.traverseAncestors(a => {
+                if (a.userData.onClick) a.userData.onClick();
             });
         }
-    }
+    };
 
-    // Tweening function using requestAnimationFrame
     const updateCameraRotation = () => {
         if (!camRef || !bodyRef) return;
 
@@ -102,7 +101,6 @@ export default function HeadCam(props: HeadCamProps) {
         animationFrameId = requestAnimationFrame(updateCameraRotation);
     };
 
-    // Reset target orientation when props.baseOrientation changes
     createEffect(() => {
         targetYaw = props.baseOrientation.yaw;
         targetPitch = props.baseOrientation.pitch;
@@ -121,8 +119,8 @@ export default function HeadCam(props: HeadCamProps) {
     onCleanup(() => {
         parentScene?.removeEventListener('mousemove', handleMouseMove);
         parentScene?.removeEventListener('click', handleClick);
-        cancelAnimationFrame(animationFrameId); // kills updateCameraRotation.
-    })
+        cancelAnimationFrame(animationFrameId);
+    });
 
     return (
         <lume-element3d
@@ -137,5 +135,5 @@ export default function HeadCam(props: HeadCamProps) {
                 rotation={`${props.baseOrientation.pitch} 0 0`}
             ></lume-perspective-camera>
         </lume-element3d>
-    )
+    );
 }

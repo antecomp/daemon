@@ -1,6 +1,8 @@
+import { hoveredItem } from "@/components/util/Interactable";
+import ditherShader from "@/shaders/dither.shader";
 import { Motor, Scene } from "lume";
 import { Vector2 } from "three";
-import { GlitchPass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
+import { GlitchPass, OutlineEffect, OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
 
 
@@ -30,19 +32,31 @@ export default function applyShader(scene: Scene) {
     //const glitchPass = new GlitchPass();
     //composer.addPass(glitchPass);
 
-    const effectSobel = new ShaderPass(SobelOperatorShader);
-    effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-    effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-    composer.addPass( effectSobel );
+    // const effectSobel = new ShaderPass(SobelOperatorShader);
+    // effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+    // effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+    // composer.addPass( effectSobel );
+
+    //composer.addPass(ditherShader);
+
+   let outlinePass = new OutlinePass( new Vector2( window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio ), scene.three, scene.threeCamera );
+   composer.addPass( outlinePass );
+
+    //if(playerRef) outlinePass.selectedObjects = [playerRef.three];
+
+
+    
+
+    let slop = new OutlineEffect(scene.glRenderer, {defaultColor: [1, 1, 1]});
 
     const outputPass = new OutputPass();
     composer.addPass(outputPass);
 
     // Overwrite draw method with our custom passes.
     scene.drawScene = () => {
-        console.log("utilizing new draw");
         renderPass.camera = scene.threeCamera;
-
+        outlinePass.selectedObjects = hoveredItem() ? [hoveredItem()!] : [];
+        //slop.render(scene.three, scene.threeCamera);
         composer.render();
     }
 
