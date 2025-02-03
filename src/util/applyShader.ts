@@ -8,7 +8,7 @@ import { EffectComposer } from "three/examples/jsm/Addons.js";
 
 export default function applyShader(scene: Scene) {
     if (!scene.glRenderer) return; // 
-    console.log("DEBUG glRenderer found, applying custom pass...");
+    //console.log("DEBUG glRenderer found, applying custom pass...");
 
     const composer = new EffectComposer(scene.glRenderer);
 

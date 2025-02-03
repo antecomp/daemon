@@ -12,4 +12,5 @@ export type SceneRegistry = {
 export const scenes: SceneRegistry = { // Change any type to something proper later.
     DefaultScene: lazy(() => import("./DefaultScene/DefaultScene")),
     AnotherScene: lazy(() => import("./AnotherScene/AnotherScene")),
+    ThirdScene: lazy(() => import("./ThirdScene/ThirdScene"))
 }

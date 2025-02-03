@@ -33,10 +33,9 @@ export default function AnotherScene() {
 
     onMount(() => {
         if (sceneRef) {
-            // TODO/NOTE
-            /* Using requestAnimationFrame to wait for
-             when the glRenderer is actually online.
-             Is there a eventListener for this instead? */
+            // Unfortunately, due to how Solid mounts, it triggers
+            // this call before the scenes openGlRenderer is setup
+            // We have to do this arbitrary delay to force a wait.
             requestAnimationFrame(() => {
                 applyShader(sceneRef);
             });
@@ -47,7 +46,7 @@ export default function AnotherScene() {
         <lume-scene 
             webgl
             ref={sceneRef} 
-            shadow-mode="pcfsoft" 
+            shadow-mode="basic" 
             id='SCENE'
             physically-correct-lights 
             perspective="800"

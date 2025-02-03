@@ -1,4 +1,4 @@
-import {createSignal, Suspense} from "solid-js";
+import {createSignal, For, Suspense} from "solid-js";
 import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
 
@@ -13,8 +13,16 @@ export default function SceneContainer() {
                 <Dynamic component={scenes[currentScene()]} />
             </Suspense>
             </div>
-            <button onClick={() => setSceneName("AnotherScene")}>Load Another Scene</button>
             <p>{currentScene()}</p>
+            <div id="scene-switcher">
+                <For each={Object.keys(scenes)}>
+                    {(scene) => (
+                        <button onClick={() => setSceneName(scene)}>
+                            {scene}
+                        </button>
+                    )}
+                </For>
+            </div>
         </>
     )
 }
