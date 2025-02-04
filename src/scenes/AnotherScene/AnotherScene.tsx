@@ -14,7 +14,7 @@ export default function AnotherScene() {
     const [camLayout, setCamLayout] = createSignal({
         position: "35 -192 144",
         orientation: {
-            yaw: 10,
+            yaw: 180,
             pitch: 0
         }
     })

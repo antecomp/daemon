@@ -58,8 +58,15 @@ export default function applyShader(scene: Scene) {
         ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
 
-        ditherPass.uniforms.XOffset.value = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
-        ditherPass.uniforms.YOffset.value = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
+        // https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
+        /* 
+            If quantize the offsets
+        */
+        const OX = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
+        const OY = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
+
+        ditherPass.uniforms.XOffset.value = 2 * Math.floor(OX / 2 + 0.5);
+        ditherPass.uniforms.YOffset.value = 2 * Math.floor(OY / 2 + 0.5);
     }
 
     const outputPass = new OutputPass();
