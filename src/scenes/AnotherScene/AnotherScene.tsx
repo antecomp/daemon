@@ -57,14 +57,14 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-			<HeadCam
+			{/* <HeadCam
 				baseOrientation={camLayout().orientation}
 				position={camLayout().position}
 				maxYaw={70}
 				maxPitch={15}
-			/>
+			/> */}
 
-            {/* <WadsCam></WadsCam> */}
+            <WadsCam></WadsCam>
 
             <lume-point-light 
                 intensity="1200" 

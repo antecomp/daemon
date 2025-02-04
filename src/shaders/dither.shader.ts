@@ -61,11 +61,6 @@ const DitherShader = {
 		vec4 color = texture2D(tDiffuse, vUv);
 		float brightness = dot(color.rgb, vec3(0.299, 0.587, 0.114));  // Convert to grayscale
 
-		//gl_FragColor = (brightness <= ditherValue) ? vec4(0.0, 0.0, 0.0, 1.0) : vec4(1.0, 1.0, 1.0, 1.0);
-		float blendFactor = smoothstep(ditherValue - 0.05, ditherValue + 0.05, brightness);
-
-		//gl_FragColor = mix(vec4(0.0), vec4(1.0), blendFactor);
-
 		// Blending threshold: control how much blending occurs
 		float blendThreshold = 0.05;  // Lower value = sharper transitions, higher = smoother
 
@@ -78,10 +73,15 @@ const DitherShader = {
 		} 
 		else {
 			// Apply smoothstep blending only in midtones
-			float blendFactor = smoothstep(ditherValue - blendThreshold, ditherValue + blendThreshold, brightness);
-			gl_FragColor = mix(vec4(0.0), vec4(1.0), blendFactor);  // Blend between black and white
+			//float blendFactor = smoothstep(ditherValue - blendThreshold, ditherValue + blendThreshold, brightness);
+			//gl_FragColor = mix(vec4(0.0), vec4(1.0), blendFactor);  // Blend between black and white
+
+			float thresholdDiff = brightness - ditherValue;
+			vec3 rampColor = mix(vec3(0.0), vec3(1.0), smoothstep(0.0, 0.1, thresholdDiff));
+			gl_FragColor = vec4(rampColor, 1.0);
+
 		}
-		}
+	}
 	`
 }
 
