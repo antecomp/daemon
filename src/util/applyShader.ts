@@ -1,13 +1,11 @@
 import { hoveredItem } from "@/components/util/Interactable";
-import { FOV, SCENE_DIMENSIONS } from "@/config";
+import { DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
 import DitherShader from "@/shaders/dither.shader";
-import ditherShader from "@/shaders/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
 import { Vector2 } from "three";
 import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
-import { radians } from "three/tsl";
 
 
 export default function applyShader(scene: Scene) {
@@ -58,15 +56,23 @@ export default function applyShader(scene: Scene) {
         ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
 
-        // https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
-        /* 
-            If quantize the offsets
-        */
         const OX = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
         const OY = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
 
-        ditherPass.uniforms.XOffset.value = 2 * Math.floor(OX / 2 + 0.5);
-        ditherPass.uniforms.YOffset.value = 2 * Math.floor(OY / 2 + 0.5);
+        switch (DITHER_MODE) {
+            case 0:
+                break; // No offset
+            case 1:
+                ditherPass.uniforms.XOffset.value = OX;
+                ditherPass.uniforms.YOffset.value = OY;
+                break;
+            case 2:
+                // https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
+                ditherPass.uniforms.XOffset.value = 2 * Math.floor(OX / 2 + 0.5);
+                ditherPass.uniforms.YOffset.value = 2 * Math.floor(OY / 2 + 0.5);
+                break;
+        }
+
     }
 
     const outputPass = new OutputPass();
