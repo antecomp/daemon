@@ -3,14 +3,14 @@ import { ShaderPass } from "three/examples/jsm/Addons.js";
 
 const DitherShader = {
 	uniforms: {
-		tDiffuse: {value: null}, // Input texture
+		tDiffuse: { value: null }, // Input texture
 		// Will likely need to change this to scenes client size/window size, for proper scaling
-		screenSize: {value: new Vector2(window.innerWidth, window.innerHeight)},
-		cameraRotation: {value: 0.0},
-		cameraFov: {value: Math.PI / 4},
+		screenSize: { value: new Vector2(window.innerWidth, window.innerHeight) },
+		cameraRotation: { value: 0.0 },
+		cameraFov: { value: Math.PI / 4 },
 		opacity: { value: 1.0 },
-		XOffset: {value: 0.0},
-		YOffset: {value: 0.0}
+		XOffset: { value: 0.0 },
+		YOffset: { value: 0.0 }
 	},
 
 	vertexShader: `
@@ -54,9 +54,6 @@ const DitherShader = {
 		// Apply dither offset to UVs
 		vec2 ditherCoord = mod((vUv * screenSize + vec2(XOffset, YOffset)), 4.0);
 
-		// For debugging: Visualize the dither coordinates
-		gl_FragColor = vec4(ditherCoord.x / 4.0, ditherCoord.y / 4.0, 0.0, 1.0);
-
 		// Apply the actual dithering effect
 		float ditherValue = bayerDither(ditherCoord);
 
@@ -64,8 +61,26 @@ const DitherShader = {
 		vec4 color = texture2D(tDiffuse, vUv);
 		float brightness = dot(color.rgb, vec3(0.299, 0.587, 0.114));  // Convert to grayscale
 
-		// Uncomment this to apply the dithering
-		gl_FragColor = (brightness <= ditherValue) ? vec4(0.0, 0.0, 0.0, 1.0) : vec4(1.0, 1.0, 1.0, 1.0);
+		//gl_FragColor = (brightness <= ditherValue) ? vec4(0.0, 0.0, 0.0, 1.0) : vec4(1.0, 1.0, 1.0, 1.0);
+		float blendFactor = smoothstep(ditherValue - 0.05, ditherValue + 0.05, brightness);
+
+		//gl_FragColor = mix(vec4(0.0), vec4(1.0), blendFactor);
+
+		// Blending threshold: control how much blending occurs
+		float blendThreshold = 0.05;  // Lower value = sharper transitions, higher = smoother
+
+		// Retain pure black and pure white
+		if (brightness <= 0.0) {
+			gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);  // Keep pure black
+		} 
+		else if (brightness >= 1.0) {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);  // Keep pure white
+		} 
+		else {
+			// Apply smoothstep blending only in midtones
+			float blendFactor = smoothstep(ditherValue - blendThreshold, ditherValue + blendThreshold, brightness);
+			gl_FragColor = mix(vec4(0.0), vec4(1.0), blendFactor);  // Blend between black and white
+		}
 		}
 	`
 }

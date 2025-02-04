@@ -59,7 +59,7 @@ export default function applyShader(scene: Scene) {
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
 
         ditherPass.uniforms.XOffset.value = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
-        ditherPass.uniforms.YOffset.value = (SCENE_DIMENSIONS.height * pitch) / (aspect * Math.PI / 4);
+        ditherPass.uniforms.YOffset.value = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
     }
 
     const outputPass = new OutputPass();
