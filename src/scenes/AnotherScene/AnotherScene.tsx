@@ -59,7 +59,7 @@ export default function AnotherScene() {
 			<HeadCam
 				baseOrientation={camLayout().orientation}
 				position={camLayout().position}
-				maxYaw={30}
+				maxYaw={70}
 				maxPitch={15}
 			/>
 

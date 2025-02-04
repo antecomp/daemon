@@ -8,7 +8,6 @@ const DitherShader = {
 		screenSize: {value: new Vector2(window.innerWidth, window.innerHeight)},
 		cameraRotation: {value: 0.0},
 		cameraFov: {value: Math.PI / 4},
-		ditherScale: {value: 1},
 		opacity: { value: 1.0 }
 	},
 
@@ -25,7 +24,6 @@ const DitherShader = {
 		uniform vec2 screenSize;
 		uniform float cameraRotation;
 		uniform float cameraFov;
-		uniform float ditherScale;
 
 		varying vec2 vUv;
 
@@ -48,17 +46,20 @@ const DitherShader = {
 		}
 
 	void main() {
-		float aspectRatio = screenSize.x / screenSize.y;
+		// Calculate aspect ratio
+    float aspectRatio = screenSize.x / screenSize.y;
 
-		// Create offset that smoothly shifts based on camera rotation
-		float rotationMultiplier = 1.0;  // Adjust this for more visible shifts
-		vec2 ditherOffset = vec2(
-			(cameraRotation * rotationMultiplier) / cameraFov,
-			(cameraRotation * rotationMultiplier) / (cameraFov * aspectRatio)
-		);
+    // Normalize camera rotation to FOV units
+    float normalizedRotation = cameraRotation / cameraFov;
 
-		// Apply the offset to the UV coordinates
-		vec2 ditherCoord = mod((vUv * screenSize + ditherOffset) / ditherScale, 4.0);
+    // Adjust dither offset with aspect ratio correction
+    vec2 ditherOffset = vec2(
+        (screenSize.x * normalizedRotation) / (2.0 * 3.141592653589793 * aspectRatio),
+        (screenSize.y * normalizedRotation) / (2.0 * 3.141592653589793)
+    );
+
+    // Apply dither offset to UVs
+    vec2 ditherCoord = mod((vUv * screenSize + ditherOffset), 4.0);
 
 		// For debugging: Visualize the dither coordinates
 		gl_FragColor = vec4(ditherCoord.x / 4.0, ditherCoord.y / 4.0, 0.0, 1.0);

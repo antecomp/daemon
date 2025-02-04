@@ -43,9 +43,13 @@ export default function applyShader(scene: Scene) {
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    //@ts-ignore
+    scene.camera.fov = 45; // FOV prop for Lume is in degrees for some reason
     function updateCameraRotation() {
         const body = scene.threeCamera.parent;  // Get parent element (body)
         const yawRotation = body ? body.rotation.y : 0.0;  // Fallback to 0 if no parent
+
+        // Handled in radians in the shader!
         ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
     }
