@@ -1,5 +1,5 @@
 import { hoveredItem } from "@/components/util/Interactable";
-import { SCENE_DIMENSIONS } from "@/config";
+import { FOV, SCENE_DIMENSIONS } from "@/config";
 import DitherShader from "@/shaders/dither.shader";
 import ditherShader from "@/shaders/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
@@ -7,6 +7,7 @@ import { Scene } from "lume";
 import { Vector2 } from "three";
 import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
+import { radians } from "three/tsl";
 
 
 export default function applyShader(scene: Scene) {
@@ -44,14 +45,21 @@ export default function applyShader(scene: Scene) {
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
     //@ts-ignore
-    scene.camera.fov = 45; // FOV prop for Lume is in degrees for some reason
+    scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
     function updateCameraRotation() {
         const body = scene.threeCamera.parent;  // Get parent element (body)
         const yawRotation = body ? body.rotation.y : 0.0;  // Fallback to 0 if no parent
 
+        const pitch = scene.threeCamera.rotation.x
+        //@ts-ignore
+        const aspect = scene.threeCamera.aspect;
+
         // Handled in radians in the shader!
         ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
+
+        ditherPass.uniforms.XOffset.value = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
+        ditherPass.uniforms.YOffset.value = (SCENE_DIMENSIONS.height * pitch) / (aspect * Math.PI / 4);
     }
 
     const outputPass = new OutputPass();
