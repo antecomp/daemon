@@ -1,8 +1,11 @@
 import { hoveredItem } from "@/components/util/Interactable";
+import { SCENE_DIMENSIONS } from "@/config";
+import DitherShader from "@/shaders/dither.shader";
+import ditherShader from "@/shaders/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
 import { Vector2 } from "three";
-import { OutlinePass, OutputPass, RenderPass } from "three/examples/jsm/Addons.js";
+import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
 
 
@@ -26,15 +29,26 @@ export default function applyShader(scene: Scene) {
 
     composer.addPass(renderPass);
 
+    let outlinePass = new OutlinePass(new Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio), scene.three, scene.threeCamera);
+    composer.addPass(outlinePass);
+
+    //console.log(scene.clientHeight); // this is 0 :(
+
     // const effectSobel = new ShaderPass(SobelOperatorShader);
     // effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
     // effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
     // composer.addPass( effectSobel );
 
-    //composer.addPass(ditherShader); // (still needs to be implemented)
+    const ditherPass = new ShaderPass(DitherShader);
+    composer.addPass(ditherPass);
 
-    let outlinePass = new OutlinePass(new Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio), scene.three, scene.threeCamera);
-    composer.addPass(outlinePass);
+    ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    function updateCameraRotation() {
+        const body = scene.threeCamera.parent;  // Get parent element (body)
+        const yawRotation = body ? body.rotation.y : 0.0;  // Fallback to 0 if no parent
+        ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
+        ditherPass.uniforms.cameraFov.value = Math.PI / 4;
+    }
 
     const outputPass = new OutputPass();
     composer.addPass(outputPass);
@@ -43,6 +57,7 @@ export default function applyShader(scene: Scene) {
     scene.drawScene = () => {
         // idk why I had this camera thing. Seems to work without?
         //renderPass.camera = scene.threeCamera;
+        updateCameraRotation();
         outlinePass.selectedObjects = hoveredItem() ? [hoveredItem()!] : []; // Kinda gross. Will change how this works later maybe.
         composer.render();
     }
