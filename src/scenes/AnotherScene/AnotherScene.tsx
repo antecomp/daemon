@@ -15,7 +15,7 @@ export default function AnotherScene() {
     const [camLayout, setCamLayout] = createSignal({
         position: "35 -192 144",
         orientation: {
-            yaw: 180,
+            yaw: 18,
             pitch: 0
         }
     })
@@ -57,14 +57,14 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-			{/* <HeadCam
+			<HeadCam
 				baseOrientation={camLayout().orientation}
 				position={camLayout().position}
 				maxYaw={70}
 				maxPitch={15}
-			/> */}
+			/>
 
-            <WadsCam></WadsCam>
+            {/* <WadsCam></WadsCam> */}
 
             <lume-point-light 
                 intensity="1200" 
@@ -118,7 +118,7 @@ export default function AnotherScene() {
             ></lume-fbx-model>
         </Interactable>
 
-          <lume-ambient-light intensity={2} />
+          <lume-ambient-light intensity={5} />
             <lume-obj-model 
                 id="map" 
                 obj={mapobj}
