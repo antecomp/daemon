@@ -1,5 +1,5 @@
 import { hoveredItem } from "@/components/util/Interactable";
-import { DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
+import { DITHER_LUMA_CUTOFF, DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
 import DitherShader from "@/shaders/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
@@ -42,6 +42,7 @@ export default function applyShader(scene: Scene) {
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
     function updateCameraRotation() {
@@ -63,8 +64,8 @@ export default function applyShader(scene: Scene) {
             case 0:
                 break; // No offset
             case 1:
-                ditherPass.uniforms.XOffset.value = OX;
-                ditherPass.uniforms.YOffset.value = OY;
+                ditherPass.uniforms.XOffset.value = Math.round(OX);
+                ditherPass.uniforms.YOffset.value = Math.round(OY);
                 break;
             case 2:
                 // https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924

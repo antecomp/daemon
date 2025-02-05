@@ -10,7 +10,8 @@ const DitherShader = {
 		cameraFov: { value: Math.PI / 4 },
 		opacity: { value: 1.0 },
 		XOffset: { value: 0.0 },
-		YOffset: { value: 0.0 }
+		YOffset: { value: 0.0 },
+        lumaCutoff: {value: 0.0}
 	},
 
 	vertexShader: `
@@ -28,6 +29,7 @@ const DitherShader = {
 		uniform float cameraFov;
 		uniform float XOffset;
 		uniform float YOffset;
+        uniform float lumaCutoff;
 
 
 		varying vec2 vUv;
@@ -54,12 +56,15 @@ const DitherShader = {
 		// Apply dither offset to UVs
 		vec2 ditherCoord = mod((vUv * screenSize + vec2(XOffset, YOffset)), 4.0);
 
-		// Apply the actual dithering effect
-		float ditherValue = bayerDither(ditherCoord);
-
 		// Sample the original color from the scene
 		vec4 color = texture2D(tDiffuse, vUv);
 		float brightness = dot(color.rgb, vec3(0.299, 0.587, 0.114));  // Convert to grayscale
+        if(brightness <= lumaCutoff) {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+            return;
+        }
+
+		float ditherValue = bayerDither(ditherCoord);
 
 		// Blending threshold: control how much blending occurs
 		float blendThreshold = 0.05;  // Lower value = sharper transitions, higher = smoother
