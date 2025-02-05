@@ -3,6 +3,7 @@ import applyShader from "@/util/applyShader";
 import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
+import HeadCam from "@/components/util/HeadCam";
 
 export default function Sponza() {
     let sceneRef: Scene | undefined;
@@ -24,7 +25,13 @@ export default function Sponza() {
             physically-correct-lights 
             perspective="800"
         >
-            <WadsCam/>
+            {/* <WadsCam/> */}
+            <HeadCam 
+                position="-5 -52 4"
+                baseOrientation={{yaw: 73, pitch: 0}}
+                maxYaw={25}
+                maxPitch={25}
+            />
 
             <lume-ambient-light intensity={8} />
 
