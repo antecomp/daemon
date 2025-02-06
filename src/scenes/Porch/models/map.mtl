@@ -1,0 +1,9 @@
+newmtl BW/666
+map_Kd ../../../../tb/textures/BW/666.png
+
+newmtl BW/888
+map_Kd ../../../../tb/textures/BW/888.png
+
+newmtl BW/black
+map_Kd ../../../../tb/textures/BW/black.png
+

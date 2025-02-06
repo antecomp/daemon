@@ -13,5 +13,6 @@ export const scenes: SceneRegistry = { // Change any type to something proper la
     DefaultScene: lazy(() => import("./DefaultScene/DefaultScene")),
     AnotherScene: lazy(() => import("./AnotherScene/AnotherScene")),
     ThirdScene: lazy(() => import("./ThirdScene/ThirdScene")),
-    Sponza: lazy(() => import("./Sponza/Sponza"))
+    Sponza: lazy(() => import("./Sponza/Sponza")),
+    Porch: lazy(() => import("./Porch/Porch"))
 }

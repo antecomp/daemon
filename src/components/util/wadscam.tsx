@@ -9,7 +9,7 @@ import * as THREE from 'three';
  * @param scene - ref to the containing scene for the camera
  * @returns 
  */
-export default function WadsCam({ speed = 5}: { speed?: number}) {
+export default function WadsCam({ speed = 5, defaultPosition = "0 -192 5"}: { speed?: number, defaultPosition?: string}) {
   let bodyRef: any;
   let camRef: any;
 
@@ -102,7 +102,7 @@ export default function WadsCam({ speed = 5}: { speed?: number}) {
   return (
     <lume-element3d ref={bodyRef} 
     id="test"
-    position="0 -192 5"
+    position={defaultPosition}
     align-point="0.5 0.5"
     >
       <lume-perspective-camera ref={camRef} active />

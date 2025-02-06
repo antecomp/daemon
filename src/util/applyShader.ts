@@ -6,6 +6,7 @@ import { Scene } from "lume";
 import { Vector2 } from "three";
 import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
+import { SSAOPass } from "three/examples/jsm/Addons.js";
 
 
 export default function applyShader(scene: Scene) {
@@ -30,6 +31,12 @@ export default function applyShader(scene: Scene) {
 
     let outlinePass = new OutlinePass(new Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio), scene.three, scene.threeCamera);
     composer.addPass(outlinePass);
+
+    // const ssaoPass = new SSAOPass(scene.three, scene.threeCamera, SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    // ssaoPass.kernelRadius = 4;  // Adjust for softer/harder AO
+    // ssaoPass.minDistance = 0.001;
+    // ssaoPass.maxDistance = 0.1;
+    // composer.addPass(ssaoPass);
 
     //console.log(scene.clientHeight); // this is 0 :(
 

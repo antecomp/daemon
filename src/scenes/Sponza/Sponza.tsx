@@ -35,6 +35,15 @@ export default function Sponza() {
 
             <lume-ambient-light intensity={8} />
 
+            <lume-directional-light
+                intensity="12" 
+                align-point="0.5 0.5" 
+                mount-point="0.5 0.5" 
+                position="100 -256 100" 
+                color="white"
+                cast-shadow="true"
+            />
+
             <lume-gltf-model
                 align-point="0.5 0.5"
                 scale="50 50 50"
