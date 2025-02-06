@@ -118,7 +118,7 @@ export default function AnotherScene() {
             ></lume-fbx-model>
         </Interactable>
 
-          <lume-ambient-light intensity={5} />
+          <lume-ambient-light intensity={3} />
             <lume-obj-model 
                 id="map" 
                 obj={mapobj}

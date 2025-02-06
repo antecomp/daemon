@@ -43,24 +43,16 @@ export default function HeadCam(props: HeadCamProps) {
     // diff this for onHoverLeave check
     let previouslyHoveredObject: THREE.Object3D | null = null;
 
-    const handleMouseMove = (event: MouseEvent) => {
+    function runHoverRaycast() {
         if (!camRef || !parentScene) return;
-
-        const rect = parentScene.getBoundingClientRect();
-        const { left, top, width, height } = rect;
-
-        const normalizedX = ((event.clientX - left) / width) * 2 - 1;
-        const normalizedY = ((event.clientY - top) / height) * 2 - 1;
-
-        targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.yaw;
-        targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
-
-        // Raycasting
-        mouse.set(normalizedX, -normalizedY);
+        // To implement, and replace logic inside runHoverCheck
+        // Then the updateCameraRotation (or similar) can invoke this too.
         raycaster.setFromCamera(mouse, camRef.three);
 
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
         const hoveredObject = intersects.length > 0 ? intersects[0].object : null;
+
+        if(previouslyHoveredObject == hoveredObject) return; // no need to re-traverse
 
         if (hoveredObject !== previouslyHoveredObject) {
             if (previouslyHoveredObject) {
@@ -77,6 +69,22 @@ export default function HeadCam(props: HeadCamProps) {
 
             previouslyHoveredObject = hoveredObject;
         }
+    }
+
+    const handleMouseMove = (event: MouseEvent) => {
+        if (!camRef || !parentScene) return;
+
+        const rect = parentScene.getBoundingClientRect();
+        const { left, top, width, height } = rect;
+
+        const normalizedX = ((event.clientX - left) / width) * 2 - 1;
+        const normalizedY = ((event.clientY - top) / height) * 2 - 1;
+
+        targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.yaw;
+        targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
+
+        mouse.set(normalizedX, -normalizedY);
+        //runHoverRaycast();
     };
 
     const handleClick = () => {
@@ -97,6 +105,8 @@ export default function HeadCam(props: HeadCamProps) {
 
         bodyRef.rotation.y = currentYaw;
         camRef.rotation.x = currentPitch;
+
+        runHoverRaycast();
 
         animationFrameId = requestAnimationFrame(updateCameraRotation);
     };
