@@ -7,6 +7,7 @@ import applyShader from "@/util/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import BillboardSprite from "@/components/util/BillboardSprite";
 import viyaTexture from "@/assets/artwork/characters/viya.png"
+import Interactable from "@/components/util/Interactable";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -34,7 +35,7 @@ export default function Porch() {
             /> */}
             <HeadCam
                 position="-230 -317 128"
-                baseOrientation={{yaw: 270, pitch: 15}}
+                baseOrientation={{yaw: 290, pitch: 0}}
                 maxPitch={25}
                 maxYaw={45}
             />
@@ -100,10 +101,13 @@ export default function Porch() {
                 color="white"
             ></lume-sphere>
 
-            <BillboardSprite
-                texture={viyaTexture}
-                position="100 -245 100"
-            />
+            <Interactable onClick={() => alert("slop")}>
+                <BillboardSprite
+                    texture={viyaTexture}
+                    size={225}
+                    position="-90 -230 0"
+                />
+            </Interactable>
 
             <lume-obj-model
                 id="map"

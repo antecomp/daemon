@@ -46,7 +46,7 @@ export default function applyShader(scene: Scene) {
     // composer.addPass( effectSobel );
 
     const ditherPass = new ShaderPass(DitherShader);
-    //composer.addPass(ditherPass);
+    composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
     ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;

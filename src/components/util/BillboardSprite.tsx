@@ -10,60 +10,51 @@ interface BillboardSpriteProps {
 
 export default function BillboardSprite(props: BillboardSpriteProps) {
     let wrapperRef: Element3D | undefined;
-
+    let sprite: THREE.Sprite | null = null;
+    let spriteMaterial: THREE.SpriteMaterial | null = null;
   
-    function waitForScene(callback: () => void) {
-        if (wrapperRef?.scene?.three) {
-          callback();
-        } else {
-          console.log("Scene isn't ready yet, waiting...");
-          requestAnimationFrame(() => waitForScene(callback)); // Retry until scene exists
+    onMount(() => {
+      if (!wrapperRef) return;
+  
+      const textureLoader = new THREE.TextureLoader();
+      const baseSize = props.size || 100;
+  
+      textureLoader.load(
+        props.texture,
+        (texture) => {
+          if (!wrapperRef.scene?.three) {
+            console.error("Scene is missing at texture load time.");
+            return;
+          }
+  
+          const aspect = texture.image.width / texture.image.height;
+          spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+          sprite = new THREE.Sprite(spriteMaterial);
+          sprite.scale.set(aspect * baseSize, baseSize, 1);
+  
+          wrapperRef.three.add(sprite);
+          // EXTREMELT IMPORTANT BELOW. NEED TO TELL SCENE TO ACTUALLY RE-RENDER
+          // OUR SPRITE IN!!!!!!!!!!!!!!!!!!!!!!!!
+          wrapperRef.scene.needsUpdate();
+        },
+        undefined,
+        (error) => console.error("Texture loading error:", error)
+      );
+  
+      onCleanup(() => {
+        if (sprite && wrapperRef) {
+          wrapperRef.three.remove(sprite);
         }
-      }
-    
-      function loadTexture(callback: (texture: THREE.Texture) => void) {
-        const textureLoader = new THREE.TextureLoader();
-        textureLoader.load(
-          props.texture,
-          (texture) => callback(texture),
-          undefined,
-          (error) => console.error("Texture loading error:", error)
-        );
-      }
-    
-      function createSprite(texture: THREE.Texture) {
-        if (!wrapperRef?.three) {
-          console.error("Scene was ready but somehow disappeared?");
-          return;
-        }
-    
-        const baseSize = props.size || 100;
-        const aspect = texture.image.width / texture.image.height;
-        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.scale.set(aspect * baseSize, baseSize, 1);
-        wrapperRef.scene?.needsUpdate();
-    
-        wrapperRef.three.add(sprite);
-    
-        onCleanup(() => {
-          console.log("Cleaning up sprite");
-          wrapperRef?.three.remove(sprite);
-          spriteMaterial.dispose();
-          texture.dispose();
-        });
-      }
-    
-      onMount(() => {
-        waitForScene(() => {
-          loadTexture((texture) => createSprite(texture));
-        });
+        spriteMaterial?.dispose();
+        sprite?.material.map?.dispose();
+        sprite = null;
+        spriteMaterial = null;
       });
-
+    });
 
     return (
         <lume-element3d
-            id="spritea"
+            id="sprite"
             align-point="0.5 0.5"
             ref={wrapperRef}
             position={props.position}
