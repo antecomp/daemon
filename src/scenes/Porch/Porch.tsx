@@ -8,6 +8,7 @@ import starfield from "../shared_textures/starfield.png"
 import BillboardSprite from "@/components/util/BillboardSprite";
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import Interactable from "@/components/util/Interactable";
+import YBillboard from "@/components/util/YBillboard";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -101,13 +102,19 @@ export default function Porch() {
                 color="white"
             ></lume-sphere>
 
-            <Interactable onClick={() => alert("slop")}>
+            {/* <Interactable onClick={() => alert("slop")}>
                 <BillboardSprite
                     texture={viyaTexture}
                     size={225}
                     position="-90 -230 0"
                 />
-            </Interactable>
+            </Interactable> */}
+
+            <YBillboard
+                    texture={viyaTexture}
+                    size={225}
+                    position="-90 -240 0"
+            />
 
             <lume-obj-model
                 id="map"

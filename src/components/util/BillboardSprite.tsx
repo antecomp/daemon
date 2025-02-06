@@ -1,5 +1,5 @@
 import { Element3D } from "lume";
-import { createEffect, createSignal, onCleanup, onMount } from "solid-js";
+import { onCleanup, onMount } from "solid-js";
 import * as THREE from 'three'
 
 interface BillboardSpriteProps {

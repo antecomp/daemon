@@ -1,9 +1,9 @@
 import {createSignal, For, Suspense} from "solid-js";
 import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
-import { SCENE_DIMENSIONS } from "@/config";
+import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 
-export const [currentScene, setSceneName] = createSignal("AnotherScene");
+export const [currentScene, setSceneName] = createSignal(INITIAL_SCENE);
 
 export default function SceneContainer() {
 

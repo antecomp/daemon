@@ -27,3 +27,8 @@ export interface AssArray<T> { // Associative Array / Dictionary. I have the hum
 }
 
 export type VLID = `${string}:${string}` // I wish I could make this more robust but whatever
+
+/**
+ * "x y z" - coordinates as a string. Used for position prop for lume elements.
+ */
+export type LumePosition = `${number} ${number} ${number}`
