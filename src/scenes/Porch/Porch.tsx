@@ -5,6 +5,8 @@ import mapmtl from './models/map.mtl?url';
 import { onMount, Scene } from "lume";
 import applyShader from "@/util/applyShader";
 import starfield from "../shared_textures/starfield.png"
+import BillboardSprite from "@/components/util/BillboardSprite";
+import viyaTexture from "@/assets/artwork/characters/viya.png"
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -26,8 +28,8 @@ export default function Porch() {
             perspective="800"
             shadowmap-type="pcf"
         >
-{/* 
-            <WadsCam
+
+            {/* <WadsCam
                 defaultPosition="-228 -282 -5"
             /> */}
             <HeadCam
@@ -90,12 +92,18 @@ export default function Porch() {
                 id="stars"
                 texture={starfield}
                 receive-shadow="false"
+                //@ts-ignore
                 has="basic-material"
                 sidedness="back"
                 size="6000 6000 6000"
                 mount-point="0.5 0.5 0.5"
                 color="white"
             ></lume-sphere>
+
+            <BillboardSprite
+                texture={viyaTexture}
+                position="100 -256 100"
+            />
 
             <lume-obj-model
                 id="map"
