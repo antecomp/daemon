@@ -1,13 +1,12 @@
 import { hoveredItem } from "@/components/util/Interactable";
-import { FOV, SCENE_DIMENSIONS } from "@/config";
+import { DITHER_LUMA_CUTOFF, DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
 import DitherShader from "@/shaders/dither.shader";
-import ditherShader from "@/shaders/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
 import { Vector2 } from "three";
 import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
-import { radians } from "three/tsl";
+import { SSAOPass } from "three/examples/jsm/Addons.js";
 
 
 export default function applyShader(scene: Scene) {
@@ -33,6 +32,12 @@ export default function applyShader(scene: Scene) {
     let outlinePass = new OutlinePass(new Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio), scene.three, scene.threeCamera);
     composer.addPass(outlinePass);
 
+    // const ssaoPass = new SSAOPass(scene.three, scene.threeCamera, SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    // ssaoPass.kernelRadius = 4;  // Adjust for softer/harder AO
+    // ssaoPass.minDistance = 0.001;
+    // ssaoPass.maxDistance = 0.1;
+    // composer.addPass(ssaoPass);
+
     //console.log(scene.clientHeight); // this is 0 :(
 
     // const effectSobel = new ShaderPass(SobelOperatorShader);
@@ -44,6 +49,7 @@ export default function applyShader(scene: Scene) {
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
     function updateCameraRotation() {
@@ -58,8 +64,23 @@ export default function applyShader(scene: Scene) {
         ditherPass.uniforms.cameraRotation.value = yawRotation;  // Pass body yaw to shader
         ditherPass.uniforms.cameraFov.value = Math.PI / 4;
 
-        ditherPass.uniforms.XOffset.value = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
-        ditherPass.uniforms.YOffset.value = (SCENE_DIMENSIONS.height * pitch) / (aspect * Math.PI / 4);
+        const OX = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
+        const OY = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
+
+        switch (DITHER_MODE) {
+            case 0:
+                break; // No offset
+            case 1:
+                ditherPass.uniforms.XOffset.value = Math.round(OX);
+                ditherPass.uniforms.YOffset.value = Math.round(OY);
+                break;
+            case 2:
+                // https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
+                ditherPass.uniforms.XOffset.value = 2 * Math.floor(OX / 2 + 0.5);
+                ditherPass.uniforms.YOffset.value = 2 * Math.floor(OY / 2 + 0.5);
+                break;
+        }
+
     }
 
     const outputPass = new OutputPass();

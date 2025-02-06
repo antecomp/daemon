@@ -38,7 +38,7 @@ export default function HeadCam(props: HeadCamProps) {
     let targetPitch = props.baseOrientation.pitch;
     let currentYaw = props.baseOrientation.yaw;
     let targetYaw = props.baseOrientation.yaw;
-    const smoothingFactor = 0.1;
+    const smoothingFactor = 0.2;
 
     // diff this for onHoverLeave check
     let previouslyHoveredObject: THREE.Object3D | null = null;

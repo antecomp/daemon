@@ -7,6 +7,7 @@ import { createSignal, onMount } from 'solid-js'
 import Interactable from '@/components/util/Interactable'
 import { Scene } from 'lume'
 import applyShader from '@/util/applyShader'
+import WadsCam from '@/components/util/wadscam'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
@@ -14,8 +15,8 @@ export default function AnotherScene() {
     const [camLayout, setCamLayout] = createSignal({
         position: "35 -192 144",
         orientation: {
-            yaw: 25,
-            pitch: 10
+            yaw: 18,
+            pitch: 0
         }
     })
 
@@ -62,6 +63,8 @@ export default function AnotherScene() {
 				maxYaw={70}
 				maxPitch={15}
 			/>
+
+            {/* <WadsCam></WadsCam> */}
 
             <lume-point-light 
                 intensity="1200" 
@@ -115,7 +118,7 @@ export default function AnotherScene() {
             ></lume-fbx-model>
         </Interactable>
 
-          <lume-ambient-light intensity={2} />
+          <lume-ambient-light intensity={5} />
             <lume-obj-model 
                 id="map" 
                 obj={mapobj}
