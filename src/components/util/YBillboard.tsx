@@ -1,5 +1,5 @@
 import { LumePosition } from "@/extra.types";
-import { Element3D, onCleanup, onMount } from "lume";
+import { Element3D, Motor, onCleanup, onMount, RenderTask } from "lume";
 import * as THREE from 'three'
 
 interface YBillboardProps {
@@ -12,6 +12,7 @@ export default function YBillboard(props: YBillboardProps) {
     let wrapperRef: Element3D | undefined;
     let plane: THREE.Mesh | null = null;
     let planeMaterial: THREE.MeshBasicMaterial | null = null;
+    let yawRenderTask: RenderTask | null = null;
 
     function updateYawOnly() {
         if (!wrapperRef?.scene?.three || !plane) return;
@@ -61,7 +62,8 @@ export default function YBillboard(props: YBillboardProps) {
 
                 wrapperRef.three.add(plane);
 
-                wrapperRef.scene.three.onBeforeRender = updateYawOnly;
+                //wrapperRef.scene.three.onBeforeRender = updateYawOnly;
+                yawRenderTask = Motor.addRenderTask(updateYawOnly);
                 wrapperRef.scene.needsUpdate(); // Force update to render in new billboard.
             },
             undefined,
@@ -77,6 +79,7 @@ export default function YBillboard(props: YBillboardProps) {
         plane?.geometry.dispose();
         plane = null;
         planeMaterial = null;
+        if(yawRenderTask) Motor.removeRenderTask(yawRenderTask);
     });
 
     return (

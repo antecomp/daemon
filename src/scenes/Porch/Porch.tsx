@@ -5,8 +5,8 @@ import mapmtl from './models/map.mtl?url';
 import { onMount, Scene } from "lume";
 import applyShader from "@/util/applyShader";
 import starfield from "../shared_textures/starfield.png"
-import BillboardSprite from "@/components/util/BillboardSprite";
 import viyaTexture from "@/assets/artwork/characters/viya.png"
+import friendTexture from "@/assets/artwork/characters/friend.png"
 import Interactable from "@/components/util/Interactable";
 import YBillboard from "@/components/util/YBillboard";
 
@@ -114,6 +114,12 @@ export default function Porch() {
                     texture={viyaTexture}
                     size={225}
                     position="-90 -240 0"
+            />
+
+            <YBillboard
+                    texture={friendTexture}
+                    size={50}
+                    position="-70 -266 200"
             />
 
             <lume-obj-model
