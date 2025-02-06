@@ -102,7 +102,7 @@ export default function Porch() {
 
             <BillboardSprite
                 texture={viyaTexture}
-                position="100 -256 100"
+                position="100 -245 100"
             />
 
             <lume-obj-model

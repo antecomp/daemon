@@ -11,49 +11,59 @@ interface BillboardSpriteProps {
 export default function BillboardSprite(props: BillboardSpriteProps) {
     let wrapperRef: Element3D | undefined;
 
-    onMount(() => {
-        if (!wrapperRef) return;
+  
+    function waitForScene(callback: () => void) {
+        if (wrapperRef?.scene?.three) {
+          callback();
+        } else {
+          console.log("Scene isn't ready yet, waiting...");
+          requestAnimationFrame(() => waitForScene(callback)); // Retry until scene exists
+        }
+      }
     
+      function loadTexture(callback: (texture: THREE.Texture) => void) {
         const textureLoader = new THREE.TextureLoader();
-        const baseSize = props.size || 100;
-    
         textureLoader.load(
           props.texture,
-          (texture) => {
-            if (!wrapperRef.scene?.three) {
-                console.log("Scene isnt fucking loaded yet kms");
-              requestAnimationFrame(() => {
-                if (wrapperRef.scene) createSprite(texture);
-              });
-            } else {
-              createSprite(texture);
-            }
-          },
+          (texture) => callback(texture),
           undefined,
           (error) => console.error("Texture loading error:", error)
-    );
+        );
+      }
     
-    function createSprite(texture: THREE.Texture) {
-          const aspect = texture.image.width / texture.image.height;
-          const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-          const sprite = new THREE.Sprite(spriteMaterial);
-          sprite.scale.set(aspect * baseSize, baseSize, 1);
-    
-          wrapperRef?.three.add(sprite);
-    
-          onCleanup(() => {
-            wrapperRef?.three.remove(sprite);
-            spriteMaterial.dispose();
-            texture.dispose();
-          });
+      function createSprite(texture: THREE.Texture) {
+        if (!wrapperRef?.three) {
+          console.error("Scene was ready but somehow disappeared?");
+          return;
         }
-    });
-
+    
+        const baseSize = props.size || 100;
+        const aspect = texture.image.width / texture.image.height;
+        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(aspect * baseSize, baseSize, 1);
+        wrapperRef.scene?.needsUpdate();
+    
+        wrapperRef.three.add(sprite);
+    
+        onCleanup(() => {
+          console.log("Cleaning up sprite");
+          wrapperRef?.three.remove(sprite);
+          spriteMaterial.dispose();
+          texture.dispose();
+        });
+      }
+    
+      onMount(() => {
+        waitForScene(() => {
+          loadTexture((texture) => createSprite(texture));
+        });
+      });
 
 
     return (
         <lume-element3d
-            id="sprite"
+            id="spritea"
             align-point="0.5 0.5"
             ref={wrapperRef}
             position={props.position}
