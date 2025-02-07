@@ -14,6 +14,12 @@ export default function YBillboard(props: YBillboardProps) {
     let planeMaterial: THREE.MeshBasicMaterial | null = null;
     let yawRenderTask: RenderTask | null = null;
 
+    // Offscreen canvas used for alpha collision detection
+    // Super hacky, may want to replace with a more elegant solution in the future
+    let offscreenCanvas: HTMLCanvasElement | null = null;
+    let offscreenCtx: CanvasRenderingContext2D | null = null;
+    let imageBitmap: ImageBitmap | null = null;
+
     function updateYawOnly() {
         if (!wrapperRef?.scene?.three || !plane) return;
     
@@ -36,6 +42,21 @@ export default function YBillboard(props: YBillboardProps) {
         plane.rotation.set(0, yaw, 0); // Apply only Y rotation
     }
 
+    function isOpaque(uv: THREE.Vector2): boolean {
+        if (!offscreenCtx || !offscreenCanvas) return true; // Assume opaque if no canvas
+        if (!imageBitmap) return true; // Fallback if the image isn't ready yet
+    
+        // Convert UV coordinates (0 → 1) to pixel coordinates
+        const x = Math.floor(uv.x * offscreenCanvas.width);
+        const y = Math.floor((1 - uv.y) * offscreenCanvas.height); // Y is flipped from texture input.
+    
+        // Get pixel data from the canvas
+        const pixel = offscreenCtx.getImageData(x, y, 1, 1).data;
+        const alpha = pixel[3] / 255; // Normalize alpha to 0-1 range
+    
+        return alpha > 0.1; // Threshold to ignore nearly transparent pixels
+    }
+
     onMount(() => {
         if (!wrapperRef) return;
 
@@ -44,25 +65,31 @@ export default function YBillboard(props: YBillboardProps) {
 
         textureLoader.load(
             props.texture,
-            (texture) => {
+            async (texture) => {
                 if (!wrapperRef.scene?.three) {
                     console.error("Scene is missing at texture load time. Race condition?");
                     return;
                 }
 
+                // Create offscreen canvas representation of sprite. Used for opaque check
+                // on mouse events. TODO: Is this the most elegant way of doing this???
+                offscreenCanvas = document.createElement("canvas");
+                offscreenCtx = offscreenCanvas.getContext("2d");
+                offscreenCanvas.width = texture.image.width;
+                offscreenCanvas.height = texture.image.height
+                offscreenCtx!.drawImage(texture.image, 0, 0);
+                imageBitmap = await createImageBitmap(texture.image); // Convert texture to ImageBitmap for faster pixel access
+
+                // Create and append actual mesh to scene.
                 const aspect = texture.image.width / texture.image.height;
                 const geometry = new THREE.PlaneGeometry(aspect * baseSize, baseSize);
                 planeMaterial = new THREE.MeshBasicMaterial({
                     map: texture,
-                    transparent: true // explicitely enable alpha. Do we need this?
+                    transparent: true
                 });
-
                 plane = new THREE.Mesh(geometry, planeMaterial);
                 plane.rotation.x = Math.PI / 2;
-
                 wrapperRef.three.add(plane);
-
-                //wrapperRef.scene.three.onBeforeRender = updateYawOnly;
                 yawRenderTask = Motor.addRenderTask(updateYawOnly);
                 wrapperRef.scene.needsUpdate(); // Force update to render in new billboard.
             },
@@ -72,12 +99,16 @@ export default function YBillboard(props: YBillboardProps) {
 
         // Attach Interaction Event Listeners.
         if(!wrapperRef?.three) return;
-        wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
-            console.log("Hovered at UV:", uv);
-        };
+        // wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
+        //     if (isOpaque(uv)) {
+        //         console.log("Hovered at opaque UV:", uv);
+        //     }
+        // };
 
         wrapperRef.three.userData.onClick = (uv: THREE.Vector2) => {
-            console.log("Clicked at UV:", uv);
+            if (isOpaque(uv)) {
+                console.log("Clicked at opaque UV:", uv);
+            }
         };
 
 
@@ -92,6 +123,20 @@ export default function YBillboard(props: YBillboardProps) {
         plane = null;
         planeMaterial = null;
         if(yawRenderTask) Motor.removeRenderTask(yawRenderTask);
+
+        // Need to dispose of offscreen canvas manually since we attach it to the document
+        if(offscreenCanvas) {
+            offscreenCanvas = null;
+        } 
+        if (offscreenCtx) {
+            offscreenCtx = null;
+        }
+
+        if (imageBitmap) {
+            imageBitmap.close();
+            imageBitmap = null;
+        }
+
     });
 
     return (
