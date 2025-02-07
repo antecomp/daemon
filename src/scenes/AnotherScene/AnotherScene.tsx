@@ -94,7 +94,9 @@ export default function AnotherScene() {
                 align-point="0.5 0.5"
             ></lume-sphere>
 
-            <Interactable onClick={() => alert("Sphere Clicked")}>
+            <Interactable
+                interactions={[() => console.log('interact'), () => console.log('chat'), () => console.log('observe')]}    
+            >
                 <lume-sphere
                     size="20"
                     cast-shadow="true"

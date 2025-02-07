@@ -1,0 +1,27 @@
+.cornerRec {
+    position: relative;
+}
+
+.cornerRec img.tl {
+    position: absolute;
+    top: var(--borderSize);
+    left: var(--borderSize);
+}
+
+.cornerRec img.tr {
+    position: absolute;
+    right: var(--borderSize);
+    top: var(--borderSize);
+}
+
+.cornerRec img.bl {
+    position: absolute;
+    bottom: var(--borderSize);
+    left: var(--borderSize);
+}
+
+.cornerRec img.br {
+    position: absolute;
+    bottom: var(--borderSize);
+    right: var(--borderSize);
+}

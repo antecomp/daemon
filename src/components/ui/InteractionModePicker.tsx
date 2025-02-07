@@ -13,10 +13,12 @@ export enum InteractionMode {
 /**
  * Map of interaction modes to a CB to run for handling that interaction type.
  * Used by YBillboard and Interactable
+ * 
+ * A map can either be an object that maps to the enum directly, or you can just shorthand as an array of [interact(), chat(), observe()]
  */
 export type InteractionMap = {
     [mode in InteractionMode]?: (uv?: Vector2) => void
-} | [(uv?: Vector2) => void, (uv?: Vector2) => void, (uv?: Vector2) => void]
+} | [((uv?: Vector2) => void)?, ((uv?: Vector2) => void)?, ((uv?: Vector2) => void)?]
 
 const _interactionModeToImage = (idx: InteractionMode) => {
     return [msi, msc, mso][idx];

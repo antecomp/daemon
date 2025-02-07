@@ -3,6 +3,11 @@ import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 import { currentInteractionMode, setCurrentInteractionMode } from "./ui/InteractionModePicker";
+import CornerRect from "./util/CornerRect";
+import tl from '@/assets/ui/corners/s5/tl.png'
+import tr from '@/assets/ui/corners/s5/tr.png'
+import bl from '@/assets/ui/corners/s5/bl.png'
+import br from '@/assets/ui/corners/s5/br.png'
 
 /**
  * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 
@@ -29,10 +34,12 @@ export default function SceneContainer() {
     }
 
     return (
-        <div id="scene-container" onContextMenu={cycleInteractionMode} style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
-        <Suspense fallback={<p>Loading scene...</p>}>
-            <Dynamic component={scenes[currentScene()]} />
-        </Suspense>
-        </div>
+        // <div id="scene-container" onContextMenu={cycleInteractionMode} style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
+        <CornerRect borderSize={1} borderType="solid white" corners={[tl, tr, bl, br]} id="scene-container" style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
+            <Suspense fallback={<p>Loading scene...</p>}>
+                <Dynamic component={scenes[currentScene()]} />
+            </Suspense>
+        </CornerRect>
+        // </div>
     )
 }

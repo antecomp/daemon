@@ -90,7 +90,7 @@ export default function YBillboard(props: YBillboardProps) {
                 // Create offscreen canvas representation of sprite. Used for opaque check
                 // on mouse events. TODO: Is this the most elegant way of doing this???
                 offscreenCanvas = document.createElement("canvas");
-                offscreenCtx = offscreenCanvas.getContext("2d");
+                offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});
                 offscreenCanvas.width = texture.image.width;
                 offscreenCanvas.height = texture.image.height
                 offscreenCtx!.drawImage(texture.image, 0, 0);
