@@ -10,6 +10,7 @@ import friendTexture from "@/assets/artwork/characters/friend.png"
 import Interactable from "@/components/util/Interactable";
 import YBillboard from "@/components/util/YBillboard";
 import { InteractionMode } from "@/components/ui/InteractionModePicker";
+import { addLogMessage } from "@/components/ui/EventLog";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -107,18 +108,22 @@ export default function Porch() {
                     texture={viyaTexture}
                     size={225}
                     position="-90 -240 0"
-                    interactions={{
-                        [InteractionMode.Interact]: () => alert("Don't fucking touch me"),
-                        [InteractionMode.Chat]: () => alert("She doesn't say anything"),
-                        [InteractionMode.Observe]: () => alert("She's smoking a cigarette.")
-                    }}
+                    interactions={[
+                        () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
+                        () => addLogMessage(`She doesn't say anything`),
+                        () => addLogMessage(`She is smoking a cigarette.`)
+                    ]}
             />
 
             <YBillboard
                     texture={friendTexture}
                     size={50}
                     position="-70 -266 200"
-                    onClick={() => alert('bnuy')}
+                    interactions={[
+                        () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
+                        () => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
+                        () => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
+                    ]}
             />
 
             <lume-obj-model

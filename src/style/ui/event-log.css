@@ -1,0 +1,21 @@
+#event-log .inner {
+    overflow: auto;
+    height: 100%;
+    padding: 4px;
+    padding-top: 2px;
+}
+
+#event-log .inner::-webkit-scrollbar {
+    display: none;
+}
+
+#event-log .inner p {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
