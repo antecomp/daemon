@@ -28,9 +28,17 @@ export default function EventLog() {
     })
   )
 
+  /* HEY REDDIT - IF YOU DONT WANT PEOPLE SCROLLJACKING. MAYBE PROVIDE AN ALTERNATIVE 🖕 */
+  const handleWheel = (e: WheelEvent) => {
+    if(containerRef) {
+      e.preventDefault();
+      containerRef.scrollTop += e.deltaY * 0.3;
+    }
+  }
+
     return (
       <CornerRect borderSize={3} borderType="double white" corners={[pissbot, tr, undefined, br]} style={{width: 'inherit', height: 'inherit'}} id="event-log">
-        <p class="inner" ref={containerRef}>
+        <p class="inner" ref={containerRef} onwheel={handleWheel}>
           <For each={logMessages()}>
             {(msg) => <p class="event-message" style={{color: msg.color}}>{msg.text}</p>}
           </For>
