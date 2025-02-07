@@ -3,27 +3,28 @@ import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 
-export const [currentScene, setSceneName] = createSignal(INITIAL_SCENE);
+/**
+ * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 
+ * immediately load the new one.
+ */
+export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 
+/**
+ * Scene container is responsible for the dynamic lazy loading of scenes from the scene registry. It listens to the public
+ * currentScene atom to load and switch between the active scenes.
+ * 
+ * To change a scene, import setCurrentScene atom and call it by name. (You can also get the active scene by import.)
+ * 
+ * To register a scene, reference sceneRegistry.
+ * @returns 
+ */
 export default function SceneContainer() {
 
     return (
-        <>
-            <div id="scene-container" style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
-            <Suspense fallback={<p>Loading scene...</p>}>
-                <Dynamic component={scenes[currentScene()]} />
-            </Suspense>
-            </div>
-            <p>{currentScene()}</p>
-            <div id="scene-switcher">
-                <For each={Object.keys(scenes)}>
-                    {(scene) => (
-                        <button onClick={() => setSceneName(scene)}>
-                            {scene}
-                        </button>
-                    )}
-                </For>
-            </div>
-        </>
+        <div id="scene-container" style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
+        <Suspense fallback={<p>Loading scene...</p>}>
+            <Dynamic component={scenes[currentScene()]} />
+        </Suspense>
+        </div>
     )
 }

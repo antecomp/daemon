@@ -45,8 +45,6 @@ export default function HeadCam(props: HeadCamProps) {
 
     function runHoverRaycast() {
         if (!camRef || !parentScene) return;
-        // To implement, and replace logic inside runHoverCheck
-        // Then the updateCameraRotation (or similar) can invoke this too.
         raycaster.setFromCamera(mouse, camRef.three);
 
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
