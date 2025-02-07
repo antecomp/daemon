@@ -2,7 +2,7 @@ import { Element3D } from "lume";
 import {onMount, children, createSignal} from "solid-js"
 import { Object3D, Object3DEventMap, Vector2 } from "three";
 
-type interactionCB = (uv?: Vector2) => void; // Just get interaction mode from atom?
+export type interactionCB = (uv?: Vector2) => void; // Just get interaction mode from atom?
 
 interface InteractiveElementProps {
     onClick: interactionCB

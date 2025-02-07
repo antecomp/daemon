@@ -114,12 +114,14 @@ export default function Porch() {
                     texture={viyaTexture}
                     size={225}
                     position="-90 -240 0"
+                    onClick={() => alert('Can I borrow a cigarette?')}
             />
 
             <YBillboard
                     texture={friendTexture}
                     size={50}
                     position="-70 -266 200"
+                    onClick={() => alert('bnuy')}
             />
 
             <lume-obj-model

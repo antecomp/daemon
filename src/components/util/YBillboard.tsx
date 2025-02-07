@@ -1,13 +1,27 @@
 import { LumePosition } from "@/extra.types";
 import { Element3D, Motor, onCleanup, onMount, RenderTask } from "lume";
 import * as THREE from 'three'
+import { interactionCB } from "./Interactable";
 
 interface YBillboardProps {
     texture: string, // (url)
     size?: number,
     position: LumePosition;
+    onHover?: interactionCB;
+    onClick?: interactionCB;
 }
 
+/**
+ * Yaw-only billboard (sprite) - mainly used for 2D art of characters within a scene. Tilts about Y to face the player, but doesn't tilt along X/Z like THREE.Sprite
+ * 
+ * NOTE: Due to the nature of transparency and no actual geometry, these comes with their own interaction handlers (onClick/onHover),
+ * please use those over the Interactable Wrapper.
+ * @prop texture - url for image texture
+ * @prop size - the *height* of the sprite in 3D space
+ * @prop position - lume-style position.
+ * @prop onHover - hover CB, passed UV coordinates
+ * @prop onClick - click CB, passed UV coordinates
+ */
 export default function YBillboard(props: YBillboardProps) {
     let wrapperRef: Element3D | undefined;
     let plane: THREE.Mesh | null = null;
@@ -99,15 +113,15 @@ export default function YBillboard(props: YBillboardProps) {
 
         // Attach Interaction Event Listeners.
         if(!wrapperRef?.three) return;
-        // wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
-        //     if (isOpaque(uv)) {
-        //         console.log("Hovered at opaque UV:", uv);
-        //     }
-        // };
+        wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
+            if (isOpaque(uv)) {
+                if(props.onHover) props.onHover(uv);
+            }
+        };
 
         wrapperRef.three.userData.onClick = (uv: THREE.Vector2) => {
             if (isOpaque(uv)) {
-                console.log("Clicked at opaque UV:", uv);
+                if(props.onClick) props.onClick(uv);
             }
         };
 
