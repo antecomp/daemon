@@ -1,4 +1,4 @@
-import { onMount, onCleanup, JSX, Ref, JSXElement } from 'solid-js';
+import { onMount, onCleanup } from 'solid-js';
 import * as THREE from 'three';
 
 /**

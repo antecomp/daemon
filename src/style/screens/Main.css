@@ -1,0 +1,27 @@
+:root {
+    --sidebar-width: 254px;
+    /* Not related to the scene size constants really. If its too big it just adds padding */
+    --scene-height: 696px;
+    --scene-width: 958px;
+    --picker-width: 80px;
+    --bottom-bar-height: 81px;
+}
+
+#main { 
+    display: grid; 
+    box-sizing: border-box;
+    grid-template-columns: 
+        var(--sidebar-width) 
+        calc(var(--scene-width) - var(--picker-width)) 
+        var(--picker-width); 
+    grid-template-rows: 
+        var(--scene-height) 
+        var(--bottom-bar-height); 
+    grid-column-gap: 0px;
+    grid-row-gap: 0px; 
+}
+
+#sidebar { grid-area: 1 / 1 / 3 / 2; } 
+#event-log { grid-area: 2 / 2 / 3 / 3; } 
+#scene-container { grid-area: 1 / 2 / 2 / 4; } 
+#intmode-picker { grid-area: 2 / 3 / 3 / 4; } 

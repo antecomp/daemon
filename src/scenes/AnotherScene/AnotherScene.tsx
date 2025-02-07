@@ -8,6 +8,7 @@ import Interactable from '@/components/util/Interactable'
 import { Scene } from 'lume'
 import applyShader from '@/util/applyShader'
 import WadsCam from '@/components/util/wadscam'
+import { InteractionMode } from '@/components/ui/InteractionModePicker'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
@@ -109,7 +110,11 @@ export default function AnotherScene() {
 
         <Interactable 
             onClick={() => setHumanYaw(prev => prev +5)} 
-            /* onHover={() => console.log(playerRef!)} // This works but obv TS has no way of knowing lume exposes a var by this name from id. */
+            interactions={{
+                [InteractionMode.Interact]: () => {alert('test guy INTERACT')},
+                [InteractionMode.Chat]: () => alert('test guy CHAT'),
+                [InteractionMode.Observe]: () => {alert('test guy OBSERVE')}
+            }}
         >
             <lume-fbx-model
                 id="playerRef"
@@ -118,7 +123,7 @@ export default function AnotherScene() {
             ></lume-fbx-model>
         </Interactable>
 
-          <lume-ambient-light intensity={5} />
+          <lume-ambient-light intensity={3} />
             <lume-obj-model 
                 id="map" 
                 obj={mapobj}

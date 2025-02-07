@@ -1,5 +1,8 @@
 import { Vector2 } from "three";
 
+/**
+ * Post-processing (screenspace) dither shader, applied to a scene by applyShader.
+ */
 const DitherShader = {
   uniforms: {
     tDiffuse: { value: null }, // Input texture

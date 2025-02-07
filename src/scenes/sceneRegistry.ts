@@ -7,7 +7,11 @@ export type SceneRegistry = {
 };
 
 /**
- * Scene Registry for code splitting and dynamic import @ runtime
+ * Scene Registry for code splitting and dynamic import @ runtime.
+ * 
+ * Every entry should follow the same syntax;
+ * 
+ * SceneName: lazy(() => import("path/to/scene")),
  */
 export const scenes: SceneRegistry = { // Change any type to something proper later.
     DefaultScene: lazy(() => import("./DefaultScene/DefaultScene")),

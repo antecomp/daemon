@@ -1,11 +1,10 @@
 import './style/base.css'
 import 'lume'
-import SceneContainer, { setSceneName } from './components/SceneContainer'
+import Main from './components/screens/Main'
 
 function App() {
-  return (
-    <><SceneContainer /></>
-  )
+  // Will change to switch current screen based on game triggers.
+  return <Main/>
 }
 
 export default App
