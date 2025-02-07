@@ -10,7 +10,7 @@ import br from '@/assets/ui/corners/s5/br.png'
 export default function Sidebar() {
     return (
         <CornerRect id="sidebar" borderSize={1} borderType="solid white" corners={[tl, tr, bl, undefined]} style={{width: 'inherit', height: 'inherit'}}>
-            <CornerRect id="debug-menu" borderSize={1} borderType="solid white" corners={[tl, tr, bl, br]} style={{margin: '4px', height: 'fit-content'}}>
+            <CornerRect id="debug-menu" borderSize={1} borderType="solid white" corners={[tl, tr, bl, br]} style={{margin: '4px', height: 'fit-content', padding: '5px'}}>
                 <h3>DEBUG MENU</h3>
                 <h4>Change scene:</h4>
                 <p>Current scene: {currentScene()}</p>

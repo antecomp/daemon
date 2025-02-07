@@ -28,6 +28,11 @@ export default function EventLog() {
     })
   )
 
+  // Little greeting message for demo. Remove later.
+  setTimeout(() => {
+    addLogMessage('Welcome to daemon.garden', 'teal')
+  }, 50)
+
   /* HEY REDDIT - IF YOU DONT WANT PEOPLE SCROLLJACKING. MAYBE PROVIDE AN ALTERNATIVE 🖕 */
   const handleWheel = (e: WheelEvent) => {
     if(containerRef) {
