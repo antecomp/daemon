@@ -24,7 +24,7 @@ export default function SceneContainer() {
     // Used to cycle interaction mode if you right click the scene.
     function cycleInteractionMode() {
         setCurrentInteractionMode(
-            (currentInteractionMode() % 3) + 1
+            (currentInteractionMode() + 1) % 3
         )
     }
 

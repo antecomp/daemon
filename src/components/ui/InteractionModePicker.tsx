@@ -1,12 +1,10 @@
 import msi from '@/assets/ui/InteractionModePicker/msi.png'
 import mso from '@/assets/ui/InteractionModePicker/mso.png'
 import msc from '@/assets/ui/InteractionModePicker/msc.png'
-import msb from '@/assets/ui/InteractionModePicker/msb.png'
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import { Vector2 } from 'three'
 
 export enum InteractionMode {
-    None, // We should almost never see/use this. It's moreso to catch bugs!
     Interact,
     Chat,
     Observe,
@@ -18,10 +16,10 @@ export enum InteractionMode {
  */
 export type InteractionMap = {
     [mode in InteractionMode]?: (uv?: Vector2) => void
-}
+} | [(uv?: Vector2) => void, (uv?: Vector2) => void, (uv?: Vector2) => void]
 
 const _interactionModeToImage = (idx: InteractionMode) => {
-    return [msb, msi, msc, mso][idx];
+    return [msi, msc, mso][idx];
 }
 
 export const [currentInteractionMode, setCurrentInteractionMode] = createSignal<InteractionMode>(InteractionMode.Interact);
@@ -30,8 +28,8 @@ export default function InteractionModePicker() {
 
     // Change interaction mode by pressing 1, 2, or 3...
     const handleKeyPress = (ev: KeyboardEvent) => {
-        let kn = Number(ev.key);
-        if(1 <= kn && kn <= 3) {
+        let kn = Number(ev.key) - 1;
+        if(0 <= kn && kn <= 2) {
             setCurrentInteractionMode(kn);
         }
     };
