@@ -1,7 +1,7 @@
 :root {
     --sidebar-width: 254px;
     /* Not related to the scene size constants really. If its too big it just adds padding */
-    --scene-height: 696px;
+    --scene-height: 695px;
     --scene-width: 958px;
     --picker-width: 80px;
     --bottom-bar-height: 81px;
@@ -21,7 +21,7 @@
     grid-row-gap: 0px; 
 }
 
-#sidebar { grid-area: 1 / 1 / 3 / 2; } 
+#sidebar { grid-area: 1 / 1 / 3 / 2; margin-right: 2px;} 
 #event-log { grid-area: 2 / 2 / 3 / 3; } 
 #scene-container { grid-area: 1 / 2 / 2 / 4; } 
 #intmode-picker { grid-area: 2 / 3 / 3 / 4; } 

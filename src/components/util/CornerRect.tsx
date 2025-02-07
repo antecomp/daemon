@@ -13,6 +13,7 @@ interface CornerRecProps {
     className?: string
     style?: React.CSSProperties
     id?: string
+    onContextMenu?: () => void;
 }
 
 export default function CornerRect(props: CornerRecProps) {
@@ -20,11 +21,12 @@ export default function CornerRect(props: CornerRecProps) {
         <div class={`cornerRec ${props.className ?? ""}`} id={props.id ?? undefined}
             style={{
                 "--borderSize": `${-1 * props.borderSize}px`,
-                width: props.width ?? '100%',
-                height: props.height ?? '100%',
+                width: props.width ?? 'inherit',
+                height: props.height ?? 'inherit',
                 border: `${props.borderSize}px ${props.borderType}`,
                 ...props.style
             } as JSX.CSSProperties}
+            onContextMenu={props.onContextMenu}
         >
             {props.children}
             {props.corners[0] && <img src={props.corners[0]} class="tl" alt="" />} {props.corners[1] && <img src={props.corners[1]} alt="" class="tr" />}

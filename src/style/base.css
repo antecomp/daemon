@@ -1,7 +1,18 @@
+@font-face {
+  font-family: "main";
+  src: url('@/assets/fonts/Piksel-JAGa.ttf');
+}
+
 :root {
   color: rgba(255, 255, 255, 0.87);
   background: rgb(0, 0, 0);
   image-rendering: pixelated;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -10,6 +21,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: 'main';
 }
 
 #scene-container {
