@@ -2,6 +2,7 @@ import { LumePosition } from "@/extra.types";
 import { Element3D, Motor, onCleanup, onMount, RenderTask } from "lume";
 import * as THREE from 'three'
 import { interactionCB } from "./Interactable";
+import { InteractionMap, currentInteractionMode } from "../ui/InteractionModePicker";
 
 interface YBillboardProps {
     texture: string, // (url)
@@ -9,12 +10,13 @@ interface YBillboardProps {
     position: LumePosition;
     onHover?: interactionCB;
     onClick?: interactionCB;
+    interactions?: InteractionMap;
 }
 
 /**
  * Yaw-only billboard (sprite) - mainly used for 2D art of characters within a scene. Tilts about Y to face the player, but doesn't tilt along X/Z like THREE.Sprite
  * 
- * NOTE: Due to the nature of transparency and no actual geometry, these comes with their own interaction handlers (onClick/onHover),
+ * NOTE: Due to the nature of transparency and no actual geometry, these comes with their own interaction handlers.
  * please use those over the Interactable Wrapper.
  * @prop texture - url for image texture
  * @prop size - the *height* of the sprite in 3D space
@@ -122,6 +124,10 @@ export default function YBillboard(props: YBillboardProps) {
         wrapperRef.three.userData.onClick = (uv: THREE.Vector2) => {
             if (isOpaque(uv)) {
                 if(props.onClick) props.onClick(uv);
+
+                if(props.interactions && props.interactions[currentInteractionMode()]) {
+                    props.interactions[currentInteractionMode()]!(); // Ts doesnt like my catch for some reason.
+                }
             }
         };
 

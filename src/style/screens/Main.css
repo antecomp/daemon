@@ -1,11 +1,10 @@
 :root {
     --sidebar-width: 254px;
-    /* this should be overwritten by SCENE_DIMENSION
-        might need to do +2 in update to account for border */
-    --scene-height: 692px;
-    --scene-width: 956px;
-    --picker-width: 50px;
-    --bottom-bar-height: 100px;
+    /* Not related to the scene size constants really. If its too big it just adds padding */
+    --scene-height: 696px;
+    --scene-width: 958px;
+    --picker-width: 80px;
+    --bottom-bar-height: 81px;
 }
 
 #main { 

@@ -1,12 +1,14 @@
 import { Element3D } from "lume";
 import {onMount, children, createSignal} from "solid-js"
 import { Object3D, Object3DEventMap, Vector2 } from "three";
+import { currentInteractionMode, InteractionMap } from "../ui/InteractionModePicker";
 
 export type interactionCB = (uv?: Vector2) => void; // Just get interaction mode from atom?
 
 interface InteractiveElementProps {
-    onClick: interactionCB
+    onClick?: interactionCB
     onHover?: interactionCB
+    interactions?: InteractionMap
     onHoverLeave?: () => void,
     //children: any
     children: any,
@@ -20,7 +22,13 @@ export default function Interactable(props: InteractiveElementProps) {
     
     onMount(() => {
         if(containerRef && containerRef.three) {
-            containerRef.three.userData.onClick = props.onClick;
+            containerRef.three.userData.onClick = () => {
+                if(props.onClick) props.onClick();
+                
+                if(props.interactions && props.interactions[currentInteractionMode()]) {
+                    props.interactions[currentInteractionMode()]!(); // Ts doesnt like my catch for some reason.
+                 }
+            };
             containerRef.three.userData.onHover = () => {
                 if(props.onHover) props.onHover();
                 // We want to make the direct child of the interact container to be the receiver of the 

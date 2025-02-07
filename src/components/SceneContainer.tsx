@@ -1,7 +1,8 @@
-import {createSignal, For, Suspense} from "solid-js";
+import {createSignal, Suspense} from "solid-js";
 import { scenes } from "../scenes/sceneRegistry";
 import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
+import { currentInteractionMode, setCurrentInteractionMode } from "./ui/InteractionModePicker";
 
 /**
  * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 
@@ -20,8 +21,15 @@ export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
  */
 export default function SceneContainer() {
 
+    // Used to cycle interaction mode if you right click the scene.
+    function cycleInteractionMode() {
+        setCurrentInteractionMode(
+            (currentInteractionMode() % 3) + 1
+        )
+    }
+
     return (
-        <div id="scene-container" style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
+        <div id="scene-container" onContextMenu={cycleInteractionMode} style={{width: `${SCENE_DIMENSIONS.width}px`, height: `${SCENE_DIMENSIONS.height}px`}}>
         <Suspense fallback={<p>Loading scene...</p>}>
             <Dynamic component={scenes[currentScene()]} />
         </Suspense>

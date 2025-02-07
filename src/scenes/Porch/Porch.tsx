@@ -9,6 +9,7 @@ import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import Interactable from "@/components/util/Interactable";
 import YBillboard from "@/components/util/YBillboard";
+import { InteractionMode } from "@/components/ui/InteractionModePicker";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -102,19 +103,15 @@ export default function Porch() {
                 color="white"
             ></lume-sphere>
 
-            {/* <Interactable onClick={() => alert("slop")}>
-                <BillboardSprite
-                    texture={viyaTexture}
-                    size={225}
-                    position="-90 -230 0"
-                />
-            </Interactable> */}
-
             <YBillboard
                     texture={viyaTexture}
                     size={225}
                     position="-90 -240 0"
-                    onClick={() => alert('Can I borrow a cigarette?')}
+                    interactions={{
+                        [InteractionMode.Interact]: () => alert("Don't fucking touch me"),
+                        [InteractionMode.Chat]: () => alert("She doesn't say anything"),
+                        [InteractionMode.Observe]: () => alert("She's smoking a cigarette.")
+                    }}
             />
 
             <YBillboard
