@@ -30,6 +30,7 @@ export default function HeadCam(props: HeadCamProps) {
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
+    let previousUV: THREE.Vector2 | null = null
 
     // Side note, I probably won't do this for position
     // Or ill make it optional by some prop. Often we may want to "snap" to a location,
@@ -46,27 +47,30 @@ export default function HeadCam(props: HeadCamProps) {
     function runHoverRaycast() {
         if (!camRef || !parentScene) return;
         raycaster.setFromCamera(mouse, camRef.three);
-
+    
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
-        const hoveredObject = intersects.length > 0 ? intersects[0].object : null;
-
-        if(previouslyHoveredObject == hoveredObject) return; // no need to re-traverse
-
-        if (hoveredObject !== previouslyHoveredObject) {
-            if (previouslyHoveredObject) {
-                previouslyHoveredObject.traverseAncestors(a => {
-                    if (a.userData.onHoverLeave) a.userData.onHoverLeave();
-                });
-            }
-
-            if (hoveredObject) {
-                hoveredObject.traverseAncestors(a => {
-                    if (a.userData.onHover) a.userData.onHover();
-                });
-            }
-
-            previouslyHoveredObject = hoveredObject;
+        const hoveredIntersection = intersects.length > 0 ? intersects[0] : null;
+        const hoveredObject = hoveredIntersection?.object || null;
+        const uv = hoveredIntersection?.uv ? hoveredIntersection.uv.clone() : new THREE.Vector2();
+    
+        // If the object and UV are unchanged, skip updates
+        if (hoveredObject === previouslyHoveredObject && previousUV?.equals(uv)) return;
+    
+        if (previouslyHoveredObject && hoveredObject !== previouslyHoveredObject) {
+            previouslyHoveredObject.traverseAncestors(a => {
+                if (a.userData.onHoverLeave) a.userData.onHoverLeave();
+            });
         }
+    
+        if (hoveredObject) {
+            hoveredObject.traverseAncestors(a => {
+                if (a.userData.onHover) a.userData.onHover(uv);
+            });
+        }
+    
+        // Update previous tracking variables
+        previouslyHoveredObject = hoveredObject;
+        previousUV = uv;
     }
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -82,15 +86,19 @@ export default function HeadCam(props: HeadCamProps) {
         targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
 
         mouse.set(normalizedX, -normalizedY);
-        //runHoverRaycast();
+        runHoverRaycast();
     };
 
     const handleClick = () => {
         const intersects = raycaster.intersectObjects(parentScene.three.children, true);
         if (intersects.length > 0) {
-            let clickedObject = intersects[0].object;
+            let clickedIntersection = intersects[0];
+            let clickedObject = clickedIntersection.object;
+    
+            const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new THREE.Vector2();
+    
             clickedObject.traverseAncestors(a => {
-                if (a.userData.onClick) a.userData.onClick();
+                if (a.userData.onClick) a.userData.onClick(uv);
             });
         }
     };

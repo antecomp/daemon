@@ -69,6 +69,18 @@ export default function YBillboard(props: YBillboardProps) {
             undefined,
             (error) => console.error("Texture loading error: ", error)
         );
+
+        // Attach Interaction Event Listeners.
+        if(!wrapperRef?.three) return;
+        wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
+            console.log("Hovered at UV:", uv);
+        };
+
+        wrapperRef.three.userData.onClick = (uv: THREE.Vector2) => {
+            console.log("Clicked at UV:", uv);
+        };
+
+
     });
 
     onCleanup(() => {

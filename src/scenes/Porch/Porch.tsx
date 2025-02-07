@@ -110,11 +110,13 @@ export default function Porch() {
                 />
             </Interactable> */}
 
-            <YBillboard
-                    texture={viyaTexture}
-                    size={225}
-                    position="-90 -240 0"
-            />
+            <Interactable onClick={() => alert("can I borrow a cigarette?")}>
+                <YBillboard
+                        texture={viyaTexture}
+                        size={225}
+                        position="-90 -240 0"
+                />
+            </Interactable>
 
             <YBillboard
                     texture={friendTexture}
