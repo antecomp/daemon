@@ -62,6 +62,7 @@ export default function HeadCam(props: HeadCamProps) {
             });
         }
     
+        // TODO: FIND MORE EFFECIENT/CACHED WAY OF HANDLING THIS. THIS IS INSANELY INEFFECIENT.
         if (hoveredObject) {
             hoveredObject.traverseAncestors(a => {
                 if (a.userData.onHover) a.userData.onHover(uv);
@@ -79,9 +80,12 @@ export default function HeadCam(props: HeadCamProps) {
         const rect = parentScene.getBoundingClientRect();
         const { left, top, width, height } = rect;
 
+        /* 
+        Normalize mouse position (relative to scene element) then use that
+        to shift angle on a range of [(base - max), (base + max)]
+        */
         const normalizedX = ((event.clientX - left) / width) * 2 - 1;
         const normalizedY = ((event.clientY - top) / height) * 2 - 1;
-
         targetYaw = -normalizedX * props.maxYaw + props.baseOrientation.yaw;
         targetPitch = normalizedY * props.maxPitch + props.baseOrientation.pitch;
 
@@ -97,6 +101,7 @@ export default function HeadCam(props: HeadCamProps) {
     
             const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new THREE.Vector2();
     
+            // TODO: FIND MORE EFFECIENT/CACHED WAY OF HANDLING THIS. THIS IS INSANELY INEFFECIENT.
             clickedObject.traverseAncestors(a => {
                 if (a.userData.onClick) a.userData.onClick(uv);
             });

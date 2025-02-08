@@ -16,6 +16,10 @@ export const addLogMessage = (msg: string, color?: string) => {
   setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text: msg, color: color ?? '#aaa' }]);
 };
 
+/**
+ * Textbox at the bottom of the Main UI, under the scene. Used to convey game events or other short bits of info.
+ * Text can be appended to this from anywhere using the addLogMessage method.
+ */
 export default function EventLog() {
   let containerRef: HTMLParagraphElement | undefined;
 

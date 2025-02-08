@@ -8,6 +8,10 @@ interface BillboardSpriteProps {
     position: `${number} ${number} ${number}`
 }
 
+/**
+ * Don't use this. Use YBillboard.
+ * If you really need all angle billboards, re-implement/update this with the nice systems built into YBillboard.
+ */
 export default function BillboardSprite(props: BillboardSpriteProps) {
     let wrapperRef: Element3D | undefined;
     let sprite: THREE.Sprite | null = null;

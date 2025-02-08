@@ -26,6 +26,9 @@ const _interactionModeToImage = (idx: InteractionMode) => {
 
 export const [currentInteractionMode, setCurrentInteractionMode] = createSignal<InteractionMode>(InteractionMode.Interact);
 
+/**
+ * Little image in the corner of the Main UI, indicates (and provides buttons to switch) the current interaction mode.
+ */
 export default function InteractionModePicker() {
 
     // Change interaction mode by pressing 1, 2, or 3...

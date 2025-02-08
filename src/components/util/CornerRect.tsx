@@ -13,9 +13,19 @@ interface CornerRecProps {
     className?: string
     style?: React.CSSProperties
     id?: string
+    // Soley used for SceneContainer, feel free to add support for other event listeners l8r tho.
     onContextMenu?: () => void;
 }
 
+/**
+ * Decorative div that places images at each corner.
+ * @prop width: width in pixels
+ * @prop height: height in pixels
+ * @prop corners array of four image urls. To skip a corner, pass undefined.
+ * @prop borderSize: thickness of the border in pixels
+ * @prop borderType: a border type (f.e 'solid') followed by a colour string
+ * @returns 
+ */
 export default function CornerRect(props: CornerRecProps) {
     return (
         <div class={`cornerRec ${props.className ?? ""}`} id={props.id ?? undefined}
