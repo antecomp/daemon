@@ -1,16 +1,13 @@
-import HeadCam from "@/components/util/HeadCam";
-import WadsCam from "@/components/util/wadscam";
+import HeadCam from "@/components/lume/HeadCam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
 import { onMount, Scene } from "lume";
-import applyShader from "@/util/applyShader";
+import applyShader from "@/core/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
-import Interactable from "@/components/util/Interactable";
-import YBillboard from "@/components/util/YBillboard";
-import { InteractionMode } from "@/components/ui/InteractionModePicker";
-import { addLogMessage } from "@/components/ui/EventLog";
+import YBillboard from "@/components/lume/YBillboard";
+import { addLogMessage } from "@/components/ui/event-log/EventLog";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;

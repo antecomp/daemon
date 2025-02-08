@@ -1,9 +1,9 @@
 import {createSignal, Suspense} from "solid-js";
-import { scenes } from "../scenes/sceneRegistry";
+import { scenes } from '@/scenes/sceneRegistry';
 import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
-import { currentInteractionMode, setCurrentInteractionMode } from "./ui/InteractionModePicker";
-import CornerRect from "./util/CornerRect";
+import { currentInteractionMode, setCurrentInteractionMode } from '../interaction/InteractionModePicker';
+import CornerRect from "@/components/util/corner-rect/CornerRect";
 import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import br from '@/assets/ui/corners/s5/br.png'

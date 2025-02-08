@@ -1,7 +1,7 @@
 import { Element3D } from "lume";
 import {onMount, children, createSignal} from "solid-js"
 import { Object3D, Object3DEventMap, Vector2 } from "three";
-import { currentInteractionMode, InteractionMap } from "../ui/InteractionModePicker";
+import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
 
 // Note - we have access to interaction mode from the atom, don't put it in this CB.
 export type interactionCB = (uv?: Vector2) => void;

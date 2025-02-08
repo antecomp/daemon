@@ -2,7 +2,7 @@ import { LumePosition } from "@/extra.types";
 import { Element3D, Motor, onCleanup, onMount, RenderTask } from "lume";
 import * as THREE from 'three'
 import { interactionCB } from "./Interactable";
-import { InteractionMap, currentInteractionMode } from "../ui/InteractionModePicker";
+import { InteractionMap, currentInteractionMode } from "../ui/interaction/InteractionModePicker";
 
 interface YBillboardProps {
     texture: string, // (url)

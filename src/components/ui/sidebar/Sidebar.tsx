@@ -1,7 +1,7 @@
 import { scenes } from "@/scenes/sceneRegistry";
 import { For } from "solid-js";
-import { currentScene, setCurrentScene } from "../SceneContainer";
-import CornerRect from "../util/CornerRect";
+import { currentScene, setCurrentScene } from "../scene-container/SceneContainer";
+import CornerRect from "@/components/util/corner-rect/CornerRect";
 import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import bl from '@/assets/ui/corners/s5/bl.png'

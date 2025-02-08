@@ -1,9 +1,9 @@
-import CornerRect from "../util/CornerRect";
+import CornerRect from '@/components/util/corner-rect/CornerRect';
 import tr from '@/assets/ui/corners/d1/tr.png'
 import br from '@/assets/ui/corners/d1/br.png'
 import pissbot from '@/assets/ui/corners/special/pissbot.png'
 import { createEffect, createSignal, For, on } from "solid-js";
-import '@/style/ui/event-log.css'
+import './event-log.css'
 
 const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([]);
 

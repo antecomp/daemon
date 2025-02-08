@@ -1,12 +1,12 @@
-import { hoveredItem } from "@/components/util/Interactable";
+import { hoveredItem } from "@/components/lume/Interactable";
 import { DITHER_LUMA_CUTOFF, DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
-import DitherShader from "@/shaders/dither.shader";
+import DitherShader from "@/shaders/post-processing/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
 import { Vector2 } from "three";
-import { OutlinePass, OutputPass, RenderPass, ShaderPass, SobelOperatorShader } from "three/examples/jsm/Addons.js";
+import { OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import { EffectComposer } from "three/examples/jsm/Addons.js";
-import { SSAOPass } from "three/examples/jsm/Addons.js";
+//import { SSAOPass } from "three/examples/jsm/Addons.js";
 
 
 export default function applyShader(scene: Scene) {

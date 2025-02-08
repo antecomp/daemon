@@ -1,9 +1,9 @@
-import WadsCam from "@/components/util/wadscam";
-import applyShader from "@/util/applyShader";
+//import WadsCam from "@/components/lume/wadscam";
+import applyShader from "@/core/applyShader";
 import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
-import HeadCam from "@/components/util/HeadCam";
+import HeadCam from "@/components/lume/HeadCam";
 
 export default function Sponza() {
     let sceneRef: Scene | undefined;

@@ -1,10 +1,10 @@
-import HeadCam from "@/components/util/HeadCam";
-import WadsCam from "@/components/util/wadscam";
+//import HeadCam from "@/components/lume/HeadCam";
+import WadsCam from "@/components/lume/wadscam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
 import thingy from './models/thingy.gltf?url'
 import { onMount, Scene } from "lume";
-import applyShader from "@/util/applyShader";
+import applyShader from "@/core/applyShader";
 import player_ref from '../shared_models/player_ref.fbx?url'
 
 export default function ThirdScene() {

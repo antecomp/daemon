@@ -2,18 +2,18 @@ import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 //import WadsCam from '../../components/util/wadscam'
-import HeadCam from '@/components/util/HeadCam'
+import HeadCam from '@/components/lume/HeadCam'
 import { createSignal, onMount } from 'solid-js'
-import Interactable from '@/components/util/Interactable'
+import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
-import applyShader from '@/util/applyShader'
-import WadsCam from '@/components/util/wadscam'
-import { InteractionMode } from '@/components/ui/InteractionModePicker'
+import applyShader from '@/core/applyShader'
+//import WadsCam from '@/components/lume/wadscam'
+import { InteractionMode } from '@/components/ui/interaction/InteractionModePicker'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
 
-    const [camLayout, setCamLayout] = createSignal({
+    const [camLayout, _setCamLayout] = createSignal({
         position: "35 -192 144",
         orientation: {
             yaw: 18,

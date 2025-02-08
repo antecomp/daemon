@@ -1,4 +1,4 @@
-import '@/style/util/CornerRect.css'
+import './CornerRect.css'
 import { JSX } from 'solid-js';
 
 type BorderType = "none" | "hidden" | "dotted" | "dashed" | "solid" | "double" | "groove" | "ridge" | "inset" | "outset";

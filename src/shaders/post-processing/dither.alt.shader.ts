@@ -1,5 +1,4 @@
 import { Vector2 } from "three";
-import { ShaderPass } from "three/examples/jsm/Addons.js";
 
 const DitherShader = {
     uniforms: {

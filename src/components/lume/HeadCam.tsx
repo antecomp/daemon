@@ -1,7 +1,7 @@
 import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
 import { createEffect, onCleanup, onMount } from "solid-js";
-import { Gimbal } from "../../extra.types";
-import lerp from "../../util/lerp";
+import { Gimbal } from '@/extra.types'
+import lerp from "@/util/lerp";
 import * as THREE from 'three';
 
 interface HeadCamProps {

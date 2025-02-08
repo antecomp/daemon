@@ -1,8 +1,8 @@
-import SceneContainer from "../SceneContainer";
-import EventLog from "../ui/EventLog";
-import InteractionModePicker from "../ui/InteractionModePicker";
-import Sidebar from "../ui/Sidebar";
-import '@/style/screens/Main.css'
+import SceneContainer from "@/components/ui/scene-container/SceneContainer";
+import EventLog from "@/components/ui/event-log/EventLog";
+import InteractionModePicker from "../../ui/interaction/InteractionModePicker";
+import Sidebar from "@/components/ui/sidebar/Sidebar";
+import './Main.css'
 
 /**
  * Main container UI/Screen for the majority of the game. It's the layout for our base scene navigation/interaction.
