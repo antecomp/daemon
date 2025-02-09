@@ -21,6 +21,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
             {typeof node.render === "function" ? <i>Custom render function</i> : node.render}
 
             {isLeaf && <span style={{ color: "red" }}> 🍃</span>}
+            {node.sideEffect && <i>[runs side effect]</i>}
 
             {/* Handle loopbacks */}
             {isLoop ? (

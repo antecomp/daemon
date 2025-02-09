@@ -12,8 +12,7 @@ export type DialogueNode = {
     render: string | (() => string) // Maybe just use empty string to representing blank message for navigation nodes (f.e chaining options together with no text).
     options: DialogueOption[]
     next?: DialogueNode
-    // TODO: make a side-effect function, that runs when dialogue rendered.
-        // While we can technically have side-effects of render, that doesn't sound ideal.
+    sideEffect?: () => void,
 
     /**
     * Attach a new or existing child DialogueNode to the node
@@ -42,15 +41,26 @@ export type DialogueNode = {
      */
     addCAROptionChild(summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'], senderName?: string, responderName?: string): DialogueNode,
 
-    // TODO: Multiple Option/CARs attached at once?????
-    // Additional Wraper Function Helpers for extra fast tree building >:3
-
     /**
      * Quickly append a chain of messages as a simple array.
      * @param messages Array of either Dialogue Node Render-ers (string or function that returns a string) or obj of {name, render} for adapting the name
      * @returns ref to the last message in the chain.
      */
     addMessageChain(messages: ({name: string, render: DialogueNode['render']} | DialogueNode['render'])[]): DialogueNode
+
+    /**
+     * Generates a message chain where the names are set to alternate between two values automatically. Used for back-and-fourth dialogue.
+     * @param messages Array of messages
+     * @param first First person to speak (name)
+     * @param second Next person to speak (name)
+     */
+    addBackAndFourthChain(messages: (DialogueNode['render'])[], first: string, second: string): DialogueNode
+
+    /**
+     * Attach a "side effect" (additional function) that will run when a node is rendered. Returns a ref back to the node.
+     * @param ef The CB to run when the node is entered
+     */
+    attachSideEffect(ef: () => void): DialogueNode
 }
 
 let nodeCounter = 0;
@@ -87,7 +97,6 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
 
         // Helper function to automatically attach a child as an option.
         addChildAsOption(summaryText, fullText, renderOrNode, name?: string){
-
             // Attach Existing
             if(typeof renderOrNode === 'object' && 'id' in renderOrNode) {
                 this.options.push({
@@ -110,8 +119,6 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
 
 
         addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName) {
-
-
             const callNode = createDialogueNode(fullText, senderName ?? DEFAULT_DIALOGUE_SENDER);
             this.options.push({
                 summaryText, fullText, next: callNode
@@ -142,6 +149,20 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
 
             return active;
         },
+
+        attachSideEffect(ef) {
+            this.sideEffect = ef;
+            return this;
+        },
+
+        addBackAndFourthChain(messages, first, second) {
+            let active: DialogueNode = this;
+            messages.forEach((messageRender, idx) => {
+                active = active.addChild(messageRender, [first, second][idx % 2])
+            })
+            return active;
+        },
+
     }
 
     return node;

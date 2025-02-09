@@ -28,12 +28,14 @@ export default function generateDialogue(): DialogueNode {
             `He quickly looks around before focusing on me again.`,
             "VISUALIZER"
         )
-        .addChild("What model VI-LINK you have?", characters.MAN)
-        .addChild("Why does it matter?", characters.ARDA)
-        .addChild("Because a difference in a model number is a difference in whether your brain melts or not", characters.MAN)
-        .addChild("XA-3", characters.ARDA)
-        .addChild("Damn, fancy for someone like you. You doing this to rebel against your rich daddy?", characters.MAN);
-
+        .addBackAndFourthChain([
+            "What model VI-LINK you have?",
+            "Why does it matter?",
+            "Because a difference in a model number is a difference in whether your brain melts or not",
+            "XA-3",
+            "Damn, fancy for someone like you. You doing this to rebel against your rich daddy?",
+        ], characters.MAN, characters.ARDA)
+        
     richDadFork.addCAROptionChild(
         "Not your business", "None of your fucking business",
         "Like hell it isn't my business, I'm here to make sure you don't eject and dob immediately.",
@@ -62,6 +64,7 @@ export default function generateDialogue(): DialogueNode {
         "Then you're on your own.",
         "You understand?",
     ])
+    .attachSideEffect(() => {/* do something */})
 
     understandQuestionFork.addCAROptionChild(
         "done threatening me?", "you dont threatening me so we can get on with it?",

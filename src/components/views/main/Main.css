@@ -19,6 +19,8 @@
         var(--bottom-bar-height); 
     grid-column-gap: 0px;
     grid-row-gap: 0px; 
+    position: relative;
+    user-select: none;
 }
 
 #sidebar { grid-area: 1 / 1 / 3 / 2; margin-right: 2px;} 
