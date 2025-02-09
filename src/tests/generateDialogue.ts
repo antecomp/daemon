@@ -12,7 +12,6 @@ export default function generateDialogue(): DialogueNode {
     const root = createDialogueNode(
         `
             A man finally sits down at the table across from me. He's bald, wearing a suit and a large pair of sunglasses. 
-            I always thought sunglasses in NS were a stupid decision, the ambient light here is barely a half moon on the best of days.
         `,
         "VISUALIZER"
     )
@@ -21,12 +20,13 @@ export default function generateDialogue(): DialogueNode {
 
     const richDadFork = root
         .addChild(
+            `I always thought sunglasses in NS were a stupid decision, the ambient light here is barely a half moon on the best of days.`,
+        )
+        .addChild(
             `I can see his eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.`,
-            "VISUALIZER"
         )
         .addChild(
             `He quickly looks around before focusing on me again.`,
-            "VISUALIZER"
         )
         .addBackAndFourthChain([
             "What model VI-LINK you have?",

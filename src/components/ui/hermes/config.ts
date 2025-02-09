@@ -1,1 +1,1 @@
-export const HERMES_MESSAGE_DELAY = 1000;
+export const HERMES_MESSAGE_DELAY = 1500;

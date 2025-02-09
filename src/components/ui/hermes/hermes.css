@@ -59,6 +59,10 @@
 	user-select: none;
 }
 
+.text-preview + div {
+	margin-top: 4px !important;
+}
+
 .hermes-resp-container:hover {
 	opacity: 1;
 }
@@ -179,7 +183,7 @@
 	position: relative;
 }
 
-.message-body:last-child {
+.message-body:last-child, .visualizer-body:last-child {
 	animation: message-send 0.5s forwards;
 }
 
@@ -226,4 +230,13 @@
 .hpo-active {
 	background-color: white;
 	cursor: default;
+}
+
+.visualizer-body {
+    width: 223px;
+    height: 82px;
+    background: black;
+    color: #aaa;
+    border: solid #aaa 1px;
+    padding: 2px 5px;
 }
