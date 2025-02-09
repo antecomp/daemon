@@ -32,8 +32,8 @@ body {
   font-family: 'main';
 
   /* dont ask - makes pixel aligned */
-  margin-left: 1px;
-  overflow-y: hidden;
+  /* margin-left: 1px;
+  overflow-y: hidden; */
 }
 
 #scene-container {

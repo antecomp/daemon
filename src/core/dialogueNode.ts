@@ -32,6 +32,13 @@ export type DialogueNode = {
     addChildAsOption(summaryText: string, fullText: string, renderOrNode: DialogueNode['render'] | DialogueNode, name?: string): DialogueNode;
 
     /**
+     * Allows adding multiple options at once.
+     * @param options - Array of { summaryText, fullText, renderOrNode, name? }
+     * @returns - Array of created DialogueNodes
+     */
+    addOptions(options: { summaryText: string, fullText: string, renderOrNode: DialogueNode['render'] | DialogueNode, name?: string }[]): DialogueNode[];
+
+    /**
      * "Call and Response" - render a node for summaryText and add it as a node, then attach an immediate response node as another child.
      * @param summaryText  Text for the options quick representation
      * @param fullText  Full previewed text in the dialogue box 
@@ -40,7 +47,14 @@ export type DialogueNode = {
      * @param responderName - name attached to the "response" text, if we're creating a new node for it.
      * @returns Ref to the "response" child.
      */
-    addCAROptionChild(summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'], senderName?: string, responderName?: string): DialogueNode,
+    addCAROptionChild(summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, senderName?: string, responderName?: string): DialogueNode,
+
+    /**
+     * Allows adding multiple Call-and-Response (CAR) options at once.
+     * @param carOptions - Array of { summaryText, fullText, responseAsRenderOrNode, senderName?, responderName? }
+     * @returns - Array of created response DialogueNodes
+     */
+    addCAROptions(carOptions: { summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, senderName?: string, responderName?: string }[]): DialogueNode[];
 
     /**
      * Quickly append a chain of messages as a simple array.
@@ -175,6 +189,18 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             this.options.push({summaryText, fullText})
             return this;
         },
+
+        addOptions(options) {
+            return options.map(({ summaryText, fullText, renderOrNode, name }) => 
+                this.addChildAsOption(summaryText, fullText, renderOrNode, name)
+            );
+        },
+
+        addCAROptions(carOptions) {
+            return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName }) => 
+                this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName)
+            );
+        }
 
     }
 

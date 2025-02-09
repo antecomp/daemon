@@ -38,7 +38,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
                                 <div>
                                     <strong>→ {opt.summaryText}</strong> ({opt.fullText})
                                     <div style={{"padding-left": `${20 * (depth + 1)}px`}}>
-                                        {renderDialogueTree(opt.next, visited, depth + 1)}
+                                        {opt.next ? renderDialogueTree(opt.next, visited, depth + 1) : "🍂"}
                                     </div>
                                 </div>
                             ))}

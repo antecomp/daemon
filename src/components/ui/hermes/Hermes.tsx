@@ -78,8 +78,8 @@ export default function Hermes() {
     await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing
       await advanceDialogue(node.next);
     } else {
-        console.log("LEAF AUTOGEN")
-        setCurrentOptions([{summaryText: "[END]", fullText: ""}]) // Generate our own termination option.
+        // Generate our own termination option.
+        setCurrentOptions([{summaryText: "[END]", fullText: ""}]) 
     }
   }
 
@@ -89,8 +89,9 @@ export default function Hermes() {
     setHoveredOption("") // Clear preview text
     if(option.next) {
         await advanceDialogue(option.next);
-    } else { // Option has no next, terminate dialogue
-        console.log("EXIT TIME!!")
+    } else {
+        // Option has no next, terminate dialogue
+        console.log("EXIT TIME!!") // TO IMPLEMENT: EXIT.
     }
   }
 
