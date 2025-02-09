@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import generateDialogue from "@/tests/generateDialogue"; // Developer swaps this path to test different trees.
 import type { DialogueNode, DialogueOption } from "@/core/dialogueNode";
+import './dialogue-visualizer.css'
 
 /**
  * Recursively renders the dialogue tree with indentation and loop detection.
@@ -8,14 +9,18 @@ import type { DialogueNode, DialogueOption } from "@/core/dialogueNode";
 function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), depth = 0) {
     if (!node) return null;
 
-    const indent = "  ".repeat(depth);
+    //const indent = "  ".repeat(depth);
     const isLoop = visited.has(node.id);
     visited.add(node.id);
 
+    const isLeaf = !node.next && node.options.length === 0;
+
     return (
-        <div style={{ "margin-left": `${depth * 20}px`, "border-left": "1px solid gray", "padding-left": "10px" }}>
-            <strong>{node.name}:</strong>{" "}
+        <div>
+            [{node.id.substring(5)}] <strong>{node.name}:</strong>{" "}
             {typeof node.render === "function" ? <i>Custom render function</i> : node.render}
+
+            {isLeaf && <span style={{ color: "red" }}> 🍃</span>}
 
             {/* Handle loopbacks */}
             {isLoop ? (
@@ -31,7 +36,9 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
                             {node.options.map((opt: DialogueOption) => (
                                 <div>
                                     <strong>→ {opt.summaryText}</strong> ({opt.fullText})
-                                    {renderDialogueTree(opt.next, visited, depth + 1)}
+                                    <div style={{"padding-left": `${20 * (depth + 1)}px`}}>
+                                        {renderDialogueTree(opt.next, visited, depth + 1)}
+                                    </div>
                                 </div>
                             ))}
                         </div>

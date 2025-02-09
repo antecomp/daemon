@@ -124,7 +124,7 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             }
 
             // Either infer response is from the name associated with just before the options, or explicitely take one.
-            const responseAsChild = createDialogueNode(responseAsRenderOrNode, this.name ?? responderName)
+            const responseAsChild = createDialogueNode(responseAsRenderOrNode, responderName ?? this.name)
             callNode.next = responseAsChild;
 
             return responseAsChild;
@@ -146,77 +146,3 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
 
     return node;
 }
-
-
-// ---------------------------------------------
-/* Debugging / Visualizing Tools */
-// Import your dialogue system
-
-/**
- * Recursively prints a dialogue tree in a readable format.
- * @param node The starting dialogue node
- * @param visited Keeps track of visited nodes to prevent infinite loops
- * @param depth Indentation level for printing
- */
-function printDialogueTree(node: DialogueNode, visited = new Set(), depth = 0) {
-    if (!node || visited.has(node.id)) return; // Avoid infinite loops in cyclic structures
-    visited.add(node.id);
-
-    const indent = "  ".repeat(depth);
-    console.log(`${indent}- [${node.name}] ${typeof node.render === "function" ? node.render() : node.render}`);
-
-    // Print next node (linear)
-    if (node.next) {
-        //console.log(`${indent}  ↳`);
-        printDialogueTree(node.next, visited, depth + 1);
-    }
-
-    // Print choices
-    if (node.options.length > 0) {
-        console.log(`${indent}  ↳ (Options)`);
-        node.options.forEach((option, index) => {
-            console.log(`${indent}    ${index + 1}. ${option.summaryText} - ${option.fullText}`);
-            printDialogueTree(option.next, visited, depth + 2);
-        });
-    }
-}
-
-/** 🌳 Test: Build and visualize a dialogue tree */
-function testDialogueSystem() {
-    console.log("🎭 Testing Dialogue System\n");
-
-    const root = createDialogueNode("Welcome to the test dialogue!", "Narrator");
-
-    // Linear branch
-    const branchA = root
-        .addMessageChain(["This is from a message chain", "It can add a rapid set of messages", "without much thought"])
-        .addMessageChain([
-            {name: "Person A", render: "You can even have a back and fourth, albiet with a bit more boilerplate."},
-            {name: "Person B", render: "Switching back and fourth between people, just like this"},
-            "Or, you can continue with a simple string, and it'll retain the speaker from the previous item in the array!"
-        ])
-        .addChild("Now, you have a choice...", "NPC");
-
-    // Adding choices
-    branchA.addCAROptionChild("Ask about the town", "Tell me about this place.", "The town is old and full of mystery.", "Player", "NPC")
-        .addChild("Interesting...", "Player");
-
-    branchA.addChildAsOption("Leave town", "I'm just passing through.", "Safe travels, stranger.", "NPC");
-
-    // Loopback scenario
-    const loopStart = createDialogueNode("This is a loop entry point.", "NPC");
-    const loopBack = loopStart.addChild("You are looping back...");
-    loopBack.addChildAsOption("Loop again", "I want to go back!", loopStart);
-    loopBack.addChildAsOption("Exit loop", "I'm done with the loop.", "The loop ends here.", "NPC");
-
-    branchA.addChildAsOption("Enter loop", "Show me something interesting.", loopStart);
-
-    // Print the final dialogue tree
-    console.log("\n🎭 Dialogue Tree Structure:\n");
-    printDialogueTree(root);
-}
-
-// Run the test
-testDialogueSystem();
-
-
