@@ -3,7 +3,7 @@ import { DEFAULT_DIALOGUE_SENDER } from "../config";
 export interface DialogueOption {
     summaryText: string
     fullText: string
-    next: DialogueNode
+    next?: DialogueNode
 }
 
 export type DialogueNode = {
@@ -38,6 +38,7 @@ export type DialogueNode = {
      * @param responseAsRenderOrNode  existing node or 'render' that is navigated to by this option.
      * @param senderName - name attached to the "caller" (first person 99% of the time), defaults to config.DEFAULT_DIALOGUE_SENDER if none provided.
      * @param responderName - name attached to the "response" text, if we're creating a new node for it.
+     * @returns Ref to the "response" child.
      */
     addCAROptionChild(summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'], senderName?: string, responderName?: string): DialogueNode,
 
@@ -61,6 +62,13 @@ export type DialogueNode = {
      * @param ef The CB to run when the node is entered
      */
     attachSideEffect(ef: () => void): DialogueNode
+
+    /**
+     * Add a option that ends the dialogue with custom text.
+     * @param summaryText 
+     * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
+     */
+    addTerminationOption(summaryText: string, fullText: string): DialogueNode
 }
 
 let nodeCounter = 0;
@@ -161,6 +169,11 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
                 active = active.addChild(messageRender, [first, second][idx % 2])
             })
             return active;
+        },
+
+        addTerminationOption(summaryText, fullText) {
+            this.options.push({summaryText, fullText})
+            return this;
         },
 
     }

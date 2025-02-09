@@ -67,7 +67,7 @@ export default function generateDialogue(): DialogueNode {
     .attachSideEffect(() => {/* do something */})
 
     understandQuestionFork.addCAROptionChild(
-        "done threatening me?", "you dont threatening me so we can get on with it?",
+        "done threatening me?", "you done threatening me so we can get on with it?",
         "I'm not threatening you, miss, just some... terms and conditions.",
         characters.ARDA,
         characters.MAN
@@ -75,15 +75,17 @@ export default function generateDialogue(): DialogueNode {
         {render: "Right. Moving on.", name: characters.ARDA},
         {render: "he glares before shifting back in his seat", name: "VISUALIZER"},
         {render: "Moving on...", name: characters.MAN},
-        "Expect a cached deliviered to your preferred home node in the next few days.",
-        "This is a DV mod specifically for your XA-3. Mods embedded steganographically on top of some old porn.",
+        "Expect a cached delivered to your preferred home node in the next few days.",
+        "This is a DV mod specifically for your XA-3. Mods embedded stenographically on top of some old porn.",
         "Makes customs okay with the suspicious packages and lack of program signature.",
         "I'm assuming you'll know how to extract it since you found us on FF.",
-        "Once you have it instakked, message this VLID:",
+        "Once you have it installed, message this VLID:",
         () => "<randomly generate a VLID here...>",
         "We'll be in touch after that to find a time and place to verify everything is working before handing off the origins.",
-        {render: "Got it", name: characters.ARDA}
     ])
+    .addChild("Got it", characters.ARDA)
+
+    understandQuestionFork.addTerminationOption("Stop talking to him", "I think we're done here.");
         
 
     return root;

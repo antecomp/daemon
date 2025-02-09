@@ -12,6 +12,7 @@ import botb from "./assets/botb.png";
 import ntwrk from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import { HERMES_MESSAGE_DELAY } from "./config";
+import createTypewriter from "@/hooks/createTypewriter";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -26,6 +27,8 @@ const MessageBox = (props: MessageBoxProps) => {
   onMount(() => {
     ref && ref.scrollIntoView({ behavior: "smooth", block: "center" });
   });
+
+  if(props.text === "") return;
 
   if(props.name === "VISUALIZER") return (
     <div class="visualizer-body message-body" ref={ref}>
@@ -57,6 +60,10 @@ export default function Hermes() {
   const [currentOptionPage, setCurrentOptionPage] = createSignal(0); // to implement...
   const optionsOffset = () => currentOptionPage() * 3;
 
+  // Preview message for hovered option.
+  const [hoveredOption, setHoveredOption] = createSignal("")
+  const {displayText: optionPreviewText} = createTypewriter(hoveredOption)
+
   /** Advances dialogue based on the current node */
   async function advanceDialogue(node: DialogueNode) {
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
@@ -70,13 +77,21 @@ export default function Hermes() {
     if (node.next) {
     await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing
       await advanceDialogue(node.next);
+    } else {
+        console.log("LEAF AUTOGEN")
+        setCurrentOptions([{summaryText: "[END]", fullText: ""}]) // Generate our own termination option.
     }
   }
 
   /** Handles when an option is picked */
   async function selectOption(option: DialogueOption) {
     setCurrentOptions([]); // Clear options
-    await advanceDialogue(option.next);
+    setHoveredOption("") // Clear preview text
+    if(option.next) {
+        await advanceDialogue(option.next);
+    } else { // Option has no next, terminate dialogue
+        console.log("EXIT TIME!!")
+    }
   }
 
   onMount(() => {
@@ -93,8 +108,8 @@ export default function Hermes() {
       <div class={`sender-container ${currentOptions().length > 0 ? "" : "inactive"}`}>
         <div class="text-preview">
           <img src={nameplateBorder} alt="" />
-          <span class="name">Eske</span>
-          Option previewed here!!
+          <span class="name">Arda</span>
+          {optionPreviewText()}
         </div>
         {[0, 1, 2].map((index) => {
         const option = currentOptions()[optionsOffset() + index];
@@ -102,6 +117,7 @@ export default function Hermes() {
             <div
                 class={"hermes-resp-container " + (option ? "" : "inactive")}
                 onClick={() => option && selectOption(option)}
+                onMouseOver={() => option && setHoveredOption(option.fullText)}
             >
                 <p>{option?.summaryText ?? ""}</p>
                 <span></span>
