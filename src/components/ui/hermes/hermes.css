@@ -199,11 +199,11 @@
 
 .hermes-pages {
 	position: absolute;
-	bottom: 25px;
+	bottom: 27px;
 	left: -11px;
 	background: url('/src/components/ui/hermes/assets/pagecon.png');
 	width: 10px;
-	height: 64px;
+	height: 82px;
 	display: flex;
 	flex-direction: column;
 	padding-top: 9px;

@@ -74,6 +74,18 @@ export default function generateDialogue(): DialogueNode {
                     }
                 ])
 
+    questionLoopback.addTerminationOption("Option 3", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option 4", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option 5", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
+    questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")  
 
     return root;
 }

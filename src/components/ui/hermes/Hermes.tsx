@@ -27,6 +27,16 @@ export default function Hermes({root}: {root: DialogueNode}) {
   const [currentOptions, setCurrentOptions] = createSignal<DialogueOption[]>([]);
   const [currentOptionPage, setCurrentOptionPage] = createSignal(0); // to implement...
   const optionsOffset = () => currentOptionPage() * 3;
+  const numPages = () => Math.ceil(currentOptions().length / 3);
+
+  const generatePages = () =>
+    Array.from({ length: numPages() }, (_, i) => (
+      <a 
+        class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`} 
+        onClick={() => setCurrentOptionPage(i)}
+      ></a>
+    ));
+
 
   // Preview message for hovered option.
   const [hoveredOption, setHoveredOption] = createSignal("")
@@ -101,6 +111,16 @@ export default function Hermes({root}: {root: DialogueNode}) {
         <span>S-VLID:91ae0:ffc13 R-VLID:0000:0000</span>
         <span class="hermes-disconnect">DISCONNECT</span>
       </div>
+      {
+        (currentOptions().length > 3) &&
+        <div classList={{
+          "hermes-pages": true,
+          "hp-first": (currentOptionPage() == 0),
+          "hp-last": (currentOptionPage() == numPages() -1)
+        }}>
+          {generatePages()}
+        </div>
+      }
     </div>
   );
 }
