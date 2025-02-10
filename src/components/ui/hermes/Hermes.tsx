@@ -29,6 +29,8 @@ export default function Hermes({root}: {root: DialogueNode}) {
   const optionsOffset = () => currentOptionPage() * 3;
   const numPages = () => Math.ceil(currentOptions().length / 3);
 
+  const [atLeaf, setAtLeaf] = createSignal(false);
+
   const generatePages = () =>
     Array.from({ length: numPages() }, (_, i) => (
       <a 
@@ -59,6 +61,7 @@ export default function Hermes({root}: {root: DialogueNode}) {
     } else {
         // Generate our own termination option.
         setCurrentOptions([{summaryText: "[END]", fullText: ""}]) 
+        setAtLeaf(true);
     }
   }
 
@@ -109,7 +112,12 @@ export default function Hermes({root}: {root: DialogueNode}) {
       <div class="hermes-footer">
         <img src={ntwrk} />
         <span>S-VLID:91ae0:ffc13 R-VLID:0000:0000</span>
-        <span class="hermes-disconnect">DISCONNECT</span>
+        <span 
+          class={`hermes-disconnect ${(DialogueService.canCloseDialogueEarly() || atLeaf()) ? 'can-disconnect': ''}`}
+          onClick={() => (DialogueService.canCloseDialogueEarly() || atLeaf()) && DialogueService.endDialogue()}
+        >
+          DISCONNECT
+        </span>
       </div>
       {
         (currentOptions().length > 3) &&

@@ -5,6 +5,7 @@
 	z-index: 2; /* show above modals */
     --fgc: white;
     --outlinec: black;
+	--altfgc: #555;
 }
 
 .sender-container {

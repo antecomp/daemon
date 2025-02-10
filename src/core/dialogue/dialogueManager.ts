@@ -18,6 +18,11 @@ class DialogueManager {
     public currentDialogueOverlay = this.activeDialogueOverlay[0];
     public setCurrentDialogueOverlay = this.activeDialogueOverlay[1]; // Init with the startDialogue, you *can* also change it mid dialogue.
 
+    // Signal to indicate to Hermes whether you can use the "disconnect" button or not (early dialogue tree termination / optional dialogue)
+    private closeDialogueEarly = createSignal(false);
+    public canCloseDialogueEarly = this.closeDialogueEarly[0];
+    public setCanCloseDialogueEarly = this.closeDialogueEarly[1];
+
     constructor() {};
 
     public static getInstance(): DialogueManager {
@@ -27,20 +32,20 @@ class DialogueManager {
 
     // Add options later for camera hijacking / artwork
     // Options will eventually include: sceneRef? cameraRef? and desired position/rotation to tween to. <- whatever you need for hijacking the camera
-    public startDialogue(rootNode: DialogueNode, options?: {overlay?: string}) {
+    public startDialogue(rootNode: DialogueNode, options?: {overlay?: string, canCloseDialogueEarly?: boolean}) {
         if(this.activeDialogue()) throw new Error("Dialogue already in progress.");
         this.setActiveDialogue(rootNode);
-
-        // TODO: Camera Hijack / Scene Overlay Logic
+        this.setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
+        // TODO: Camera Hijack
         options?.overlay && this.setCurrentDialogueOverlay(options.overlay);
     }
 
     public endDialogue() {
         if (!this.activeDialogue()) return;
 
-        // Add stuff to restore camera position / remove overlay...
+        // TODO: Add stuff to restore camera position
         this.setCurrentDialogueOverlay(null);
-
+        this.setCanCloseDialogueEarly(false);
         this.setActiveDialogue(null);
     }
 }

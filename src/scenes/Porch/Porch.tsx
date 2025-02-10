@@ -114,7 +114,7 @@ export default function Porch() {
                     position="-90 -240 0"
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => DialogueService.startDialogue(generateDialogue(), {overlay: viya_dia_bg}),
+                        () => DialogueService.startDialogue(generateDialogue(), {overlay: viya_dia_bg, canCloseDialogueEarly: true}),
                         () => addLogMessage(`She is smoking a cigarette.`)
                     ]}
             />
