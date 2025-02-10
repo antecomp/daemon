@@ -2,7 +2,6 @@ import { createSignal } from "solid-js";
 import { DialogueNode } from "./dialogueNode.types";
 
 
-
 // Singleton for managing the active dialogue, exposes signal for conditional rendering of Hermes with a dialogue instance.
 class DialogueManager {
     private static instance: DialogueManager;

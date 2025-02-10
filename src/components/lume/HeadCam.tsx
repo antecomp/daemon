@@ -146,12 +146,14 @@ export default function HeadCam(props: HeadCamProps) {
     return (
         <lume-element3d
             ref={bodyRef}
+            id="headcam_body"
             align-point="0.5 0.5"
             position={props.position}
             rotation={`0 ${props.baseOrientation.yaw} 0`}
         >
             <lume-perspective-camera
                 ref={camRef}
+                id="headcam"
                 active
                 rotation={`${props.baseOrientation.pitch} 0 0`}
             ></lume-perspective-camera>
