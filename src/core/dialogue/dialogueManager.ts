@@ -16,7 +16,7 @@ class DialogueManager {
     // Signal used for overlay image (if one exists), this is instead used by SceneContainer (since it has the dimensions and DOM position of what we want to overlay)
     private activeDialogueOverlay = createSignal<string | null>(null); // string = image url.
     public currentDialogueOverlay = this.activeDialogueOverlay[0];
-    private setCurrentDialogueOverlay = this.activeDialogueOverlay[1]; // Managed/set by the start/end dialogue.
+    public setCurrentDialogueOverlay = this.activeDialogueOverlay[1]; // Init with the startDialogue, you *can* also change it mid dialogue.
 
     constructor() {};
 

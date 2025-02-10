@@ -35,6 +35,7 @@ export default function Hermes({root}: {root: DialogueNode}) {
   /** Advances dialogue based on the current node */
   async function advanceDialogue(node: DialogueNode) {
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
+    node.sideEffect && node.sideEffect();
 
     if (node.options.length > 0) {
       setCurrentOptions(node.options);

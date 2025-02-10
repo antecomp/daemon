@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import generateDialogue from "@/tests/generateDialogue"; // Developer swaps this path to test different trees.
 import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
+import root from "@/dialogues/rabbits/porchRabbit";
 
 /**
  * Recursively renders the dialogue tree with indentation and loop detection.
@@ -54,7 +55,8 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
  * Component to visualize a generated dialogue tree.
  */
 const DialogueVisualizer = () => {
-    const [dialogueRoot] = createSignal(generateDialogue()); // Generate dialogue tree once
+    //const [dialogueRoot] = createSignal(generateDialogue()); // Generate dialogue tree once
+    const [dialogueRoot] = createSignal(root);
 
     return (
         <div style={{ "font-family": "monospace", padding: "20px" }}>
