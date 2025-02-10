@@ -112,12 +112,6 @@ export default function Porch() {
                     position="-90 -240 0"
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        // () => {
-                        //     const hijackBody = hijackCamera(sceneRef);
-                        //     setTimeout(() => {
-                        //         hijackBody?.remove();
-                        //     }, 1000)
-                        // },
                         () => DialogueService.startDialogue(
                             generateDialogue(), 
                             {
