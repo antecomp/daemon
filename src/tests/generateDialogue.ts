@@ -1,4 +1,5 @@
-import { createDialogueNode, DialogueNode } from "@/core/dialogueNode";
+import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
+import { createDialogueNode } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";
 
 // You can make local enums to track the people talking

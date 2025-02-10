@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import generateDialogue from "@/tests/generateDialogue"; // Developer swaps this path to test different trees.
-import type { DialogueNode, DialogueOption } from "@/core/dialogueNode";
+import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
 
 /**

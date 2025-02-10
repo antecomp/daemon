@@ -8,6 +8,8 @@ import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
+import generateDialogue from "@/tests/generateDialogue";
+import { DialogueService } from "@/core/dialogue/dialogueManager";
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -107,7 +109,7 @@ export default function Porch() {
                     position="-90 -240 0"
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => addLogMessage(`She doesn't say anything`),
+                        () => DialogueService.startDialogue(generateDialogue()),
                         () => addLogMessage(`She is smoking a cigarette.`)
                     ]}
             />

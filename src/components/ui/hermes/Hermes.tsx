@@ -1,11 +1,9 @@
 import "./hermes.css";
 import { createSignal, For } from "solid-js";
-import { DialogueNode, DialogueOption } from "@/core/dialogueNode";
+import { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
-import generateDialogue from "@/tests/generateDialogue";
-
-import dogtagFirst from "./assets/dogtag_first.png";
-import dogtagLast from "./assets/dogtag_last.png";
+import MessageBox from "./MessageBox";
+import { MessageBoxProps } from "./MessageBox";
 import topb from "./assets/topb.png";
 import midb from "./assets/midb.png";
 import botb from "./assets/botb.png";
@@ -13,44 +11,14 @@ import ntwrk from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import { HERMES_MESSAGE_DELAY } from "./config";
 import createTypewriter from "@/hooks/createTypewriter";
-
+import { DialogueService } from "@/core/dialogue/dialogueManager";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-interface MessageBoxProps {
-  name: string;
-  text: string | (() => string);
-}
 
-const MessageBox = (props: MessageBoxProps) => {
-  let ref: HTMLDivElement | undefined;
-
-  onMount(() => {
-    ref && ref.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
-
-  if(props.text === "") return;
-
-  if(props.name === "VISUALIZER") return (
-    <div class="visualizer-body message-body" ref={ref}>
-        <p>{typeof props.text === "string" ? props.text : props.text()}</p>
-    </div>
-  )
-
-  return (
-    <div class="message-body" ref={ref}>
-      <div class="message-dogtag">
-        <img src={dogtagFirst} />
-        <span>{props.name}</span>
-        <img src={dogtagLast} />
-      </div>
-      <div class="message-content">
-        <p>{typeof props.text === "string" ? props.text : props.text()}</p>
-      </div>
-    </div>
-  );
-};
-
-export default function Hermes() {
+// Do purposeful none reactive destructure of the root node to copy it?
+// It doesn't matter since we're passing the getter result plain into here anyways...
+// Just destructure for the sake of convenience.
+export default function Hermes({root}: {root: DialogueNode}) {
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
   const addMessage = ({ name, text }: { name: string; text: string }) => {
     setMessages((prev) => [...prev, { name, text }]);
@@ -91,12 +59,12 @@ export default function Hermes() {
         await advanceDialogue(option.next);
     } else {
         // Option has no next, terminate dialogue
-        console.log("EXIT TIME!!") // TO IMPLEMENT: EXIT.
+        DialogueService.endDialogue();
     }
   }
 
   onMount(() => {
-    const root = generateDialogue(); // This will be given as a prop or by some atom later...
+    //const root = generateDialogue(); // This will be given as a prop or by some atom later...
     advanceDialogue(root);
   });
 
