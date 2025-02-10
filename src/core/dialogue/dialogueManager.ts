@@ -1,5 +1,8 @@
 import { createSignal } from "solid-js";
 import { DialogueNode } from "./dialogueNode.types";
+import { Gimbal, LumePosition } from "@/extra.types";
+import { Element3D, Scene } from "lume";
+import hijackCamera from "@/components/lume/hijackCamera";
 
 
 // Singleton for managing the active dialogue, exposes signal for conditional rendering of Hermes with a dialogue instance.
@@ -22,6 +25,9 @@ class DialogueManager {
     public canCloseDialogueEarly = this.closeDialogueEarly[0];
     public setCanCloseDialogueEarly = this.closeDialogueEarly[1];
 
+    // Ref to a hijacker camera (if it exists), needed for deletion on endDialogue.
+    private hijackCameraBody: Element3D | undefined;
+
     constructor() {};
 
     public static getInstance(): DialogueManager {
@@ -31,21 +37,24 @@ class DialogueManager {
 
     // Add options later for camera hijacking / artwork
     // Options will eventually include: sceneRef? cameraRef? and desired position/rotation to tween to. <- whatever you need for hijacking the camera
-    public startDialogue(rootNode: DialogueNode, options?: {overlay?: string, canCloseDialogueEarly?: boolean}) {
+    public startDialogue(rootNode: DialogueNode, options?: {overlay?: string, canCloseDialogueEarly?: boolean, cameraHijack?: {sceneRef: Scene  | undefined, targetPosition: LumePosition, targetOrientation: Omit<Gimbal, 'roll'>}}) {
         if(this.activeDialogue()) throw new Error("Dialogue already in progress.");
         this.setActiveDialogue(rootNode);
         this.setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
-        // TODO: Camera Hijack
         options?.overlay && this.setCurrentDialogueOverlay(options.overlay);
+
+        if (!options?.cameraHijack) return;
+        this.hijackCameraBody = hijackCamera({...options.cameraHijack})
     }
 
     public endDialogue() {
         if (!this.activeDialogue()) return;
 
-        // TODO: Add stuff to restore camera position
         this.setCurrentDialogueOverlay(null);
         this.setCanCloseDialogueEarly(false);
         this.setActiveDialogue(null);
+
+        this.hijackCameraBody?.remove();
     }
 }
 

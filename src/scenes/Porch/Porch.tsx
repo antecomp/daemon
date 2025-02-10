@@ -13,7 +13,7 @@ import generateDialogue from "@/tests/generateDialogue";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
 import viya_dia_bg from '@/assets/artwork/dialogue_bgs/terrible_test.png'
 import root from "@/dialogues/rabbits/porchRabbit";
-import hijackCamera from "@/components/lume/hijackCamera";
+import WadsCam from "@/components/lume/wadscam";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -111,14 +111,25 @@ export default function Porch() {
                     size={225}
                     position="-90 -240 0"
                     interactions={[
-                        // () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => {
-                            const hijackBody = hijackCamera(sceneRef);
-                            setTimeout(() => {
-                                hijackBody?.remove();
-                            }, 1000)
-                        },
-                        () => DialogueService.startDialogue(generateDialogue(), {overlay: viya_dia_bg, canCloseDialogueEarly: true}),
+                        () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
+                        // () => {
+                        //     const hijackBody = hijackCamera(sceneRef);
+                        //     setTimeout(() => {
+                        //         hijackBody?.remove();
+                        //     }, 1000)
+                        // },
+                        () => DialogueService.startDialogue(
+                            generateDialogue(), 
+                            {
+                                // overlay: viya_dia_bg, 
+                                canCloseDialogueEarly: true,
+                                cameraHijack: {
+                                    sceneRef,
+                                    targetPosition: "122 -287 151",
+                                    targetOrientation: {yaw: 41, pitch: 2}
+                                }
+                            }
+                        ),
                         () => addLogMessage(`She is smoking a cigarette.`)
                     ]}
             />
