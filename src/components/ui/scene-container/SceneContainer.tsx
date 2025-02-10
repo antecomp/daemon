@@ -1,4 +1,4 @@
-import {createSignal, Suspense} from "solid-js";
+import {createSignal, Show, Suspense} from "solid-js";
 import { scenes } from '@/scenes/sceneRegistry';
 import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
@@ -8,6 +8,8 @@ import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import br from '@/assets/ui/corners/s5/br.png'
 import pisstop from '@/assets/ui/corners/special/pisstop.png'
+import { DialogueService } from "@/core/dialogue/dialogueManager";
+import './scene-container.css'
 
 /**
  * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 
@@ -40,11 +42,19 @@ export default function SceneContainer() {
             borderType="solid white" 
             corners={[tl, tr, pisstop, br]} 
             id="scene-container" 
-            style={{width: `${SCENE_DIMENSIONS.width + 2}px`, height: `${SCENE_DIMENSIONS.height + 2}px`}} // need +2 for borders. Change with border size thanks.
+            style={{
+                width: `${SCENE_DIMENSIONS.width + 2}px`, 
+                height: `${SCENE_DIMENSIONS.height + 2}px`,
+                //pointerEvents: DialogueService.activeDialogue()? "none" : "auto" // doesn't work :(
+            }} // need +2 for borders. Change with border size thanks.
         >
             <Suspense fallback={<p>Loading scene...</p>}>
                 <Dynamic component={scenes[currentScene()]} />
             </Suspense>
+        {/* We always have an overlay on dialogue, it works as an easy blocker for mouse events AND we can show artwork when we need :) */}
+        <Show when={DialogueService.activeDialogue()}>
+            <div id="dialogue-overlay"></div>
+        </Show>
         </CornerRect>
     )
 }

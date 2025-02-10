@@ -7,9 +7,13 @@ import { DialogueNode } from "./dialogueNode.types";
 class DialogueManager {
     private static instance: DialogueManager;
 
+    // Signal used for conditional rendering of Hermes, (and passing root node to Hermes)
+    // Generally also reference HermesOverlay.tsx
     private activeDialogueSignal = createSignal<DialogueNode | null>(null);
     public activeDialogue = this.activeDialogueSignal[0];
-    private setActiveDialogue = this.activeDialogueSignal[1];
+    private setActiveDialogue = this.activeDialogueSignal[1]; // -> Use startDialogue/endDialogue to manage externally.
+
+    // Signal used for overlay image (if one exists), also used by HermesOverlay.tsx to conditonally render
 
     constructor() {};
 

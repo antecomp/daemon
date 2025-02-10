@@ -4,9 +4,24 @@ export interface DialogueOption {
     next?: DialogueNode
 }
 
+/**
+ * A DialogueNode represents a single "message" within a dialogue tree. You can generate a completely new one with the createDialogueNode FF (this is done for a root node).
+ * 
+ * However, the main strength of DialogueNode is it's helper methods. Every DialogueNode provides methods that allow you to automatically generate and attach children nodes.
+ * Furthermore, each of these methods return the newly created nodes, allowing you to chain multiple helpers together to quickly build dialogue trees.
+ * 
+ * Generally, refer to the JSDoc for the createDialogueNode and helper methods here instead of the node itself. You should never be declaring a node manually.
+ * 
+ * @property id - Internal tracking of dialogue nodes for keying and visualization. This should never be changed.
+ * @property name - who is speaking.
+ * @property render - a string or a method that returns a string, represents the actual message content being sent. The method that returns a string type is if you want to make the messages change their content based on game-state, or if you want to use helpers such as pickRandom().
+ * @property options - an array of "options" ({summaryText, fullText, next}), these are the players response-points, forks in the dialogue tree.
+ * @property next - pointer to the subsequent node, typically a child DialogueNode, but this can also loop/point to other parts of the Dialogue Graph.
+ * @property sideEffect - method that runs whenever a dialogue node renders, allows you to update game state based on dialogue events.
+ */
 export type DialogueNode = {
     id: string;
-    name: string // whos speaking
+    name: string
     render: string | (() => string) // Maybe just use empty string to representing blank message for navigation nodes (f.e chaining options together with no text).
     options: DialogueOption[]
     next?: DialogueNode
