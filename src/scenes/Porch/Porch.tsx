@@ -10,6 +10,7 @@ import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
 import generateDialogue from "@/tests/generateDialogue";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
+import viya_dia_bg from '@/assets/artwork/dialogue_bgs/terrible_test.png'
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -109,7 +110,7 @@ export default function Porch() {
                     position="-90 -240 0"
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => DialogueService.startDialogue(generateDialogue()),
+                        () => DialogueService.startDialogue(generateDialogue(), {overlay: viya_dia_bg}),
                         () => addLogMessage(`She is smoking a cigarette.`)
                     ]}
             />

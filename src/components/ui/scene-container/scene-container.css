@@ -4,5 +4,13 @@
     height: 100%;
     top: 0;
     left: 0;
-    background: #000000aa;
+    background-color: #000000aa;
+    opacity: 0;
+    animation: forwards 0.5s fadeIn;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
 }
