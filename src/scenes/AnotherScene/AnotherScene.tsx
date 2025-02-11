@@ -6,7 +6,7 @@ import HeadCam from '@/components/lume/HeadCam'
 import { createSignal, onMount } from 'solid-js'
 import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
-import applyShader from '@/core/applyShader'
+import applyShader from '@/core/lume/applyShader'
 //import WadsCam from '@/components/lume/wadscam'
 import { InteractionMode } from '@/components/ui/interaction/InteractionModePicker'
 

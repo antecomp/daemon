@@ -4,7 +4,7 @@ import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
 import thingy from './models/thingy.gltf?url'
 import { onMount, Scene } from "lume";
-import applyShader from "@/core/applyShader";
+import applyShader from "@/core/lume/applyShader";
 import player_ref from '../shared_models/player_ref.fbx?url'
 
 export default function ThirdScene() {

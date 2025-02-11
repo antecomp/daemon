@@ -1,9 +1,9 @@
 import HeadCam from "@/components/lume/HeadCam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
-import { Scene } from "lume";
+import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show} from "solid-js"
-import applyShader from "@/core/applyShader";
+import applyShader from "@/core/lume/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
@@ -12,17 +12,23 @@ import { addLogMessage } from "@/components/ui/event-log/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
 import root from "@/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
+import applyShadows from "@/core/lume/applyShadows";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
 
+    let mapRef: ObjModel | undefined;
+
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
                 applyShader(sceneRef);
             });
+        }
+        if(mapRef) {
+            applyShadows(mapRef);
         }
     })
 
@@ -52,8 +58,6 @@ export default function Porch() {
                 position="100 -356 200" 
                 color="white"
                 cast-shadow="true"
-                shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
-                // shadow-bias={-0.005} // Reduce shadow acne
             />
 
             <lume-point-light 
@@ -63,8 +67,6 @@ export default function Porch() {
                 position="100 -356 0" 
                 color="white"
                 cast-shadow="true"
-                shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
-                // shadow-bias={-0.005} // Reduce shadow acne
             />
 
             <lume-sphere
@@ -117,6 +119,7 @@ export default function Porch() {
                 id="map"
                 obj={mapobj}
                 mtl={mapmtl}
+                ref={mapRef}
                 recieve-shadow="true"
                 cast-shadow="true"
                 align-point="0.5 0.5"

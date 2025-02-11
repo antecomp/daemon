@@ -1,0 +1,13 @@
+# Blender 4.3.2 MTL File: 'None'
+# www.blender.org
+
+newmtl Material.001
+Ns 0.000000          # Set to 0 to remove shininess
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.000000 0.000000 0.000000  # Set to black (no specular reflection)
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1               # Change from 2 to 1 (removes specular)
+

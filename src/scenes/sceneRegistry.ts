@@ -1,4 +1,5 @@
 import { Component, lazy } from "solid-js";
+import Liminality from "./Liminality/Liminality";
 
 type SceneComponent = Component<{}>;
 
@@ -18,5 +19,6 @@ export const scenes: SceneRegistry = { // Change any type to something proper la
     AnotherScene: lazy(() => import("./AnotherScene/AnotherScene")),
     ThirdScene: lazy(() => import("./ThirdScene/ThirdScene")),
     Sponza: lazy(() => import("./Sponza/Sponza")),
-    Porch: lazy(() => import("./Porch/Porch"))
+    Porch: lazy(() => import("./Porch/Porch")),
+    Liminality: lazy(() => import("./Liminality/Liminality"))
 }
