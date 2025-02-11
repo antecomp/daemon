@@ -50,3 +50,7 @@ button {
   padding: 1px;
   margin: 1px;
 }
+
+#dg-ver {
+  text-align: right;
+}
