@@ -1,0 +1,243 @@
+.hermes-container {
+	position: absolute;
+	right: 0;
+	top: 10px;
+	z-index: 2; /* show above modals */
+    --fgc: white;
+    --outlinec: black;
+	--altfgc: #555;
+}
+
+.sender-container {
+	width: 240px;
+	height: 184px;
+	background: url('/src/components/ui/hermes/assets/base.png');
+	padding-top: 8px;
+	/* display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 86px repeat(3, 27px);
+	grid-column-gap: 0px;
+	grid-row-gap: 0px; */
+}
+
+.sender-container .text-preview {
+	height: 83px;
+	margin: 3px 5px 2px 5px;
+	padding: 1px;
+	padding-left: 3px;
+	line-height: 120%;
+	cursor: default;
+}
+
+.sender-container.inactive {
+/* 	filter: brightness(0.5); */
+	pointer-events: none;
+}
+
+.hermes-resp-container.inactive {
+	pointer-events: none;
+	opacity: 0.25;
+}
+
+.sender-container .text-preview img {
+	position: absolute;
+	left: 5px;
+}
+
+.sender-container .text-preview .name {
+	margin-left: 2px;
+	margin-right: 30px;
+}
+
+.hermes-resp-container {
+	display: flex;
+	padding-left: 10px;
+	height: 27px;
+	align-items: center;
+	opacity: 0.5;
+	cursor: pointer;
+	margin-bottom: 1px;
+	user-select: none;
+}
+
+.text-preview + div {
+	margin-top: 4px !important;
+}
+
+.hermes-resp-container:hover {
+	opacity: 1;
+}
+
+.hermes-resp-container span {
+	background: white;
+	background-position: 5px 7px;
+	flex-grow: 1;
+	height: 1px;
+}
+
+.hermes-resp-container img {
+	height: min-content;
+}
+
+.hermes-footer {
+	background: url('/src/components/ui/hermes/assets/footerbase.png');
+	width: 240px;
+	height: 21px;
+	display: flex;
+  	align-items: center;
+	cursor: default;
+}
+
+/* .sender-container.inactive + .hermes-footer {
+	filter: brightness(0.5);
+} */
+
+.hermes-footer span {
+	font-family: 'teeny';
+	line-height: 50%;
+	font-size: 5px;
+}
+
+.hermes-footer img {
+	float: left;
+  	margin-right: 3px;
+}
+
+.sender-container.inactive + .hermes-footer .hermes-disconnect {
+	cursor: default;
+}
+
+.hermes-disconnect {
+	margin-left: auto;
+	padding: 8px;
+ 	padding-right: 2px;
+	color: var(--altfgc);
+	cursor:default;
+}
+
+.hermes-disconnect.can-disconnect {
+	cursor: pointer !important;
+	color: var(--fgc);
+}
+
+
+
+/* =========================================================== */
+
+.messages-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end; /* align to right side */
+	/* justify-content: flex-end; align to bottom (when no overflow)   - BREAKS OVERFLOW SCROLL BECAUSE FUCK YOU (ISSUE RESOLVED BUT NOT FIXED 🖕 ) */ 
+	padding-bottom: 5px;
+	padding-right: 6px;
+	gap: 5px;
+	height: 400px;
+	overflow: auto;
+	overflow-x: hidden;
+	/* overflow: hidden; */
+	scrollbar-width: none;
+	cursor: default;
+}
+
+/* .hermes-container::before {
+	content: url('/src/components/ui/hermes/assets/fadething.png');
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 2;
+} */
+
+/* ref: https://github.com/philipwalton/flexbugs/issues/53 */
+.messages-container > :first-child {
+	/* margin-top: auto; */
+	height: 410px;
+  	flex-grow: 1;
+  	flex-shrink: 0;
+}
+
+.message-content {
+	width: 223px;
+	height: 82px;
+	background: url('/src/components/ui/hermes/assets/message_body_bg.png');
+}
+
+.message-content p {
+	padding: 2px 5px;
+}
+
+.message-dogtag {
+	display: flex;
+}
+
+.message-dogtag img {
+	display: block;
+}
+
+.message-dogtag span {
+	background-color: var(--fgc);
+	color: var(--outlinec);
+	line-height: 80%;
+}
+
+.message-body {
+	position: relative;
+}
+
+.message-body:last-child, .visualizer-body:last-child {
+	animation: message-send 0.5s forwards;
+}
+
+@keyframes message-send {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+.hermes-pages {
+	position: absolute;
+	bottom: 27px;
+	left: -11px;
+	background: url('/src/components/ui/hermes/assets/pagecon.png');
+	width: 10px;
+	height: 82px;
+	display: flex;
+	flex-direction: column;
+	padding-top: 9px;
+	padding-bottom: 9px;;
+}
+
+.hermes-pages.hp-first {
+	background: url('/src/components/ui/hermes/assets/pagecon_tsel.png');
+}
+
+.hermes-pages.hp-last {
+	background: url('/src/components/ui/hermes/assets/pagecon_bsel.png');
+}
+
+.hermes-page-opt {
+	width: 100%;
+	display: block;
+	height: auto;
+	flex-grow: 1;
+	cursor: pointer;
+	
+}
+
+.hpo-active {
+	background-color: white;
+	cursor: default;
+}
+
+.visualizer-body {
+    width: 223px;
+    height: 82px;
+    background: black;
+    color: #aaa;
+    border: solid #aaa 1px;
+    padding: 2px 5px;
+}

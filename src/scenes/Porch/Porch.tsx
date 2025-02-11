@@ -1,13 +1,19 @@
 import HeadCam from "@/components/lume/HeadCam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
-import { onMount, Scene } from "lume";
+import { Scene } from "lume";
+import {onMount, createSignal, Show} from "solid-js"
 import applyShader from "@/core/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
+import { DialogueService } from "@/core/dialogue/dialogueManager";
+import root from "@/dialogues/rabbits/porchRabbit";
+import {default as viya_root} from "./dialogues/viya_dialogue"
+
+export const [showRabbit, setShowRabbit] = createSignal(true);
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -30,9 +36,6 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            {/* <WadsCam
-                defaultPosition="-228 -282 -5"
-            /> */}
             <HeadCam
                 position="-230 -317 128"
                 baseOrientation={{yaw: 290, pitch: 0}}
@@ -51,15 +54,7 @@ export default function Porch() {
                 cast-shadow="true"
                 shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
                 // shadow-bias={-0.005} // Reduce shadow acne
-            >
-                {/* <lume-sphere size="20" 
-                    cast-shadow="true" 
-                    receive-shadow="false" 
-                    color="#ff006e" 
-                    //@ts-ignore
-                    has="basic-material"
-                ></lume-sphere> */}
-            </lume-point-light>
+            />
 
             <lume-point-light 
                 intensity="6000" 
@@ -70,24 +65,7 @@ export default function Porch() {
                 cast-shadow="true"
                 shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
                 // shadow-bias={-0.005} // Reduce shadow acne
-            >
-                {/* <lume-sphere size="20" 
-                    cast-shadow="true" 
-                    receive-shadow="false" 
-                    color="#ff006e" 
-                    //@ts-ignore
-                    has="basic-material"
-                ></lume-sphere> */}
-            </lume-point-light>
-
-            {/* <lume-directional-light
-                intensity="120" 
-                align-point="0.5 0.5" 
-                mount-point="0.5 0.5" 
-                position="100 -128 100" 
-                color="white"
-                cast-shadow="true"
-            /> */}
+            />
 
             <lume-sphere
                 id="stars"
@@ -99,7 +77,7 @@ export default function Porch() {
                 size="6000 6000 6000"
                 mount-point="0.5 0.5 0.5"
                 color="white"
-            ></lume-sphere>
+            />
 
             <YBillboard
                     texture={viyaTexture}
@@ -107,22 +85,34 @@ export default function Porch() {
                     position="-90 -240 0"
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => addLogMessage(`She doesn't say anything`),
+                        () => DialogueService.startDialogue(
+                            viya_root, 
+                            {
+                                // overlay: viya_dia_bg, 
+                                canCloseDialogueEarly: true,
+                                cameraHijack: {
+                                    sceneRef,
+                                    targetPosition: "122 -287 151",
+                                    targetOrientation: {yaw: 41, pitch: 2}
+                                }
+                            }
+                        ),
                         () => addLogMessage(`She is smoking a cigarette.`)
                     ]}
             />
-
-            <YBillboard
-                    texture={friendTexture}
-                    size={50}
-                    position="-70 -266 200"
-                    interactions={[
-                        () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
-                        () => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
-                        () => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
-                    ]}
-            />
-
+            <Show when={showRabbit()}>
+                <YBillboard
+                        texture={friendTexture}
+                        size={50}
+                        position="-70 -266 200"
+                        interactions={[
+                            () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
+                            //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
+                            () => DialogueService.startDialogue(root),
+                            () => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
+                        ]}
+                />
+            </Show>
             <lume-obj-model
                 id="map"
                 obj={mapobj}
@@ -131,7 +121,7 @@ export default function Porch() {
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
-            ></lume-obj-model>
+            />
 
         </lume-scene>
     )

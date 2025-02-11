@@ -3,6 +3,11 @@
   src: url('@/assets/fonts/Piksel-JAGa.ttf');
 }
 
+@font-face {
+  font-family: 'teeny';
+  src: url(../assets/fonts/TeenyTinyPixls-o2zo.ttf);
+}
+
 :root {
   color: rgba(255, 255, 255, 0.87);
   background: rgb(0, 0, 0);
@@ -25,6 +30,10 @@ body {
   align-items: center;
   height: 100vh;
   font-family: 'main';
+
+  /* dont ask - makes pixel aligned */
+  /* margin-left: 1px;
+  overflow-y: hidden; */
 }
 
 #scene-container {
@@ -40,4 +49,8 @@ button {
   font-family: 'main';
   padding: 1px;
   margin: 1px;
+}
+
+#dg-ver {
+  text-align: right;
 }

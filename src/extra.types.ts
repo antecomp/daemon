@@ -32,3 +32,5 @@ export type VLID = `${string}:${string}` // I wish I could make this more robust
  * "x y z" - coordinates as a string. Used for position prop for lume elements.
  */
 export type LumePosition = `${number} ${number} ${number}`
+
+export type Point3DTuple = [number, number, number]; // Can convert from this to LumePosition with array.join(' ')...

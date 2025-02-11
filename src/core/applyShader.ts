@@ -88,8 +88,9 @@ export default function applyShader(scene: Scene) {
 
     // Overwrite draw method with our custom passes.
     scene.drawScene = () => {
-        // idk why I had this camera thing. Seems to work without?
-        //renderPass.camera = scene.threeCamera;
+        // IM GLAD I ONLY COMMENTED OUT THIS CAMERA THING. NOW ITS NEEDED LMFAOOOOOOO
+        // THIS IS NEEDED IF THE CAMERA EVER CHANGES - I.E WHEN WE HAVE A HIJACKER CAMERA!!!
+        renderPass.camera = scene.threeCamera;
         updateCameraRotation();
         outlinePass.selectedObjects = hoveredItem() ? [hoveredItem()!] : []; // Kinda gross. Will change how this works later maybe.
         composer.render();

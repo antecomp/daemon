@@ -8,6 +8,9 @@ import bl from '@/assets/ui/corners/s5/bl.png'
 import br from '@/assets/ui/corners/s5/br.png'
 
 export default function Sidebar() {
+
+    // TODO (When sidebar has more content): Have this subscribe to the dialogue signal and gray itself out when there's dialogue.
+
     return (
         <CornerRect id="sidebar" borderSize={1} borderType="solid white" corners={[tl, tr, bl, undefined]} style={{width: 'inherit', height: 'inherit'}}>
             <CornerRect id="debug-menu" borderSize={1} borderType="solid white" corners={[tl, tr, bl, br]} style={{margin: '4px', height: 'fit-content', padding: '5px'}}>
