@@ -15,10 +15,15 @@ import { DialogueService } from "@/core/dialogue/dialogueManager";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
-// Do purposeful none reactive destructure of the root node to copy it?
-// It doesn't matter since we're passing the getter result plain into here anyways...
-// Just destructure for the sake of convenience.
+/**
+ * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
+ * 
+ * This component is conditionally rendered (check HermesOverlay) based on the state of the DialogueService.activeDialogue signal, to spawn a new Hermes
+ * instance you want to start a dialogue using DialogueService.
+ * @param root - The root node of the dialogue tree
+ */
 export default function Hermes({root}: {root: DialogueNode}) {
+  // non-reactive destructure done here out of convenience, we're instantiating the signal on input anyway
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
   const addMessage = ({ name, text }: { name: string; text: string }) => {
     setMessages((prev) => [...prev, { name, text }]);
@@ -56,7 +61,7 @@ export default function Hermes({root}: {root: DialogueNode}) {
     }
 
     if (node.next) {
-    await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing
+      await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing (TODO: should I add some randomness here?)
       await advanceDialogue(node.next);
     } else {
         // Generate our own termination option.
@@ -78,7 +83,6 @@ export default function Hermes({root}: {root: DialogueNode}) {
   }
 
   onMount(() => {
-    //const root = generateDialogue(); // This will be given as a prop or by some atom later...
     advanceDialogue(root);
   });
 

@@ -7,6 +7,12 @@ export interface MessageBoxProps {
     text: string | (() => string);
   }
 
+  /**
+   * Simple helper component for Hermes, renders out individual messages/nodes within the dialogue tree.
+   * @param name: Whos speaking ("dogtag"). Set this to "VISUALIZER" if you want to instead have a /me-like gray action box.
+   * @param text: The content of the message (string or a function that returns a string)
+   * @returns 
+   */
 export default function MessageBox (props: MessageBoxProps) {
   let ref: HTMLDivElement | undefined;
 

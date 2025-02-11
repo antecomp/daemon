@@ -8,6 +8,13 @@ interface hijackCameraSettings {
     targetOrientation: Omit<Gimbal, 'roll'>
 }
 
+/**
+ * You will likely never use this, it's only utilized by the DialogueManager to reposition the camera during dialogue. 
+ * 
+ * Appends a new active camera with a set position and orientation to a scene.
+ * @param hijackCameraSettings - composed of {sceneRef: Scene, targetOrientation: {pitch: number, yaw: number}, targetPosition: LumePosition} - all are hopefully self-explinatory.
+ * @returns a reference to that camera body (such that you can use .remove() on it later)
+ */
 export default function hijackCamera({sceneRef, targetOrientation, targetPosition}: hijackCameraSettings) {
     if (!sceneRef) {console.log("No scene detected for hijack"); return;}
 

@@ -5,6 +5,16 @@ import { Element3D, Scene } from "lume";
 import hijackCamera from "@/components/lume/hijackCamera";
 
 
+type StartDialogueOptions = {
+    overlay?: string, 
+    canCloseDialogueEarly?: boolean, 
+    cameraHijack?: {
+        sceneRef: Scene  | undefined, 
+        targetPosition: LumePosition, 
+        targetOrientation: Omit<Gimbal, 'roll'>
+    }
+};
+
 // Singleton for managing the active dialogue, exposes signal for conditional rendering of Hermes with a dialogue instance.
 class DialogueManager {
     private static instance: DialogueManager;
@@ -35,9 +45,13 @@ class DialogueManager {
         return this.instance;
     }
 
-    // Add options later for camera hijacking / artwork
-    // Options will eventually include: sceneRef? cameraRef? and desired position/rotation to tween to. <- whatever you need for hijacking the camera
-    public startDialogue(rootNode: DialogueNode, options?: {overlay?: string, canCloseDialogueEarly?: boolean, cameraHijack?: {sceneRef: Scene  | undefined, targetPosition: LumePosition, targetOrientation: Omit<Gimbal, 'roll'>}}) {
+    /**
+     * Launch a new Hermes instance (new dialogue sequence).
+     * @param rootNode, required param, a ref to the root node of the dialogue tree you want to render.
+     * @param options - Start dialogue options (all optional), reference type definition for more details
+     * @throws "Dialogue already in progress" error if there's already an active dialogue.
+     */
+    public startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
         if(this.activeDialogue()) throw new Error("Dialogue already in progress.");
         this.setActiveDialogue(rootNode);
         this.setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
@@ -47,6 +61,9 @@ class DialogueManager {
         this.hijackCameraBody = hijackCamera({...options.cameraHijack})
     }
 
+    /**
+     * Terminate dialogue sequence. Either called by Hermes at a leaf node (or early disconnect). However this can be called early from anywhere to terminate dialogue (be careful!).
+     */
     public endDialogue() {
         if (!this.activeDialogue()) return;
 
@@ -58,4 +75,5 @@ class DialogueManager {
     }
 }
 
+/** The instantiated singleton of DialogueManager, always just call methods off this, never touch the class! */
 export const DialogueService = DialogueManager.getInstance();

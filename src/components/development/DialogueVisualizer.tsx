@@ -1,11 +1,13 @@
 import { createSignal } from "solid-js";
-import generateDialogue from "@/tests/generateDialogue"; // Developer swaps this path to test different trees.
 import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
-import root from "@/dialogues/rabbits/porchRabbit";
+import root from "@/tests/generateDialogue"; // Swap this out to test different dialogue components.
 
 /**
- * Recursively renders the dialogue tree with indentation and loop detection.
+ * Simple dialogue tree visualizer used for testing/debugging composed dialogue.
+ * Also reference /tests/generateDialogue for the script that forwards a dialogue root to this component.
+ * 
+ * To view this test tree in-dev, navigate to http://localhost:5173/dialogue.html
  */
 function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), depth = 0) {
     if (!node) return null;
@@ -55,7 +57,6 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
  * Component to visualize a generated dialogue tree.
  */
 const DialogueVisualizer = () => {
-    //const [dialogueRoot] = createSignal(generateDialogue()); // Generate dialogue tree once
     const [dialogueRoot] = createSignal(root);
 
     return (

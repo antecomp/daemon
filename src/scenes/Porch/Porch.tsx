@@ -9,11 +9,9 @@ import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
-import generateDialogue from "@/tests/generateDialogue";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
-import viya_dia_bg from '@/assets/artwork/dialogue_bgs/terrible_test.png'
 import root from "@/dialogues/rabbits/porchRabbit";
-import WadsCam from "@/components/lume/wadscam";
+import {default as viya_root} from "./dialogues/viya_dialogue"
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -56,15 +54,7 @@ export default function Porch() {
                 cast-shadow="true"
                 shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
                 // shadow-bias={-0.005} // Reduce shadow acne
-            >
-                {/* <lume-sphere size="20" 
-                    cast-shadow="true" 
-                    receive-shadow="false" 
-                    color="#ff006e" 
-                    //@ts-ignore
-                    has="basic-material"
-                ></lume-sphere> */}
-            </lume-point-light>
+            />
 
             <lume-point-light 
                 intensity="6000" 
@@ -75,24 +65,7 @@ export default function Porch() {
                 cast-shadow="true"
                 shadow-mapSize={{ x: 1024, y: 1024 }} // Higher values = sharper shadows
                 // shadow-bias={-0.005} // Reduce shadow acne
-            >
-                {/* <lume-sphere size="20" 
-                    cast-shadow="true" 
-                    receive-shadow="false" 
-                    color="#ff006e" 
-                    //@ts-ignore
-                    has="basic-material"
-                ></lume-sphere> */}
-            </lume-point-light>
-
-            {/* <lume-directional-light
-                intensity="120" 
-                align-point="0.5 0.5" 
-                mount-point="0.5 0.5" 
-                position="100 -128 100" 
-                color="white"
-                cast-shadow="true"
-            /> */}
+            />
 
             <lume-sphere
                 id="stars"
@@ -104,7 +77,7 @@ export default function Porch() {
                 size="6000 6000 6000"
                 mount-point="0.5 0.5 0.5"
                 color="white"
-            ></lume-sphere>
+            />
 
             <YBillboard
                     texture={viyaTexture}
@@ -113,7 +86,7 @@ export default function Porch() {
                     interactions={[
                         () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                         () => DialogueService.startDialogue(
-                            generateDialogue(), 
+                            viya_root, 
                             {
                                 // overlay: viya_dia_bg, 
                                 canCloseDialogueEarly: true,
@@ -148,7 +121,7 @@ export default function Porch() {
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
-            ></lume-obj-model>
+            />
 
         </lume-scene>
     )
