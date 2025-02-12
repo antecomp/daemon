@@ -1,5 +1,5 @@
 //import WadsCam from "@/components/lume/wadscam";
-import applyShader from "@/core/applyShader";
+import applyShader from "@/core/lume/applyShader";
 import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
