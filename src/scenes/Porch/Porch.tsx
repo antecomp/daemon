@@ -24,7 +24,7 @@ export default function Porch() {
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
-                applyShader(sceneRef);
+                applyShader(sceneRef, 2, 0.12);
             });
         }
         if(mapRef) {

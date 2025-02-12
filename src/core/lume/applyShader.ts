@@ -9,7 +9,7 @@ import { EffectComposer } from "three/examples/jsm/Addons.js";
 //import { SSAOPass } from "three/examples/jsm/Addons.js";
 
 
-export default function applyShader(scene: Scene) {
+export default function applyShader(scene: Scene, mode?: 0 | 1 | 2, lumaCutoff?: number) {
     if (!scene.glRenderer) return; // 
     //console.log("DEBUG glRenderer found, applying custom pass...");
 
@@ -49,7 +49,8 @@ export default function applyShader(scene: Scene) {
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
-    ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;
+    //ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;
+    ditherPass.uniforms.lumaCutoff.value = lumaCutoff ?? 0;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
     function updateCameraRotation() {
@@ -67,7 +68,7 @@ export default function applyShader(scene: Scene) {
         const OX = -(SCENE_DIMENSIONS.width * yawRotation) / (2 * Math.atan(Math.tan(Math.PI / 8) * aspect));
         const OY = (SCENE_DIMENSIONS.height * pitch) / (Math.PI / 4);
 
-        switch (DITHER_MODE) {
+        switch (mode ?? 2) {
             case 0:
                 break; // No offset
             case 1:

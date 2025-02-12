@@ -17,11 +17,11 @@ export default function Liminality() {
     let baseRef: ObjModel | undefined;
     let dmnRef: ObjModel | undefined;
 
-    let piss = "400";
+    let piss = "300";
 
     onMount(() => {
         requestAnimationFrame(() => {
-            sceneRef && applyShader(sceneRef);
+            sceneRef && applyShader(sceneRef, 0);
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
         })
