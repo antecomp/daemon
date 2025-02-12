@@ -91,6 +91,7 @@ export default function applyShader(scene: Scene) {
         // IM GLAD I ONLY COMMENTED OUT THIS CAMERA THING. NOW ITS NEEDED LMFAOOOOOOO
         // THIS IS NEEDED IF THE CAMERA EVER CHANGES - I.E WHEN WE HAVE A HIJACKER CAMERA!!!
         renderPass.camera = scene.threeCamera;
+        outlinePass.renderCamera = scene.threeCamera;
         updateCameraRotation();
         outlinePass.selectedObjects = hoveredItem() ? [hoveredItem()!] : []; // Kinda gross. Will change how this works later maybe.
         composer.render();
