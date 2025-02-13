@@ -88,9 +88,21 @@ export const Prepare = new (class extends PassiveMove {
         self.addEffect(new VulnerableEffect(1)); // Applies Vulnerability before execution
     }
 
+    applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
+        if(opponentMove instanceof AggressiveMove) {
+            self.data.skipPrepare = true;
+        }
+    }
+
     applyPostEffect(self: Actor, _opponent: Actor): void {
         console.log(`${self.name} is now Prepared!`);
+        if(self.data.skipPrepare) {
+            console.log("Focus Broken, Attacked While Preparing!");
+            self.data.skipPrepare = false;
+            return;
+        }
         self.addEffect(new PreparedEffect(1)); // Applies Prepared for the next move pairing
+        self.data.skipPrepare = false;
     }
 })();
 
@@ -104,7 +116,6 @@ export const Heal = new (class extends PassiveMove {
     applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
         // Use this temporary flag to communicate between CounterEffect, PostEffect
         if(opponentMove instanceof AggressiveMove) {
-            console.log("egg");
             self.data.skipHeal = true;
         }
     }
@@ -116,7 +127,7 @@ export const Heal = new (class extends PassiveMove {
             return;
         }
 
-        console.log(`${self.name} heals for 20 HP!`);
+        console.log(`${self.name} heals for 5 HP!`);
         self.heal(5); // TODO: Change this to scale based on prepared level
         self.data.skipHeal = false;
     }

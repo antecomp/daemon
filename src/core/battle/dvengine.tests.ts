@@ -1,5 +1,6 @@
 import { Actor } from "./actor";
 import { evaluatePairing } from "./dvengine";
+import { VulnerableEffect } from "./effects";
 import { Attack, Fireball, Defend, Observe, Evade, Prepare, Heal } from "./moves";
 
 const allMoves = [Attack, Fireball, Defend, Observe, Evade, Prepare, Heal];
@@ -31,6 +32,8 @@ for (const playerMove of allMoves) {
         enemy.health = 90;
         player.effects = new Map();
         enemy.effects = new Map();
+        player.addEffect(new VulnerableEffect(2))
+        enemy.addEffect(new VulnerableEffect())
 
         console.log("BEFORE MOVE:");
         printActorState(player);

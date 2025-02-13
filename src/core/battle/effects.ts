@@ -40,15 +40,6 @@ export function computeEffectMultipliers(actor: Actor): MultiplierSet {
 
 
 
-
-
-
-
-
-
-
-
-
 /* Effects Themselves............... (move to different file?) */
 
 export class VulnerableEffect extends Effect {
