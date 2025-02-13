@@ -1,5 +1,6 @@
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
+import { printActorState } from "./dvengine.tests";
 import { computeEffectMultipliers } from "./effects";
 
 export function evaluatePairing(index: number, player: Actor, enemy: Actor) {
@@ -10,6 +11,13 @@ export function evaluatePairing(index: number, player: Actor, enemy: Actor) {
 
     playerMove.applyPreEffect(player, enemy);
     enemyMove.applyPreEffect(enemy, player);
+
+    playerMove.applyCounterEffect(player, enemy, enemyMove);
+    enemyMove.applyCounterEffect(enemy, player, playerMove);
+
+    console.log("INTERMEDIATE STATE:")
+    printActorState(player);
+    printActorState(enemy);
 
     const playerEffectMultipliers = computeEffectMultipliers(player);
     const enemyEffectMultipliers = computeEffectMultipliers(enemy);

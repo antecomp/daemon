@@ -57,7 +57,8 @@ export class VulnerableEffect extends Effect {
     }
 
     override getEffectMultipliers(level: number): MultiplierSet {
-        return { incoming: 1.5 ** level, outgoing: 1 }; // Increases damage taken
+        // Change this based on whatever balancing you want.
+        return { incoming: 2 ** level, outgoing: 1 }; // Increases damage taken
     }
 }
 

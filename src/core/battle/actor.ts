@@ -10,6 +10,14 @@ export class Actor {
     moves: Move[]; // Full move pool
     currentSequence: Move[] = [];
 
+    // Track custom data and flags for advanced logic
+    // Leaving this open for whatever that is needed.
+    // As an example, Heal uses this to see if we should heal or skip.
+    // Moves and whatever is responsible for maintaining this data tho, be smart :)
+    data: {
+        [key: string]: any
+    } = {};
+
     constructor(name: string, maxHealth: number, moves: Move[]) {
         this.name = name;
         this.maxHealth = maxHealth;

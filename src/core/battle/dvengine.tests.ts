@@ -9,7 +9,7 @@ const player = new Actor("Player", 100, allMoves);
 const enemy = new Actor("Enemy", 100, allMoves);
 
 // Function to print current state of actors
-function printActorState(actor: Actor) {
+export function printActorState(actor: Actor) {
     console.log(`${actor.name}: HP=${actor.health}`);
     console.log(`With Effects:`, JSON.stringify([...actor.effects.entries()], null, 2));
 }
@@ -27,8 +27,8 @@ for (const playerMove of allMoves) {
         enemy.currentSequence[0] = enemyMove;
 
         // Reset actor health before each test
-        player.health = 100;
-        enemy.health = 100;
+        player.health = 90; // have slighly reduced health to test healing
+        enemy.health = 90;
         player.effects = new Map();
         enemy.effects = new Map();
 

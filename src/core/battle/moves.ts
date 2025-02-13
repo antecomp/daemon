@@ -5,11 +5,16 @@ import { PreparedEffect, VulnerableEffect } from "./effects";
 export abstract class Move {
     name: string = "NULL_MOVE (OH FUCK DEBUG TIME)"
     abstract getMultipliers(actor: Actor): MultiplierSet;
+    /** Applied *before* interaction - use for in-turn status-effects */
     applyPreEffect(_self: Actor, _opponent: Actor) {};
+    /** Applied *after* interaction (and effect ticker) - use for next-turn status effects */
     applyPostEffect(_self: Actor, _opponent: Actor) {};
+    /** Applied before interaction - custom logic based on opponent move. */
+    applyCounterEffect(_self: Actor, _opponent: Actor, _opponentMove: Move) {}
 }
 
 class PassiveMove extends Move {
+    name = "Nothing"
     override getMultipliers(_actor: Actor): MultiplierSet {
         return { incoming: 1, outgoing: 0 }; // Passive moves don't deal damage
     }
@@ -96,9 +101,24 @@ export const Heal = new (class extends PassiveMove {
         self.addEffect(new VulnerableEffect(1)); // Applies Vulnerability before execution
     }
 
+    applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
+        // Use this temporary flag to communicate between CounterEffect, PostEffect
+        if(opponentMove instanceof AggressiveMove) {
+            console.log("egg");
+            self.data.skipHeal = true;
+        }
+    }
+
     applyPostEffect(self: Actor, _opponent: Actor): void {
+        if(self.data.skipHeal) {
+            console.log('Attacked While Healing! No Health Restored!');
+            self.data.skipHeal = false;
+            return;
+        }
+
         console.log(`${self.name} heals for 20 HP!`);
-        self.heal(20); // Change this to scale based on prepared level
+        self.heal(5); // TODO: Change this to scale based on prepared level
+        self.data.skipHeal = false;
     }
 })();
 
