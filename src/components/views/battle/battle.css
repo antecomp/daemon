@@ -1,0 +1,9 @@
+#battle-container, #battle-view {
+    position: relative;
+}
+
+#battle-sprite {
+    position: absolute;
+    top: 150px;
+    left: 430px;
+}
