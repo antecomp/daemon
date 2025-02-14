@@ -41,7 +41,7 @@ export default function OppStatusBar(props: OppStatusBarProps) {
                     <span>{props.name}</span>
                     <img src={name_postcut} />
                 </div>
-                <div class="statbar">
+                <div class="statbar" style={{"--level": `${props.level}%`}}>
                         <img class="front" src={sbb_left} />
                         <div class='middle'></div>
                         <img src={sbb_right}  />

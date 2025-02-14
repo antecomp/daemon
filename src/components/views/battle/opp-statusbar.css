@@ -37,7 +37,7 @@
     }
 
     .statbar {
-        --level: 80%;
+        --level: 0%; /* will be changed by component */
         background-color: black; /* fallback */
         z-index: 2;
         margin-left: -15px;
@@ -74,7 +74,7 @@
         height: 29px;
         margin-right: -23px;
 
-        div {
+        & div {
             background-color: black;
             display: flex;
             align-items: center;
@@ -84,7 +84,7 @@
             padding: 5px;
         }
 
-        img {
+        & img {
             height: min-content;
             margin-right: 5px;
             margin-left: -8px;
@@ -98,7 +98,7 @@
     .opp-hint:first-of-type {
         border-left: solid 1px white;
 
-        img {
+        & img {
             margin-left: 0;
         }
     }

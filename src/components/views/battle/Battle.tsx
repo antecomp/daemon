@@ -45,7 +45,7 @@ export default function Battle() {
     return (
         <div id="battle-container">
             <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
-                <OppStatusBar name='STOLAS' level={0.5}/>
+                <OppStatusBar name='STOLAS' level={65}/>
                 <canvas id="battle-bg" width="1065" height="695" ref={canvasRef}></canvas>
                 <img src={pallas} alt="" id="battle-sprite" />
             </CornerRect>
