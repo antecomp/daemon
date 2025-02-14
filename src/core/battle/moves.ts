@@ -3,7 +3,7 @@ import { MultiplierSet } from "./battle.types";
 import { PreparedEffect, VulnerableEffect } from "./effects";
 
 export abstract class Move {
-    name: string = "NULL_MOVE (OH FUCK DEBUG TIME)"
+    name: string = "NULL_MOVE"
     abstract getMultipliers(actor: Actor): MultiplierSet;
     /** Applied *before* interaction - use for in-turn status-effects */
     applyPreEffect(_self: Actor, _opponent: Actor) {};
@@ -20,6 +20,8 @@ class PassiveMove extends Move {
     }
 }
 
+export const NothingMove = new PassiveMove();
+
 class AggressiveMove extends Move {
     name = "Generic Attack"
     override getMultipliers(actor: Actor): MultiplierSet {
@@ -35,6 +37,28 @@ class AggressiveMove extends Move {
     }
 }
 
+/** Moves that require "focus" - i.e passive moves that can be broken if attacked.
+ * 
+ * Maintains temporary "moveIsBroken" in actor data.
+ */
+class FocusMove extends PassiveMove {
+    name = "Focus"
+    applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
+        if(opponentMove instanceof AggressiveMove) {
+            self.data.focusLost = true;
+        }
+    }
+    // Now check for focusLost in postEffect
+}
+
+class VulnerableMove extends FocusMove {
+    name = "Vulnerable Focus"
+    applyPreEffect(self: Actor, _opponent: Actor): void {
+        console.log(`${self.name} requires focus to ${this.name}! Vulnerable for this turn!`);
+        self.addEffect(new VulnerableEffect(1)); // Applies Vulnerability before execution
+    }
+}
+
 
 // Likely when/if we have a larger subset of moves, we will want to move these to a seperate file
 // Or potentially even instantiate them per-enemy.
@@ -46,10 +70,11 @@ export const Attack = new AggressiveMove(); // Utilize default behavior. Basic A
 // Such as one that *requires* prepared.
 export const StrongAttack = new (class extends AggressiveMove {
     name = "Strong Attack"
+    damageMultiplier = 5
     override getMultipliers(actor: Actor): MultiplierSet {
         let mults = super.getMultipliers(actor);
         if (actor.getEffectLevel("prepared") > 0) {
-            mults.outgoing *= 5;
+            mults.outgoing *= this.damageMultiplier;
         }
         return mults;
     }
@@ -59,11 +84,12 @@ export const StrongAttack = new (class extends AggressiveMove {
 // are pretty simple too...
 export const Fireball = new (class extends AggressiveMove {
     name = "Fireball"
+    damageMultiplier = 1.25
     override getMultipliers(actor: Actor): MultiplierSet {
         let mults = super.getMultipliers(actor);
         // This scales the already existing mults,
         // So a prepared fireball is 2 * 1.25 (where 2 is gathered from the super call)
-        mults.outgoing *= 1.25 
+        mults.outgoing *= this.damageMultiplier
         return mults;
     }
 })()
@@ -81,55 +107,33 @@ export const Defend = new(class extends PassiveMove {
 
 
 
-export const Prepare = new (class extends PassiveMove {
+export const Prepare = new (class extends VulnerableMove {
     name = "Prepare"
-    applyPreEffect(self: Actor, _opponent: Actor): void {
-        console.log(`${self.name} becomes Vulnerable due to Preparing!`);
-        self.addEffect(new VulnerableEffect(1)); // Applies Vulnerability before execution
-    }
-
-    applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
-        if(opponentMove instanceof AggressiveMove) {
-            self.data.skipPrepare = true;
-        }
-    }
-
     applyPostEffect(self: Actor, _opponent: Actor): void {
         console.log(`${self.name} is now Prepared!`);
-        if(self.data.skipPrepare) {
+        if(self.data.focusLost) {
             console.log("Focus Broken, Attacked While Preparing!");
-            self.data.skipPrepare = false;
+            self.data.focusLost = false;
             return;
         }
+        // TODO: If prepared on this turn we actually scale and apply to next turn. (prepare prolong)
         self.addEffect(new PreparedEffect(1)); // Applies Prepared for the next move pairing
-        self.data.skipPrepare = false;
+        self.data.focusLost = false;
     }
 })();
 
-export const Heal = new (class extends PassiveMove {
+export const Heal = new (class extends VulnerableMove {
     name = "Heal"
-    applyPreEffect(self: Actor, _opponent: Actor): void {
-        console.log(`${self.name} is temporarily Vulnerable while healing!`);
-        self.addEffect(new VulnerableEffect(1)); // Applies Vulnerability before execution
-    }
-
-    applyCounterEffect(self: Actor, _opponent: Actor, opponentMove: Move): void {
-        // Use this temporary flag to communicate between CounterEffect, PostEffect
-        if(opponentMove instanceof AggressiveMove) {
-            self.data.skipHeal = true;
-        }
-    }
-
     applyPostEffect(self: Actor, _opponent: Actor): void {
-        if(self.data.skipHeal) {
+        if(self.data.focusLost) {
             console.log('Attacked While Healing! No Health Restored!');
-            self.data.skipHeal = false;
+            self.data.focusLost = false;
             return;
         }
 
         console.log(`${self.name} heals for 5 HP!`);
         self.heal(5); // TODO: Change this to scale based on prepared level
-        self.data.skipHeal = false;
+        self.data.focusLost = false;
     }
 })();
 

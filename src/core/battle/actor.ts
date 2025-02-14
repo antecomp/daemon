@@ -1,14 +1,17 @@
 import { Effect } from "./effects";
 import { Move } from "./moves";
 
+export type MoveSequence = [Move, Move, Move, Move, Move]
+
 export class Actor {
     name: string;
     maxHealth: number;
     health: number;
     // Enforce uniqueness of effect with a map, but stack multiple of the same effect in an array.
     effects: Map<string, Effect[]> = new Map(); 
-    moves: Move[]; // Full move pool
-    currentSequence: Move[] = [];
+    //moves: Move[]; // Full move pool
+    moves: Move[];
+    currentSequence: MoveSequence | [] = [];
 
     // Track custom data and flags for advanced logic
     // Leaving this open for whatever that is needed.
@@ -71,7 +74,7 @@ export class Actor {
         return this.effects.has(type) ? this.effects.get(type)!.length : 0;
     }
 
-    public setMoveSequence(selectedMoves: Move[]) {
+    public setMoveSequence(selectedMoves: MoveSequence) {
         if (selectedMoves.length > 5) {
             throw new Error("Cannot select more than 5 moves in a sequence!");
         }

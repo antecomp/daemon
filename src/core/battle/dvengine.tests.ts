@@ -1,13 +1,19 @@
 import { Actor } from "./actor";
-import { evaluatePairing } from "./dvengine";
-import { VulnerableEffect } from "./effects";
-import { Attack, Fireball, Defend, Observe, Evade, Prepare, Heal } from "./moves";
+// import { evaluatePairing, evaluateSequencePairing } from "./dvengine";
+// import { VulnerableEffect } from "./effects";
+// import { Attack, Fireball, Defend, Observe, Evade, Prepare, Heal, Move } from "./moves";
 
-const allMoves = [Attack, Fireball, Defend, Observe, Evade, Prepare, Heal];
+// const TEST_ALL_COMBINATIONS = false;
+// const TEST_SPECIFIC_SEQUENCE: {player: Move[], enemy: Move[]} | false = {
+//     player: [Prepare, Attack, Prepare, Heal, Prepare],
+//     enemy: [Attack, Attack, Attack, Attack, Attack]
+// } 
 
-// Create test actors
-const player = new Actor("Player", 100, allMoves);
-const enemy = new Actor("Enemy", 100, allMoves);
+// const allMoves = [Attack, Fireball, Defend, Observe, Evade, Prepare, Heal];
+
+// // Create test actors
+// const player = new Actor("Player", 100, allMoves);
+// const enemy = new Actor("Enemy", 100, allMoves);
 
 // Function to print current state of actors
 export function printActorState(actor: Actor) {
@@ -17,34 +23,46 @@ export function printActorState(actor: Actor) {
 
 
 
-// Iterate through all possible move pairings
-for (const playerMove of allMoves) {
-    for (const enemyMove of allMoves) {
-        console.log("========================================");
-        console.log(`TESTING: Player uses ${playerMove.name} vs Enemy uses ${enemyMove.name}`);
-        console.log("========================================");
-        
-        player.currentSequence[0] = playerMove;
-        enemy.currentSequence[0] = enemyMove;
+// // Iterate through all possible move pairings
+// if(TEST_ALL_COMBINATIONS){
+//     for (const playerMove of allMoves) {
+//         for (const enemyMove of allMoves) {
+//             console.log("========================================");
+//             console.log(`TESTING: Player uses ${playerMove.name} vs Enemy uses ${enemyMove.name}`);
+//             console.log("========================================");
+            
+//             player.currentSequence[0] = playerMove;
+//             enemy.currentSequence[0] = enemyMove;
 
-        // Reset actor health before each test
-        player.health = 90; // have slighly reduced health to test healing
-        enemy.health = 90;
-        player.effects = new Map();
-        enemy.effects = new Map();
-        player.addEffect(new VulnerableEffect(2))
-        enemy.addEffect(new VulnerableEffect())
+//             // Reset actor health before each test
+//             player.health = 90; // have slighly reduced health to test healing
+//             enemy.health = 90;
+//             player.effects = new Map();
+//             enemy.effects = new Map();
+//             player.addEffect(new VulnerableEffect(2))
+//             enemy.addEffect(new VulnerableEffect())
 
-        console.log("BEFORE MOVE:");
-        printActorState(player);
-        printActorState(enemy);
+//             console.log("BEFORE MOVE:");
+//             printActorState(player);
+//             printActorState(enemy);
 
-        // Run the move pairing
-        evaluatePairing(0, player, enemy);
-        
-        console.log("AFTER MOVE:");
-        printActorState(player);
-        printActorState(enemy);
-        console.log("\n\n");
-    }
-}
+//             // Run the move pairing
+//             evaluatePairing(0, player, enemy);
+            
+//             console.log("AFTER MOVE:");
+//             printActorState(player);
+//             printActorState(enemy);
+//             console.log("\n\n");
+//         }
+//     }
+// }
+
+// if(TEST_SPECIFIC_SEQUENCE) {
+//     player.currentSequence = TEST_SPECIFIC_SEQUENCE.player;
+//     enemy.currentSequence = TEST_SPECIFIC_SEQUENCE.enemy;
+//     evaluateSequencePairing(player, enemy);
+//     console.log("After Sequence");
+//     printActorState(player);
+//     printActorState(enemy);
+//     console.log("\n\n");
+// }

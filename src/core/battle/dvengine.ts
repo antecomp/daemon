@@ -16,8 +16,8 @@ export function evaluatePairing(index: number, player: Actor, enemy: Actor) {
     enemyMove.applyCounterEffect(enemy, player, playerMove);
 
     console.log("INTERMEDIATE STATE:")
-    printActorState(player);
-    printActorState(enemy);
+    //printActorState(player);
+    //printActorState(enemy);
 
     const playerEffectMultipliers = computeEffectMultipliers(player);
     const enemyEffectMultipliers = computeEffectMultipliers(enemy);
@@ -53,4 +53,15 @@ export function evaluatePairing(index: number, player: Actor, enemy: Actor) {
     for(const effectStack of enemy.effects.values()) {
         effectStack.forEach(effect => effect.applyPostEffect(enemy, player));
     }
+}
+
+export function evaluateSequencePairing(player: Actor, enemy: Actor) {
+    if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate");
+    if(enemy.currentSequence.length != 5 ) throw new Error("Enemty sequence not of correct length to evaluate")
+    
+    for(let i = 0; i < 5; i++) {
+        evaluatePairing(i, player, enemy);
+    }
+
+    // I think resetting the sequence should be done elsewhere.
 }
