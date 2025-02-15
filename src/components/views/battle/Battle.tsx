@@ -5,6 +5,7 @@ import CornerRect from '@/components/util/corner-rect/CornerRect';
 import vtl from './assets/vtl.png'
 import vtr from './assets/vtr.png'
 import OppStatusBar from './OppStatusbar';
+import Actionbar from './Actionbar';
 
 export default function Battle() {
 
@@ -46,9 +47,10 @@ export default function Battle() {
         <div id="battle-container">
             <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                 <OppStatusBar name='STOLAS' level={65}/>
-                <canvas id="battle-bg" width="1065" height="695" ref={canvasRef}></canvas>
+                <canvas id="battle-bg" width="1060" height="695" ref={canvasRef}></canvas>
                 <img src={pallas} alt="" id="battle-sprite" />
             </CornerRect>
+            <Actionbar/>
         </div>
     )
 }
