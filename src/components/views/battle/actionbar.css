@@ -17,6 +17,11 @@
             bottom: 0px;
             left: -3px;
             z-index: 2;
+            pointer-events: none;
+        }
+
+        #runebuilder circle {
+            pointer-events: auto;
         }
 
         #rb-buttons {
@@ -78,11 +83,63 @@
         grid-template-rows: 30px 50px;
 
         #fch-bar {
-            --level: 33%;
+            --level: 25%;
+            --offset: calc(100% - var(--level));
             margin-top: 6px;
             margin-left: 15px;
             background-color: black; /* fallback */
-            background: linear-gradient(135deg, white var(--level), black var(--level));
+            background: linear-gradient(135deg, white 50%, black 50%);
+            background-size: 200% 100%;
+            background-position: var(--offset);
+            transition: background-position 0.5s linear;
+        }
+
+        #multbars {
+            display: flex;
+            position: relative;
+            justify-content: center;
+
+            .dbars {
+                position: absolute;
+                top: 0;
+                mix-blend-mode: difference;
+            }
+
+            .ur-bar {
+                --level: 80%;
+                background: linear-gradient(270deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--level);
+            }
+
+            .us-bar {
+                --level: 15%;
+                --offset: calc(100% - var(--level));
+                background: linear-gradient(90deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--offset);
+            }
+
+            .ds-bar {
+                --level: 20%;
+                background: linear-gradient(270deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--level);
+            }
+
+            .dr-bar {
+                --level: 43%;
+                --offset: calc(100% - var(--level));
+                background: linear-gradient(90deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--offset);
+            }
+
+
         }
     }
+}
+
+#multbars img {
+    transition: background-position 0.5s linear;
 }

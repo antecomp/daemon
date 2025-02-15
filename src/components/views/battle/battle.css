@@ -1,5 +1,11 @@
 #battle-container, #battle-view {
     position: relative;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#battle-container img {
+    -webkit-user-drag: none;
 }
 
 #battle-sprite {

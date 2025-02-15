@@ -38,12 +38,16 @@
 
     .statbar {
         --level: 0%; /* will be changed by component */
+        --offset: calc(100% - var(--level));
         background-color: black; /* fallback */
         z-index: 2;
         margin-left: -15px;
         display: grid;
         grid-template-columns: min-content auto min-content;
-        background: linear-gradient(135deg, white var(--level), black var(--level));
+        background: linear-gradient(135deg, white 50.5%, black 50.5%);
+        background-size: 200% 100%;
+        background-position: var(--offset);
+        transition: background-position 0.5s linear;
 
         .middle {
             border-style: solid;
