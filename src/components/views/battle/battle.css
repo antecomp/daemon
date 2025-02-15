@@ -10,6 +10,7 @@
 
 #battle-sprite {
     position: absolute;
-    top: 150px;
-    left: 430px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -22,7 +22,7 @@ class PassiveMove extends Move {
 
 export const NothingMove = new PassiveMove();
 
-class AggressiveMove extends Move {
+export class AggressiveMove extends Move {
     name = "Generic Attack"
     override getMultipliers(actor: Actor): MultiplierSet {
         const incoming = 1;

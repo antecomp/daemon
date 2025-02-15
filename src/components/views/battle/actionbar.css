@@ -69,11 +69,6 @@
         }
     }
 
-    .moves {
-        /* min-width: 5px;
-        height: 30px; */
-    }
-
     .right {
         position: relative;
         background: url('./assets/actionbar-right-base.png');

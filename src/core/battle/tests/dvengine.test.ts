@@ -13,8 +13,8 @@ import { describe, expect, test } from 'vitest'
 // Helper function to create fresh test actors
 function createActors() {
     return {
-        player: new Actor("Player", 100, [Attack, Fireball, Defend, Evade, Prepare, Heal, StrongAttack, Observe]),
-        enemy: new Actor("Enemy", 100, [Attack, Fireball, Defend, Evade, Prepare, Heal, StrongAttack, Observe]),
+        player: new Actor("Player", 100),
+        enemy: new Actor("Enemy", 100),
     };
 }
 
