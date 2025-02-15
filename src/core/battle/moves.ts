@@ -13,7 +13,7 @@ export abstract class Move {
     applyCounterEffect(_self: Actor, _opponent: Actor, _opponentMove: Move) {}
 }
 
-class PassiveMove extends Move {
+export class PassiveMove extends Move {
     name = "Nothing"
     override getMultipliers(_actor: Actor): MultiplierSet {
         return { incoming: 1, outgoing: 0 }; // Passive moves don't deal damage
@@ -51,7 +51,7 @@ class FocusMove extends PassiveMove {
     // Now check for focusLost in postEffect
 }
 
-class VulnerableMove extends FocusMove {
+export class VulnerableMove extends FocusMove {
     name = "Vulnerable Focus"
     applyPreEffect(self: Actor, _opponent: Actor): void {
         console.log(`${self.name} requires focus to ${this.name}! Vulnerable for this turn!`);

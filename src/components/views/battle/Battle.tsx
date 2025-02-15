@@ -10,6 +10,7 @@ import Actionbar from './Actionbar';
 import { DVOpponentData, MoveData, MoveDataSequence } from '@/core/battle/battle.types';
 import { createMutable, createStore } from 'solid-js/store';
 import { Actor } from '@/core/battle/actor';
+import { VulnerableEffect } from '@/core/battle/effects';
 
 // function createBattleOpponentStore(baseOpponent: DVOpponentData) {
 //     return createStore({
@@ -73,6 +74,7 @@ export default function Battle(props: BattleProps) {
       function preSequence() {
         const opponentSequence = props.opponentData.getSequence(opponent, player); 
         setInsight(generateHint(opponentSequence));
+
       }
 
 
@@ -87,6 +89,9 @@ export default function Battle(props: BattleProps) {
 
       setTimeout(() => {
         opponent.takeDamage(25)
+        opponent.addEffect(new VulnerableEffect()) // Does NOT update UI
+        //opponent.effects = new Map(opponent.effects); // lol, this technically will trigger an update.
+        console.log(opponent.effects)
         console.log(opponent.health)
       }, 1000);
     
@@ -107,7 +112,7 @@ export default function Battle(props: BattleProps) {
                 <img src={props.opponentData.sprite} alt="" id="battle-sprite" />
             </CornerRect>
             <Actionbar/>
-            {opponent.health}
+            {/* {JSON.stringify([...opponent.effects.entries()])} */}
         </div>
     )
 }

@@ -1,6 +1,6 @@
 // Simple Helper Types.
 
-import { Actor, MoveSequence } from "./actor";
+import { Actor } from "./actor";
 import { Move } from "./moves";
 
 export type MultiplierSet = {incoming: number, outgoing: number};
@@ -10,6 +10,10 @@ export interface MoveData {
     icon: string, // image url
     instance: Move 
     // description: string // for tooltip (to implement)
+}
+
+export interface PlayerMoveData extends MoveData {
+    rbIcon: string // seperate icon for the runebuilder.
 }
 
 export type MoveDataSequence = [MoveData, MoveData, MoveData, MoveData, MoveData];

@@ -10,6 +10,7 @@ import us_bar from './assets/mult_us.png'
 import dr_bar from './assets/mult_dr.png'
 import ds_bar from './assets/mult_ds.png'
 import placeholder_move_icon from './assets/placeholder_move_icon.png'
+import { Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade } from '@/core/battle/moves/playermoves';
 import { For } from 'solid-js'
 
 interface SelectedMoveProps {
@@ -29,6 +30,10 @@ function SelectedMove(props: SelectedMoveProps) {
 }
 
 export default function Actionbar() {
+
+        // Will be gathered from game store later...
+        const playerMoveBin = [Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade];
+
     return (
         <div id="battle-actionbar">
             <div class="left">
