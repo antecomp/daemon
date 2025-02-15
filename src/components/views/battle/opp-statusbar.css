@@ -76,7 +76,7 @@
     .opp-hint {
         display: flex;
         height: 29px;
-        margin-right: -23px;
+        margin-right: -25px;
 
         & div {
             background-color: black;

@@ -9,6 +9,24 @@ import ur_bar from './assets/mult_ur.png'
 import us_bar from './assets/mult_us.png'
 import dr_bar from './assets/mult_dr.png'
 import ds_bar from './assets/mult_ds.png'
+import placeholder_move_icon from './assets/placeholder_move_icon.png'
+import { For } from 'solid-js'
+
+interface SelectedMoveProps {
+    icon?: string // img url
+    text: string
+}
+
+function SelectedMove(props: SelectedMoveProps) {
+    return (
+        <span class="player-move">
+            <div>
+                <img src={props.icon}/>
+                {props.text}
+            </div>
+        </span>
+    )
+}
 
 export default function Actionbar() {
     return (
@@ -22,7 +40,31 @@ export default function Actionbar() {
                 </div>
             </div>
             <div class="right">
-                <div class="moves">            
+                <div class="moves">
+                    <For each={[
+                        {
+                            icon: placeholder_move_icon,
+                            text: "Move"
+                        },
+                        {
+                            icon: placeholder_move_icon,
+                            text: "Move"
+                        },
+                        {
+                            icon: placeholder_move_icon,
+                            text: "Move"
+                        },
+                        {
+                            icon: placeholder_move_icon,
+                            text: "Move"
+                        },
+                        {
+                            icon: placeholder_move_icon,
+                            text: "Move"
+                        },
+                    ]}>
+                        {(x) => <SelectedMove {...x}/>}
+                    </For>
                 </div>
                 <img src={fch_bar} id="fch-bar" />
                 <div id="multbars">

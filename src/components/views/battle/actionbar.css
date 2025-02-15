@@ -60,7 +60,7 @@
         #eject-button {
             z-index: 3;
             position: absolute;
-            bottom: 0;
+            bottom: 1px;
             left: 0;
         }
 
@@ -121,7 +121,7 @@
             }
 
             .ds-bar {
-                --level: 20%;
+                --level: 0%;
                 background: linear-gradient(270deg, white 50%, black 50%);
                 background-size: 200% 100%;
                 background-position: var(--level);
@@ -136,6 +136,43 @@
             }
 
 
+        }
+
+        .moves {
+            display: flex;
+            translate: -28px;
+
+            .player-move {
+                display: flex;
+                height: 29px;
+                margin-right: -25px;
+
+                & div {
+                    background-color: black;
+                    display: flex;
+                    align-items: center;
+                    border-top: solid white 1px;
+                    border-bottom: solid white 1px;
+                    height: 100%;
+                    padding: 5px;
+                }
+
+                & img {
+                    height: min-content;
+                    margin-right: 5px;
+                    margin-left: -8px;
+                }
+            }
+
+            .player-move::before {
+                content: url('./assets/opp-hint-l.png');
+                transform: scaleY(-1);
+            }
+
+            .player-move::after {
+                content: url('./assets/opp-hint-r.png');
+                transform: scaleY(-1);
+            }
         }
     }
 }
