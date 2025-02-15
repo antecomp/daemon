@@ -11,7 +11,7 @@ function App() {
     <>
       <footer id='dg-ver'>daemon.garden ({DG_VER})</footer>
       {/* <Main/> */}
-      <Battle opponent={OPPONENT_PANOPTES}/>
+      <Battle opponentData={OPPONENT_PANOPTES}/>
     </>
   )
 }

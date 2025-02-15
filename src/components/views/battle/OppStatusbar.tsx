@@ -1,11 +1,9 @@
 import { For } from 'solid-js'
-import icon from './assets/placeholder_icon.png'
 import './opp-statusbar.css'
 import name_postcut from './assets/name-postcut.png'
 import sbb_left from './assets/sbb-left.png'
 import sbb_right from './assets/sbb-right.png'
 import insight_label from './assets/insight-label.png'
-import placeholder_move_icon from './assets/placeholder_move_icon.png'
 import { MoveData } from '@/core/battle/battle.types'
 
 
@@ -14,7 +12,7 @@ interface OppStatusBarProps {
     name: string
     health: number
     // sequenceHint?: MoveData[]
-    sequenceHint?: [MoveData?, MoveData?, MoveData?, MoveData?, MoveData?]
+    sequenceHint?: (MoveData | undefined)[]
 }
 
 interface OppHintProps {

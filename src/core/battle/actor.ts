@@ -9,7 +9,7 @@ export class Actor {
     health: number;
     // Enforce uniqueness of effect with a map, but stack multiple of the same effect in an array.
     effects: Map<string, Effect[]> = new Map(); 
-    //moves: Move[]; // Full move pool (uneeded by Actor, moved to wrapper.)
+    availableMoves: Move[]; // Full move pool (uneeded by Actor, moved to wrapper.)
     currentSequence: MoveSequence | [] = [];
 
     // Track custom data and flags for advanced logic
@@ -20,10 +20,11 @@ export class Actor {
         [key: string]: any
     } = {};
 
-    constructor(name: string, maxHealth: number) {
+    constructor(name: string, maxHealth: number, availableMoves: Move[]) {
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = maxHealth;
+        this.availableMoves = availableMoves
     }
 
     // Returns bool indicating if Actor is alive. Idk if ill end up using this or not.

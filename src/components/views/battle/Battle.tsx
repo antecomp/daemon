@@ -1,4 +1,4 @@
-import { onMount } from 'solid-js';
+import { createSignal, onMount } from 'solid-js';
 import './battle.css'
 // import pallas from '@/assets/artwork/characters/pallas.png'
 import snake from '@/assets/artwork/dæmons/snaek.png'
@@ -7,24 +7,37 @@ import vtl from './assets/vtl.png'
 import vtr from './assets/vtr.png'
 import OppStatusBar from './OppStatusbar';
 import Actionbar from './Actionbar';
-import { DVOpponentData } from '@/core/battle/battle.types';
-import { createStore } from 'solid-js/store';
+import { DVOpponentData, MoveData, MoveDataSequence } from '@/core/battle/battle.types';
+import { createMutable, createStore } from 'solid-js/store';
 import { Actor } from '@/core/battle/actor';
 
-function createBattleOpponentStore(baseOpponent: DVOpponentData) {
-    return createStore({
-        ...baseOpponent,
-        actor: new Actor(baseOpponent.name, baseOpponent.maxHealth)
-    })
-}
+// function createBattleOpponentStore(baseOpponent: DVOpponentData) {
+//     return createStore({
+//         ...baseOpponent,
+//         actor: new Actor(baseOpponent.name, baseOpponent.maxHealth)
+//     })
+// }
 
 interface BattleProps {
-    opponent: DVOpponentData
+    opponentData: DVOpponentData
+}
+
+const generateHint = (seq: MoveDataSequence): (MoveData | undefined)[] => {
+    const indices = new Set<number>
+
+    while(indices.size < 3) {
+        indices.add(Math.floor(Math.random() * seq.length));
+    }
+
+    return seq.map((item, index) => indices.has(index) ? undefined : item);
 }
 
 export default function Battle(props: BattleProps) {
 
-    const [opponent] = createBattleOpponentStore(props.opponent);
+    const opponent = createMutable(new Actor(props.opponentData.name, props.opponentData.maxHealth, props.opponentData.moveBin.map(m => m.instance)));
+    const player = createMutable(new Actor("player", 100, []));
+
+    const [insight, setInsight] = createSignal<(MoveData | undefined)[]>([]);
 
     let canvasRef: HTMLCanvasElement | undefined;
 
@@ -54,13 +67,27 @@ export default function Battle(props: BattleProps) {
         ctx.fillStyle = pattern;
         ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
       };
+
+
+
+      function preSequence() {
+        const opponentSequence = props.opponentData.getSequence(opponent, player); 
+        setInsight(generateHint(opponentSequence));
+      }
+
+
+
+
+
     
       onMount(() => {
         drawPattern();
+        preSequence();
       });
 
       setTimeout(() => {
-        opponent.actor.takeDamage(25)
+        opponent.takeDamage(25)
+        console.log(opponent.health)
       }, 1000);
     
 
@@ -69,15 +96,18 @@ export default function Battle(props: BattleProps) {
             <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                 <OppStatusBar 
                     name={opponent.name.toUpperCase()} 
-                    health={opponent.actor.health / opponent.actor.maxHealth * 100} 
-                    icon={opponent.icon}
+                    health={opponent.health / props.opponentData.maxHealth * 100} 
+                    icon={props.opponentData.icon}
                     /* placeholder */
-                    sequenceHint={opponent.getSequence(opponent.actor, opponent.actor)}
+                    // sequenceHint={props.opponent.getSequence(opponent.actor, opponent.actor)}
+                    // sequenceHint={[...props.opponentData.moveBin] as MoveDataSequence}
+                    sequenceHint={insight()}
                 />
                 <canvas id="battle-bg" width="1060" height="695" ref={canvasRef}></canvas>
-                <img src={opponent.sprite} alt="" id="battle-sprite" />
+                <img src={props.opponentData.sprite} alt="" id="battle-sprite" />
             </CornerRect>
             <Actionbar/>
+            {opponent.health}
         </div>
     )
 }
