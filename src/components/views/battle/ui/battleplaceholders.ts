@@ -1,8 +1,8 @@
-import { DVOpponentData, MoveData } from "@/core/battle/battle.types";
+import { DVOpponentData, MoveData } from "@/core/battle/engine/battle.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan from "@/assets/artwork/dæmons/snaek.png"
 import sample_move_icon from "@/components/views/battle/assets/placeholder_move_icon.png"
-import { AggressiveMove, NothingMove } from "@/core/battle/moves";
+import { AggressiveMove, NothingMove } from "@/core/battle/engine/moves";
 
 // Custom name example
 const biteMove: MoveData = {

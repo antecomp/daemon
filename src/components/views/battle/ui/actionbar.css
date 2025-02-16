@@ -8,7 +8,7 @@
     .left {
         position: relative;
         
-        background: url('./assets/actionbar-left-base.png');
+        background: url('../assets/actionbar-left-base.png');
         background-repeat: no-repeat;
 
         #runebuilder {
@@ -82,7 +82,7 @@
 
     .right {
         position: relative;
-        background: url('./assets/actionbar-right-base.png');
+        background: url('../assets/actionbar-right-base.png');
         background-repeat: no-repeat;
         display: grid;
         grid-template-columns: auto;
@@ -172,12 +172,12 @@
             }
 
             .player-move::before {
-                content: url('./assets/opp-hint-l.png');
+                content: url('../assets/opp-hint-l.png');
                 transform: scaleY(-1);
             }
 
             .player-move::after {
-                content: url('./assets/opp-hint-r.png');
+                content: url('../assets/opp-hint-r.png');
                 transform: scaleY(-1);
             }
         }

@@ -1,10 +1,10 @@
 import { For } from 'solid-js'
 import './opp-statusbar.css'
-import name_postcut from './assets/name-postcut.png'
-import sbb_left from './assets/sbb-left.png'
-import sbb_right from './assets/sbb-right.png'
-import insight_label from './assets/insight-label.png'
-import { MoveData } from '@/core/battle/battle.types'
+import name_postcut from '../assets/name-postcut.png'
+import sbb_left from '../assets/sbb-left.png'
+import sbb_right from '../assets/sbb-right.png'
+import insight_label from '../assets/insight-label.png'
+import { MoveData } from '@/core/battle/engine/battle.types'
 
 
 interface OppStatusBarProps {

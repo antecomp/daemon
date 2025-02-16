@@ -1,7 +1,7 @@
-import { MoveData, PlayerMoveData } from "@/core/battle/battle.types";
+import { MoveData, PlayerMoveData } from "@/core/battle/engine/battle.types";
 import { Point } from "@/extra.types";
 import { For } from "solid-js";
-import { BattleUIState, useBattleUIState } from "./Battle";
+import { BattleUIState, useBattleUIState } from "../Battle";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;

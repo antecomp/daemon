@@ -1,4 +1,4 @@
-import { MultiplierSet, PlayerMoveData } from "../battle.types";
+import { MultiplierSet, PlayerMoveData } from "../engine/battle.types";
 import apprentice_icon from './icons/apprentice.png'
 import candle_icon from './icons/candle.png'
 import chain_icon from './icons/chains.png'
@@ -18,9 +18,9 @@ import prae_icon_ex from './icons/prae_ex.png'
 import priestess_icon_ex from './icons/priestess_ex.png'
 import trickster_icon_ex from './icons/trickster_ex.png'
 import lantern_icon_ex from './icons/lantern.png'
-import { AggressiveMove, NothingMove, PassiveMove, VulnerableMove } from "../moves";
-import { Actor } from "../actor";
-import { PreparedEffect, VulnerableEffect } from "../effects";
+import { AggressiveMove, NothingMove, PassiveMove, VulnerableMove } from "../engine/moves";
+import { Actor } from "../engine/actor";
+import { PreparedEffect, VulnerableEffect } from "../engine/effects";
 
 export const Attack: PlayerMoveData = {
     displayName: "Candlelight",

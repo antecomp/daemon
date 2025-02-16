@@ -53,7 +53,7 @@
         .middle {
             border-style: solid;
             border-width: 4px 0; /* Top and bottom only */
-            border-image-source: url('./assets/sbb-bim-t.png');
+            border-image-source: url('../assets/sbb-bim-t.png');
             border-image-slice: 4 0; /* Top and bottom stretch, left and right ignored */
             border-image-repeat: stretch; /* Stretches to fit */
         }
@@ -110,10 +110,10 @@
     }
 
     .opp-hint::before {
-        content: url('./assets/opp-hint-l.png');
+        content: url('../assets/opp-hint-l.png');
     }
 
     .opp-hint::after {
-        content: url('./assets/opp-hint-r.png');
+        content: url('../assets/opp-hint-r.png');
     }
 }

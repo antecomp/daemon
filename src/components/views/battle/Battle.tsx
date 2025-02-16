@@ -1,15 +1,15 @@
 import { createContext, createSignal, onMount, useContext } from 'solid-js';
-import './battle.css'
+import './ui/battle.css'
 // import pallas from '@/assets/artwork/characters/pallas.png'
 import CornerRect from '@/components/util/corner-rect/CornerRect';
 import vtl from './assets/vtl.png'
 import vtr from './assets/vtr.png'
-import OppStatusBar from './OppStatusbar';
-import Actionbar from './Actionbar';
-import { DVOpponentData, MoveData, MoveDataSequence, MultiplierSet } from '@/core/battle/battle.types';
+import OppStatusBar from './ui/OppStatusbar';
+import Actionbar from './ui/Actionbar';
+import { DVOpponentData, MoveData, MoveDataSequence, MultiplierSet } from '@/core/battle/engine/battle.types';
 import { createMutable } from 'solid-js/store';
-import { Actor } from '@/core/battle/actor';
-import { computeEffectMultipliers } from '@/core/battle/effects';
+import { Actor } from '@/core/battle/engine/actor';
+import { computeEffectMultipliers } from '@/core/battle/engine/effects';
 import sleep from '@/util/sleep';
 
 // function createBattleOpponentStore(baseOpponent: DVOpponentData) {

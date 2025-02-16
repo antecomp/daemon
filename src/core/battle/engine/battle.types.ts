@@ -1,5 +1,3 @@
-// Simple Helper Types.
-
 import { Actor } from "./actor";
 import { Move } from "./moves";
 
@@ -18,25 +16,6 @@ export interface PlayerMoveData extends MoveData {
 
 export type MoveDataSequence = [MoveData, MoveData, MoveData, MoveData, MoveData];
 
-
-// export class DVOpponent {
-//     name: string
-//     icon: string
-//     sprite: string
-//     actor: Actor
-//     moveBin: MoveData[]
-//     getSequence?: () => MoveSequence // Make non-optional later. We just have this so we can test UI init
-
-//     constructor(name: string, icon: string, sprite: string, actor: Actor, moveBin: MoveData[], getSequenceArrowFunc?: (() => MoveSequence)) {
-//         this.name = name;
-//         this.icon = icon;
-//         this.sprite = sprite;
-//         this.actor = actor;
-//         this.moveBin = moveBin;
-//         this.getSequence = getSequenceArrowFunc
-//     }
-// }
-
 export interface DVOpponentData {
     name: string
     icon: string
@@ -45,7 +24,7 @@ export interface DVOpponentData {
     moveBin: MoveData[]
     maxHealth: number
     // Use opponent and player state to make decisions...
-    getSequence: (me: Actor, player: Actor) => MoveDataSequence // HOW THE FUCK DO I MAKE THIS ACCESS MOVEBIN? WHAT IS THE FUCKING POINT OF MOVEBIN!?!?!?!?
+    getSequence: (me: Actor, player: Actor) => MoveDataSequence
 }
 
 

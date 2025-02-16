@@ -1,5 +1,5 @@
 import { Actor } from "../actor";
-import { evaluateSequencePairing } from "../dvengine";
+import { evaluateSequencePairing } from "../archive/dvengine";
 import { PreparedEffect, VulnerableEffect } from "../effects";
 import { Attack, Fireball, Defend, Observe, Evade, Prepare, Heal, StrongAttack, NothingMove } from "../moves";
 
