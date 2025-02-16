@@ -89,7 +89,7 @@ export default function Battle(props: BattleProps) {
 
 
         for(let moveIndex = 0; moveIndex < 5; moveIndex++) {
-            (async () => {const playerMove = player.currentSequence[moveIndex];
+            const playerMove = player.currentSequence[moveIndex];
             const oppMove = opponent.currentSequence[moveIndex];
 
             playerMove.applyPreEffect(player, opponent);
@@ -137,9 +137,13 @@ export default function Battle(props: BattleProps) {
 
             for(const effectStack of opponent.effects.values()) {
                 effectStack.forEach(effect => effect.applyPostEffect(opponent, player));
-            }})()
+            }
+
+            setPlayerMults({outgoing: 0, incoming: 0});
+            setOpponentMults({outgoing: 0, incoming: 0});
 
             await sleep(3000);
+
         }
 
         // Ui Cleanup
@@ -150,7 +154,7 @@ export default function Battle(props: BattleProps) {
 
         // Loop back.
         preSequence();
-
+        console.log(player, opponent);
 
     }
 
