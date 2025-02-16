@@ -3,7 +3,7 @@ import 'lume'
 import Main from './components/views/main/Main'
 import { DG_VER } from './config'
 import Battle from './components/views/battle/Battle'
-import { OPPONENT_PANOPTES } from './components/views/battle/ui/battleplaceholders'
+import { OPPONENT_PANOPTES } from './core/battle/battleplaceholders'
 
 function App() {
   // Will change to switch current screen based on game triggers.
