@@ -25,6 +25,7 @@ export interface DVOpponentData {
     maxHealth: number
     // Use opponent and player state to make decisions...
     getSequence: (me: Actor, player: Actor) => MoveDataSequence
+    backgroundShader: string
 }
 
 

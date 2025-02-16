@@ -7,7 +7,6 @@ import sleep from "@/util/sleep";
 import { computeEffectMultipliers } from "./effects";
 
 
-// Helper function - move this elsewhere during refactor plox.
 const generateHint = (seq: MoveDataSequence): (MoveData | undefined)[] => {
     const indices = new Set<number>
 
@@ -50,6 +49,9 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
         player.setMoveSequence(userSelectedSequence.map(movedata => movedata.instance));
         if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate");
+
+        // TODO: Advanced Move Pre-eval, stuff like repeat.
+        //  Maybe make more robust with some strange self-mutate property for moves?
 
         for(let moveIndex = 0; moveIndex < 5; moveIndex++) {
             const playerMove = player.currentSequence[moveIndex];
