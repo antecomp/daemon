@@ -24,6 +24,13 @@
             pointer-events: auto;
         }
 
+        #runebuilder line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 0.5s ease-in forwards;
+            pointer-events: none;
+        }
+
         #rb-buttons {
             z-index: 1;
             display: flex;
@@ -42,6 +49,10 @@
 
             #exec-button {
                 clip-path: polygon(100% 0, 100% 71%, 90% 100%, 0 100%, 0 0);
+            }
+
+            #reset-button.usable, #exec-button.usable {
+                filter: brightness(3);
             }
 
             /* change to require some sort of "active" class*/
@@ -175,4 +186,10 @@
 
 #multbars img {
     transition: background-position 0.5s linear;
+}
+
+@keyframes drawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
 }

@@ -22,7 +22,7 @@ const nothingMove: MoveData = {
 // export const sampleDVOpponent: DVOpponent = new DVOpponent("Panoptes", pan_icon, pan, new Actor("Panoptes", 100), [])
 
 export const OPPONENT_PANOPTES: DVOpponentData = {
-    name: "Panoptes",
+    name: "Panoptesian Serpent",
     icon: pan_icon,
     sprite: pan,
     moveBin: [biteMove, nothingMove],

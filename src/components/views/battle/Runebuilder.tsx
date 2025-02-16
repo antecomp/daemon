@@ -1,6 +1,7 @@
 import { MoveData, PlayerMoveData } from "@/core/battle/battle.types";
-import { coordinatePair, Point } from "@/extra.types";
+import { Point } from "@/extra.types";
 import { For } from "solid-js";
+import { BattleUIState, useBattleUIState } from "./Battle";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
@@ -14,6 +15,8 @@ interface RunebuilderProps {
 
 export default function Runebuilder(props: RunebuilderProps) {
 
+    const {battleUIState} = useBattleUIState();
+
     const CENTER = SVG_DIM / 2;
 
     const runePositions = new Map<MoveData, Point>();
@@ -24,7 +27,7 @@ export default function Runebuilder(props: RunebuilderProps) {
             <circle 
                 cx={CENTER} cy={CENTER}
                 r={RUNEBUILDER_RADIUS}
-                stroke="white"
+                stroke={(battleUIState() != BattleUIState.WAITING) ? "white" : "#aaa"}
                 stroke-width="2"
                 fill="black"
             ></circle>
