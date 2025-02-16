@@ -26,7 +26,7 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     icon: pan_icon,
     sprite: pan,
     moveBin: [biteMove, nothingMove],
-    maxHealth: 100,
+    maxHealth: 20,
     getSequence: (_me, _player) => {
         console.log(this);
         return [biteMove, nothingMove, nothingMove, biteMove, biteMove]

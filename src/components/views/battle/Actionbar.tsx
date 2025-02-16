@@ -11,8 +11,8 @@ import dr_bar from './assets/mult_dr.png'
 import ds_bar from './assets/mult_ds.png'
 import placeholder_move_icon from './assets/placeholder_move_icon.png'
 import { Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade } from '@/core/battle/moves/playermoves';
-import { createSignal, For } from 'solid-js'
-import { MoveData } from '@/core/battle/battle.types'
+import { Accessor, createSignal, For } from 'solid-js'
+import { MoveData, MultiplierSet } from '@/core/battle/battle.types'
 import { BattleUIState, useBattleUIState } from './Battle'
 
 interface SelectedMoveProps {
@@ -34,6 +34,19 @@ function SelectedMove(props: SelectedMoveProps) {
 interface ActionbarProps {
     execSequence: (userSelectedSequence: MoveData[]) => void
     playerHealth: number
+    playerMults: Accessor<MultiplierSet>
+    opponentMults: Accessor<MultiplierSet>
+}
+
+function mapMultiplier(x: number): number {
+    const oldMin = 1 / 5, oldMax = 5;
+    const newMin = 0, newMax = 100;
+
+    // Clamp x within the valid range
+    x = Math.max(oldMin, Math.min(x, oldMax));
+
+    return ((x - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
+
 }
 
 export default function Actionbar(props: ActionbarProps) {
@@ -105,12 +118,12 @@ export default function Actionbar(props: ActionbarProps) {
                 <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealth}%`} />
                 <div id="multbars">
                     <div class="userbars">
-                        <img src={ur_bar} class="ur-bar"/>
-                        <img src={us_bar} class="us-bar"/>
+                        <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.playerMults().incoming)}%`}/>
+                        <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.playerMults().outgoing)}%`}/>
                     </div>
                     <div class="dbars">
-                        <img src={ds_bar} class="ds-bar"/>
-                        <img src={dr_bar} class="dr-bar"/>
+                        <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.opponentMults().outgoing)}%`}/>
+                        <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.opponentMults().incoming)}%`}/>
                     </div>
                 </div>
             </div>

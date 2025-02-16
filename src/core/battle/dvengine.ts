@@ -57,7 +57,7 @@ export function evaluatePairing(index: number, player: Actor, enemy: Actor) {
 
 export function evaluateSequencePairing(player: Actor, enemy: Actor) {
     if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate");
-    if(enemy.currentSequence.length != 5 ) throw new Error("Enemty sequence not of correct length to evaluate")
+    if(enemy.currentSequence.length != 5 ) throw new Error("Enemty sequence not of correct length to evaluate");
     
     for(let i = 0; i < 5; i++) {
         evaluatePairing(i, player, enemy);

@@ -64,12 +64,12 @@ export const Prepare: PlayerMoveData = {
     instance: new (class extends VulnerableMove {
         name = "Prepare"
         applyPostEffect(self: Actor, _opponent: Actor): void {
-            console.log(`${self.name} is now Prepared!`);
             if(self.data.focusLost) {
                 console.log("Focus Broken, Attacked While Preparing!");
                 self.data.focusLost = false;
                 return;
             }
+            console.log("Prepared!")
             // TODO: If prepared on this turn we actually scale and apply to next turn. (prepare prolong)
             self.addEffect(new PreparedEffect(1)); // Applies Prepared for the next move pairing
             self.data.focusLost = false;
