@@ -11,11 +11,12 @@ import dr_bar from './assets/mult_dr.png'
 import ds_bar from './assets/mult_ds.png'
 import placeholder_move_icon from './assets/placeholder_move_icon.png'
 import { Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade } from '@/core/battle/moves/playermoves';
-import { For } from 'solid-js'
+import { createSignal, For } from 'solid-js'
+import { MoveData } from '@/core/battle/battle.types'
 
 interface SelectedMoveProps {
     icon?: string // img url
-    text: string
+    displayName: string
 }
 
 function SelectedMove(props: SelectedMoveProps) {
@@ -23,51 +24,46 @@ function SelectedMove(props: SelectedMoveProps) {
         <span class="player-move">
             <div>
                 <img src={props.icon}/>
-                {props.text}
+                {props.displayName}
             </div>
         </span>
     )
 }
 
-export default function Actionbar() {
+interface ActionbarProps {
+    execSequence: (userSelectedSequence: MoveData[]) => void
+}
 
-        // Will be gathered from game store later...
-        const playerMoveBin = [Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade];
+export default function Actionbar(props: ActionbarProps) {
+
+    // Will be gathered from game store later...
+    const playerMoveBin = [Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade];
+
+    const [sequenceBuffer, setSequenceBuffer] = createSignal<MoveData[]>([]);
+
+    const addRune = (toAdd: MoveData) => {
+        if(sequenceBuffer().length == 5) return;
+        setSequenceBuffer(prev => (prev.some(item => item == toAdd)) ? prev: [...prev, toAdd]);
+    }
+
+    const resetRunes = () => {
+        setSequenceBuffer([]);
+    }
+
 
     return (
         <div id="battle-actionbar">
             <div class="left">
                 <img src={eject_button} id='eject-button' />
-                <Runebuilder/>
+                <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
-                    <img src={reset_button} id='reset-button'/>
+                    <img src={reset_button} onClick={resetRunes} id='reset-button'/>
                     <img src={exec_button} id='exec-button'/>
                 </div>
             </div>
             <div class="right">
                 <div class="moves">
-                    <For each={[
-                        {
-                            icon: placeholder_move_icon,
-                            text: "Move"
-                        },
-                        {
-                            icon: placeholder_move_icon,
-                            text: "Move"
-                        },
-                        {
-                            icon: placeholder_move_icon,
-                            text: "Move"
-                        },
-                        {
-                            icon: placeholder_move_icon,
-                            text: "Move"
-                        },
-                        {
-                            icon: placeholder_move_icon,
-                            text: "Move"
-                        },
-                    ]}>
+                    <For each={sequenceBuffer()}>
                         {(x) => <SelectedMove {...x}/>}
                     </For>
                 </div>

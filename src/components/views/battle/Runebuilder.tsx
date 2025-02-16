@@ -1,12 +1,22 @@
+import { MoveData, PlayerMoveData } from "@/core/battle/battle.types";
+import { coordinatePair, Point } from "@/extra.types";
 import { For } from "solid-js";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
 const AVAILABLE_RUNE_COUNT = 8; // Will update based on actual prop data later.
 
-export default function Runebuilder() {
+interface RunebuilderProps {
+    availRunes: PlayerMoveData[], 
+    addRune: (toAdd: MoveData) => void,
+    sequenceBuffer: MoveData[]
+}
+
+export default function Runebuilder(props: RunebuilderProps) {
 
     const CENTER = SVG_DIM / 2;
+
+    const runePositions = new Map<MoveData, Point>();
 
     return (
         <svg width={SVG_DIM} height={SVG_DIM} id="runebuilder">
@@ -18,27 +28,70 @@ export default function Runebuilder() {
                 stroke-width="2"
                 fill="black"
             ></circle>
+
+            {/* Rune Lines */}
+            <g>
+            <For each={props.sequenceBuffer.slice(1)}>
+                {(rune, index) => {
+
+                    const prev = props.sequenceBuffer[index()];
+                    const currRune = runePositions.get(rune);
+                    const prevPos = runePositions.get(prev);
+
+                    if (!currRune || !prevPos) return null;
+
+                    return (
+                        <>
+                            <line
+                                x1={prevPos.x} y1={prevPos.y}
+                                x2={currRune.x} y2={currRune.y}
+                                stroke="white"
+                                stroke-width="2"
+                            />
+                        </>
+                    )
+                }}
+            </For>
+            </g>
+
             {/* Rune Button Circles */}
+            <g>
             <For 
                 /* Actual rune data will go here later */
-                each={[
-                    "rune1", "rune2", "rune3", "rune4", "rune5", "rune6", "rune7", "rune8"
-                ]}
+                each={props.availRunes}
             >
-                {(_rune, index) => 
+                {(rune, index) => 
                     {
                     const angle = (Math.PI * 2 * index()) / AVAILABLE_RUNE_COUNT
                     const x = CENTER + RUNEBUILDER_RADIUS * Math.cos(angle);
                     const y = CENTER + RUNEBUILDER_RADIUS * Math.sin(angle);
 
-                    return <circle
-                        cx={x} cy={y}
-                        r={RUNEBUILDER_RADIUS / 4}
-                        stroke="white"
-                        fill="black"
-                    ></circle>}
+                    runePositions.set(rune, { x, y });
+
+                    return (
+                        <>
+                            <circle
+                                cx={x} cy={y}
+                                r={RUNEBUILDER_RADIUS / 4}
+                                // stroke="white"
+                                stroke={props.sequenceBuffer.includes(rune) ? "white" : "#aaa"}
+                                // fill={(props.sequenceBuffer.includes(rune) ? "red" : "black")}
+                                fill="black"
+                                onClick={() => props.addRune(rune)}
+                            ></circle>
+                            <image
+                                href={rune.rbIcon}
+                                x={x - 16}
+                                y={y - 16}
+                                
+                                preserveAspectRatio="xMidYMid meet"
+                            />
+                        </>
+                    )
+                    }
                 }
             </For>
+            </g>
         </svg>
     )
 }

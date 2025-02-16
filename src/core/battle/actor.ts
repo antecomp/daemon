@@ -10,7 +10,7 @@ export class Actor {
     // Enforce uniqueness of effect with a map, but stack multiple of the same effect in an array.
     effects: Map<string, Effect[]> = new Map(); 
     availableMoves: Move[]; // Full move pool (uneeded by Actor, moved to wrapper.)
-    currentSequence: MoveSequence | [] = [];
+    currentSequence: Move[]= [];
 
     // Track custom data and flags for advanced logic
     // Leaving this open for whatever that is needed.
@@ -73,7 +73,7 @@ export class Actor {
         return this.effects.has(type) ? this.effects.get(type)!.length : 0;
     }
 
-    public setMoveSequence(selectedMoves: MoveSequence) {
+    public setMoveSequence(selectedMoves: Move[]) {
         if (selectedMoves.length > 5) {
             throw new Error("Cannot select more than 5 moves in a sequence!");
         }
