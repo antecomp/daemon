@@ -1,5 +1,5 @@
 import { Effect } from "./effects";
-import { Move } from "./moves";
+import { Move } from "../moves/moves.types";
 
 export type MoveSequence = [Move, Move, Move, Move, Move]
 

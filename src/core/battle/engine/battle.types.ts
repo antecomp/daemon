@@ -1,5 +1,4 @@
 import { Actor } from "./actor";
-import { Move } from "./moves";
 
 export type MultiplierSet = {incoming: number, outgoing: number};
 
