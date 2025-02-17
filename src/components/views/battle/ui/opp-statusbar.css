@@ -31,7 +31,7 @@
         letter-spacing: 5px;
         white-space: nowrap;
 
-        img {
+        & img {
             margin-left: -6px;
             z-index: 3;
         }
