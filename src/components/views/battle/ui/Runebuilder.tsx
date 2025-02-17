@@ -60,7 +60,6 @@ export default function Runebuilder(props: RunebuilderProps) {
             {/* Rune Button Circles */}
             <g>
             <For 
-                /* Actual rune data will go here later */
                 each={props.availRunes}
             >
                 {(rune, index) => 
@@ -80,7 +79,9 @@ export default function Runebuilder(props: RunebuilderProps) {
                                 stroke={props.sequenceBuffer.includes(rune) ? "white" : "#aaa"}
                                 // fill={(props.sequenceBuffer.includes(rune) ? "red" : "black")}
                                 fill="black"
-                                onClick={() => props.addRune(rune)}
+                                onClick={() => {
+                                    if(rune.instance.canPerform(props.sequenceBuffer.map(m => m.instance), index())) props.addRune(rune);
+                                }}
                             ></circle>
                             <image
                                 href={rune.rbIcon}

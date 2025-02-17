@@ -4,18 +4,22 @@ import { PreparedEffect, VulnerableEffect } from "./effects";
 
 export abstract class Move {
     name: string = "NULL_MOVE"
-    abstract getMultipliers(actor: Actor): MultiplierSet;
+    abstract getMultipliers(actor: Actor, _sequence: Move[], _index: number): MultiplierSet;
     /** Applied *before* interaction - use for in-turn status-effects */
-    applyPreEffect(_self: Actor, _opponent: Actor) {};
+    applyPreEffect(_self: Actor, _opponent: Actor, _sequence: Move[], _index: number) {};
     /** Applied *after* interaction (and effect ticker) - use for next-turn status effects */
-    applyPostEffect(_self: Actor, _opponent: Actor) {};
-    /** Applied before interaction - custom logic based on opponent move. */
-    applyCounterEffect(_self: Actor, _opponent: Actor, _opponentMove: Move) {}
+    applyPostEffect(_self: Actor, _opponent: Actor, _sequence: Move[], _index: number) {};
+    /** Applied before interaction - custom logic based on opponent move / current sequence. */
+    applyCounterEffect(_self: Actor, _opponent: Actor, _opponentMove: Move, _sequence: Move[], _index: number) {}
+    /** If the move has some pre-condition to be performed. Default to always return true */
+    canPerform(_partialSequence: Move[], _index: number) {return true}
+    //extended param version. Implement If Needed (will need changes to dataflow as runebuilder currently cant access this stuff.)
+    //canPerform(_self: Actor, _opponent: Actor, _partialSequence: Move[], _index: number) {return true}
 }
 
 export class PassiveMove extends Move {
     name = "Nothing"
-    override getMultipliers(_actor: Actor): MultiplierSet {
+    override getMultipliers(_actor: Actor, _sequence: Move[], _index: number): MultiplierSet {
         return { incoming: 1, outgoing: 0 }; // Passive moves don't deal damage
     }
 }
@@ -98,8 +102,8 @@ export const Fireball = new (class extends AggressiveMove {
 /// Passive Moves
 export const Defend = new(class extends PassiveMove {
     name = "Defend"
-    override getMultipliers(actor: Actor): MultiplierSet {
-        let {incoming, outgoing} = super.getMultipliers(actor);
+    override getMultipliers(actor: Actor, _sequence: Move[], _index: number): MultiplierSet {
+        let {incoming, outgoing} = super.getMultipliers(actor, _sequence, _index);
         incoming *= Math.pow(0.5, actor.getEffectLevel("prepared") + 1);
         return {incoming, outgoing}
     }
@@ -146,8 +150,8 @@ export const Observe = new (class extends PassiveMove {
 
 export const Evade = new (class extends PassiveMove {
     name = "Evade"
-    override getMultipliers(actor: Actor): MultiplierSet {
-        let {outgoing} = super.getMultipliers(actor);
+    override getMultipliers(actor: Actor, _sequence: Move[], _index: number): MultiplierSet {
+        let {outgoing} = super.getMultipliers(actor, _sequence, _index);
         let chance = 0.5 + (0.25 * actor.getEffectLevel("prepared"));
         return {
             outgoing,

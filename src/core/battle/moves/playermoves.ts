@@ -18,7 +18,7 @@ import prae_icon_ex from './icons/prae_ex.png'
 import priestess_icon_ex from './icons/priestess_ex.png'
 import trickster_icon_ex from './icons/trickster_ex.png'
 import lantern_icon_ex from './icons/lantern.png'
-import { AggressiveMove, NothingMove, PassiveMove, VulnerableMove } from "../engine/moves";
+import { AggressiveMove, Move, NothingMove, PassiveMove, VulnerableMove } from "../engine/moves";
 import { Actor } from "../engine/actor";
 import { PreparedEffect, VulnerableEffect } from "../engine/effects";
 
@@ -34,8 +34,8 @@ export const Defend: PlayerMoveData = {
     icon: prae_icon,
     rbIcon: prae_icon_ex,
     instance: new(class extends PassiveMove {
-            override getMultipliers(actor: Actor): MultiplierSet {
-                let {incoming, outgoing} = super.getMultipliers(actor);
+            override getMultipliers(actor: Actor, sequence: Move[], index: number): MultiplierSet {
+                let {incoming, outgoing} = super.getMultipliers(actor, sequence, index);
                 incoming *= Math.pow(0.5, actor.getEffectLevel("prepared") + 1);
                 return {incoming, outgoing}
             }
@@ -46,7 +46,44 @@ export const Repeat: PlayerMoveData = {
     displayName: "Apprentice",
     icon: apprentice_icon,
     rbIcon: apprentice_icon_ex,
-    instance: NothingMove
+    instance: new (class extends PassiveMove { /* extending passive move as a "do nothing" fallback */
+        name="Repeat"
+        canPerform(partialSequence: Move[]): boolean {
+            return partialSequence.length > 0
+        }
+        applyCounterEffect(_self: Actor, _opponent: Actor, _opponentMove: Move, sequence: Move[], index: number): void {
+            if(index == 0) {
+                console.error("Repeat performed on first move. This should never happen. Falling back to PassiveMove.")
+                super.applyCounterEffect(_self, _opponent, _opponentMove, sequence, index);
+                return;
+            }
+
+            // Should the index passed to the function be index - 1?
+            sequence[index - 1].applyCounterEffect(_self, _opponent, _opponentMove, sequence, index);
+        }
+        // TODO, remaining functions to call neighbor, similar structure as above
+        applyPreEffect(_self: Actor, _opponent: Actor, sequence: Move[], index: number): void {
+            if(index == 0) {
+                super.applyPreEffect(_self, _opponent, sequence, index);
+                return;
+            }
+            sequence[index - 1].applyPreEffect(_self, _opponent, sequence, index);
+        }
+
+        applyPostEffect(_self: Actor, _opponent: Actor, sequence: Move[], index: number): void {
+            if(index == 0) {
+                super.applyPostEffect(_self, _opponent, sequence, index)
+                return;
+            }
+            sequence[index - 1].applyPostEffect(_self, _opponent, sequence, index);
+        }
+        getMultipliers(_actor: Actor, sequence: Move[], index: number): MultiplierSet {
+            if(index == 0) {
+                return super.getMultipliers(_actor, sequence, index);
+            }
+            return sequence[index - 1].getMultipliers(_actor, sequence, index);
+        }
+    })()
 }
 
 // Abstract - Double enemy multipliers (maybe for some amount of turns?), both incoming and outgoing - can be helpful or harmful so you have to predict how the enemy will act
@@ -115,8 +152,8 @@ export const Evade: PlayerMoveData = {
     rbIcon: trickster_icon_ex,
     instance: new (class extends PassiveMove {
         name = "Evade"
-        override getMultipliers(actor: Actor): MultiplierSet {
-            let {outgoing} = super.getMultipliers(actor);
+        override getMultipliers(actor: Actor, sequence: Move[], index: number): MultiplierSet {
+            let {outgoing} = super.getMultipliers(actor, sequence, index);
             let chance = 0.5 + (0.25 * actor.getEffectLevel("prepared"));
             return {
                 outgoing,

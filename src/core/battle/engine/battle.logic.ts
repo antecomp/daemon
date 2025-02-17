@@ -57,19 +57,19 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             const playerMove = player.currentSequence[moveIndex];
             const oppMove = opponent.currentSequence[moveIndex];
 
-            playerMove.applyPreEffect(player, opponent);
-            oppMove.applyPreEffect(opponent, player);
+            playerMove.applyPreEffect(player, opponent, player.currentSequence, moveIndex);
+            oppMove.applyPreEffect(opponent, player, opponent.currentSequence, moveIndex);
 
-            playerMove.applyCounterEffect(player, opponent, oppMove);
-            oppMove.applyCounterEffect(opponent, player, playerMove);
+            playerMove.applyCounterEffect(player, opponent, oppMove, player.currentSequence, moveIndex);
+            oppMove.applyCounterEffect(opponent, player, playerMove, opponent.currentSequence, moveIndex);
 
             // TODO: Visualize Effects Here
 
             const playerEffectMultipliers = computeEffectMultipliers(player);
             const opponentEffectMultipliers = computeEffectMultipliers(opponent);
 
-            const playerMoveMultipliers = playerMove.getMultipliers(player);
-            const opponentMoveMultipliers = oppMove.getMultipliers(opponent);
+            const playerMoveMultipliers = playerMove.getMultipliers(player, player.currentSequence, moveIndex);
+            const opponentMoveMultipliers = oppMove.getMultipliers(opponent, opponent.currentSequence, moveIndex);
 
             const playerFinalMultipliers: MultiplierSet = {
                 incoming: playerEffectMultipliers.incoming * playerMoveMultipliers.incoming,
@@ -93,8 +93,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.tickAndRemoveEffects();
 
             // Apply PostEffects AFTER ticking down (so duration 1 actually makes sense.)
-            playerMove.applyPostEffect(player, opponent);
-            oppMove.applyPostEffect(opponent, player);
+            playerMove.applyPostEffect(player, opponent, player.currentSequence, moveIndex);
+            oppMove.applyPostEffect(opponent, player, opponent.currentSequence, moveIndex);
 
             for (const effectStack of player.effects.values()) {
                 effectStack.forEach(effect => effect.applyPostEffect(player, opponent));
