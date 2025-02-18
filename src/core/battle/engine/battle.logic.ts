@@ -96,13 +96,15 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             playerMove.applyPostEffect(player, opponent, player.currentSequence, moveIndex);
             oppMove.applyPostEffect(opponent, player, opponent.currentSequence, moveIndex);
 
-            for (const effectStack of player.effects.values()) {
-                effectStack.forEach(effect => effect.applyPostEffect(player, opponent));
-            }
 
-            for(const effectStack of opponent.effects.values()) {
-                effectStack.forEach(effect => effect.applyPostEffect(opponent, player));
-            }
+            // This should be above the ticker?
+            // for (const effectStack of player.effects.values()) {
+            //     effectStack.forEach(effect => effect.applyPostEffect(player, opponent));
+            // }
+
+            // for(const effectStack of opponent.effects.values()) {
+            //     effectStack.forEach(effect => effect.applyPostEffect(opponent, player));
+            // }
 
             setPlayerMults({outgoing: 0, incoming: 0});
             setOpponentMults({outgoing: 0, incoming: 0});

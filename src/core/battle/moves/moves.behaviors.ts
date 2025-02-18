@@ -1,11 +1,13 @@
 /**
  * Composable Behaviors To Be Inserted Into Move Pipelines.
+ * 
+ * TODO: Seperate These Into MultPipeline File and SideEffect File.
  */
 
-import { VulnerableEffect } from "../engine/effects";
-import { getBaseMultipliers, MoveSideEffect, MultiplierPipelineStep } from "./moves.types";
+import { PreparedEffect, VulnerableEffect } from "../engine/effects";
+import { getBaseMultipliers, MoveSEConditionalWrapper, MoveSideEffect, MultiplierPipelineStep } from "./moves.types";
 
-export const PreparedBonus: MultiplierPipelineStep = (prevMultipliers, self) => {
+export const PreparedAttackBonus: MultiplierPipelineStep = (prevMultipliers, self) => {
     return {
         ...prevMultipliers,
         outgoing: prevMultipliers.outgoing * Math.pow(2, self.getEffectLevel("prepared"))
@@ -37,36 +39,55 @@ export const RepeatStep: MultiplierPipelineStep = (prevMults, self, index) => {
     return inheritedMults;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+// Evade + Counter logic makes me want to eat rocks tbh.
 
-export const VulnerableOnFocus: MoveSideEffect = (self) => {
-    console.log(`${self.name} Applying vulnerable to self for interact`);
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+export const RequireFocus: MoveSEConditionalWrapper = (self, opponent, index, SE) => {
+    if(opponent.currentSequence[index].type != "Aggressive") {
+        return SE
+    } else {
+        console.log(`Focus lost, unable to perform ${self.currentSequence[index].name}`)
+        return undefined;
+    }
+}
+
+export const ApplySelfVulnerable: MoveSideEffect = (self) => {
     self.addEffect(new VulnerableEffect(1));
 }
 
-export const CheckFocusBreak: MoveSideEffect = (self, opponent, index) => {
-    if(opponent.currentSequence[index].type == "Aggressive") {
-        self.data.focusLost = true;
-    }
-}
-
-export const ApplyHeal: MoveSideEffect = (self) => {
-    if(self.data.focusLost) {
-        console.log(`${self.name} was attacked while healing—no health restored.`);
-        self.data.focusLost = false;
-        return;
-    }
-
+// Wrap this in RequireFocus.
+export const ApplySelfHeal: MoveSideEffect = (self) => {
     const healAmount = 5 * (1 + self.getEffectLevel("prepared"));
     console.log(`${self.name} successfully heals for ${healAmount}!`);
     self.heal(healAmount);
 }
 
 
-export const ApplyVulnerableWithRefresh: MoveSideEffect = (self, opponent, index) => {
-    // TODO: Carryover effect logic. (Get Vulnerable level from opponent?) - dont do the prevMove check
-}
+// Kinda disgusting design pattern but uhhh. Idk maybe ill think of something less stupid later....
+// This accounts for "stacking and extending" status effects.
+// tldr; if Opponent already vulnerable, we want to "push" that effect into the turn after this one.
+// Pre-tick up to avoid expiration (extend). Use as a preEffect
+export const ExtendOpponentVulnerable: MoveSideEffect = (_self, opponent) => opponent.tickUpEffect("vulnerable", 1);
+
+// Now as a postEffect we can just apply vuln normally (stack)
+export const ApplyOpponentVulnerable: MoveSideEffect = (_self, opponent) => opponent.addEffect(new VulnerableEffect(1));
+
+
+// Similar idea for stacking preperation levels...
+// (Both of these need to be wrapped in a RequireFocus)
+export const ExtendSelfPrepared: MoveSideEffect = (self) => {self.tickUpEffect("prepared", 1);}
+export const ApplySelfPrepared: MoveSideEffect = (self) => self.addEffect(new PreparedEffect(1));
+
+
+
+
+
 
 
 // Kinda Yucky But Idk What We Could Do Instead.
@@ -77,17 +98,7 @@ export const RepeatPreEffect: MoveSideEffect = (self, opponent, index) => {
     if (!prevMove?.behaviors?.preEffect) return; // Safety check
 
     console.log(`${self.name} is repeating ${prevMove.name}'s pre-effect.`);
-    prevMove.behaviors.preEffect.forEach(effect => effect(self, opponent, index));
-};
-
-export const RepeatCounterEffect: MoveSideEffect = (self, opponent, index) => {
-    if (index === 0) return; // Should never happen
-
-    const prevMove = self.currentSequence[index - 1];
-    if (!prevMove?.behaviors?.counterEffect) return; // Safety check
-
-    console.log(`${self.name} is repeating ${prevMove.name}'s counter-effect.`);
-    prevMove.behaviors.counterEffect.forEach(effect => effect(self, opponent, index));
+    prevMove.behaviors.preEffect.forEach(effect => effect && effect(self, opponent, index));
 };
 
 export const RepeatPostEffect: MoveSideEffect = (self, opponent, index) => {
@@ -97,5 +108,5 @@ export const RepeatPostEffect: MoveSideEffect = (self, opponent, index) => {
     if (!prevMove?.behaviors?.postEffect) return; // Safety check
 
     console.log(`${self.name} is repeating ${prevMove.name}'s post-effect.`);
-    prevMove.behaviors.postEffect.forEach(effect => effect(self, opponent, index));
+    prevMove.behaviors.postEffect.forEach(effect => effect && effect(self, opponent, index));
 };

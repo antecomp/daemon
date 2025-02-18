@@ -68,6 +68,19 @@ export class Actor {
             }
         }
     }
+
+    /** Increment Duration of all instances of an effect. Used for extending effects to next move eval */
+    public tickUpEffect(effectName: string, amount: number) {
+        if(this.effects.has(effectName)) {
+            let updatedEffects = this.effects.get(effectName)?.map(effect => {
+                effect.duration += amount;
+                return effect;
+            }) || [];
+
+            this.effects.set(effectName, updatedEffects);
+            console.log(`${this.name}'s ${effectName} effects have been extended by ${amount} turns.`);
+        }
+    }
     
     public getEffectLevel(type: string): number {
         return this.effects.has(type) ? this.effects.get(type)!.length : 0;

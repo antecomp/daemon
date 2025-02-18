@@ -6,19 +6,20 @@ export type movetype = "Aggressive" | "Passive";
 export type MoveSideEffect = (self: Actor, opponent: Actor, index: number) => void
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, self: Actor, /* opponent: Actor, */ index: number) => MultiplierSet
 export type MoveValidator = (self: Actor, workingSequence: Move[]) => boolean;
+export type MoveSEConditionalWrapper = (self: Actor, opponent: Actor, index: number, SE: MoveSideEffect) => MoveSideEffect | undefined
 
 export interface Move {
     name: string;
     type: movetype;
     behaviors: {
-        preEffect?: MoveSideEffect[];
-        counterEffect?: MoveSideEffect[];
+        preEffect?: (MoveSideEffect | undefined)[];
         multipliers?: MultiplierPipelineStep[];
-        postEffect?: MoveSideEffect[];
+        postEffect?: (MoveSideEffect | undefined)[];
     };
     canPerform?: MoveValidator
 }
 
+// Move this to engine.
 export function getBaseMultipliers(type: movetype): MultiplierSet {
     return {
         "Aggressive":   {incoming: 1, outgoing: 1},
