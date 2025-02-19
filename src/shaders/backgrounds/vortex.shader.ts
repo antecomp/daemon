@@ -1,5 +1,4 @@
-const vortexShader = `
-    #version 300 es
+const vortexShader = `#version 300 es
         precision mediump float;
         uniform float time;
         in vec2 uv;

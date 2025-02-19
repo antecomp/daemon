@@ -1,5 +1,5 @@
 import { BattleUIState, useBattleUIState } from "@/core/battle/engine/battle.context";
-import { MoveData, PlayerMoveData } from "@/core/battle/engine/battle.types";
+import { PlayerMoveMeta } from "@/core/battle/moves/moves.types";
 import { Point } from "@/extra.types";
 import { For } from "solid-js";
 
@@ -8,9 +8,9 @@ const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
 const AVAILABLE_RUNE_COUNT = 8; // Will update based on actual prop data later.
 
 interface RunebuilderProps {
-    availRunes: PlayerMoveData[], 
-    addRune: (toAdd: MoveData) => void,
-    sequenceBuffer: MoveData[]
+    availRunes: PlayerMoveMeta[], 
+    addRune: (toAdd: PlayerMoveMeta) => void,
+    sequenceBuffer: PlayerMoveMeta[]
 }
 
 export default function Runebuilder(props: RunebuilderProps) {
@@ -19,7 +19,7 @@ export default function Runebuilder(props: RunebuilderProps) {
 
     const CENTER = SVG_DIM / 2;
 
-    const runePositions = new Map<MoveData, Point>();
+    const runePositions = new Map<PlayerMoveMeta, Point>();
 
     return (
         <svg width={SVG_DIM} height={SVG_DIM} id="runebuilder">
@@ -80,7 +80,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                                 // fill={(props.sequenceBuffer.includes(rune) ? "red" : "black")}
                                 fill="black"
                                 onClick={() => {
-                                    if(rune.instance.canPerform(props.sequenceBuffer.map(m => m.instance), index())) props.addRune(rune);
+                                    if(!rune.canPerform || rune.canPerform(props.sequenceBuffer)) props.addRune(rune);
                                 }}
                             ></circle>
                             <image

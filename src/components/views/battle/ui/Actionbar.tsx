@@ -9,10 +9,11 @@ import ur_bar from '../assets/mult_ur.png'
 import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
-import { Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade } from '@/core/battle/moves/playermoves';
 import { Accessor, createSignal, For } from 'solid-js'
-import { MoveData, MultiplierSet } from '@/core/battle/engine/battle.types'
+import { MultiplierSet } from '@/core/battle/engine/battle.types'
+import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
+import { playerMoves } from '@/core/battle/moves/metas/player'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -31,7 +32,7 @@ function SelectedMove(props: SelectedMoveProps) {
 }
 
 interface ActionbarProps {
-    execSequence: (userSelectedSequence: MoveData[]) => void
+    execSequence: (userSelectedSequence: PlayerMoveMeta[]) => void
     playerHealth: number
     playerMults: Accessor<MultiplierSet>
     opponentMults: Accessor<MultiplierSet>
@@ -53,16 +54,16 @@ export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
 
     // Will be gathered from game store later...
-    const playerMoveBin = [Attack, Defend, Repeat, Abstract, Prepare, Observe, Heal, Evade];
+    const playerMoveBin: PlayerMoveMeta[] = Object.values(playerMoves);
 
-    const [sequenceBuffer, setSequenceBuffer] = createSignal<MoveData[]>([]);
+    const [sequenceBuffer, setSequenceBuffer] = createSignal<PlayerMoveMeta[]>([]);
 
-    const addRune = (toAdd: MoveData) => {
+    const addRune = (toAdd: PlayerMoveMeta) => {
         if(sequenceBuffer().length == 5) return;
         if(battleUIState() != BattleUIState.WAITING) return;
 
         setSequenceBuffer(prev => {
-            const rtn = (prev.some(item => item == toAdd)) ? prev: [...prev, toAdd]
+            const rtn = (prev.some(item => item == toAdd)) ? prev: [...prev, toAdd] // Add (enforce unique).
             if(rtn.length == 5) {
                 setBattleUIState(BattleUIState.READY)
                 console.log(battleUIState());

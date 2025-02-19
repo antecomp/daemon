@@ -46,9 +46,9 @@ export function combineMultiplierSets(...sets: MultiplierSet[]) {
 
 /** Extracts the underlying Move information from MoveMeta sequence, allows us to do preprocessing logic for dynamic moves. */
 export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[]): Move[] {
-    return seq.map(meta => {
+    return seq.map((meta, index) => {
         if(typeof meta.getMove == "function") { // getMove has some special logic that will return a move.
-            return meta.getMove({self, seq});
+            return meta.getMove({self, seq, index});
         } else { // We just have a move straight-up
             return meta.getMove;
         }
@@ -87,7 +87,11 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         setInsight(opponentSequence);
 
         player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence));
+        console.log(player.currentSequence);
         if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate");
+
+        const playerSequenceBuffer = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}};
+        const opponentSequenceBuffer = {0: {}, 1: {}, 2: {}, 3: {}, 4: {}};
         
         // Likely want to do some work to generalize this so we dont have to write double of everything.
         for(let moveIndex = 0; moveIndex < 5; moveIndex++) {
@@ -97,7 +101,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opponent: opponent,
                 index: moveIndex,
                 sequence: player.currentSequence,
-                sequenceBuffer: {}
+                sequenceBuffer: playerSequenceBuffer
             }
             const oppMove = opponent.currentSequence[moveIndex];
             const oppMoveContext: MoveContext = {
@@ -105,7 +109,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opponent: player,
                 index: moveIndex,
                 sequence: opponent.currentSequence,
-                sequenceBuffer: {}
+                sequenceBuffer: opponentSequenceBuffer
             }
 
             playerMove.behaviors.preEffects?.forEach(effect => effect(playerMoveContext));

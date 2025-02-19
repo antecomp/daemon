@@ -4,7 +4,7 @@ import name_postcut from '../assets/name-postcut.png'
 import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import insight_label from '../assets/insight-label.png'
-import { MoveData } from '@/core/battle/engine/battle.types'
+import { MoveMeta } from '@/core/battle/moves/moves.types'
 
 
 interface OppStatusBarProps {
@@ -12,7 +12,7 @@ interface OppStatusBarProps {
     name: string
     health: number
     // sequenceHint?: MoveData[]
-    sequenceHint?: (MoveData | undefined)[]
+    sequenceHint?: (MoveMeta | undefined)[]
 }
 
 interface OppHintProps {
