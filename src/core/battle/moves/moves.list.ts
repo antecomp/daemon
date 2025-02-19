@@ -2,8 +2,8 @@
  * Generic Moves 
 */
 
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfVulnerable, ExendOpponentVulnerable, RequiresFocus } from "./moves.effects";
-import { EvadeCheck, PreparedAttackBonus, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExendOpponentVulnerable, ExtendSelfPrepared, RepeatPostEffect, RepeatPreEffect, RequiresFocus } from "./moves.effects";
+import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage, RepeatStep, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
 import { Move } from "./moves.types";
 
 export const Observe: Move = {
@@ -39,3 +39,32 @@ export const Heal: Move = {
         postEffects: [RequiresFocus(ApplySelfHeal)]
     }
 }
+
+export const Repeat: Move = {
+    name: "repeat",
+    type: "Passive", // This is a fucking problem. Repeat may change it's move type and we need to react to that!!
+    behaviors: {
+        preEffects: [RepeatPreEffect],
+        multpipeline: [RepeatStep],
+        postEffects: [RepeatPostEffect]
+    }
+}
+
+export const Prepare: Move = {
+    name: "prepare",
+    type: "Passive",
+    behaviors: {
+        preEffects: [ApplySelfVulnerable, RequiresFocus(ExtendSelfPrepared)],
+        postEffects: [RequiresFocus(ApplySelfPrepared)]
+    }
+}
+
+export const Defend: Move = {
+    name: "defend",
+    type: "Passive",
+    behaviors: {
+        multpipeline: [ReduceIncomingDamage]
+    }
+}
+
+// TODO: Determine Mage/8th Move Idea
