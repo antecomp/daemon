@@ -1,11 +1,11 @@
+import { Move } from "../moves/moves.types";
 import { Actor } from "./actor";
 
 export type MultiplierSet = {incoming: number, outgoing: number};
 
-export interface MoveData {
+export interface MoveData extends Move {
     displayName: string, // Can differ from the name of the instance, if we want a custom name for a generic move (e.g "slash" vs "attack")
     icon: string, // image url
-    instance: Move 
     // description: string // for tooltip (to implement)
 }
 

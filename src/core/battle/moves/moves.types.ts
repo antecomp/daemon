@@ -9,7 +9,7 @@ export interface SequenceBuffer {
 }
 
 export interface MoveContext {
-    move: Move; // Points to the move itself (used for pipeline stuff)
+    // move: Move; // Points to the move itself (used for pipeline stuff)
     self: Actor;
     opponent: Actor;
     index: number;
@@ -20,16 +20,16 @@ export interface MoveContext {
 export type MoveSideEffect = (context: MoveContext) => void;
 export type MoveValidator = (self: Actor, workingSequence: Move[]) => boolean;
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
-export type MoveSEConditionalWrapper = (context: MoveContext, SE: MoveSideEffect) => MoveSideEffect | undefined;
+export type MoveSEConditionalWrapper = (effect: MoveSideEffect) => MoveSideEffect;
 
 
 export interface Move {
     name: string,
     type: movetype,
     behaviors: {
-        preEffects?: (MoveSideEffect | undefined)[]
+        preEffects?: (MoveSideEffect)[]
         multpipeline?: (MultiplierPipelineStep)[]
-        postEffects?: (MoveSideEffect | undefined)[]
+        postEffects?: (MoveSideEffect)[]
     },
     canPerform?: MoveValidator
 }
