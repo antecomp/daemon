@@ -1,7 +1,7 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
-import { DVOpponentData, MoveDataSequence, MultiplierSet } from "./battle.types";
-import { MoveData } from "../moves/moves.types";
+import { DVOpponentData, MultiplierSet } from "./battle.types";
+import {  MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
@@ -9,7 +9,7 @@ import { computeEffectMultipliers } from "./effects";
 import { Move, MoveContext, movetype } from "../moves/moves.types";
 
 
-const generateHint = (seq: MoveDataSequence): (MoveData | undefined)[] => {
+const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     const indices = new Set<number>
 
     while (indices.size < 3) {
@@ -44,17 +44,28 @@ export function combineMultiplierSets(...sets: MultiplierSet[]) {
     }, {incoming: 1, outgoing: 1})
 }
 
+/** Extracts the underlying Move information from MoveMeta sequence, allows us to do preprocessing logic for dynamic moves. */
+export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[]): Move[] {
+    return seq.map(meta => {
+        if(typeof meta.getMove == "function") { // getMove has some special logic that will return a move.
+            return meta.getMove({self, seq});
+        } else { // We just have a move straight-up
+            return meta.getMove;
+        }
+    })
+}
+
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
     // This should be extracted from game store later?
-    const player = createMutable(new Actor("player", 20, []));
+    const player = createMutable(new Actor("player", 20));
 
-    const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth, opponentData.moveBin));
-    let opponentSequence: MoveDataSequence // Mutable ref-like for use in multiple UI states. (Hint then full reveal)
+    const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
+    let opponentSequence: MoveMeta[] // Mutable ref-like for use in multiple UI states. (Hint then full reveal)
 
-    const [insight, setInsight] = createSignal<(MoveData | undefined)[]>([]);
+    const [insight, setInsight] = createSignal<(MoveMeta | undefined)[]>([]);
 
     const [playerMults, setPlayerMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
     const [opponentMults, setOpponentMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
@@ -63,19 +74,19 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     function setupRound() { 
         opponentSequence = opponentData.getSequence(opponent, player);
         setInsight(generateHint(opponentSequence));
-        opponent.setMoveSequence(opponentSequence);
+        opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence));
         setBattleUIState(BattleUIState.WAITING);
     }
 
 
-    async function executeRound(userSelectedSequence: Move[]) {
+    async function executeRound(userSelectedSequence: PlayerMoveMeta[]) {
         if(opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
 
         setBattleUIState(BattleUIState.EXECUTING);
 
         setInsight(opponentSequence);
 
-        player.setMoveSequence(userSelectedSequence);
+        player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence));
         if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate");
         
         // Likely want to do some work to generalize this so we dont have to write double of everything.

@@ -18,10 +18,9 @@ export interface MoveContext {
 }
 
 export type MoveSideEffect = (context: MoveContext) => void;
-export type MoveValidator = (/*self: Actor, */ workingSequence: Move[]) => boolean;
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
 export type MoveSEConditionalWrapper = (effect: MoveSideEffect) => MoveSideEffect;
-
+export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
 export interface Move {
     /** Internally used name for the move. Generic. */
@@ -36,18 +35,24 @@ export interface Move {
         multpipeline?: (MultiplierPipelineStep)[]
         /** Side effects that run *after* everything (including status tickdowns). Namely used to apply next-turn statuses */
         postEffects?: (MoveSideEffect)[]
-    },
-    canPerform?: MoveValidator
+    }
 }
 
 
-// COme up with a better name for this please.
-export interface MoveData extends Move {
-    displayName: string // Custom name in the UI for moves, different from general name we use internally.
-    icon: string
-    // description: string
+
+export interface MoveMeta {
+    /** Different than move name, can be used to give cool distinct names for moves. F.e "candlelight" instead of "attack" */
+    displayName: string,
+    /** Small icon used in sequence visualization. Image url (import) */ 
+    icon: string,
+    /** Move or function that returns a move (conditional move return, i.e for repeat.) */
+    getMove: Move | ((context: {self: Actor, seq: MoveMeta[]}) => Move)
+    /** Conditional for RB/AI-Get Sequence, logic indicating if the move is valid at a given step / given sequence.
+     * 
+     * For example, this is used in repeat to prevent it being the first move. */
+    canPerform: MoveValidator
 }
 
-export interface PlayerMoveData extends MoveData {
-    rbIcon: string // Larger, uniquer icons used for runebuilder.
+export interface PlayerMoveMeta extends MoveMeta {
+    rbIcon: string // Larger, unique icons used for runebuilder.
 }

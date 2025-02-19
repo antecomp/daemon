@@ -1,4 +1,3 @@
-import { getBaseMultipliers } from "../engine/battle.logic";
 import { MultiplierPipelineStep } from "./moves.types";
 
 export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, context) => {
@@ -32,22 +31,4 @@ export const SuccessfulEvadeAttackBonus: MultiplierPipelineStep = (prevMults, {s
         ...prevMults,
         outgoing: prevMults.outgoing * (2 ** (sequenceBuffer[index - 1]['evadeSuccess'] ?? 0))
     }
-}
-
-export const RepeatStep: MultiplierPipelineStep = (prevMults, context) => {
-    if(context.index === 0) return prevMults; // Do Nothing. This should never occur.
-
-    const prevMove = context.self.currentSequence[context.index - 1];
-    if (!prevMove) return prevMults; // ANother should-never-happen fallback
-
-    // Basically have to just re-hash how our main pipeline gets the info here.
-    let inheritedMults = getBaseMultipliers(prevMove.type);
-    if(prevMove.behaviors.multpipeline) {
-        inheritedMults = prevMove.behaviors.multpipeline.reduce(
-            (mults, step) => step(mults, context),
-            inheritedMults
-        )
-    }
-
-    return inheritedMults;
 }

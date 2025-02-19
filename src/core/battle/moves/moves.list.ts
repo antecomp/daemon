@@ -2,8 +2,8 @@
  * Generic Moves 
 */
 
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExendOpponentVulnerable, ExtendSelfPrepared, RepeatPostEffect, RepeatPreEffect, RequiresFocus } from "./moves.effects";
-import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage, RepeatStep, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
+import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
 import { Move } from "./moves.types";
 
 export const Observe: Move = {
@@ -40,15 +40,7 @@ export const Heal: Move = {
     }
 }
 
-export const Repeat: Move = {
-    name: "repeat",
-    type: "Passive", // This is a fucking problem. Repeat may change it's move type and we need to react to that!!
-    behaviors: {
-        preEffects: [RepeatPreEffect],
-        multpipeline: [RepeatStep],
-        postEffects: [RepeatPostEffect]
-    }
-}
+// REPEAT IS **NOT** A MOVE. IT IS A ABSTRACTION CREATED IN MOVEMETA!
 
 export const Prepare: Move = {
     name: "prepare",

@@ -50,21 +50,3 @@ export const ExtendSelfPrepared: MoveSideEffect = ({self}) => {
 export const ApplySelfPrepared: MoveSideEffect = ({self}) => {
     self.addEffect(new PreparedEffect(1));
 }
-
-export const RepeatPreEffect: MoveSideEffect = (context) => {
-    if(context.index === 0) return;
-
-    const prevMove = context.self.currentSequence[context.index - 1];
-    if(!prevMove?.behaviors.preEffects) return;
-
-    prevMove.behaviors.preEffects.forEach(effect => effect && effect(context));
-}
-
-export const RepeatPostEffect: MoveSideEffect = (context) => {
-    if(context.index === 0) return;
-
-    const prevMove = context.self.currentSequence[context.index -1];
-    if(!prevMove?.behaviors.postEffects) return;
-
-    prevMove.behaviors.postEffects.forEach(effect => effect && effect(context));
-}
