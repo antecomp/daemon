@@ -140,9 +140,6 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 effectStack.forEach(effect => effect.applyPostEffect(opponent, player));
             }
 
-            playerMove.behaviors.preTickEffects?.forEach(effect => effect(playerMoveContext));
-            oppMove.behaviors.preTickEffects?.forEach(effect => effect(oppMoveContext))
-
             player.tickAndRemoveEffects();
             opponent.tickAndRemoveEffects();
 

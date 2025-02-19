@@ -18,18 +18,23 @@ export interface MoveContext {
 }
 
 export type MoveSideEffect = (context: MoveContext) => void;
-export type MoveValidator = (self: Actor, workingSequence: Move[]) => boolean;
+export type MoveValidator = (/*self: Actor, */ workingSequence: Move[]) => boolean;
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
 export type MoveSEConditionalWrapper = (effect: MoveSideEffect) => MoveSideEffect;
 
 
 export interface Move {
+    /** Internally used name for the move. Generic. */
     name: string,
+    /** Move type, used to calculate base multipliers, some moves also conditionally react to their/opposers type */
     type: movetype,
+    /** A table of move behavior functions ("Side Effects" and "Pipeline Steps") that compose the moves actual behavior in a turn */
     behaviors: {
+        /** Side Effects That Run *before* any multiplier/damage calculation. Namely used for applying in-turn statuses. */
         preEffects?: (MoveSideEffect)[]
+        /** "pipeline steps", functions that are reduced over to calculate the final outgoing and incoming damage multipliers for this move. */
         multpipeline?: (MultiplierPipelineStep)[]
-        preTickEffects?: (MoveSideEffect)[]
+        /** Side effects that run *after* everything (including status tickdowns). Namely used to apply next-turn statuses */
         postEffects?: (MoveSideEffect)[]
     },
     canPerform?: MoveValidator
