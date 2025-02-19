@@ -29,7 +29,20 @@ export interface Move {
     behaviors: {
         preEffects?: (MoveSideEffect)[]
         multpipeline?: (MultiplierPipelineStep)[]
+        preTickEffects?: (MoveSideEffect)[]
         postEffects?: (MoveSideEffect)[]
     },
     canPerform?: MoveValidator
+}
+
+
+// COme up with a better name for this please.
+export interface MoveData extends Move {
+    displayName: string // Custom name in the UI for moves, different from general name we use internally.
+    icon: string
+    // description: string
+}
+
+export interface PlayerMoveData extends MoveData {
+    rbIcon: string // Larger, uniquer icons used for runebuilder.
 }

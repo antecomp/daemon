@@ -1,18 +1,10 @@
-import { Move } from "../moves/moves.types";
+import { MoveData, PlayerMoveData } from "../moves/moves.types";
 import { Actor } from "./actor";
 
 export type MultiplierSet = {incoming: number, outgoing: number};
 
-export interface MoveData extends Move {
-    displayName: string, // Can differ from the name of the instance, if we want a custom name for a generic move (e.g "slash" vs "attack")
-    icon: string, // image url
-    // description: string // for tooltip (to implement)
-}
-
-export interface PlayerMoveData extends MoveData {
-    rbIcon: string // seperate icon for the runebuilder.
-}
-
+// Avoid using this type, it's stupid. Im in the process of just switching it out
+// We already have gaurds for the sequence length, ejforcing it in TS provides no benefit.
 export type MoveDataSequence = [MoveData, MoveData, MoveData, MoveData, MoveData];
 
 export interface DVOpponentData {
@@ -30,6 +22,6 @@ export interface DVOpponentData {
 
 // Will be moved to an interface and modifies as part of GameData later.
 export interface PlayerData {
-    moveBin: MoveData[]
+    moveBin: PlayerMoveData[]
     actor: Actor
 }

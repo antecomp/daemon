@@ -1,6 +1,7 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
-import { DVOpponentData, MoveData, MoveDataSequence, MultiplierSet } from "./battle.types";
+import { DVOpponentData, MoveDataSequence, MultiplierSet } from "./battle.types";
+import { MoveData } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
@@ -138,6 +139,9 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             for (const effectStack of opponent.effects.values()) {
                 effectStack.forEach(effect => effect.applyPostEffect(opponent, player));
             }
+
+            playerMove.behaviors.preTickEffects?.forEach(effect => effect(playerMoveContext));
+            oppMove.behaviors.preTickEffects?.forEach(effect => effect(oppMoveContext))
 
             player.tickAndRemoveEffects();
             opponent.tickAndRemoveEffects();

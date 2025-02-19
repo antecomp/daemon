@@ -67,4 +67,10 @@ export const Defend: Move = {
     }
 }
 
+export const NothingMove: Move = {
+    name: "nothing",
+    type: "Passive",
+    behaviors: {}
+}
+
 // TODO: Determine Mage/8th Move Idea
