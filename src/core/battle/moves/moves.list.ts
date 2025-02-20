@@ -2,7 +2,7 @@
  * Generic Moves 
 */
 
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
 import { Move } from "./moves.types";
 
@@ -10,7 +10,7 @@ export const Observe: Move = {
     name: "observe",
     type: "Passive",
     behaviors: {
-        preEffects: [ExendOpponentVulnerable],
+        preEffects: [ExtendOpponentVulnerable],
         postEffects: [ApplyOpponentVulnerable]
     }
 }

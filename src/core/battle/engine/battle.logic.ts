@@ -5,7 +5,7 @@ import {  MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMove } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects } from "./battle.utils";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -66,16 +66,27 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             // Delay before damage dealt. (see multipliers then apply)
             await sleep(1000);
 
+            // I know this doubling up look stupid, but you can't easily loop generalize this
+            // as we require this specific flip-floppy way of ordering the events!!!
             opponent.takeDamage(playerFinalMultipliers.outgoing * opponentFinalMultipliers.incoming);
             player.takeDamage(playerFinalMultipliers.incoming * opponentFinalMultipliers.outgoing);
 
-            // PostEffects for Statuses and Moves.
-            handlePostMove(player, opponent, moveIndex, playerSequenceBuffer);
-            handlePostMove(opponent, player, moveIndex, opponentSequenceBuffer);
+            performStatusPostEffects(player, opponent);
+            performStatusPostEffects(opponent, player);
+
+            player.tickAndRemoveStatuses();
+            opponent.tickAndRemoveStatuses();
+
+            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer);
+            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer);
 
             // Reset signal for UI
             setPlayerMults({incoming: 0, outgoing: 0});
             setOpponentMults({incoming: 0, outgoing: 0})
+
+            //console.log(player, opponent);
+            console.log("OPP", opponent.statuses);
+            console.log("SELF", player.statuses);
 
             await sleep(3000); // Wait before doing next move.
         }

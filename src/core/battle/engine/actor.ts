@@ -1,14 +1,12 @@
-import { Effect } from "./effects";
+import { Status } from "./statuses";
 import { Move } from "../moves/moves.types";
-
-export type MoveSequence = [Move, Move, Move, Move, Move]
 
 export class Actor {
     name: string;
     maxHealth: number;
     health: number;
     // Enforce uniqueness of effect with a map, but stack multiple of the same effect in an array.
-    effects: Map<string, Effect[]> = new Map(); 
+    statuses: Map<string, Status[]> = new Map(); 
     //availableMoves: Move[]; // Full move pool (uneeded by Actor, moved to wrapper.)
     currentSequence: Move[]= [];
 
@@ -38,20 +36,20 @@ export class Actor {
         this.health = Math.min(this.maxHealth, this.health + amount);
     }
 
-    public addEffect(effect: Effect) {
-        if(!this.effects.has(effect.type)) {
-            this.effects.set(effect.type, []);
+    public addStatus(status: Status) {
+        if(!this.statuses.has(status.type)) {
+            this.statuses.set(status.type, []);
         }
 
-        let effectStack = this.effects.get(effect.type)!;
+        let statusStack = this.statuses.get(status.type)!;
 
-        effectStack.push(effect);
+        statusStack.push(status);
         // Sort so pop gets the smaller duration one.
-        effectStack.sort((a, b) => a.duration - b.duration);
+        statusStack.sort((a, b) => a.duration - b.duration);
     }
 
-    public tickAndRemoveEffects() {
-        for (const [type, effectStack] of this.effects) {
+    public tickAndRemoveStatuses() {
+        for (const [type, effectStack] of this.statuses) {
 
             // Tick every effect in an individual stack
             for(let i = 0; i < effectStack.length; i++) {
@@ -64,26 +62,26 @@ export class Actor {
             }
 
             if(effectStack.length == 0) {
-                this.effects.delete(type);
+                this.statuses.delete(type);
             }
         }
     }
 
     /** Increment Duration of all instances of an effect. Used for extending effects to next move eval */
-    public tickUpEffect(effectName: string, amount: number) {
-        if(this.effects.has(effectName)) {
-            let updatedEffects = this.effects.get(effectName)?.map(effect => {
+    public tickUpStatus(effectName: string, amount: number) {
+        if(this.statuses.has(effectName)) {
+            let updatedEffects = this.statuses.get(effectName)?.map(effect => {
                 effect.duration += amount;
                 return effect;
             }) || [];
 
-            this.effects.set(effectName, updatedEffects);
+            this.statuses.set(effectName, updatedEffects);
             console.log(`${this.name}'s ${effectName} effects have been extended by ${amount} turns.`);
         }
     }
     
-    public getEffectLevel(type: string): number {
-        return this.effects.has(type) ? this.effects.get(type)!.length : 0;
+    public getStatusLevel(type: string): number {
+        return this.statuses.has(type) ? this.statuses.get(type)!.length : 0;
     }
 
     public setMoveSequence(selectedMoves: Move[]) {

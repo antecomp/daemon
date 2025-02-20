@@ -1,4 +1,4 @@
-import { PreparedEffect, VulnerableEffect } from "../engine/effects";
+import { PreparedStatus, VulnerableStatus } from "../engine/statuses";
 import { MoveContext, MoveSEConditionalWrapper, MoveSideEffect } from "./moves.types";
 
 export const RequiresFocus: MoveSEConditionalWrapper = (effect) => {
@@ -14,28 +14,32 @@ export const RequiresFocus: MoveSEConditionalWrapper = (effect) => {
     }   
 }
 
-export const ApplySelfVulnerable: MoveSideEffect = (context) => {
-    context.self.addEffect(new VulnerableEffect(1));
+export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
+    console.log("Attempting self vuln")
+    self.addStatus(new VulnerableStatus(1));
+    console.log(self.statuses)
 }
 
 export const ApplySelfHeal: MoveSideEffect = ({self}) => {
-    const healAmount = 5 * (1 + self.getEffectLevel("prepared"));
+    const healAmount = 5 * (1 + self.getStatusLevel("prepared"));
     console.log(`${self.name} successfully heals for ${healAmount}!`);
     self.heal(healAmount);
 }
 
-export const ExendOpponentVulnerable: MoveSideEffect = ({opponent}) => {
-    opponent.tickUpEffect("vulnerable", 1);
+export const ExtendOpponentVulnerable: MoveSideEffect = ({opponent}) => {
+    opponent.tickUpStatus("vulnerable", 1);
 }
 
-export const ApplyOpponentVulnerable: MoveSideEffect = ({opponent}) => {
-    opponent.addEffect(new VulnerableEffect(1));
+export const ApplyOpponentVulnerable: MoveSideEffect = (context) => {
+    console.log("Attempting to apply opp vuln")
+    context.opponent.addStatus(new VulnerableStatus(1));
+    console.log(context.opponent, context.opponent.statuses);
 }
 
 export const ExtendSelfPrepared: MoveSideEffect = ({self}) => {
-    self.tickUpEffect("prepared", 1);
+    self.tickUpStatus("prepared", 1);
 }
 
 export const ApplySelfPrepared: MoveSideEffect = ({self}) => {
-    self.addEffect(new PreparedEffect(1));
+    self.addStatus(new PreparedStatus(1));
 }

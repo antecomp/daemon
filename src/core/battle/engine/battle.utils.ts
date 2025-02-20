@@ -1,7 +1,7 @@
 import { Move, MoveContext, MoveMeta, movetype, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
-import { computeEffectMultipliers } from "./effects";
+import { computeStatusMultipliers } from "./statuses";
 
 export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     const indices = new Set<number>
@@ -74,40 +74,38 @@ export function prepareMove(
 
     const baseMultipliers = getBaseMultipliers(move.type);
     const moveMultipliers = performMultPipeline(baseMultipliers, move, context);
-    const effectMultipliers = computeEffectMultipliers(actor);
+    const statusMultipliers = computeStatusMultipliers(actor);
 
-    const finalMultipliers = combineMultiplierSets(effectMultipliers, moveMultipliers);
+    const finalMultipliers = combineMultiplierSets(statusMultipliers, moveMultipliers);
 
     return finalMultipliers;
 }
 
+export function performStatusPostEffects(actor: Actor, opponent: Actor) {
+    for (const effectStack of actor.statuses.values()) {
+        effectStack.forEach((status) => status.applyPostEffect && status.applyPostEffect(actor, opponent));
+    }
+}
+
 /** Runs Side Effects After Damage Calculation, From Move and Statuses */
-export function handlePostMove(
+export function handlePostMoveEffects(
     actor: Actor,
     opponent: Actor,
     moveIndex: number,
     sequenceBuffer: SequenceBuffer
 ) {
-    // Apply post-effects from ongoing actor effects
-    // Might be worth making this a method of actor.
-    for (const effectStack of actor.effects.values()) {
-        effectStack.forEach((effect) => effect.applyPostEffect(actor, opponent));
-    }
-
-    // Remove expired effects
-    actor.tickAndRemoveEffects();
-
     // Run Move PostEffect *last* so it can apply effects for
     // the next turn that won't be ticked off.
     const move = actor.currentSequence[moveIndex];
-    move.behaviors.postEffects?.forEach((effect) =>
+    move.behaviors.postEffects?.forEach((effect) => {
         // Just manually rebuild the context here, doesn't matter.
-        effect({
-            self: actor,
-            opponent: opponent,
-            index: moveIndex,
-            sequence: actor.currentSequence,
-            sequenceBuffer: sequenceBuffer,
-        })
+            effect({
+                self: actor,
+                opponent: opponent,
+                index: moveIndex,
+                sequence: actor.currentSequence,
+                sequenceBuffer: sequenceBuffer,
+            })
+        }
     );
 }

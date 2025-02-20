@@ -3,19 +3,19 @@ import { MultiplierPipelineStep } from "./moves.types";
 export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, context) => {
     return {
         ...prevMults,
-        outgoing: prevMults.outgoing * Math.pow(2, context.self.getEffectLevel("prepared"))
+        outgoing: prevMults.outgoing * Math.pow(2, context.self.getStatusLevel("prepared"))
     }
 }
 
 export const ReduceIncomingDamage: MultiplierPipelineStep = (prevMults, context) => {
     return {
         ...prevMults,
-        incoming: prevMults.incoming * Math.pow(0.5, context.self.getEffectLevel("prepared") + 1)
+        incoming: prevMults.incoming * Math.pow(0.5, context.self.getStatusLevel("prepared") + 1)
     }
 }
 
 export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuffer, index, opponent}) => {
-    const chance = 0.5 + (0.25 * self.getEffectLevel("prepared"));
+    const chance = 0.5 + (0.25 * self.getStatusLevel("prepared"));
 
     // Evade technically fails if we're not attacked (dont apply bonus)
     // Once we add status messages we'll wanna break this into actual cases for it to make sense.

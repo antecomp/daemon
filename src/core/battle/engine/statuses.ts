@@ -1,7 +1,7 @@
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
 
-export abstract class Effect {
+export abstract class Status {
     type: string;
     duration: number;
 
@@ -11,9 +11,9 @@ export abstract class Effect {
     }
 
     /** Applies effect multipliers based on level, where level = stack depth (amount of times effect applied) */
-    abstract getEffectMultipliers(level: number): MultiplierSet;
+    abstract getStatusMultipliers(level: number): MultiplierSet;
 
-    applyPostEffect(_self: Actor, _opponent: Actor) {/* noop */};
+    applyPostEffect?(_self: Actor, _opponent: Actor) {/* noop */};
 
     /** Reduce duration */
     tick(): boolean {
@@ -22,16 +22,16 @@ export abstract class Effect {
     }
 }
 
-export function computeEffectMultipliers(actor: Actor): MultiplierSet {
+export function computeStatusMultipliers(actor: Actor): MultiplierSet {
     let incoming = 1;
     let outgoing = 1;
 
-    for (const [_type, effectStack] of actor.effects) {
-        const stackCount = effectStack.length;
+    for (const [_type, statusStack] of actor.statuses) {
+        const stackCount = statusStack.length;
         if (stackCount > 0) {
-            const effectMultipliers = effectStack[0].getEffectMultipliers(stackCount);
-            incoming *= effectMultipliers.incoming;
-            outgoing *= effectMultipliers.outgoing;
+            const statusMults = statusStack[0].getStatusMultipliers(stackCount);
+            incoming *= statusMults.incoming;
+            outgoing *= statusMults.outgoing;
         }
     }
 
@@ -40,54 +40,55 @@ export function computeEffectMultipliers(actor: Actor): MultiplierSet {
 
 
 
-/* Effects Themselves............... (move to different file?) */
+/* Effects Themselves............... (move to different file if this list gets too long.) */
 
-export class VulnerableEffect extends Effect {
+export class VulnerableStatus extends Status {
     constructor(duration: number = 1) {
         super("vulnerable", duration);
     }
 
-    override getEffectMultipliers(level: number): MultiplierSet {
+    override getStatusMultipliers(level: number): MultiplierSet {
         // Change this based on whatever balancing you want.
         return { incoming: 1.5 ** level, outgoing: 1 }; // Increases damage taken
     }
 }
 
-export class WeakenedEffect extends Effect {
+export class WeakenedStatus extends Status {
     constructor(duration: number = 1) {
         super("weakened", duration);
     }
 
-    override getEffectMultipliers(level: number): MultiplierSet {
+    getStatusMultipliers(level: number): MultiplierSet {
         return { incoming: 1, outgoing: 0.75 ** level }; // Reduces outgoing damage exponentially
     }
 }
 
 // I likely won't use this, but this serves as an example of what PostEffect can do.
-export class PoisonEffect extends Effect {
+export class PoisonStatus extends Status {
     constructor(duration: number = 3) {
         super("poison", duration);
     }
 
-    override getEffectMultipliers(_level: number): MultiplierSet {
+    getStatusMultipliers(_level: number): MultiplierSet {
         return { incoming: 1, outgoing: 1 }; // No damage scaling, but causes poison
     }
 
-    override applyPostEffect(self: Actor, _opponent: Actor) {
+    applyPostEffect(self: Actor, _opponent: Actor) {
         // Keeping this constant out of laziness, but 
         // you can easily scale this on effect level.
         self.takeDamage(2);
     }
 }
 
-export class PreparedEffect extends Effect {
+export class PreparedStatus extends Status {
     constructor(duration: number = 1) {
         super("prepared", duration);
     }
 
     // Prepared should not change these multipliers, instead it triggers 
     // special resulting behavior in each move.
-    override getEffectMultipliers(_level: number): MultiplierSet {
+    getStatusMultipliers(_level: number): MultiplierSet {
+        console.log("focus check")
         return {incoming: 1, outgoing: 1}
     }
 }
