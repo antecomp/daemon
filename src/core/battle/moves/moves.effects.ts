@@ -1,17 +1,6 @@
 import { PreparedEffect, VulnerableEffect } from "../engine/effects";
 import { MoveContext, MoveSEConditionalWrapper, MoveSideEffect } from "./moves.types";
 
-// export const RequiresFocus: MoveSEConditionalWrapper = ({index, sequenceBuffer, opponent, self}, SE) => {
-//     if(opponent.currentSequence[index].type != "Aggressive") {
-//         return SE;
-//     } else {
-//         // Indicate loss of focus if subsequent moves require it.
-//         sequenceBuffer[index]['focusLost'] = true;
-//         console.log(`Focus lost. Unable to perform ${self.currentSequence[index].name}`);
-//         return undefined;
-//     }
-// }
-
 export const RequiresFocus: MoveSEConditionalWrapper = (effect) => {
     // Return a wrapper for effect to determine if the effect itself runs.
     return (context: MoveContext) => {

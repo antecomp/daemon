@@ -21,9 +21,6 @@ export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuf
     // Once we add status messages we'll wanna break this into actual cases for it to make sense.
     const success = opponent.currentSequence[index].type == "Aggressive" ?  Math.random() <= chance : false;
 
-    console.log(index);
-
-    console.log(sequenceBuffer);
     sequenceBuffer[index]['evadeSuccess'] = Number(success); // Used for post-evade bonuses.
 
     return {
@@ -35,10 +32,7 @@ export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuf
 export const SuccessfulEvadeAttackBonus: MultiplierPipelineStep = (prevMults, {sequenceBuffer, index}) => {
     console.log(sequenceBuffer);
 
-    let bonusK = 0;
-    if(sequenceBuffer[index - 1]) {
-        bonusK = sequenceBuffer[index - 1]['evadeSuccess'] ?? 0
-    }
+    const bonusK = sequenceBuffer[index - 1]?.['evadeSuccess'] ?? 0
 
     return {
         ...prevMults,
