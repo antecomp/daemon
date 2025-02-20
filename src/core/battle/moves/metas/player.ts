@@ -19,6 +19,7 @@ import trickster_icon_ex from '../icons/trickster_ex.png'
 import lantern_icon_ex from '../icons/lantern.png'
 import { PlayerMoveMeta } from '../moves.types'
 import { Attack, Defend, Evade, Heal, NothingMove, Observe, Prepare } from '../moves.list'
+import { CannotBeFirst } from '../moves.validators'
 
 
 
@@ -45,7 +46,8 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
             } else { // We just have a move straight-up
                 return prevMeta.getMove;
             }
-        }
+        },
+        canPerform: CannotBeFirst
     },
 
     observe: {
