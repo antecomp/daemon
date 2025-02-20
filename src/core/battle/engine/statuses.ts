@@ -1,13 +1,17 @@
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
+import vuln_icon from "@/assets/icons/statuses/vuln.png"
+import prep_icon from "@/assets/icons/statuses/prep.png"
 
 export abstract class Status {
     type: string;
+    icon?: string
     duration: number;
 
-    constructor(type: string, duration: number = 1) {
+    constructor(type: string, duration: number = 1, icon?: string) {
         this.type = type;
         this.duration = duration;
+        this.icon = icon
     }
 
     /** Applies effect multipliers based on level, where level = stack depth (amount of times effect applied) */
@@ -44,7 +48,7 @@ export function computeStatusMultipliers(actor: Actor): MultiplierSet {
 
 export class VulnerableStatus extends Status {
     constructor(duration: number = 1) {
-        super("vulnerable", duration);
+        super("vulnerable", duration, vuln_icon);
     }
 
     override getStatusMultipliers(level: number): MultiplierSet {
@@ -82,7 +86,7 @@ export class PoisonStatus extends Status {
 
 export class PreparedStatus extends Status {
     constructor(duration: number = 1) {
-        super("prepared", duration);
+        super("prepared", duration, prep_icon);
     }
 
     // Prepared should not change these multipliers, instead it triggers 

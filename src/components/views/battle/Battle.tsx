@@ -17,7 +17,7 @@ interface BattleProps {
 export default function Battle(props: BattleProps) {
 
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
-    const { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight } = useBattleLogic(props.opponentData);
+    const { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses } = useBattleLogic(props.opponentData);
 
     onMount(() => {
         setupRound();
@@ -35,7 +35,7 @@ export default function Battle(props: BattleProps) {
                     />
                     <BattleCanvas sprite={props.opponentData.sprite} fragmentShader={props.opponentData.backgroundShader}/>
                 </CornerRect>
-                <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults}} />
+                <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses}} />
             </div>
         </BattleUIStateContext.Provider>
     )

@@ -36,6 +36,7 @@ interface ActionbarProps {
     playerHealth: number
     playerMults: Accessor<MultiplierSet>
     opponentMults: Accessor<MultiplierSet>
+    currentStatuses: Accessor<{player: string[], opp: string[]}>
 }
 
 function mapMultiplier(x: number): number {
@@ -124,6 +125,16 @@ export default function Actionbar(props: ActionbarProps) {
                     <div class="dbars">
                         <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.opponentMults().outgoing)}%`}/>
                         <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.opponentMults().incoming)}%`}/>
+                    </div>
+                    <div class="player-statuses">
+                        <For each={props.currentStatuses().player}>
+                            {stat => <img class="status-icon" src={stat} />}
+                        </For>
+                    </div>
+                    <div class="opp-statuses">
+                        <For each={props.currentStatuses().opp}>
+                            {stat => <img class="status-icon" src={stat}/>}
+                        </For>
                     </div>
                 </div>
             </div>

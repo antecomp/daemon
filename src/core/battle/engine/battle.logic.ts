@@ -26,6 +26,9 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     const [playerMults, setPlayerMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
     const [opponentMults, setOpponentMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
 
+    // Signal used to visualize status effects in multbar
+    const [currentStatuses, setCurrentStatusIcons] = createSignal<{player: string[], opp: string[]}>({player: [], opp: []});
+
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
     function setupRound() { 
@@ -57,11 +60,13 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             const playerFinalMultipliers = prepareMove( player, opponent, moveIndex, playerSequenceBuffer);
             const opponentFinalMultipliers = prepareMove( opponent, player, moveIndex, opponentSequenceBuffer);
 
-            // Update signal to visualize new mults in UI
+            // Update UI
             setPlayerMults(playerFinalMultipliers); 
             setOpponentMults(opponentFinalMultipliers);
-
-            // TODO: Also Visualize Applied Effects.
+            setCurrentStatusIcons({
+                player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
+                opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+            });
 
             // Delay before damage dealt. (see multipliers then apply)
             await sleep(1000);
@@ -82,11 +87,11 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
             // Reset signal for UI
             setPlayerMults({incoming: 0, outgoing: 0});
-            setOpponentMults({incoming: 0, outgoing: 0})
-
-            //console.log(player, opponent);
-            console.log("OPP", opponent.statuses);
-            console.log("SELF", player.statuses);
+            setOpponentMults({incoming: 0, outgoing: 0});
+            setCurrentStatusIcons({
+                player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
+                opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+            });
 
             await sleep(3000); // Wait before doing next move.
         }
@@ -100,5 +105,5 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         
     }
 
-    return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight };
+    return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses };
 }

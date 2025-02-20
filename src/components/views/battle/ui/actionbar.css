@@ -141,6 +141,20 @@
                 background-position: var(--offset);
             }
 
+            .player-statuses {
+                position: absolute;
+                top: 8px;
+                left: 82px;
+            }
+
+            .opp-statuses {
+                position: absolute;
+                top: 8px;
+                right: 82px;
+                display: flex;
+                flex-direction: row-reverse;
+            }
+
 
         }
 
