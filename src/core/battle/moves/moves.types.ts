@@ -57,6 +57,9 @@ export interface MoveMeta {
      * 
      * For example, this is used in repeat to prevent it being the first move. */
     canPerform?: MoveValidator
+
+    /** Used for tooltip */
+    description: string
 }
 
 export interface PlayerMoveMeta extends MoveMeta {

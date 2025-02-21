@@ -32,6 +32,7 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         displayName: "apprentice",
         icon: apprentice_icon,
         rbIcon: apprentice_icon_ex,
+        description: `Like the flowers, knowledge comes from the rotting ones. \n \n Maintain momentum. Repeats previous rune. \n Cannot be used first.`,
         getMove: (context) => {
 
             const prevMeta = context.seq[context.index - 1];
@@ -54,48 +55,55 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         displayName: "lantern",
         icon: mage_icon,
         rbIcon: mage_icon_ex,
-        getMove: Observe
+        getMove: Observe,
+        description: `The flame, our illuminator and destroyer. Illuminate weaknesses of adversary. \n\n Applies vulnerability to opponent on subsequent interaction.`
     },
 
     attack: {
         displayName: "candlelight",
         icon: candle_icon,
         rbIcon: candle_icon_ex,
-        getMove: Attack
+        getMove: Attack,
+        description: `If moonlight heals, what does candlelight do? \n \n Directly challenge opponents' sense of reality. Deals damage.`
     },
 
     evade: {
         displayName: "trickster",
         icon: trickster_icon,
         rbIcon: trickster_icon_ex,
-        getMove: Evade
+        getMove: Evade,
+        description: `Our first understanding of self comes from a two-faced fox. \n\n Localized distortion of existence, chance to completely negate damage of incoming attacks.`
     },
 
     heal: {
         displayName: "priestess",
         icon: priestess_icon,
         rbIcon: priestess_icon_ex,
-        getMove: Heal
+        getMove: Heal,
+        description: `We only stay for the pretty music. \n\n Focus on restoring a sense of reality. If not attacked, heal.`
     },
 
     prepare: {
         displayName: "hourglass",
         icon: hourglass_icon,
         rbIcon: hourglass_icon_ex,
-        getMove: Prepare
+        getMove: Prepare,
+        description: `The sand is nauseous from your constant turmoil. \n\n Carefully calculate strategy. Increases effectiveness of subsequent rune.`
     },
 
     defend: {
         displayName: "praetorian",
         icon: prae_icon,
         rbIcon: prae_icon_ex,
-        getMove: Defend
+        getMove: Defend,
+        description: `The bravest coward you'll ever meet. \n\n Cling to personal illusion. Reduce damage of incoming attacks.`
     },
 
     abstract: {
         displayName: "abstract",
         icon: chain_icon,
         rbIcon: chain_icon_ex,
-        getMove: NothingMove
+        getMove: NothingMove,
+        description: `Frame personal reality as fiction. \n\n Does nothing. This is a bloody placeholder.`
     }
 }

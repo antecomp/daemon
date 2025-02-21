@@ -1,9 +1,18 @@
 import { MultiplierPipelineStep } from "./moves.types";
 
-export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, context) => {
+export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, {self, appendActionMessage}) => {
+
+    switch(self.getStatusLevel("prepared")) {
+        case 1:
+            appendActionMessage(`${self.name} attacks with purpose.`)
+            break;
+        case 2:
+            appendActionMessage(`${self.name} attacks with majesty.`)
+    }
+
     return {
         ...prevMults,
-        outgoing: prevMults.outgoing * Math.pow(2, context.self.getStatusLevel("prepared"))
+        outgoing: prevMults.outgoing * Math.pow(2, self.getStatusLevel("prepared"))
     }
 }
 
