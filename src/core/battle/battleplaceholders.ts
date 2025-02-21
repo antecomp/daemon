@@ -3,26 +3,27 @@ import { MoveMeta } from "./moves/moves.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan from "@/assets/artwork/dæmons/snaek.png"
 import sample_move_icon from "@/components/views/battle/assets/placeholder_move_icon.png"
-import { Attack, NothingMove } from "./moves/moves.list";
+import { Attack, NothingMove, Prepare } from "./moves/moves.list";
 import vortexShader from "@/shaders/backgrounds/vortex.shader";
-import pickRandom from "@/util/pickRandom";
+import { shuffleArray } from "@/util/shuffle";
 
 const biteMove: MoveMeta = {
     displayName: "Bite",
     icon: sample_move_icon,
-    getMove: Attack
+    getMove: Attack,
 }
 
 
 const nothingMove: MoveMeta = {
     displayName: "Idle",
     icon: sample_move_icon,
-    getMove: {
-        name: "nothing",
-        type: "Passive",
-        //behaviors: {postEffects: [({appendActionMessage}) => {appendActionMessage(`"The Serpent " ${pickRandom<string>(["hisses", "looks at you with their many eyes", "bares their teeth"])}`)}]}
-        behaviors: {}
-    }
+    getMove: NothingMove
+}
+
+const prepareMove: MoveMeta = {
+    displayName: "Poise",
+    icon: sample_move_icon,
+    getMove: Prepare
 }
 
 // Panoptes will be our opponent friend for this early test :)
@@ -35,7 +36,7 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     moveBin: [biteMove, nothingMove],
     maxHealth: 20,
     getSequence: (_me, _player) => {
-        return [biteMove, nothingMove, nothingMove, biteMove, biteMove]
+        return shuffleArray([biteMove, nothingMove, prepareMove, biteMove, biteMove])
     },
     backgroundShader: vortexShader
 }

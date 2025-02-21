@@ -59,9 +59,12 @@ export interface MoveMeta {
     canPerform?: MoveValidator
 
     /** Used for tooltip */
-    description: string
+    description?: string
 }
 
 export interface PlayerMoveMeta extends MoveMeta {
     rbIcon: string // Larger, unique icons used for runebuilder.
+
+    /** Used for tooltip. Not optional for Player Moves. */
+    description: string
 }
