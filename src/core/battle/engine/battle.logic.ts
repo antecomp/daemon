@@ -6,6 +6,7 @@ import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects } from "./battle.utils";
+import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -14,7 +15,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     /*  createMultible let's Solid listen for *value* changes on this object for UI updates
         Meaning we don't have to use a signal for "health" as it's a primitive
         already in Actor that we can access directly. */
-    const player = createMutable(new Actor("player", 20)); // This should be extracted from game store later.
+    const player = createMutable(new Actor("Arda", 20)); // This should be extracted from game store later.
     const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
 
     let opponentSequence: MoveMeta[] // Mutable ref-like (here because it's utilized by multiple methods.)
@@ -30,9 +31,13 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     const [currentStatuses, setCurrentStatusIcons] = createSignal<{player: string[], opp: string[]}>({player: [], opp: []});
 
     // Action messages are the little quick prompts that indicate things happening in the battle, information and flair text
-    const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([{text: "Placeholder"}]);
+    const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text: string/*, icon */) => {
         setActionMessages(prev => [...prev, {text}]);
+
+        setTimeout(() => {
+            setActionMessages(prev => prev.slice(1))
+        }, NOTIFICATION_LIFESPAN);
     }
 
 
@@ -75,7 +80,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             });
 
             // Delay before damage dealt. (see multipliers then apply)
-            await sleep(1000);
+            await sleep(DAMAGE_DELAY);
 
             // I know this doubling up look stupid, but you can't easily loop generalize this
             // as we require this specific flip-floppy way of ordering the events!!!
@@ -99,7 +104,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
             });
 
-            await sleep(3000); // Wait before doing next move.
+            await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
         // TODO: Death Check

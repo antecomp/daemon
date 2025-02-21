@@ -1,5 +1,5 @@
 #action-messages {
-    width: 25%;
+    width: 200px;
     position: absolute;
     top: 10%;
     right: 0;
@@ -11,32 +11,48 @@
    
 
     .action-message {
-        padding: 5px;
-        border: solid white 1px;
+        padding-left: 5px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: solid white 2px;
+        border-left: none;
         border-right: none;
         background: black;
+        transition: opacity 1s;
+        position: relative;
+    }
 
-        transition: opacity 0.3s;
+    .action-message::before {
+      content: url('../assets/notif_end.png');
+      position: absolute;
+      right: 100%;
+      top: -2px;
+    }
+
+    .fade-enter {
+      opacity: 0;
+      transition: opacity 1s;
+    }
+    .fade-enter-active {
+      opacity: 0;
+      transition: opacity 1s;
+    }
+  
+    .s-enter-to {
+      opacity: 1;
+      transition: opacity 1s;
+    }
+  
+    .fade-exit {
+      opacity: 1;
+    }
+    .fade-exit-active {
+      opacity: 0;
+      transition: opacity 1s;
     }
 }
 
 /* Names here determined/appended by TransitionGroup */
 
-.fade-enter {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  .fade-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  .fade-exit {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .fade-exit-active {
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s;
-  }

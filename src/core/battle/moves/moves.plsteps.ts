@@ -14,7 +14,7 @@ export const ReduceIncomingDamage: MultiplierPipelineStep = (prevMults, context)
     }
 }
 
-export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuffer, index, opponent}) => {
+export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuffer, index, opponent, appendActionMessage}) => {
     const chance = 0.5 + (0.25 * self.getStatusLevel("prepared"));
 
     // Evade technically fails if we're not attacked (dont apply bonus)
@@ -23,16 +23,24 @@ export const EvadeCheck: MultiplierPipelineStep = (prevMults, {self, sequenceBuf
 
     sequenceBuffer[index]['evadeSuccess'] = Number(success); // Used for post-evade bonuses.
 
+    if(success) {
+        appendActionMessage(`${self.name} swiftly dissapates the attack!`)
+    }
+
     return {
         ...prevMults,
         incoming: prevMults.incoming * Number(!success) // 1 or 0.
     }
 }
 
-export const SuccessfulEvadeAttackBonus: MultiplierPipelineStep = (prevMults, {sequenceBuffer, index}) => {
+export const SuccessfulEvadeAttackBonus: MultiplierPipelineStep = (prevMults, {sequenceBuffer, index, appendActionMessage, self}) => {
     console.log(sequenceBuffer);
 
     const bonusK = sequenceBuffer[index - 1]?.['evadeSuccess'] ?? 0
+
+    if(bonusK > 0) {
+        appendActionMessage(`${self.name} is frenzied and strikes with elegance!`)
+    }
 
     return {
         ...prevMults,

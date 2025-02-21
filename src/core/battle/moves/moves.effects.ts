@@ -8,16 +8,14 @@ export const RequiresFocus: MoveSEConditionalWrapper = (effect) => {
             effect(context)
         } else {
             // Indicate loss of focus if subsequent moves require it.
-            console.log(`Focus lost. Unable to perform ${context.self.currentSequence[context.index].name}`);
+            context.appendActionMessage(`${context.self.name}'s focus was shattered! Failed ${context.self.currentSequence[context.index].name}.`)
             context.sequenceBuffer[context.index]['focusLost'] = true;
         }
     }   
 }
 
 export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
-    console.log("Attempting self vuln")
     self.addStatus(new VulnerableStatus(1));
-    console.log(self.statuses)
 }
 
 export const ApplySelfHeal: MoveSideEffect = ({self, appendActionMessage}) => {
@@ -39,6 +37,13 @@ export const ExtendSelfPrepared: MoveSideEffect = ({self}) => {
     self.tickUpStatus("prepared", 1);
 }
 
-export const ApplySelfPrepared: MoveSideEffect = ({self}) => {
+export const ApplySelfPrepared: MoveSideEffect = ({self, appendActionMessage}) => {
     self.addStatus(new PreparedStatus(1));
+    switch(self.getStatusLevel("prepared")) {
+        case 1:
+            appendActionMessage(`${self.name}'s vision narrows.`)
+        break;    
+        case 2:
+            appendActionMessage(`${self.name} is ready for anything.`)
+    }
 }
