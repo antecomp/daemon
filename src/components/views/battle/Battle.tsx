@@ -9,6 +9,7 @@ import { DVOpponentData } from '@/core/battle/engine/battle.types';
 import { BattleUIStateContext } from '@/core/battle/engine/battle.context';
 import { useBattleLogic } from '@/core/battle/engine/battle.logic';
 import BattleCanvas from './ui/BattleCanvas';
+import ActionMessages from './ui/ActionMessages';
 
 interface BattleProps {
     opponentData: DVOpponentData
@@ -17,7 +18,7 @@ interface BattleProps {
 export default function Battle(props: BattleProps) {
 
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
-    const { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses } = useBattleLogic(props.opponentData);
+    const { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages } = useBattleLogic(props.opponentData);
 
     onMount(() => {
         setupRound();
@@ -26,6 +27,7 @@ export default function Battle(props: BattleProps) {
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
             <div id="battle-container">
+                <ActionMessages messages={actionMessages}/>
                 <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                     <OppStatusBar
                         name={opponent.name.toUpperCase()}

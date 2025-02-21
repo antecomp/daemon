@@ -21,3 +21,10 @@ export interface PlayerData {
     moveBin: PlayerMoveMeta[]
     actor: Actor
 }
+
+export interface ActionMessage {
+    // icon: string // <- I think this should be a string for a lookup table of standard icons rather than named imports/urls
+    text: string
+}
+
+export type ActionMessageAppender = (text: string, /* icon */) => void;

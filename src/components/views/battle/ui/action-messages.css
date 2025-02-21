@@ -1,0 +1,18 @@
+#action-messages {
+    background: #aaaaaaaa;
+    width: 25%;
+    position: absolute;
+    top: 10%;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: end; */
+   
+
+    .action-message {
+        padding: 5px;
+        border: solid white 1px;
+        background: black;
+    }
+}

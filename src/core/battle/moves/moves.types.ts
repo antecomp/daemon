@@ -1,5 +1,5 @@
 import { Actor } from "../engine/actor";
-import { MultiplierSet } from "../engine/battle.types";
+import { ActionMessageAppender, MultiplierSet } from "../engine/battle.types";
 
 export type movetype = "Aggressive" | "Passive";
 
@@ -15,6 +15,7 @@ export interface MoveContext {
     index: number;
     sequence: Move[];
     sequenceBuffer: SequenceBuffer; 
+    appendActionMessage: ActionMessageAppender
 }
 
 export type MoveSideEffect = (context: MoveContext) => void;

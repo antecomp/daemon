@@ -1,6 +1,6 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
-import { DVOpponentData, MultiplierSet } from "./battle.types";
+import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
 import {  MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
@@ -28,6 +28,12 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
     // Signal used to visualize status effects in multbar
     const [currentStatuses, setCurrentStatusIcons] = createSignal<{player: string[], opp: string[]}>({player: [], opp: []});
+
+    // Action messages are the little quick prompts that indicate things happening in the battle, information and flair text
+    const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([{text: "Placeholder"}]);
+    const appendActionMessage: ActionMessageAppender = (text: string/*, icon */) => {
+        setActionMessages(prev => [...prev, {text}]);
+    }
 
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
@@ -57,8 +63,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         for(let moveIndex = 0; moveIndex < 5; moveIndex++) {
             
             // PreEffects and Mults.
-            const playerFinalMultipliers = prepareMove( player, opponent, moveIndex, playerSequenceBuffer);
-            const opponentFinalMultipliers = prepareMove( opponent, player, moveIndex, opponentSequenceBuffer);
+            const playerFinalMultipliers = prepareMove( player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
+            const opponentFinalMultipliers = prepareMove( opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
 
             // Update UI
             setPlayerMults(playerFinalMultipliers); 
@@ -82,8 +88,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             player.tickAndRemoveStatuses();
             opponent.tickAndRemoveStatuses();
 
-            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer);
-            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer);
+            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
+            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
 
             // Reset signal for UI
             setPlayerMults({incoming: 0, outgoing: 0});
@@ -105,5 +111,5 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         
     }
 
-    return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses };
+    return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages };
 }

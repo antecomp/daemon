@@ -1,6 +1,6 @@
 import { Move, MoveContext, MoveMeta, movetype, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
-import { MultiplierSet } from "./battle.types";
+import { ActionMessageAppender, MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
 
 export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
@@ -54,7 +54,8 @@ export function prepareMove(
     actor: Actor,
     opponent: Actor,
     moveIndex: number,
-    sequenceBuffer: SequenceBuffer
+    sequenceBuffer: SequenceBuffer,
+    appendActionMessage: ActionMessageAppender
 ): MultiplierSet {
     
     const move = actor.currentSequence[moveIndex];
@@ -65,6 +66,7 @@ export function prepareMove(
         index: moveIndex,
         sequence: actor.currentSequence,
         sequenceBuffer: sequenceBuffer,
+        appendActionMessage
     }
 
     // Add buffer entry at index.
@@ -92,7 +94,8 @@ export function handlePostMoveEffects(
     actor: Actor,
     opponent: Actor,
     moveIndex: number,
-    sequenceBuffer: SequenceBuffer
+    sequenceBuffer: SequenceBuffer,
+    appendActionMessage: ActionMessageAppender
 ) {
     // Run Move PostEffect *last* so it can apply effects for
     // the next turn that won't be ticked off.
@@ -105,6 +108,7 @@ export function handlePostMoveEffects(
                 index: moveIndex,
                 sequence: actor.currentSequence,
                 sequenceBuffer: sequenceBuffer,
+                appendActionMessage
             })
         }
     );
