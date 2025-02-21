@@ -35,12 +35,8 @@
       opacity: 0;
       transition: opacity 1s;
     }
-    .fade-enter-active {
-      opacity: 0;
-      transition: opacity 1s;
-    }
   
-    .s-enter-to {
+    .fade-entered {
       opacity: 1;
       transition: opacity 1s;
     }
@@ -48,9 +44,10 @@
     .fade-exit {
       opacity: 1;
     }
-    .fade-exit-active {
+    .fade-exited {
       opacity: 0;
-      transition: opacity 1s;
+      margin-bottom: -65px;
+      transition: opacity 1s, margin-bottom 1s;
     }
 }
 

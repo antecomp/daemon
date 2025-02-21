@@ -13,9 +13,9 @@ export default function ActionMessages(props: ActionMessagesProps) {
         <div id="action-messages">
             <TransitionGroup
                 enterClass="fade-enter"
-                enterActiveClass="fade-enter-active"
+                enterToClass="fade-entered"
                 exitClass="fade-exit"
-                exitActiveClass="fade-exit-active"
+                exitToClass="fade-exited"
             >
                 <For each={props.messages()}>
                     {message => (
