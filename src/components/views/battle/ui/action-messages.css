@@ -1,5 +1,4 @@
 #action-messages {
-    background: #aaaaaaaa;
     width: 25%;
     position: absolute;
     top: 10%;
@@ -7,12 +6,37 @@
     z-index: 2;
     display: flex;
     flex-direction: column;
+    gap: 10px;
     /* justify-content: end; */
    
 
     .action-message {
         padding: 5px;
         border: solid white 1px;
+        border-right: none;
         background: black;
+
+        transition: opacity 0.3s;
     }
 }
+
+/* Names here determined/appended by TransitionGroup */
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  .fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .fade-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fade-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+  }

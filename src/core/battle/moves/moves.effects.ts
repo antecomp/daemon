@@ -20,9 +20,9 @@ export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
     console.log(self.statuses)
 }
 
-export const ApplySelfHeal: MoveSideEffect = ({self}) => {
+export const ApplySelfHeal: MoveSideEffect = ({self, appendActionMessage}) => {
     const healAmount = 5 * (1 + self.getStatusLevel("prepared"));
-    console.log(`${self.name} successfully heals for ${healAmount}!`);
+    appendActionMessage(`${self.name} heals for ${healAmount}`);
     self.heal(healAmount);
 }
 
@@ -33,7 +33,6 @@ export const ExtendOpponentVulnerable: MoveSideEffect = ({opponent}) => {
 export const ApplyOpponentVulnerable: MoveSideEffect = (context) => {
     console.log("Attempting to apply opp vuln")
     context.opponent.addStatus(new VulnerableStatus(1));
-    console.log(context.opponent, context.opponent.statuses);
 }
 
 export const ExtendSelfPrepared: MoveSideEffect = ({self}) => {
