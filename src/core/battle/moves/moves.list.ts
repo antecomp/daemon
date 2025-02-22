@@ -2,8 +2,8 @@
  * Generic Moves 
 */
 
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
-import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage, SuccessfulEvadeAttackBonus } from "./moves.plsteps";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
+import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move } from "./moves.types";
 
 export const Observe: Move = {
@@ -19,7 +19,7 @@ export const Attack: Move = {
     name: "attack",
     type: "Aggressive",
     behaviors: {
-        multpipeline: [PreparedAttackBonus, SuccessfulEvadeAttackBonus]
+        multpipeline: [PreparedAttackBonus]
     }
 }
 
@@ -27,7 +27,8 @@ export const Evade: Move = {
     name: "evade",
     type: "Passive",
     behaviors: {
-        multpipeline: [EvadeCheck]
+        multpipeline: [EvadeCheck],
+        postEffects: [EvadePostEffect]
     }
 }
 

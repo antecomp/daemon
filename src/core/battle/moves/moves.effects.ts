@@ -1,4 +1,4 @@
-import { PreparedStatus, VulnerableStatus } from "../engine/statuses";
+import { ManiaStatus, PreparedStatus, VulnerableStatus } from "../engine/statuses";
 import { MoveSEConditionalWrapper, MoveSideEffect, PostMoveContext, PostMoveSideEffect } from "./moves.types";
 
 export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effect) => {
@@ -45,5 +45,15 @@ export const ApplySelfPrepared: MoveSideEffect = ({self, appendActionMessage}) =
         break;    
         case 2:
             appendActionMessage(`${self.name} is ready for anything.`)
+    }
+}
+
+export const EvadePostEffect: PostMoveSideEffect = ({damageTaken, index, sequenceBuffer, self, appendActionMessage}) => {
+    if(sequenceBuffer[index].evadeSuccessful) {
+        // Confirm we actually dodged some incoming damage...
+        if(damageTaken === 0) {
+            self.addStatus(new ManiaStatus(1));
+            appendActionMessage(`${self.name} dodges swiftly. ${self.name} feels invigorated!`);
+        }
     }
 }

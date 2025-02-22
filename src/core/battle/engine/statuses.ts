@@ -2,6 +2,7 @@ import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
 import vuln_icon from "@/assets/icons/statuses/vuln.png"
 import prep_icon from "@/assets/icons/statuses/prep.png"
+import mania_icon from "@/assets/icons/statuses/mania.png"
 
 export abstract class Status {
     type: string;
@@ -92,8 +93,17 @@ export class PreparedStatus extends Status {
     // Prepared should not change these multipliers, instead it triggers 
     // special resulting behavior in each move.
     getStatusMultipliers(_level: number): MultiplierSet {
-        console.log("focus check")
         return {incoming: 1, outgoing: 1}
+    }
+}
+
+export class ManiaStatus extends Status {
+    constructor(duration: number = 1) {
+        super("mania", duration, mania_icon)
+    }
+
+    getStatusMultipliers(level: number): MultiplierSet {
+        return {incoming: 1, outgoing: 2 ** level}
     }
 }
 
