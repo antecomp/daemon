@@ -1,4 +1,22 @@
-import { MultiplierPipelineStep} from "./moves.types";
+import { MultiplierPipelineStep, MovePLStepConditionalWrapper} from "./moves.types";
+
+export const NegatedByOverwhelm: MovePLStepConditionalWrapper = (pls) => {
+    return (prevMultipliers, context) => {
+        if(context.opponent.currentSequence[context.index].type == "Overwhelming") {
+            return {incoming: 1, outgoing: 1}; // Skip out on this multiplier step, essentially.
+        } else {
+            return pls(prevMultipliers, context);
+        }
+    }
+}
+
+/** Used for Overwhelm moves. Zero's out outgoing damage if the corresponding opponent move isn't of the Defensive category. */
+export const OnlyDoDamageOnDefensive: MultiplierPipelineStep = (prevMults, {opponent, index}) => {
+    return {
+        ...prevMults,
+        outgoing: prevMults.outgoing * Number(opponent.currentSequence[index].type != "Defensive")
+    }
+}
 
 export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, {self, appendActionMessage}) => {
 

@@ -3,14 +3,14 @@
 */
 
 import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
-import { EvadeCheck, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
+import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move } from "./moves.types";
 
 export const Observe: Move = {
     name: "observe",
     type: "Passive",
     behaviors: {
-        preEffects: [ExtendOpponentVulnerable],
+        immediatePostEffects: [ExtendOpponentVulnerable],
         postEffects: [ApplyOpponentVulnerable]
     }
 }
@@ -27,7 +27,7 @@ export const Evade: Move = {
     name: "evade",
     type: "Passive",
     behaviors: {
-        multpipeline: [EvadeCheck],
+        multpipeline: [NegatedByOverwhelm(EvadeCheck)],
         postEffects: [EvadePostEffect]
     }
 }
@@ -57,7 +57,7 @@ export const Defend: Move = {
     name: "defend",
     type: "Passive",
     behaviors: {
-        multpipeline: [ReduceIncomingDamage]
+        multpipeline: [NegatedByOverwhelm(ReduceIncomingDamage)]
     }
 }
 
@@ -68,3 +68,12 @@ export const NothingMove: Move = {
 }
 
 // TODO: Determine Mage/8th Move Idea
+
+export const OverwhelmMove: Move = {
+    name: "Overwhelm",
+    type: "Overwhelming",
+    behaviors: {
+        preEffects: [ApplySelfVulnerable],
+        multpipeline: [OnlyDoDamageOnDefensive, PreparedAttackBonus]
+    }
+}

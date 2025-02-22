@@ -16,7 +16,9 @@ export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
 export function getBaseMultipliers(type: movetype): MultiplierSet {
     return {
         "Aggressive":   {incoming: 1, outgoing: 1},
-        "Passive":      {incoming: 1, outgoing: 0}
+        "Passive":      {incoming: 1, outgoing: 0},
+        "Defensive":    {incoming: 1, outgoing: 0},
+        "Overwhelming": {incoming: 1, outgoing: 1},
     }[type]
 }
 

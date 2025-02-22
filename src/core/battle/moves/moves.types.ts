@@ -1,7 +1,7 @@
 import { Actor } from "../engine/actor";
 import { ActionMessageAppender, MultiplierSet } from "../engine/battle.types";
 
-export type movetype = "Aggressive" | "Passive";
+export type movetype = "Aggressive" | "Passive" | "Defensive" | "Overwhelming";
 
 /* Per-sequence temporary data, indexed by assigning move for inter-move ref. */
 export interface SequenceBuffer {
@@ -29,6 +29,7 @@ export type MoveSideEffect = (context: MoveContext) => void;
 export type PostMoveSideEffect = (context: PostMoveContext) => void;
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
 export type MoveSEConditionalWrapper<T = MoveSideEffect | PostMoveSideEffect> = (effect: T) => T;
+export type MovePLStepConditionalWrapper = (pls: MultiplierPipelineStep) => MultiplierPipelineStep;
 export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
 export interface Move {
