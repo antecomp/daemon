@@ -1,10 +1,10 @@
 import { PreparedStatus, VulnerableStatus } from "../engine/statuses";
-import { MoveContext, MoveSEConditionalWrapper, MoveSideEffect } from "./moves.types";
+import { MoveSEConditionalWrapper, MoveSideEffect, PostMoveContext, PostMoveSideEffect } from "./moves.types";
 
-export const RequiresFocus: MoveSEConditionalWrapper = (effect) => {
+export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effect) => {
     // Return a wrapper for effect to determine if the effect itself runs.
-    return (context: MoveContext) => {
-        if(context.opponent.currentSequence[context.index].type != "Aggressive") {
+    return (context: PostMoveContext) => {
+        if(context.damageTaken <= 0) {
             effect(context)
         } else {
             // Indicate loss of focus if subsequent moves require it.

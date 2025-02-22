@@ -46,7 +46,8 @@ export const Prepare: Move = {
     name: "prepare",
     type: "Passive",
     behaviors: {
-        preEffects: [ApplySelfVulnerable, RequiresFocus(ExtendSelfPrepared)],
+        preEffects: [ApplySelfVulnerable],
+        immediatePostEffects: [RequiresFocus(ExtendSelfPrepared)],
         postEffects: [RequiresFocus(ApplySelfPrepared)]
     }
 }

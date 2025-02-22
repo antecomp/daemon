@@ -1,11 +1,11 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
-import {  MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
+import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects } from "./battle.utils";
 import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
@@ -24,17 +24,18 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     const [insight, setInsight] = createSignal<(MoveMeta | undefined)[]>([]);
 
     // Signals used to visualize the multiplier values (used by the mult bars in ActionBar.tsx)
-    const [playerMults, setPlayerMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
-    const [opponentMults, setOpponentMults] = createSignal<MultiplierSet>({incoming: 0, outgoing: 0})
+    const [playerMults, setPlayerMults] = createSignal<MultiplierSet>({ incoming: 0, outgoing: 0 })
+    const [opponentMults, setOpponentMults] = createSignal<MultiplierSet>({ incoming: 0, outgoing: 0 })
 
     // Signal used to visualize status effects in multbar
-    const [currentStatuses, setCurrentStatusIcons] = createSignal<{player: string[], opp: string[]}>({player: [], opp: []});
+    const [currentStatuses, setCurrentStatusIcons] = createSignal<{ player: string[], opp: string[] }>({ player: [], opp: [] });
 
     // Action messages are the little quick prompts that indicate things happening in the battle, information and flair text
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text: string/*, icon */) => {
-        setActionMessages(prev => [...prev, {text}]);
+        setActionMessages(prev => [...prev, { text }]);
 
+        // Should be changed to some sort of pipeline thing later.
         setTimeout(() => {
             setActionMessages(prev => prev.slice(1))
         }, NOTIFICATION_LIFESPAN);
@@ -42,37 +43,37 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
-    function setupRound() { 
+    function setupRound() {
         opponentSequence = opponentData.getSequence(opponent, player);
         setInsight(generateHint(opponentSequence));
-        opponent.setMoveSequence( unwrapMoveMetaSequence(opponent, opponentSequence) );
+        opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence));
         setBattleUIState(BattleUIState.WAITING);
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...
     async function executeRound(userSelectedSequence: PlayerMoveMeta[]) {
-        if(opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
+        if (opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
         setInsight(opponentSequence); // Visualize entire opponent sequence.
 
         player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence));
-        if(player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate"); // Should never see this.
+        if (player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate"); // Should never see this.
 
         // Sequence buffers are Record<index, {}>'s that can be used by moves to save information relevant to subsequent moves.
         // Differs from player.data which is persistent for the entire battle.
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
-        
-        for(let moveIndex = 0; moveIndex < 5; moveIndex++) {
-            
+
+        for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
+
             // PreEffects and Mults.
-            const playerFinalMultipliers = prepareMove( player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
-            const opponentFinalMultipliers = prepareMove( opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
+            const playerFinalMultipliers = prepareMove(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
+            const opponentFinalMultipliers = prepareMove(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
 
             // Update UI
-            setPlayerMults(playerFinalMultipliers); 
+            setPlayerMults(playerFinalMultipliers);
             setOpponentMults(opponentFinalMultipliers);
             setCurrentStatusIcons({
                 player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
@@ -84,8 +85,15 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
             // I know this doubling up look stupid, but you can't easily loop generalize this
             // as we require this specific flip-floppy way of ordering the events!!!
-            opponent.takeDamage(playerFinalMultipliers.outgoing * opponentFinalMultipliers.incoming);
-            player.takeDamage(playerFinalMultipliers.incoming * opponentFinalMultipliers.outgoing);
+
+            const playerDamageDealt = playerFinalMultipliers.outgoing * opponentFinalMultipliers.incoming;
+            const opponentDamageDealt = playerFinalMultipliers.incoming * opponentFinalMultipliers.outgoing;
+
+            opponent.takeDamage(playerDamageDealt);
+            player.takeDamage(opponentDamageDealt);
+
+            handleImmediatePostEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt });
+            handleImmediatePostEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt });
 
             performStatusPostEffects(player, opponent);
             performStatusPostEffects(opponent, player);
@@ -93,12 +101,12 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             player.tickAndRemoveStatuses();
             opponent.tickAndRemoveStatuses();
 
-            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
-            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
+            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt });
+            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt });
 
             // Reset signal for UI
-            setPlayerMults({incoming: 0, outgoing: 0});
-            setOpponentMults({incoming: 0, outgoing: 0});
+            setPlayerMults({ incoming: 0, outgoing: 0 });
+            setOpponentMults({ incoming: 0, outgoing: 0 });
             setCurrentStatusIcons({
                 player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
@@ -113,7 +121,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
         // Loop back to setup.
         setupRound();
-        
+
     }
 
     return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages };

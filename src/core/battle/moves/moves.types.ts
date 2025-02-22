@@ -18,9 +18,17 @@ export interface MoveContext {
     appendActionMessage: ActionMessageAppender
 }
 
+export interface MoveResolution {
+    damageDealt: number;
+    damageTaken: number;
+}
+
+export type PostMoveContext = MoveContext & MoveResolution;
+
 export type MoveSideEffect = (context: MoveContext) => void;
+export type PostMoveSideEffect = (context: PostMoveContext) => void;
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
-export type MoveSEConditionalWrapper = (effect: MoveSideEffect) => MoveSideEffect;
+export type MoveSEConditionalWrapper<T = MoveSideEffect | PostMoveSideEffect> = (effect: T) => T;
 export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
 export interface Move {
@@ -34,8 +42,10 @@ export interface Move {
         preEffects?: MoveSideEffect[]
         /** "pipeline steps", functions that are reduced over to calculate the final outgoing and incoming damage multipliers for this move. */
         multpipeline?: MultiplierPipelineStep[]
+        /** Side effects immediately after damage dished out, but before any status logic. */
+        immediatePostEffects?: PostMoveSideEffect[]
         /** Side effects that run *after* everything (including status tickdowns). Namely used to apply next-turn statuses */
-        postEffects?: MoveSideEffect[]
+        postEffects?: PostMoveSideEffect[]
     }
 }
 

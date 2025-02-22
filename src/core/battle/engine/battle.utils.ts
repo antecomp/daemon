@@ -1,4 +1,4 @@
-import { Move, MoveContext, MoveMeta, movetype, SequenceBuffer } from "../moves/moves.types";
+import { Move, MoveContext, MoveMeta, MoveResolution, movetype, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionMessageAppender, MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
@@ -95,7 +95,8 @@ export function handlePostMoveEffects(
     opponent: Actor,
     moveIndex: number,
     sequenceBuffer: SequenceBuffer,
-    appendActionMessage: ActionMessageAppender
+    appendActionMessage: ActionMessageAppender,
+    outcome: MoveResolution
 ) {
     // Run Move PostEffect *last* so it can apply effects for
     // the next turn that won't be ticked off.
@@ -108,7 +109,34 @@ export function handlePostMoveEffects(
                 index: moveIndex,
                 sequence: actor.currentSequence,
                 sequenceBuffer: sequenceBuffer,
-                appendActionMessage
+                appendActionMessage,
+                ...outcome
+            })
+        }
+    );
+}
+
+
+/** Happens before ticker. */
+export function handleImmediatePostEffects(
+    actor: Actor,
+    opponent: Actor,
+    moveIndex: number,
+    sequenceBuffer: SequenceBuffer,
+    appendActionMessage: ActionMessageAppender,
+    outcome: MoveResolution
+) {
+    const move = actor.currentSequence[moveIndex];
+    move.behaviors.immediatePostEffects?.forEach((effect) => {
+        // Just manually rebuild the context here, doesn't matter.
+            effect({
+                self: actor,
+                opponent: opponent,
+                index: moveIndex,
+                sequence: actor.currentSequence,
+                sequenceBuffer: sequenceBuffer,
+                appendActionMessage,
+                ...outcome
             })
         }
     );
