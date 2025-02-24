@@ -3,7 +3,11 @@ import { createRoot, createSignal } from "solid-js";
 import { useBattleLogic } from "@/core/battle/engine/battle.logic";
 import { Actor } from "@/core/battle/engine/actor";
 import { Status } from "@/core/battle/engine/statuses";
-import { MultiplierSet } from "@/core/battle/engine/battle.types";
+import { DVOpponentData, MultiplierSet } from "@/core/battle/engine/battle.types";
+import { MoveMeta, PlayerMoveMeta } from "@/core/battle/moves/moves.types";
+import { NothingMove } from "@/core/battle/moves/moves.list";
+import { BattleUIState } from "@/core/battle/engine/battle.context";
+import { playerMoves } from "@/core/battle/moves/metas/player";
 // Basic Hooks to Verify We Can Test Hooks at All.
 function useCounter(initialValue = 0) {
     const [count, setCount] = createSignal(initialValue);
@@ -132,5 +136,78 @@ describe("Actor Status System", () => {
     // Test may fail based on setter sorting, try swapping the indices around.
     expect(basicActor.statuses.get("xxx")?.[0].duration).toBe(2);
     expect(basicActor.statuses.get("xxx")?.[1].duration).toBe(3);
+  });
+});
+
+/////////////////////
+
+const nothingMove: PlayerMoveMeta = {
+  displayName: "Idle",
+  icon: "",
+  getMove: NothingMove,
+  rbIcon: "",
+  description: ""
+};
+
+function generateSampleOpponent(seq: MoveMeta[]) {
+  const DVO: DVOpponentData = {
+    name: "Automata",
+    icon: "",
+    sprite: "",
+    maxHealth: 100,
+    // Override this per-test.
+    getSequence: (_me, _player) => seq,
+    backgroundShader: ``
+  }
+  return DVO;
+}
+
+describe("useBattleLogic Hook Init", () => {
+  it("setupRound test", () => {
+    const {opponent, setupRound, battleUIState} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    expect(battleUIState()).toBe(BattleUIState.WAITING);
+    expect(opponent.currentSequence.length).toBe(5);
+  });
+
+  it("Exec runs and ends", async () => {
+    const {opponent, setupRound, battleUIState, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    // Back to waiting due to setupRound call.
+    expect(battleUIState()).toBe(BattleUIState.WAITING);
+
+  })
+});
+
+describe("useBattleLogic sequence eval basics", () => {
+  it("Attack damage dealt", async () => {
+    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 1);
+    expect(player.health).toBe(player.maxHealth - 2);
+  });
+
+  it("Repeat performs attack twice", async () => {
+    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    await executeRound([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
+  })
+
+  it("Defend reduces incoming damage", async () => {
+    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.defend, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 0.5);
   });
 })

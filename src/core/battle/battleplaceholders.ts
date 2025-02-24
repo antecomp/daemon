@@ -33,7 +33,7 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     name: "Panoptesian Serpent",
     icon: pan_icon,
     sprite: pan,
-    moveBin: [biteMove, nothingMove],
+    //moveBin: [biteMove, nothingMove],
     maxHealth: 20,
     getSequence: (_me, _player) => {
         return shuffleArray([biteMove, nothingMove, prepareMove, biteMove, biteMove])

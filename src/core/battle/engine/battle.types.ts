@@ -8,7 +8,7 @@ export interface DVOpponentData {
     icon: string
     sprite: string
     //actor: Actor (instead generate actor on creation)
-    moveBin: MoveMeta[]
+    //moveBin: MoveMeta[]
     maxHealth: number
     // Use opponent and player state to make decisions...
     getSequence: (me: Actor, player: Actor) => MoveMeta[]

@@ -51,7 +51,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...
-    async function executeRound(userSelectedSequence: PlayerMoveMeta[]) {
+    async function executeRound(userSelectedSequence: PlayerMoveMeta[], debugMode?: boolean) {
         if (opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
@@ -81,7 +81,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             });
 
             // Delay before damage dealt. (see multipliers then apply)
-            await sleep(DAMAGE_DELAY);
+            !debugMode && await sleep(DAMAGE_DELAY);
 
             // I know this doubling up look stupid, but you can't easily loop generalize this
             // as we require this specific flip-floppy way of ordering the events!!!
@@ -112,7 +112,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
             });
 
-            await sleep(MOVE_DELAY); // Wait before doing next move.
+            !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
         // TODO: Death Check
