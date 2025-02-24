@@ -1,6 +1,15 @@
 import { Status } from "./statuses";
 import { Move } from "../moves/moves.types";
 
+/**
+ * Actor is a simple container tracking the health, statuses and move sequence of either the player or an opponent
+ * within the battle system.
+ * @prop name: Name used for flair text.
+ * @prop maxHealth: initial health and health cap upon healing
+ * @prop statuses: set by addStatus, a map of status names to multiple status instances (to track unique durations)
+ * @prop currentSequence: Holds array for the Actors current move sequence. Iterated over for sequence evaluation. 
+ * Can also be referenced directly for move-synergy specific logic (i.e Overwhelms check for move type);
+ */
 export class Actor {
     name: string;
     maxHealth: number;
@@ -12,8 +21,8 @@ export class Actor {
 
     // Track custom data and flags for advanced logic
     // Leaving this open for whatever that is needed.
-    // As an example, Heal uses this to see if we should heal or skip.
     // Moves and whatever is responsible for maintaining this data tho, be smart :)
+    // TODO: This is honestly super lazy and stupid. Expand the class and define a custom schema PLEASE.
     data: {
         [key: string]: any
     } = {};
@@ -37,31 +46,29 @@ export class Actor {
     }
 
     public addStatus(status: Status) {
-        if(!this.statuses.has(status.type)) {
-            this.statuses.set(status.type, []);
-        }
+       const statusStack = this.statuses.get(status.type) ?? [];
 
-        let statusStack = this.statuses.get(status.type)!;
-
+       // Insert status in sorted order
+       let i = statusStack.findIndex(existing => existing.duration > status.duration);
+       if(i === -1) { // New status
         statusStack.push(status);
-        // Sort so pop gets the smaller duration one.
-        statusStack.sort((a, b) => a.duration - b.duration);
+       } else {
+        statusStack.splice(i, 0, status);
+       }
+
+       this.statuses.set(status.type, statusStack);
     }
 
+    /** Decrease the duration of all statuses by 1, remove any statuses who have reached a >0 duration. */
     public tickAndRemoveStatuses() {
-        for (const [type, effectStack] of this.statuses) {
+        for(const [type, statusStack] of this.statuses) {
+            statusStack.forEach(status => status.tick());
 
-            // Tick every effect in an individual stack
-            for(let i = 0; i < effectStack.length; i++) {
-                effectStack[i].tick();
-            }
+            const remainingStatuses = statusStack.filter(status => status.duration > 0);
 
-            // Remove expired...
-            while(effectStack.length > 0 && effectStack[0].duration <= 0) {
-                effectStack.shift(); // this is why we need to sort.
-            }
-
-            if(effectStack.length == 0) {
+            if(remainingStatuses.length > 0) {
+                this.statuses.set(type, remainingStatuses);
+            } else {
                 this.statuses.delete(type);
             }
         }

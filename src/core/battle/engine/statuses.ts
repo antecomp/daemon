@@ -18,7 +18,7 @@ export abstract class Status {
     /** Applies effect multipliers based on level, where level = stack depth (amount of times effect applied) */
     abstract getStatusMultipliers(level: number): MultiplierSet;
 
-    applyPostEffect?(_self: Actor, _opponent: Actor) {/* noop */};
+    applyPostEffect?: (_self: Actor, _opponent: Actor) => void;
 
     /** Reduce duration */
     tick(): boolean {
@@ -78,7 +78,7 @@ export class PoisonStatus extends Status {
         return { incoming: 1, outgoing: 1 }; // No damage scaling, but causes poison
     }
 
-    applyPostEffect(self: Actor, _opponent: Actor) {
+    applyPostEffect = (self: Actor, _opponent: Actor) => {
         // Keeping this constant out of laziness, but 
         // you can easily scale this on effect level.
         self.takeDamage(2);

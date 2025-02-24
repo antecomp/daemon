@@ -18,7 +18,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     const player = createMutable(new Actor("Arda", 20)); // This should be extracted from game store later.
     const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
 
-    let opponentSequence: MoveMeta[] // Mutable ref-like (here because it's utilized by multiple methods.)
+    let opponentSequence: MoveMeta[]; // At this scope for use in setupRound and executeRound.
 
     // Used for visualization of opponent sequence. Either partial "hint" of the full thing.
     const [insight, setInsight] = createSignal<(MoveMeta | undefined)[]>([]);
