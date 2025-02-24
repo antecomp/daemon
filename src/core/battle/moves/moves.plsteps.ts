@@ -14,7 +14,7 @@ export const NegatedByOverwhelm: MovePLStepConditionalWrapper = (pls) => {
 export const OnlyDoDamageOnDefensive: MultiplierPipelineStep = (prevMults, {opponent, index}) => {
     return {
         ...prevMults,
-        outgoing: prevMults.outgoing * Number(opponent.currentSequence[index].type != MoveType.Defensive)
+        outgoing: prevMults.outgoing * Number(opponent.currentSequence[index].type == MoveType.Defensive)
     }
 }
 

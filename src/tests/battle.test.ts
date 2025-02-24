@@ -149,14 +149,14 @@ const nothingMove: PlayerMoveMeta = {
   description: ""
 };
 
-function generateSampleOpponent(seq: MoveMeta[]) {
+function generateSampleOpponent(seq?: MoveMeta[]) {
   const DVO: DVOpponentData = {
     name: "Automata",
     icon: "",
     sprite: "",
     maxHealth: 100,
     // Override this per-test.
-    getSequence: (_me, _player) => seq,
+    getSequence: (_me, _player) => seq ?? [nothingMove, nothingMove, nothingMove, nothingMove, nothingMove],
     backgroundShader: ``
   }
   return DVO;
@@ -164,14 +164,14 @@ function generateSampleOpponent(seq: MoveMeta[]) {
 
 describe("useBattleLogic Hook Init", () => {
   it("setupRound test", () => {
-    const {opponent, setupRound, battleUIState} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, battleUIState} = useBattleLogic(generateSampleOpponent());
     setupRound();
     expect(battleUIState()).toBe(BattleUIState.WAITING);
     expect(opponent.currentSequence.length).toBe(5);
   });
 
   it("Exec runs and ends", async () => {
-    const {opponent, setupRound, battleUIState, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {setupRound, battleUIState, executeRound} = useBattleLogic(generateSampleOpponent());
     setupRound();
 
     await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove], true);
@@ -184,7 +184,7 @@ describe("useBattleLogic Hook Init", () => {
 
 describe("useBattleLogic sequence eval basics", () => {
   it("Attack damage dealt", async () => {
-    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
     setupRound();
 
     await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
@@ -194,7 +194,7 @@ describe("useBattleLogic sequence eval basics", () => {
   });
 
   it("Repeat performs attack twice", async () => {
-    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
     setupRound();
 
     await executeRound([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
@@ -203,11 +203,148 @@ describe("useBattleLogic sequence eval basics", () => {
   })
 
   it("Defend reduces incoming damage", async () => {
-    const {opponent, setupRound, battleUIState, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.defend, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.defend, playerMoves.defend, nothingMove, nothingMove, nothingMove]));
     setupRound();
 
     await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
 
     expect(opponent.health).toBe(opponent.maxHealth - 0.5);
+
+    opponent.health = opponent.maxHealth;
+
+    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 1); // 2x damage then halved by defend.
+  });
+
+  it("Heal fails based on RequiresFocus", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    opponent.takeDamage(10);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBeLessThan(opponent.maxHealth - 10); // 2 from attack on vuln, 10 manually decremented to verify.
+    
+  });
+
+  it("Heal succeeds with focus", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    opponent.takeDamage(10);
+    await executeRound([playerMoves.defend, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBeGreaterThan(opponent.maxHealth - 10);
+  });
+
+  it("Prepare adds status on success", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    setupRound();
+    await executeRound([playerMoves.evade, playerMoves.prepare, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.getStatusLevel("prepared")).toBe(1);
+  });
+
+  it("Prepare fails without focus", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    setupRound();
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.attack], true);
+
+    expect(opponent.getStatusLevel("prepared")).toBe(0);
+  });
+
+  it("Overwhelm lands on defensive moves", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.defend, playerMoves.evade, nothingMove, nothingMove, nothingMove], true);
+
+    expect(player.health).toBe(player.maxHealth - 2);
+  });
+
+  it("Overwhelm fails with vulnerability on non-defensive moves", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.attack, playerMoves.observe, nothingMove, nothingMove, nothingMove], true);
+
+    expect(player.health).toBe(player.maxHealth);
+    expect(opponent.health).toBe(opponent.maxHealth - 1.5); // -1.5 from vuln. <- NOTE TO SELF I SHOULD PROB MAKE THIS SOME SORT OF CONFIG CONSTANT LOL.
+  })
+
+  it("Prepare attack does bonus damage", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove], true);
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
+    opponent.heal(999);
+    await(executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.attack, nothingMove, nothingMove], true));
+    expect(opponent.health).toBe(opponent.maxHealth - 4);
+  });
+
+  it("Evade negates damage with chance", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    let evadeSuccessCount = 0;
+    let evadeFailCount = 0;
+    const testRuns = 1000; // Lower sample sizes can sometimes trigger a fail within expected range.
+
+    for (let i = 0; i < testRuns; i++) {
+      await executeRound([playerMoves.evade, nothingMove, nothingMove, nothingMove, nothingMove], true);
+      if (player.health === player.maxHealth) {
+        evadeSuccessCount++;
+      } else {
+        evadeFailCount++;
+      }
+      player.health = player.maxHealth;
+    }
+
+    const evadeSuccessRate = evadeSuccessCount / testRuns;
+    expect(evadeSuccessRate).toBeGreaterThan(0.45);
+    expect(evadeSuccessRate).toBeLessThan(0.55);
+  });
+
+  it("Evade chance scales with prepare", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    let evadeSuccessCount = 0;
+    let evadeFailCount = 0;
+    const testRuns = 1000; // Lower sample sizes can sometimes trigger a fail within expected range.
+
+    for (let i = 0; i < testRuns; i++) {
+      await executeRound([playerMoves.prepare, playerMoves.evade, nothingMove, nothingMove, nothingMove], true);
+      if (player.health === player.maxHealth) {
+        evadeSuccessCount++;
+      } else {
+        evadeFailCount++;
+      }
+      player.health = player.maxHealth;
+    }
+
+    const evadeSuccessRate = evadeSuccessCount / testRuns;
+    expect(evadeSuccessRate).toBeGreaterThan(0.65);
+    expect(evadeSuccessRate).toBeLessThan(0.85);
+  });
+
+  it("Evade Gauranteed On Prepare Repeat", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, nothingMove, nothingMove], true);
+    expect(player.health).toBe(player.maxHealth);
+  });
+
+  it("Evade counterattack bonus (mania)", async () => {
+    const {player, setupRound, executeRound, opponent} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, playerMoves.attack, nothingMove], true);
+    expect(player.health).toBe(player.maxHealth);
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
+  });
+
+  it("Heal scales on prepared", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+    player.takeDamage(10);
+    await executeRound([playerMoves.prepare, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+    expect(player.health).toBe(player.maxHealth);
   });
 })

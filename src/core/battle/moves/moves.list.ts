@@ -25,7 +25,7 @@ export const Attack: Move = {
 
 export const Evade: Move = {
     name: "evade",
-    type: MoveType.Passive,
+    type: MoveType.Defensive,
     behaviors: {
         multpipeline: [NegatedByOverwhelm(EvadeCheck)],
         postEffects: [EvadePostEffect]
@@ -37,7 +37,7 @@ export const Heal: Move = {
     type: MoveType.Passive,
     behaviors: {
         preEffects: [ApplySelfVulnerable],
-        postEffects: [RequiresFocus(ApplySelfHeal)]
+        immediatePostEffects: [RequiresFocus(ApplySelfHeal)]
     }
 }
 
@@ -55,7 +55,7 @@ export const Prepare: Move = {
 
 export const Defend: Move = {
     name: "defend",
-    type: MoveType.Passive,
+    type: MoveType.Defensive,
     behaviors: {
         multpipeline: [NegatedByOverwhelm(ReduceIncomingDamage)]
     }
