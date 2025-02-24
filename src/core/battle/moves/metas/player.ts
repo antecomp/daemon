@@ -18,7 +18,7 @@ import priestess_icon_ex from '../icons/priestess_ex.png'
 import trickster_icon_ex from '../icons/trickster_ex.png'
 import lantern_icon_ex from '../icons/lantern.png'
 import { PlayerMoveMeta } from '../moves.types'
-import { Attack, Defend, Evade, Heal, NothingMove, Observe, Prepare } from '../moves.list'
+import { Attack, Defend, Evade, Heal, NothingMove, Observe, OverwhelmMove, Prepare } from '../moves.list'
 import { CannotBeFirst } from '../moves.validators'
 
 
@@ -99,11 +99,11 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         description: `The bravest coward you'll ever meet. \n\n Cling to personal illusion. Reduce damage of incoming attacks.`
     },
 
-    abstract: {
-        displayName: "abstract",
+    overwhelm: {
+        displayName: "overwhelm",
         icon: chain_icon,
         rbIcon: chain_icon_ex,
-        getMove: NothingMove,
-        description: `Frame personal reality as fiction. \n\n Does nothing. This is a bloody placeholder.`
+        getMove: OverwhelmMove,
+        description: `Overwhelm \n\n Test Move.`
     }
 }

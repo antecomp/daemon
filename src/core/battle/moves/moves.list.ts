@@ -4,11 +4,11 @@
 
 import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
-import { Move } from "./moves.types";
+import { Move, MoveType } from "./moves.types";
 
 export const Observe: Move = {
     name: "observe",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {
         immediatePostEffects: [ExtendOpponentVulnerable],
         postEffects: [ApplyOpponentVulnerable]
@@ -17,7 +17,7 @@ export const Observe: Move = {
 
 export const Attack: Move = {
     name: "attack",
-    type: "Aggressive",
+    type: MoveType.Aggressive,
     behaviors: {
         multpipeline: [PreparedAttackBonus]
     }
@@ -25,7 +25,7 @@ export const Attack: Move = {
 
 export const Evade: Move = {
     name: "evade",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {
         multpipeline: [NegatedByOverwhelm(EvadeCheck)],
         postEffects: [EvadePostEffect]
@@ -34,7 +34,7 @@ export const Evade: Move = {
 
 export const Heal: Move = {
     name: "heal",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {
         preEffects: [ApplySelfVulnerable],
         postEffects: [RequiresFocus(ApplySelfHeal)]
@@ -45,7 +45,7 @@ export const Heal: Move = {
 
 export const Prepare: Move = {
     name: "prepare",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {
         preEffects: [ApplySelfVulnerable],
         immediatePostEffects: [RequiresFocus(ExtendSelfPrepared)],
@@ -55,7 +55,7 @@ export const Prepare: Move = {
 
 export const Defend: Move = {
     name: "defend",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {
         multpipeline: [NegatedByOverwhelm(ReduceIncomingDamage)]
     }
@@ -63,7 +63,7 @@ export const Defend: Move = {
 
 export const NothingMove: Move = {
     name: "nothing",
-    type: "Passive",
+    type: MoveType.Passive,
     behaviors: {}
 }
 
@@ -71,7 +71,7 @@ export const NothingMove: Move = {
 
 export const OverwhelmMove: Move = {
     name: "Overwhelm",
-    type: "Overwhelming",
+    type: MoveType.Overwhelming,
     behaviors: {
         preEffects: [ApplySelfVulnerable],
         multpipeline: [OnlyDoDamageOnDefensive, PreparedAttackBonus]

@@ -28,7 +28,7 @@ export class Actor {
     // Returns bool indicating if Actor is alive. Idk if ill end up using this or not.
     // If not I should just make a quick "isDead" method.
     public takeDamage(amount: number): boolean {
-        this.health -= amount;
+        this.health = Math.max(this.health - amount, 0);
         return this.health <= 0;
     }
 
@@ -67,7 +67,7 @@ export class Actor {
         }
     }
 
-    /** Increment Duration of all instances of an effect. Used for extending effects to next move eval */
+    /** Increment Duration of all instances of an status. Used for extending statuses to next move eval */
     public tickUpStatus(effectName: string, amount: number) {
         if(this.statuses.has(effectName)) {
             let updatedEffects = this.statuses.get(effectName)?.map(effect => {

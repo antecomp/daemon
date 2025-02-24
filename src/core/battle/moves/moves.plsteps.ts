@@ -1,8 +1,8 @@
-import { MultiplierPipelineStep, MovePLStepConditionalWrapper} from "./moves.types";
+import { MultiplierPipelineStep, MovePLStepConditionalWrapper, MoveType} from "./moves.types";
 
 export const NegatedByOverwhelm: MovePLStepConditionalWrapper = (pls) => {
     return (prevMultipliers, context) => {
-        if(context.opponent.currentSequence[context.index].type == "Overwhelming") {
+        if(context.opponent.currentSequence[context.index].type == MoveType.Overwhelming) {
             return {incoming: 1, outgoing: 1}; // Skip out on this multiplier step, essentially.
         } else {
             return pls(prevMultipliers, context);
@@ -14,7 +14,7 @@ export const NegatedByOverwhelm: MovePLStepConditionalWrapper = (pls) => {
 export const OnlyDoDamageOnDefensive: MultiplierPipelineStep = (prevMults, {opponent, index}) => {
     return {
         ...prevMults,
-        outgoing: prevMults.outgoing * Number(opponent.currentSequence[index].type != "Defensive")
+        outgoing: prevMults.outgoing * Number(opponent.currentSequence[index].type != MoveType.Defensive)
     }
 }
 

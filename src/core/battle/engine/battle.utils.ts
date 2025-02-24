@@ -1,4 +1,4 @@
-import { Move, MoveContext, MoveMeta, MoveResolution, movetype, SequenceBuffer } from "../moves/moves.types";
+import { Move, MoveContext, MoveMeta, MoveResolution, MoveType, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionMessageAppender, MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
@@ -13,13 +13,13 @@ export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     return seq.map((item, index) => indices.has(index) ? undefined : item);
 }
 
-export function getBaseMultipliers(type: movetype): MultiplierSet {
-    return {
-        "Aggressive":   {incoming: 1, outgoing: 1},
-        "Passive":      {incoming: 1, outgoing: 0},
-        "Defensive":    {incoming: 1, outgoing: 0},
-        "Overwhelming": {incoming: 1, outgoing: 1},
-    }[type]
+export function getBaseMultipliers(type: MoveType): MultiplierSet {
+    return [
+        {incoming: 1, outgoing: 1}, // Aggressive
+        {incoming: 1, outgoing: 0}, // Passive
+        {incoming: 1, outgoing: 0}, // Defensive
+        {incoming: 1, outgoing: 1}, // Overwhelming
+    ][type]
 }
 
 export function performMultPipeline(initialMultipliers: MultiplierSet, move: Move, context: MoveContext): MultiplierSet {

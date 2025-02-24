@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@types/node": "^22.12.0",
     "lume": "^0.3.0-alpha.44",
     "solid-js": "^1.9.3",

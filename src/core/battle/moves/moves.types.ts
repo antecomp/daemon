@@ -1,7 +1,13 @@
 import { Actor } from "../engine/actor";
 import { ActionMessageAppender, MultiplierSet } from "../engine/battle.types";
 
-export type movetype = "Aggressive" | "Passive" | "Defensive" | "Overwhelming";
+//export type movetype = "Aggressive" | "Passive" | "Defensive" | "Overwhelming";
+export enum MoveType {
+    Aggressive,
+    Passive,
+    Defensive,
+    Overwhelming
+}
 
 /* Per-sequence temporary data, indexed by assigning move for inter-move ref. */
 export interface SequenceBuffer {
@@ -36,7 +42,7 @@ export interface Move {
     /** Internally used name for the move. Generic. */
     name: string,
     /** Move type, used to calculate base multipliers, some moves also conditionally react to their/opposers type */
-    type: movetype,
+    type: MoveType,
     /** A table of move behavior functions ("Side Effects" and "Pipeline Steps") that compose the moves actual behavior in a turn */
     behaviors: {
         /** Side Effects That Run *before* any multiplier/damage calculation. Namely used for applying in-turn statuses. */
