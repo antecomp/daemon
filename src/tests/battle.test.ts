@@ -263,7 +263,7 @@ describe("useBattleLogic sequence eval basics", () => {
   it("Overwhelm fails with vulnerability on non-defensive moves", async () => {
     const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
     setupRound();
-    await executeRound([playerMoves.attack, playerMoves.observe, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
 
     expect(player.health).toBe(player.maxHealth);
     expect(opponent.health).toBe(opponent.maxHealth - 1.5); // -1.5 from vuln. <- NOTE TO SELF I SHOULD PROB MAKE THIS SOME SORT OF CONFIG CONSTANT LOL.
@@ -278,6 +278,15 @@ describe("useBattleLogic sequence eval basics", () => {
     await(executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.attack, nothingMove, nothingMove], true));
     expect(opponent.health).toBe(opponent.maxHealth - 4);
   });
+
+  it("Prepare wraps to next turn", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare], true);
+    expect(player.getStatusLevel("prepared")).toBe(1);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
+  })
 
   it("Evade negates damage with chance", async () => {
     const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
@@ -347,4 +356,113 @@ describe("useBattleLogic sequence eval basics", () => {
     await executeRound([playerMoves.prepare, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
     expect(player.health).toBe(player.maxHealth);
   });
+})
+
+describe("Mage logic", () => {
+
+  it("Player can wipe statuses", () => {
+    // Require ability to remove statuses, as mage will explicitely wipe the mage status.
+    const {player} = useBattleLogic(generateSampleOpponent());
+    expect(Object.keys(player).includes("removeStatus")).toBe(true);
+  })
+
+  it("Mage Activate Phase", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(player.statuses.has("mage")).toBe(true);
+    expect(player.statuses.get("mage")?.[0].duration).toBe(2);
+  })
+
+  it("Mage activation phase at different starting location, index - check", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+
+    await executeRound([nothingMove, nothingMove, nothingMove, playerMoves.mage, nothingMove], true);
+
+    expect(player.statuses.has("mage")).toBe(true);
+    expect(player.statuses.get("mage")?.[0].duration).toBe(2);
+  })
+
+  it("Mage activate phase fail (focus break)", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(player.statuses.has("mage")).toBe(false);
+  })
+
+  it("Mage Attack Phase (Sucess)", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+
+    setupRound();
+
+    await(executeRound([playerMoves.mage, playerMoves.attack, nothingMove, nothingMove, nothingMove], true));
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 5);
+    expect(player.statuses.has("mage")).toBe(false); // Remove status after invocation.
+
+  })
+
+  it("Mage instant invocation", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+
+    setupRound();
+
+    await executeRound([playerMoves.mage, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 5);
+    expect(player.statuses.has("mage")).toBe(false); // Should be removed after instant invocation.
+
+    // TODO: What is the players punishment for instant invocation?
+  })
+
+  it("Mage fail on late invocation", async () => {
+    
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    // TODO: What is the punishment for late invocation?
+
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.mage], true);
+    expect(opponent.health).toBe(opponent.maxHealth);
+    expect(player.statuses.has("mage")).toBe(true); // Should just get the status from the second run (return to invocation phase).
+  })
+
+  it("Prepared Mage scales timeout", async () => {
+
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+
+    await executeRound([playerMoves.prepare, playerMoves.mage, nothingMove, nothingMove, nothingMove], true);
+
+    expect(player.statuses.get("mage")?.[0].duration).toBe(3);
+
+    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.mage, nothingMove, nothingMove], true);
+
+    expect(player.statuses.get("mage")?.[0].duration).toBe(5);
+
+  })
+
+  it("Prepared MageAttack scales damage", async () => {
+
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+
+    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+
+    await executeRound([playerMoves.prepare, playerMoves.mage, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 10);
+
+  })
 })
