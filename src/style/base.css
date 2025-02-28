@@ -7,7 +7,6 @@
   font-family: 'teeny';
   src: url(../assets/fonts/TeenyTinyPixls-o2zo.ttf);
 }
-
 :root {
   color: rgba(255, 255, 255, 0.87);
   background: rgb(0, 0, 0);
@@ -53,4 +52,10 @@ button {
 
 #dg-ver {
   text-align: right;
+}
+
+/* Fixes font anti-aliasing blur 99.999999% of the time. */
+#root {
+  perspective: 0px;
+  transform: perspective(0px);
 }
