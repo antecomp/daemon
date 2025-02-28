@@ -49,12 +49,12 @@ export function combineMultiplierSets(...sets: MultiplierSet[]) {
 }
 
 /** Extracts the underlying Move information from MoveMeta sequence, allows us to do preprocessing logic for dynamic moves. */
-export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[]): Move[] {
+export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[], opponent: Actor, opponentSeq: MoveMeta[]): Move[] {
     return seq.map((meta, index) => {
         
         // getMove has some special logic that will return a move.
         if(typeof meta.getMove == "function") {
-            return meta.getMove({self, seq, index});
+            return meta.getMove({self, seq, index, opponent, opponentSeq});
         }
         
         return meta.getMove;

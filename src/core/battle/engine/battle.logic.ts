@@ -46,19 +46,20 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     function setupRound() {
         opponentSequence = opponentData.getSequence(opponent, player);
         setInsight(generateHint(opponentSequence));
-        opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence));
         setBattleUIState(BattleUIState.WAITING);
+        console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...
     async function executeRound(userSelectedSequence: PlayerMoveMeta[], debugMode?: boolean) {
-        if (opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
         setInsight(opponentSequence); // Visualize entire opponent sequence.
 
-        player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence));
+        opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence, player, userSelectedSequence));
+        player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence, opponent, opponentSequence));
+        if (opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
         if (player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate"); // Should never see this.
 
         // Sequence buffers are Record<index, {}>'s that can be used by moves to save information relevant to subsequent moves.

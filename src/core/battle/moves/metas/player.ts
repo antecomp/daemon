@@ -6,7 +6,6 @@ import mage_icon from '../icons/mage.png'
 import prae_icon from '../icons/PRAETORIAN.png'
 import priestess_icon from '../icons/priestess.png'
 import trickster_icon from '../icons/trickster.png'
-import lantern_icon from '../icons/lantern.png'
 
 import apprentice_icon_ex from '../icons/apprentice_ex.png'
 import candle_icon_ex from '../icons/candle_ex.png'
@@ -16,9 +15,8 @@ import mage_icon_ex from '../icons/mage_ex.png'
 import prae_icon_ex from '../icons/prae_ex.png'
 import priestess_icon_ex from '../icons/priestess_ex.png'
 import trickster_icon_ex from '../icons/trickster_ex.png'
-import lantern_icon_ex from '../icons/lantern.png'
 import { PlayerMoveMeta } from '../moves.types'
-import { Attack, Defend, Evade, Heal, NothingMove, Observe, OverwhelmMove, Prepare } from '../moves.list'
+import { Attack, Defend, Evade, Heal, NothingMove, OverwhelmMove, Prepare } from '../moves.list'
 import { CannotBeFirst } from '../moves.validators'
 
 
@@ -51,13 +49,13 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         canPerform: CannotBeFirst
     },
 
-    observe: {
-        displayName: "lantern",
-        icon: mage_icon,
-        rbIcon: mage_icon_ex,
-        getMove: Observe,
-        description: `The flame, our illuminator and destroyer. Illuminate weaknesses of adversary. \n\n Applies vulnerability to opponent on subsequent interaction.`
-    },
+    // observe: {
+    //     displayName: "lantern",
+    //     icon: mage_icon,
+    //     rbIcon: mage_icon_ex,
+    //     getMove: Observe,
+    //     description: `The flame, our illuminator and destroyer. Illuminate weaknesses of adversary. \n\n Applies vulnerability to opponent on subsequent interaction.`
+    // },
 
     attack: {
         displayName: "candlelight",
@@ -105,5 +103,38 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         rbIcon: chain_icon_ex,
         getMove: OverwhelmMove,
         description: `Overwhelm \n\n Test Move.`
-    }
+    },
+
+    mirror: {
+        displayName: "mirror",
+        icon: mage_icon,
+        rbIcon: mage_icon_ex,
+        getMove: (context) => {
+            const oppMoveMeta = context.opponentSeq[context.index];
+
+            // Dangerous if we have a new displayname for mirror. Might want to have general id/movetype classifier in meta....
+            if(oppMoveMeta.displayName === "mirror") {
+                context.self.data.mirrorFatigue = true; // For test/debug.
+                console.log("trigger");
+                return NothingMove; // Change to a generalized "fail" move later.
+            }
+
+            if(typeof oppMoveMeta.getMove == "function") {
+                //return oppMoveMeta.getMove(context) // I think we just pass context with no swap...
+
+                //Try swap
+                return oppMoveMeta.getMove({
+                    self: context.opponent,
+                    opponent: context.self,
+                    seq: context.opponentSeq,
+                    opponentSeq: context.seq,
+                    index: context.index
+                })
+            } else {
+                return oppMoveMeta.getMove;
+            }
+        },
+        description: `Mirror move :)`
+    },
+
 }

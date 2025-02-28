@@ -69,7 +69,7 @@ export interface MoveMeta {
     /** Small icon used in sequence visualization. Image url (import) */ 
     icon: string,
     /** Move or function that returns a move (conditional move return, i.e for repeat.) */
-    getMove: Move | ((context: {self: Actor, seq: MoveMeta[], index: number}) => Move)
+    getMove: Move | ((context: {self: Actor, opponent: Actor, seq: MoveMeta[], opponentSeq: MoveMeta[], index: number}) => Move)
     /** Conditional for RB/AI-Get Sequence, logic indicating if the move is valid at a given step / given sequence.
      * 
      * For example, this is used in repeat to prevent it being the first move. */

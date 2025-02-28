@@ -164,10 +164,10 @@ function generateSampleOpponent(seq?: MoveMeta[]) {
 
 describe("useBattleLogic Hook Init", () => {
   it("setupRound test", () => {
-    const {opponent, setupRound, battleUIState} = useBattleLogic(generateSampleOpponent());
+    const {setupRound, battleUIState, insight} = useBattleLogic(generateSampleOpponent());
     setupRound();
     expect(battleUIState()).toBe(BattleUIState.WAITING);
-    expect(opponent.currentSequence.length).toBe(5);
+    expect(insight().length).toBe(5);
   });
 
   it("Exec runs and ends", async () => {
@@ -358,111 +358,101 @@ describe("useBattleLogic sequence eval basics", () => {
   });
 })
 
-describe("Mage logic", () => {
-
-  it("Player can wipe statuses", () => {
-    // Require ability to remove statuses, as mage will explicitely wipe the mage status.
-    const {player} = useBattleLogic(generateSampleOpponent());
-    expect(Object.keys(player).includes("removeStatus")).toBe(true);
+describe("Mirror Move", () => {
+  it("Mirror move exists", () => {
+    expect(Object.keys(playerMoves)).contains("mirror")
   })
 
-  it("Mage Activate Phase", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
-    setupRound();
-
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
-
-    expect(player.statuses.has("mage")).toBe(true);
-    expect(player.statuses.get("mage")?.[0].duration).toBe(2);
-  })
-
-  it("Mage activation phase at different starting location, index - check", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
-    setupRound();
-
-    await executeRound([nothingMove, nothingMove, nothingMove, playerMoves.mage, nothingMove], true);
-
-    expect(player.statuses.has("mage")).toBe(true);
-    expect(player.statuses.get("mage")?.[0].duration).toBe(2);
-  })
-
-  it("Mage activate phase fail (focus break)", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
-    setupRound();
-
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
-
-    expect(player.statuses.has("mage")).toBe(false);
-  })
-
-  it("Mage Attack Phase (Sucess)", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+  it("Mirror clones basic move", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
 
     setupRound();
 
-    await(executeRound([playerMoves.mage, playerMoves.attack, nothingMove, nothingMove, nothingMove], true));
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
 
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
-
-    expect(opponent.health).toBe(opponent.maxHealth - 5);
-    expect(player.statuses.has("mage")).toBe(false); // Remove status after invocation.
-
+    expect(player.health).toBe(player.maxHealth - 1);
+    expect(opponent.health).toBe(opponent.maxHealth - 1);
   })
 
-  it("Mage instant invocation", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+  it("Prepare mirror properly scales move output", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
 
     setupRound();
 
-    await executeRound([playerMoves.mage, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.mirror, nothingMove, nothingMove, nothingMove], true);
 
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
-
-    expect(opponent.health).toBe(opponent.maxHealth - 5);
-    expect(player.statuses.has("mage")).toBe(false); // Should be removed after instant invocation.
-
-    // TODO: What is the players punishment for instant invocation?
+    expect(player.health).toBe(player.maxHealth - 1);
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
-  it("Mage fail on late invocation", async () => {
-    
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+  it("Mirror repeat mirrors twice", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+
     setupRound();
 
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
 
-    // TODO: What is the punishment for late invocation?
-
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.mage], true);
-    expect(opponent.health).toBe(opponent.maxHealth);
-    expect(player.statuses.has("mage")).toBe(true); // Should just get the status from the second run (return to invocation phase).
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
-  it("Prepared Mage scales timeout", async () => {
+  it("Mirror on mirror fails", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    expect(player.data.mirrorFatigue).toBe(true);
+    expect(opponent.data.mirrorFatigue).toBe(true);
+  })
 
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+  it("Opponent can use mirror", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]));
+    setupRound();
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    expect(player.health).toBe(player.maxHealth - 1);
+    expect(opponent.health).toBe(opponent.maxHealth - 1);
+  })
+
+  it("Mirror applies status moves to self", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    setupRound();
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.mirror], true);
+    expect(player.getStatusLevel("prepared")).toBe(1);
+    expect(opponent.getStatusLevel("prepared")).toBe(1);
+  })
+
+  it("Mirror on self-effecting moves (e.g heal) properly target self", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+
+    player.takeDamage(5);
+    opponent.takeDamage(5);
+
     setupRound();
 
-    await executeRound([playerMoves.prepare, playerMoves.mage, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
 
-    expect(player.statuses.get("mage")?.[0].duration).toBe(3);
-
-    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.mage, nothingMove, nothingMove], true);
-
-    expect(player.statuses.get("mage")?.[0].duration).toBe(5);
+    expect(opponent.health).toBeGreaterThan(opponent.maxHealth -5);
+    expect(player.health).toBeGreaterThan(player.maxHealth - 5);
 
   })
 
-  it("Prepared MageAttack scales damage", async () => {
+  it("Mirror on repeat, runs *opponents* last move, not our own", async () => {
+    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove]));
 
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
     setupRound();
 
-    await executeRound([playerMoves.mage, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([nothingMove, playerMoves.mirror, nothingMove, nothingMove, nothingMove], true);
 
-    await executeRound([playerMoves.prepare, playerMoves.mage, nothingMove, nothingMove, nothingMove], true);
+    expect(player.health).toBe(player.maxHealth - 2);
+    expect(opponent.health).toBe(opponent.maxHealth -1); // We do opponents attack, not our nothingMove.
 
-    expect(opponent.health).toBe(opponent.maxHealth - 10);
+  })
 
+  it("We can repeat mirror", async () => {
+    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+
+    setupRound();
+
+    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+
+    expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 })
