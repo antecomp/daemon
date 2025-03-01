@@ -4,30 +4,21 @@ import { overlayAnimations } from "./animations.reg";
 
 export const [overlayAnimRequests, setOverlayAnimRequests] = createSignal<OverlayAnimReq[]>([]);
 
-export function requestOverlayAnimation(name: string, x: number, y: number) {
+export function requestOverlayAnimation(name: string, position: [number, number]): Promise<void> {
     if (!overlayAnimations[name]) {
       console.error(`Animation "${name}" not found`);
-      return { onFinish: () => {} }; // Dummy for consistent typing.
+      return Promise.reject();
     }
 
-    let finishCallback: (() => void) | null = null;
+    return new Promise<void>((resolve) => {
+      const id = Math.random();
 
-    // Allows us to externally modify the finish callback.
-    const rtnObject = {
-        onFinish(cb: () => void) {
-          finishCallback = cb;
-        }
+      const finishedHandler = () => {
+        setTimeout(() => {setOverlayAnimRequests((prev) => prev.filter(anim => anim.id !== id))}, 10);
+        
+        resolve();
       };
-  
-    setOverlayAnimRequests((prev) => [
-      ...prev,
-      {
-        name,
-        position: [x, y],
-        id: Math.random(),
-        onFinish: () => finishCallback?.() // I just learned you can ?. with function calls kms.
-      },
-    ]);
 
-    return rtnObject;
+      setOverlayAnimRequests((prev) => [...prev, {name, position, id, onFinish: finishedHandler}])
+    })
 }

@@ -94,7 +94,9 @@ export default function Actionbar(props: ActionbarProps) {
     return (
         <div id="battle-actionbar">
             <div class="left">
-                <img src={eject_button} id='eject-button' onClick={() => requestOverlayAnimation("sample", 20, 20).onFinish(() => alert("cum"))} />
+                <img src={eject_button} id='eject-button' 
+                    onClick={async () => {await requestOverlayAnimation("sample", [20, 20]); console.log("pisss")}} 
+                />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
                     <img 

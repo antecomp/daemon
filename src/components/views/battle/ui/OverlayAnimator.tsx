@@ -1,12 +1,20 @@
 import { overlayAnimations } from "@/core/battle/animation/animations.reg";
-import { overlayAnimRequests, setOverlayAnimRequests } from "@/core/battle/animation/useOverlayAnim";
+import { overlayAnimRequests } from "@/core/battle/animation/useOverlayAnim";
 import { createEffect } from "solid-js";
 
 export default function OverlayAnimator() {
     let overlayConRef: HTMLDivElement | undefined;
+
+    const processedAnimations = new Set(); // Track animations already processed
     
     createEffect(() => {
         overlayAnimRequests().forEach(({name, position, id, onFinish}) => {
+
+            // Prevent duplicates, since signal change will append all animations again, INCLUDING ALREADY PLAYING ONES,
+            // we have to make sure to skip those.
+            if (processedAnimations.has(id)) return;
+            processedAnimations.add(id); // Mark animation as processed
+
             const config = overlayAnimations[name];
             if (!config) {
                 console.error(`Animation "${name}" not found`);
@@ -36,14 +44,9 @@ export default function OverlayAnimator() {
                   easing: `steps(${totalFrames})`
                 }
             ).onfinish = () => {
-                console.log("finish trigger")
                 sprite.remove();
-                // todo: run onfinish callback from request data.
-                onFinish();
-                setTimeout(() => {
-                  // Remove from the signal after animation completes
-                  setOverlayAnimRequests((prev) => prev.filter((anim) => anim.id !== id));
-                }, 0);
+                onFinish(); // CB sent by request, used to resolve promise.
+                processedAnimations.delete(id); // Allow new animations with this ID
             }
            
         })
