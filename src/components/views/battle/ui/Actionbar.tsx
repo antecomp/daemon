@@ -9,12 +9,13 @@ import ur_bar from '../assets/mult_ur.png'
 import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
-import { Accessor, createSignal, For } from 'solid-js'
+import { Accessor, createSignal, For, onMount } from 'solid-js'
 import { MultiplierSet } from '@/core/battle/engine/battle.types'
 import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { requestOverlayAnimation } from '@/core/battle/animation/useOverlayAnim'
+import { registerBattleUIRef } from './refRegistry'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -33,7 +34,7 @@ function SelectedMove(props: SelectedMoveProps) {
 }
 
 interface ActionbarProps {
-    execSequence: (userSelectedSequence: PlayerMoveMeta[]) => void
+    execSequence: (userSelectedSequence: PlayerMoveMeta[]) => Promise<void>
     playerHealth: number
     playerMults: Accessor<MultiplierSet>
     opponentMults: Accessor<MultiplierSet>
@@ -55,6 +56,8 @@ export default function Actionbar(props: ActionbarProps) {
 
     const {battleUIState, setBattleUIState} = useBattleUIState();
 
+    let sequenceVisConRef: HTMLDivElement | undefined = undefined;
+
     // Will be gathered from game store later...
     const playerMoveBin: PlayerMoveMeta[] = Object.values(playerMoves);
 
@@ -74,21 +77,20 @@ export default function Actionbar(props: ActionbarProps) {
         });
     }
 
-    const handleExecClick = () => {
+    const handleExecClick = async () => {
         if(battleUIState() != BattleUIState.READY) return;
-
-        // (Hopefully) Redundant check
-        if(sequenceBuffer().length != 5) throw new Error("Cannot perform execution. Sequence Buffer of Incorrect length");
-
-        props.execSequence(sequenceBuffer());
-        setSequenceBuffer([]);
-        
+        await props.execSequence(sequenceBuffer());
+        setSequenceBuffer([]); // Reset for next round.
     }
 
     const resetRunes = () => {
         if (battleUIState() == BattleUIState.READY) setBattleUIState(BattleUIState.WAITING);
         setSequenceBuffer([]);
     }
+
+    onMount(() => {
+        registerBattleUIRef("sequenceViewPlayer", sequenceVisConRef);
+    });
 
 
     return (
@@ -114,7 +116,7 @@ export default function Actionbar(props: ActionbarProps) {
                 </div>
             </div>
             <div class="right">
-                <div class="moves">
+                <div class="moves" ref={sequenceVisConRef}>
                     <For each={sequenceBuffer()}>
                         {(x) => <SelectedMove {...x}/>}
                     </For>

@@ -1,6 +1,7 @@
 import { createProgram } from "@/util/webgl.utils"
-import { createEffect } from "solid-js"
+import { createEffect, onMount } from "solid-js"
 import OverlayAnimator from "./OverlayAnimator"
+import { registerBattleUIRef } from "./refRegistry"
 
 interface BattleCanvasProps {
   sprite: string // image url
@@ -9,6 +10,11 @@ interface BattleCanvasProps {
 
 export default function BattleCanvas(props: BattleCanvasProps) {
   let canvasRef: HTMLCanvasElement | undefined
+
+  let spriteRef: HTMLImageElement | undefined
+  onMount(() => {
+    registerBattleUIRef('opponentSprite', spriteRef);
+  })
 
   createEffect(() => {
     if (!canvasRef) return;
@@ -70,7 +76,7 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   return (
     <>
       <canvas id="battle-bg" width="1060" height="695" ref={canvasRef}></canvas>
-      <img src={props.sprite} alt="" id="battle-sprite" />
+      <img src={props.sprite} alt="" id="battle-sprite" ref={spriteRef} />
       <OverlayAnimator />
     </>
   )
