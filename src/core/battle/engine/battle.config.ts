@@ -1,3 +1,6 @@
+// THESE ARE JUST PLACEHOLDERS AND SHOULD BE DISCARDED WHEN ANIMATION SYSTEM IS IMPLEMENTED
+
+
 /** Delay between showing notifications/mults and dealing damage */
 export const DAMAGE_DELAY = 1000;
 

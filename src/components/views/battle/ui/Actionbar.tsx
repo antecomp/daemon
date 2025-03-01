@@ -14,6 +14,7 @@ import { MultiplierSet } from '@/core/battle/engine/battle.types'
 import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
+import { requestOverlayAnimation } from '@/core/battle/animation/useOverlayAnim'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -93,7 +94,7 @@ export default function Actionbar(props: ActionbarProps) {
     return (
         <div id="battle-actionbar">
             <div class="left">
-                <img src={eject_button} id='eject-button' />
+                <img src={eject_button} id='eject-button' onClick={() => requestOverlayAnimation("sample", 20, 20)} />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
                     <img 
