@@ -7,6 +7,7 @@ import { createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects } from "./battle.utils";
 import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
+import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -67,7 +68,15 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
 
+        const playerSeqUIElement = getBattleUIRef('sequenceViewPlayer');
+        const opponentSeqUIElement = getBattleUIRef('sequenceViewOpponent');
+
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
+
+            // Todo: proper blink animation and delay(?) - this is just to demonstrate
+            playerSeqUIElement?.children[moveIndex].animate([{ opacity: 1 }, {opacity: 0}, { opacity: 1 }], { duration: 1000, iterations: 2 });
+            // +1 to skip the insight label.
+            opponentSeqUIElement?.children[moveIndex + 1].animate([{ opacity: 1 }, {opacity: 0}, { opacity: 1 }], { duration: 1000, iterations: 2 });
 
             // PreEffects and Mults.
             const playerFinalMultipliers = prepareMove(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
