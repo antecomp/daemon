@@ -6,7 +6,7 @@ export default function OverlayAnimator() {
     let overlayConRef: HTMLDivElement | undefined;
     
     createEffect(() => {
-        overlayAnimRequests().forEach(({name, position, id}) => {
+        overlayAnimRequests().forEach(({name, position, id, onFinish}) => {
             const config = overlayAnimations[name];
             if (!config) {
                 console.error(`Animation "${name}" not found`);
@@ -38,6 +38,8 @@ export default function OverlayAnimator() {
             ).onfinish = () => {
                 console.log("finish trigger")
                 sprite.remove();
+                // todo: run onfinish callback from request data.
+                onFinish();
                 setTimeout(() => {
                   // Remove from the signal after animation completes
                   setOverlayAnimRequests((prev) => prev.filter((anim) => anim.id !== id));

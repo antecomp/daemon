@@ -7,15 +7,27 @@ export const [overlayAnimRequests, setOverlayAnimRequests] = createSignal<Overla
 export function requestOverlayAnimation(name: string, x: number, y: number) {
     if (!overlayAnimations[name]) {
       console.error(`Animation "${name}" not found`);
-      return;
+      return { onFinish: () => {} }; // Dummy for consistent typing.
     }
+
+    let finishCallback: (() => void) | null = null;
+
+    // Allows us to externally modify the finish callback.
+    const rtnObject = {
+        onFinish(cb: () => void) {
+          finishCallback = cb;
+        }
+      };
   
     setOverlayAnimRequests((prev) => [
       ...prev,
       {
         name,
         position: [x, y],
-        id: Math.random()
+        id: Math.random(),
+        onFinish: () => finishCallback?.() // I just learned you can ?. with function calls kms.
       },
     ]);
+
+    return rtnObject;
 }

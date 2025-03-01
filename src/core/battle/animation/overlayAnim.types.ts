@@ -13,11 +13,12 @@ export interface OverlayAnimData {
     // Should we add stuff like "position" here?
 }
 
-/** Used to actually trigger an animation in ui, name maps to animData to be played. */
+/** Request used internally to actually track the animation *requests* that we've called. */ 
 export interface OverlayAnimReq {
     name: string;
     position: [number, number];
     id: number
+    onFinish: () => void;
 }
 
 export type overlayAnimationTable = Record<string, OverlayAnimData>;
