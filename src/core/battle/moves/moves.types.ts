@@ -27,6 +27,8 @@ export interface MoveContext {
 export interface MoveResolution {
     damageDealt: number;
     damageTaken: number;
+    ourMults: MultiplierSet;
+    theirMults: MultiplierSet;
 }
 
 export type PostMoveContext = MoveContext & MoveResolution;

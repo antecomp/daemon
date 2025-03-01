@@ -349,6 +349,14 @@ describe("useBattleLogic sequence eval basics", () => {
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   });
 
+  it("Evade counterattack doesn't apply when not actually attacked", async () => {
+    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    setupRound();
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.evade], true);
+    expect(player.getStatusLevel("mania")).toBe(0);
+    
+  })
+
   it("Heal scales on prepared", async () => {
     const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
     setupRound();

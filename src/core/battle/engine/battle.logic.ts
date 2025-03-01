@@ -93,8 +93,14 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.takeDamage(playerDamageDealt);
             player.takeDamage(opponentDamageDealt);
 
-            handleImmediatePostEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt });
-            handleImmediatePostEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt });
+            handleImmediatePostEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, 
+                { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt,
+                    ourMults: playerFinalMultipliers, theirMults: opponentFinalMultipliers
+                 });
+            handleImmediatePostEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, 
+                { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt,
+                    ourMults: opponentFinalMultipliers, theirMults: playerFinalMultipliers
+                 });
 
             performStatusPostEffects(player, opponent);
             performStatusPostEffects(opponent, player);
@@ -102,8 +108,16 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             player.tickAndRemoveStatuses();
             opponent.tickAndRemoveStatuses();
 
-            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt });
-            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt });
+            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, 
+                { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt,
+                    ourMults: playerFinalMultipliers, theirMults: opponentFinalMultipliers 
+                }
+            );
+            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, 
+                { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt,
+                    ourMults: opponentFinalMultipliers, theirMults: playerFinalMultipliers
+                 }
+            );
 
             // Reset signal for UI
             setPlayerMults({ incoming: 0, outgoing: 0 });

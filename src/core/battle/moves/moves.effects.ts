@@ -49,10 +49,10 @@ export const ApplySelfPrepared: MoveSideEffect = ({self, appendActionMessage}) =
     }
 }
 
-export const EvadePostEffect: PostMoveSideEffect = ({damageTaken, index, sequenceBuffer, self, appendActionMessage}) => {
+export const EvadePostEffect: PostMoveSideEffect = ({damageTaken, index, sequenceBuffer, self, appendActionMessage, theirMults: theirMults}) => {
     if(sequenceBuffer[index].evadeSuccessful) {
         // Confirm we actually dodged some incoming damage...
-        if(damageTaken === 0) { // TODO PRIO: This is stupid and won't work. No shit we'll not take damage if we dodged nothing hfjkdkhsdfjksdf
+        if(damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus(1));
             appendActionMessage(`${self.name} dodges swiftly. ${self.name} feels invigorated!`);
         }
