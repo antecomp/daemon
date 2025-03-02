@@ -1,4 +1,4 @@
-import { Move, MoveContext, MoveMeta, MoveResolution, MoveType, SequenceBuffer } from "../moves/moves.types";
+import { animationData, Move, MoveContext, MoveMeta, MoveResolution, MoveType, PostMoveContext, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionMessageAppender, MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
@@ -63,23 +63,12 @@ export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[], opponent: A
 
 /** Runs PreEffects and Mult Pipeline For A Given Move + ActorSet */
 export function prepareMove(
-    actor: Actor,
-    opponent: Actor,
-    moveIndex: number,
-    sequenceBuffer: SequenceBuffer,
-    appendActionMessage: ActionMessageAppender
+    context: MoveContext,
 ): MultiplierSet {
-    
-    const move = actor.currentSequence[moveIndex];
 
-    const context: MoveContext = {
-        self: actor,
-        opponent: opponent,
-        index: moveIndex,
-        sequence: actor.currentSequence,
-        sequenceBuffer: sequenceBuffer,
-        appendActionMessage
-    }
+    const { self, index: moveIndex, sequenceBuffer } = context;
+    
+    const move = self.currentSequence[moveIndex];
 
     // Add buffer entry at index.
     if (!sequenceBuffer[moveIndex]) sequenceBuffer[moveIndex] = {};
@@ -88,14 +77,15 @@ export function prepareMove(
 
     const baseMultipliers = getBaseMultipliers(move.type);
     const moveMultipliers = computeMoveMultipliers(baseMultipliers, move, context);
-    const statusMultipliers = computeStatusMultipliers(actor);
+    const statusMultipliers = computeStatusMultipliers(self);
 
     const finalMultipliers = combineMultiplierSets(statusMultipliers, moveMultipliers);
 
     return finalMultipliers;
 }
 
-// Runs once for every instance of a status (i.e multiple times if the status is stacked). Subject to change.
+
+// Runs once for every instance of a status (i.e multiple times if the status is stacked). TODO: change to be level based.
 export function performStatusPostEffects(actor: Actor, opponent: Actor) {
     for (const effectStack of actor.statuses.values()) {
         effectStack.forEach((status) => status.applyPostEffect && status.applyPostEffect(actor, opponent));
@@ -103,54 +93,67 @@ export function performStatusPostEffects(actor: Actor, opponent: Actor) {
 }
 
 /** Runs Move Effects at the very end (after damage calculation and ticker) */
-export function handlePostMoveEffects(
-    actor: Actor,
-    opponent: Actor,
-    moveIndex: number,
-    sequenceBuffer: SequenceBuffer,
-    appendActionMessage: ActionMessageAppender,
-    outcome: MoveResolution
-) {
+export function handlePostMoveEffects(context: PostMoveContext) {
+
+    const { self, index: moveIndex } = context;
+
     // Run Move PostEffect *last* so it can apply effects for
     // the next turn that won't be ticked off.
-    const move = actor.currentSequence[moveIndex];
+    const move = self.currentSequence[moveIndex];
     move.behaviors.postEffects?.forEach((effect) => {
-        // Just manually rebuild the context here, doesn't matter.
-            effect({
-                self: actor,
-                opponent: opponent,
-                index: moveIndex,
-                sequence: actor.currentSequence,
-                sequenceBuffer: sequenceBuffer,
-                appendActionMessage,
-                ...outcome
-            })
+            effect(context)
         }
     );
 }
 
 
 /** Run Move Effects that happen before the ticker but after the damage calculation. */
-export function handleImmediatePostEffects(
-    actor: Actor,
-    opponent: Actor,
-    moveIndex: number,
-    sequenceBuffer: SequenceBuffer,
-    appendActionMessage: ActionMessageAppender,
-    outcome: MoveResolution
-) {
-    const move = actor.currentSequence[moveIndex];
+export function handleImmediatePostEffects(context: PostMoveContext) {
+
+    const { self, index: moveIndex } = context;
+
+    const move = self.currentSequence[moveIndex];
     move.behaviors.immediatePostEffects?.forEach((effect) => {
         // Just manually rebuild the context here, doesn't matter.
-            effect({
-                self: actor,
-                opponent: opponent,
-                index: moveIndex,
-                sequence: actor.currentSequence,
-                sequenceBuffer: sequenceBuffer,
-                appendActionMessage,
-                ...outcome
-            })
+            effect(context)
         }
     );
+}
+
+export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Move, opponentMove: Move, phase: TP) {
+    // Evil type magic to make this properly cast to MoveContext or PostMoveContext.
+    type ContextType = TP extends "pre" ? MoveContext : PostMoveContext;
+    const playerAnimations = (playerMove.animations?.[phase] || []) as animationData<ContextType>[];
+    const opponentAnimations = (opponentMove.animations?.[phase] || []) as animationData<ContextType>[];
+
+    const groupedAnimations = new Map<number, {player: ((ctx: ContextType) => Promise<void>)[], opponent: ((ctx: ContextType) => Promise<void>)[]}>();
+
+    for (const animation of playerAnimations) {
+        if (!groupedAnimations.has(animation.priority)) {
+            groupedAnimations.set(animation.priority, {player: [], opponent: []});
+        }
+        groupedAnimations.get(animation.priority)!.player.push(animation.execute as (ctx: ContextType) => Promise<void>);
+    }
+
+    for (const animation of opponentAnimations) {
+        if (!groupedAnimations.has(animation.priority)) {
+            groupedAnimations.set(animation.priority, {player: [], opponent: []});
+        }
+        groupedAnimations.get(animation.priority)!.opponent.push(animation.execute as (ctx: ContextType) => Promise<void>);
+    };
+    return groupedAnimations;
+}
+
+export async function executeAnimations<contextType = MoveContext | PostMoveContext>(
+    animations: Map<number, {player: ((ctx: contextType) => Promise<void>)[], opponent: ((ctx: contextType) => Promise<void>)[]}>, 
+    playerContext: contextType,
+    opponentContext: contextType
+) {
+    // Execute in order of priority, group animations and execute simultaneously in single priority level.
+    for(const {player, opponent} of animations.values()) {
+        await Promise.all([
+            Promise.all(player.map((animation) => animation(playerContext))),
+            Promise.all(opponent.map((animation) => animation(opponentContext)))
+        ]);
+    }
 }

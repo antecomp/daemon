@@ -10,7 +10,7 @@ import { shuffleArray } from "@/util/shuffle";
 const biteMove: MoveMeta = {
     displayName: "Bite",
     icon: sample_move_icon,
-    getMove: Attack,
+    getMove: {...Attack, animations: {}},
 }
 
 

@@ -40,6 +40,11 @@ export type MoveSEConditionalWrapper<T = MoveSideEffect | PostMoveSideEffect> = 
 export type MovePLStepConditionalWrapper = (pls: MultiplierPipelineStep) => MultiplierPipelineStep;
 export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
+export type animationData<T = MoveContext | PostMoveContext> = {
+    priority: number,
+    execute: (ctx: T) => Promise<void>
+}
+
 export interface Move {
     /** Internally used name for the move. Generic. */
     name: string,
@@ -55,6 +60,11 @@ export interface Move {
         immediatePostEffects?: PostMoveSideEffect[]
         /** Side effects that run *after* everything (including status tickdowns). Namely used to apply next-turn statuses */
         postEffects?: PostMoveSideEffect[]
+    }
+    /** Optional animations for the move, utilize the battleUIRefsRegistry to target components to perform animations. */
+    animations?: {
+        pre?: animationData<MoveContext>[],
+        post?: animationData<PostMoveContext>[]
     }
 }
 

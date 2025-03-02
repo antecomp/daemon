@@ -2,6 +2,7 @@
  * Generic Moves 
 */
 
+import { requestOverlayAnimation } from "../animation/useOverlayAnim";
 import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move, MoveType } from "./moves.types";
@@ -20,6 +21,16 @@ export const Attack: Move = {
     type: MoveType.Aggressive,
     behaviors: {
         multpipeline: [PreparedAttackBonus]
+    },
+    animations: {
+        pre: [
+            {
+                priority: 1,
+                execute: async (_ctx) => {
+                    await requestOverlayAnimation("slash_norm", [200, 75]);
+                }
+            }
+        ]
     }
 }
 

@@ -18,6 +18,7 @@ import trickster_icon_ex from '../icons/trickster_ex.png'
 import { PlayerMoveMeta } from '../moves.types'
 import { Attack, Defend, Evade, Heal, NothingMove, OverwhelmMove, Prepare } from '../moves.list'
 import { CannotBeFirst } from '../moves.validators'
+import { requestOverlayAnimation } from '../../animation/useOverlayAnim'
 
 
 

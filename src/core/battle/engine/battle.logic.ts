@@ -1,11 +1,11 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
-import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
+import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations } from "./battle.utils";
 import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
 import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
 import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
@@ -74,9 +74,27 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             // Get animation objects so we can call cancel on them later.
             const seqHighlightAnimations = highlightMovesAtIndex(moveIndex);
 
+            const playerContext: MoveContext = {
+                self: player, 
+                sequence: player.currentSequence, 
+                index: moveIndex, 
+                opponent,
+                sequenceBuffer: playerSequenceBuffer,
+                appendActionMessage
+            }
+
+            const opponentContext: MoveContext = {
+                self: opponent, 
+                sequence: opponent.currentSequence, 
+                index: moveIndex, 
+                opponent: player, 
+                sequenceBuffer: opponentSequenceBuffer,
+                appendActionMessage
+            }
+
             // PreEffects and Mults.
-            const playerFinalMultipliers = prepareMove(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
-            const opponentFinalMultipliers = prepareMove(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage);
+            const playerFinalMultipliers = prepareMove(playerContext);
+            const opponentFinalMultipliers = prepareMove(opponentContext);
 
             // Update UI
             setPlayerMults(playerFinalMultipliers);
@@ -86,8 +104,32 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
             });
 
+            // Perform animations ("pre")
+            const preAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "pre");
+            !debugMode && await executeAnimations(preAnims, playerContext, opponentContext)
+
+            // function to check if any animations exist
+            function hasAnimations(animations: Map<number, {
+                player: ((ctx: MoveContext) => Promise<void>)[];
+                opponent: ((ctx: MoveContext) => Promise<void>)[];
+            }>): boolean {
+                for (const animList of animations.values()) {
+                    if (animList.player.length > 0
+                        || animList.opponent.length > 0
+                    ) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            if (!hasAnimations(preAnims)) {
+                !debugMode && await sleep(DAMAGE_DELAY);
+            }
+
             // Delay before damage dealt. (see multipliers then apply)
-            !debugMode && await sleep(DAMAGE_DELAY);
+            // Change this to be a wait iff no animations.
+            //!debugMode && await sleep(DAMAGE_DELAY);
 
             // I know this doubling up look stupid, but you can't easily loop generalize this
             // as we require this specific flip-floppy way of ordering the events!!!
@@ -98,14 +140,24 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.takeDamage(playerDamageDealt);
             player.takeDamage(opponentDamageDealt);
 
-            handleImmediatePostEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, 
-                { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt,
-                    ourMults: playerFinalMultipliers, theirMults: opponentFinalMultipliers
-                 });
-            handleImmediatePostEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, 
-                { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt,
-                    ourMults: opponentFinalMultipliers, theirMults: playerFinalMultipliers
-                 });
+            const playerPostContext: PostMoveContext = {
+                ...playerContext,
+                damageDealt: playerDamageDealt,
+                damageTaken: opponentDamageDealt,
+                ourMults: playerFinalMultipliers,
+                theirMults: opponentFinalMultipliers
+            }
+
+            const opponentPostContext: PostMoveContext = {
+                ...opponentContext,
+                damageDealt: opponentDamageDealt,
+                damageTaken: playerDamageDealt,
+                ourMults: opponentFinalMultipliers,
+                theirMults: playerFinalMultipliers
+            }
+
+            handleImmediatePostEffects(playerPostContext);
+            handleImmediatePostEffects(opponentPostContext);
 
             performStatusPostEffects(player, opponent);
             performStatusPostEffects(opponent, player);
@@ -113,16 +165,11 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             player.tickAndRemoveStatuses();
             opponent.tickAndRemoveStatuses();
 
-            handlePostMoveEffects(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage, 
-                { damageDealt: playerDamageDealt, damageTaken: opponentDamageDealt,
-                    ourMults: playerFinalMultipliers, theirMults: opponentFinalMultipliers 
-                }
-            );
-            handlePostMoveEffects(opponent, player, moveIndex, opponentSequenceBuffer, appendActionMessage, 
-                { damageDealt: opponentDamageDealt, damageTaken: playerDamageDealt,
-                    ourMults: opponentFinalMultipliers, theirMults: playerFinalMultipliers
-                 }
-            );
+            handlePostMoveEffects(playerPostContext);
+            handlePostMoveEffects(opponentPostContext);
+
+            const postAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "post");
+            !debugMode && await executeAnimations(postAnims, playerPostContext, opponentPostContext);
 
             // Reset signal for UI
             setPlayerMults({ incoming: 0, outgoing: 0 });
