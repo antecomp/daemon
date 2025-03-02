@@ -3,11 +3,12 @@ import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects } from "./battle.utils";
 import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
 import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
+import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -68,15 +69,10 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
 
-        const playerSeqUIElement = getBattleUIRef('sequenceViewPlayer');
-        const opponentSeqUIElement = getBattleUIRef('sequenceViewOpponent');
-
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
 
-            // Todo: proper blink animation and delay(?) - this is just to demonstrate
-            playerSeqUIElement?.children[moveIndex].animate([{ opacity: 1 }, {opacity: 0}, { opacity: 1 }], { duration: 1000, iterations: 2 });
-            // +1 to skip the insight label.
-            opponentSeqUIElement?.children[moveIndex + 1].animate([{ opacity: 1 }, {opacity: 0}, { opacity: 1 }], { duration: 1000, iterations: 2 });
+            // Get animation objects so we can call cancel on them later.
+            const seqHighlightAnimations = highlightMovesAtIndex(moveIndex);
 
             // PreEffects and Mults.
             const playerFinalMultipliers = prepareMove(player, opponent, moveIndex, playerSequenceBuffer, appendActionMessage);
@@ -136,6 +132,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
             });
 
+            stopHighlightingMovesAtIndex(seqHighlightAnimations);
+
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
@@ -147,6 +145,13 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         setupRound();
 
     }
+
+    createEffect(() => {
+        // Dependency, should trigger whenever health changes.
+        if(opponent.health > 0) {
+            damageFlashOpponent();
+        }
+    })
 
     return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages };
 }
