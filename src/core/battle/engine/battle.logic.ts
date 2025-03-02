@@ -6,7 +6,7 @@ import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations } from "./battle.utils";
-import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
+import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
@@ -105,6 +105,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
             // Perform animations that occur before damage output.
             const preAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "pre");
+
+            !debugMode && await sleep(PREANIM_DELAY)
 
             if(!debugMode){ // Skip anims/delay for testing
                 if(hasAnimations(preAnims)) {

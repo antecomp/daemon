@@ -26,7 +26,6 @@ import { requestOverlayAnimation } from '../../animation/useOverlayAnim'
 // Once stuff gets more dynamic, we can break it up as we need.
 export const playerMoves: Record<string, PlayerMoveMeta> = {
 
-    // We may want to move this some general definition.
     repeat: {
         displayName: "apprentice",
         icon: apprentice_icon,
@@ -48,22 +47,6 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
             }
         },
         canPerform: CannotBeFirst
-    },
-
-    // observe: {
-    //     displayName: "lantern",
-    //     icon: mage_icon,
-    //     rbIcon: mage_icon_ex,
-    //     getMove: Observe,
-    //     description: `The flame, our illuminator and destroyer. Illuminate weaknesses of adversary. \n\n Applies vulnerability to opponent on subsequent interaction.`
-    // },
-
-    attack: {
-        displayName: "candlelight",
-        icon: candle_icon,
-        rbIcon: candle_icon_ex,
-        getMove: Attack,
-        description: `If moonlight heals, what does candlelight do? \n \n Directly challenge opponents' sense of reality. Deals damage.`
     },
 
     evade: {
@@ -96,6 +79,36 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         rbIcon: prae_icon_ex,
         getMove: Defend,
         description: `The bravest coward you'll ever meet. \n\n Cling to personal illusion. Reduce damage of incoming attacks.`
+    },
+
+    attack: {
+        displayName: "candlelight",
+        icon: candle_icon,
+        rbIcon: candle_icon_ex,
+        getMove: {
+            ...Attack,
+            animations: {
+                pre: [
+                    {
+                        priority: 1,
+                        execute: async ({self}) => {
+                            const preparedLevel = self.getStatusLevel("prepared")
+
+                            if(preparedLevel == 1) {
+                                await requestOverlayAnimation("slash_purpose", [-29, 0]);
+                            } else if (preparedLevel >= 2) {
+                                await requestOverlayAnimation("slash_majes", [-29, 0]);
+                            } else if (self.getStatusLevel("mania") > 0) {
+                                await requestOverlayAnimation("slash_elag", [0, 0])
+                            } else {
+                                await requestOverlayAnimation("slash_norm", [-29, 50]);
+                            }
+                        }
+                    }
+                ]
+        }
+        },
+        description: `If moonlight heals, what does candlelight do? \n \n Directly challenge opponents' sense of reality. Deals damage.`
     },
 
     overwhelm: {

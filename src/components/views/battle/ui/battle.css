@@ -13,9 +13,19 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#overlay-animation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #overlay-animation-container div {
     transform: translate3d(0,0,0); /* for webkit */
+    image-rendering: pixelated;
     mix-blend-mode: difference;
 }

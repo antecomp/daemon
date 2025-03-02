@@ -10,7 +10,6 @@ export interface OverlayAnimData {
     frameHeight: number;
     frameRate: number;
     totalFrames: number;
-    // Should we add stuff like "position" here?
 }
 
 /** Request used internally to actually track the animation *requests* that we've called. */ 

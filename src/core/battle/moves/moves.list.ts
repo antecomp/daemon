@@ -21,16 +21,6 @@ export const Attack: Move = {
     type: MoveType.Aggressive,
     behaviors: {
         multpipeline: [PreparedAttackBonus]
-    },
-    animations: {
-        pre: [
-            {
-                priority: 1,
-                execute: async (_ctx) => {
-                    await requestOverlayAnimation("slash_norm", [200, 75]);
-                }
-            }
-        ]
     }
 }
 

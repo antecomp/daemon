@@ -26,8 +26,7 @@ export default function OverlayAnimator() {
 
             const sprite = document.createElement("div");
             sprite.style.position = "absolute";
-            sprite.style.left = `${position[0]}px`;
-            sprite.style.top = `${position[1]}px`;
+            sprite.style.translate = `${position[0]}px ${position[1]}px`
             sprite.style.width = `${frameWidth}px`;
             sprite.style.height = `${frameHeight}px`;
             sprite.style.backgroundImage = `url(${src})`;
