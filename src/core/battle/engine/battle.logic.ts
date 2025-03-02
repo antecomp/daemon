@@ -5,9 +5,8 @@ import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves
 import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations } from "./battle.utils";
 import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
-import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
 import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
@@ -104,32 +103,16 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
             });
 
-            // Perform animations ("pre")
+            // Perform animations that occur before damage output.
             const preAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "pre");
-            !debugMode && await executeAnimations(preAnims, playerContext, opponentContext)
 
-            // function to check if any animations exist
-            function hasAnimations(animations: Map<number, {
-                player: ((ctx: MoveContext) => Promise<void>)[];
-                opponent: ((ctx: MoveContext) => Promise<void>)[];
-            }>): boolean {
-                for (const animList of animations.values()) {
-                    if (animList.player.length > 0
-                        || animList.opponent.length > 0
-                    ) {
-                        return true;
-                    }
+            if(!debugMode){ // Skip anims/delay for testing
+                if(hasAnimations(preAnims)) {
+                    await executeAnimations(preAnims, playerContext, opponentContext)
+                } else {
+                    await sleep(DAMAGE_DELAY);
                 }
-                return false;
             }
-
-            if (!hasAnimations(preAnims)) {
-                !debugMode && await sleep(DAMAGE_DELAY);
-            }
-
-            // Delay before damage dealt. (see multipliers then apply)
-            // Change this to be a wait iff no animations.
-            //!debugMode && await sleep(DAMAGE_DELAY);
 
             // I know this doubling up look stupid, but you can't easily loop generalize this
             // as we require this specific flip-floppy way of ordering the events!!!
@@ -169,7 +152,12 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             handlePostMoveEffects(opponentPostContext);
 
             const postAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "post");
-            !debugMode && await executeAnimations(postAnims, playerPostContext, opponentPostContext);
+
+            if(!debugMode) {
+                if(hasAnimations(postAnims)) {
+                    await executeAnimations(postAnims, playerPostContext, opponentPostContext)
+                }
+            }
 
             // Reset signal for UI
             setPlayerMults({ incoming: 0, outgoing: 0 });

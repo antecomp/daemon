@@ -157,3 +157,17 @@ export async function executeAnimations<contextType = MoveContext | PostMoveCont
         ]);
     }
 }
+
+export function hasAnimations(animations: Map<number, {
+    player: ((ctx: PostMoveContext) => Promise<void>)[];
+    opponent: ((ctx: PostMoveContext) => Promise<void>)[];
+}>): boolean {
+    for (const animList of animations.values()) {
+        if (animList.player.length > 0
+            || animList.opponent.length > 0
+        ) {
+            return true;
+        }
+    }
+    return false;
+}
