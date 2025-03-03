@@ -54,7 +54,7 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     //moveBin: [biteMove, nothingMove],
     maxHealth: 20,
     getSequence: (_me, _player) => {
-        return shuffleArray([biteMove, shieldMove, prepareMove, biteMove, biteMove])
+        return shuffleArray([biteMove, shieldMove, prepareMove, biteMove, nothingMove])
     },
     backgroundShader: vortexShader
 }

@@ -143,7 +143,7 @@ export default function Actionbar(props: ActionbarProps) {
                     </div>
                 </div>
             </div>
-            {battleUIState()}
+            {/* {battleUIState()} */}
         </div>
     )
 }
