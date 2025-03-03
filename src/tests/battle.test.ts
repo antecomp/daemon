@@ -253,11 +253,12 @@ describe("useBattleLogic sequence eval basics", () => {
   });
 
   it("Overwhelm lands on defensive moves", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound, opponent} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
     setupRound();
     await executeRound([playerMoves.defend, playerMoves.evade, nothingMove, nothingMove, nothingMove], true);
 
     expect(player.health).toBe(player.maxHealth - 2);
+    expect(opponent.health).toBe(opponent.maxHealth); // Weird bug that I noticed playtesting.
   });
 
   it("Overwhelm fails with vulnerability on non-defensive moves", async () => {

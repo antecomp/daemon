@@ -32,6 +32,12 @@ export default function OverlayAnimator() {
             sprite.style.backgroundImage = `url(${src})`;
             sprite.style.backgroundRepeat = "no-repeat";
 
+            // Hinting for optimization
+            sprite.style.willChange = "transform, background-position";
+            sprite.style.transform = "translateZ(0)"; // Forces GPU acceleration
+            sprite.style.backfaceVisibility = "hidden"; // Optimize said GPU accel
+            sprite.style.contain = "strict"; /// ?????
+
             overlayConRef?.appendChild(sprite);
 
             

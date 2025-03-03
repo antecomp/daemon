@@ -149,8 +149,12 @@ export async function executeAnimations<contextType = MoveContext | PostMoveCont
     playerContext: contextType,
     opponentContext: contextType
 ) {
-    // Execute in order of priority, group animations and execute simultaneously in single priority level.
-    for(const {player, opponent} of animations.values()) {
+    // Sort priorities before iteration, since our Map keys are just in order of being added.
+    const sortedPriorities = [...animations.keys()].sort((a, b) => a - b);
+
+    for (const priority of sortedPriorities) {
+        const { player, opponent } = animations.get(priority)!;
+
         await Promise.all([
             Promise.all(player.map((animation) => animation(playerContext))),
             Promise.all(opponent.map((animation) => animation(opponentContext)))

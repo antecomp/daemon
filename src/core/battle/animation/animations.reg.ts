@@ -3,6 +3,7 @@ import slashnorm from '@/assets/animations/overlays/slash/slashnorm.png'
 import slash_purpose_image from '@/assets/animations/overlays/slash/slash_purpose.png'
 import slash_mages_image from '@/assets/animations/overlays/slash/slash_majes.png'
 import slash_elag_image from '@/assets/animations/overlays/slash/slash_elag.png'
+import shield_image from '@/assets/animations/overlays/shield/shield_opp1.png'
 import { overlayAnimationTable } from "./overlayAnim.types";
 
 /** Registry of the available overlay animations. */
@@ -45,5 +46,37 @@ export const overlayAnimations: overlayAnimationTable = {
         frameHeight: 625,
         frameRate: 60,
         totalFrames: 31
+    },
+
+    "shield": {
+        src: shield_image,
+        frameWidth: 317,
+        frameHeight: 344,
+        totalFrames: 60,
+        frameRate: 60
     }
 }
+
+
+// Obviously we will want to be smarter about this in the future
+// But this is a fine background init for our limited animation set for now...
+
+// Image cache
+const preloadedImages = new Map<string, HTMLImageElement>();
+
+export function preloadOverlayImages(): Promise<void[]> {
+    return Promise.all(Object.entries(overlayAnimations).map(([name, { src }]) => {
+        return new Promise<void>((resolve, reject) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = async () => {
+                await img.decode(); // Ensures image is fully decoded (prevents initialization lag)
+                preloadedImages.set(name, img);
+                resolve();
+            };
+            img.onerror = reject;
+        });
+    }));
+}
+
+preloadOverlayImages();

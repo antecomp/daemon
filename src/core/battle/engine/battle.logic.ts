@@ -106,7 +106,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             // Perform animations that occur before damage output.
             const preAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "pre");
 
-            !debugMode && await sleep(PREANIM_DELAY)
+            //!debugMode && await sleep(PREANIM_DELAY)
 
             if(!debugMode){ // Skip anims/delay for testing
                 if(hasAnimations(preAnims)) {

@@ -3,7 +3,7 @@ import { MultiplierPipelineStep, MovePLStepConditionalWrapper, MoveType} from ".
 export const NegatedByOverwhelm: MovePLStepConditionalWrapper = (pls) => {
     return (prevMultipliers, context) => {
         if(context.opponent.currentSequence[context.index].type == MoveType.Overwhelming) {
-            return {incoming: 1, outgoing: 1}; // Skip out on this multiplier step, essentially.
+            return prevMultipliers; // Skip out on this multiplier step, essentially.
         } else {
             return pls(prevMultipliers, context);
         }

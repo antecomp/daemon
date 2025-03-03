@@ -97,7 +97,7 @@ export default function Actionbar(props: ActionbarProps) {
         <div id="battle-actionbar">
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={async () => {await requestOverlayAnimation("slash_elag", [0, 0]); console.log("animation complete")}} 
+                    onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
