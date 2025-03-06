@@ -5,8 +5,8 @@ import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves
 import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations } from "./battle.utils";
-import { DAMAGE_DELAY, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, deathCheckpoint } from "./battle.utils";
+import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
@@ -16,7 +16,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     /*  createMultible let's Solid listen for *value* changes on this object for UI updates
         Meaning we don't have to use a signal for "health" as it's a primitive
         already in Actor that we can access directly. */
-    const player = createMutable(new Actor("Arda", 20)); // This should be extracted from game store later.
+    const player = createMutable(new Actor("Arda", MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE)); // This should be extracted from game store later.
     const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
 
     let opponentSequence: MoveMeta[]; // At this scope for use in setupRound and executeRound.
@@ -67,6 +67,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         // Differs from player.data which is persistent for the entire battle.
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
+
+        //!debugMode && await sleep(PREANIM_DELAY); // TODO/Alternative, little animation to indicate round start.
 
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
 
@@ -125,6 +127,11 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.takeDamage(playerDamageDealt);
             player.takeDamage(opponentDamageDealt);
 
+            if(deathCheckpoint(player, opponent)) {
+                setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
+                return;
+            }
+
             const playerPostContext: PostMoveContext = {
                 ...playerContext,
                 damageDealt: playerDamageDealt,
@@ -174,7 +181,10 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
-        // TODO: Death Check
+        if(deathCheckpoint(player, opponent)) {
+            setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
+            return;
+        }
 
         //console.log(player, opponent);
 

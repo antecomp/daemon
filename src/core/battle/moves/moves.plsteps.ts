@@ -18,15 +18,17 @@ export const OnlyDoDamageOnDefensive: MultiplierPipelineStep = (prevMults, {oppo
     }
 }
 
-export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, {self, appendActionMessage}) => {
+export const PreparedAttackBonus: MultiplierPipelineStep = (prevMults, {self}) => {
 
-    switch(self.getStatusLevel("prepared")) {
-        case 1:
-            appendActionMessage(`${self.name} attacks with purpose.`)
-            break;
-        case 2:
-            appendActionMessage(`${self.name} attacks with majesty.`)
-    }
+    // TODO: Move this to some immediatePostEffect (or work on better status message system)
+    // this has no relation to output, itll print even if we're evaded or if it's an overwhelm failure.
+    // switch(self.getStatusLevel("prepared")) {
+    //     case 1:
+    //         appendActionMessage(`${self.name} attacks with purpose.`)
+    //         break;
+    //     case 2:
+    //         appendActionMessage(`${self.name} attacks with majesty.`)
+    // }
 
     return {
         ...prevMults,

@@ -1,5 +1,6 @@
 import { animationData, Move, MoveContext, MoveMeta, MoveResolution, MoveType, PostMoveContext, SequenceBuffer } from "../moves/moves.types";
 import { Actor } from "./actor";
+import { BattleUIState } from "./battle.context";
 import { ActionMessageAppender, MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
 
@@ -173,5 +174,31 @@ export function hasAnimations(animations: Map<number, {
             return true;
         }
     }
+    return false;
+}
+
+// Actual close logic goes here later xdddd
+// This handler is retarded, move to an effect to sync with UI
+export function handleDeath(who: "player" | "opponent") {
+    if(who == "player") {
+        alert("you are loser.");
+    }
+    if(who == "opponent") {
+        alert("you are winner.");
+    }
+}
+
+export function deathCheckpoint(player: Actor, opponent: Actor) {
+    // Done first, we will technically let the player win on both dead event.
+    if(opponent.health == 0) {
+        handleDeath("opponent");
+        return true;
+    }
+
+    if(player.health == 0) {
+        handleDeath("player");
+        return true;
+    }
+
     return false;
 }

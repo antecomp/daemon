@@ -52,7 +52,7 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     icon: pan_icon,
     sprite: pan,
     //moveBin: [biteMove, nothingMove],
-    maxHealth: 20,
+    maxHealth: 15,
     getSequence: (_me, _player) => {
         return shuffleArray([biteMove, shieldMove, prepareMove, biteMove, nothingMove])
     },

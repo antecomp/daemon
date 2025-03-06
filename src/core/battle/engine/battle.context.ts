@@ -1,7 +1,7 @@
 import { createContext, useContext } from "solid-js";
 
 export enum BattleUIState {
-    WAITING, READY, EXECUTING
+    WAITING, READY, EXECUTING, END
 }
 
 interface BattleUIStateMachine {

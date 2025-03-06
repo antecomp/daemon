@@ -361,9 +361,17 @@ describe("useBattleLogic sequence eval basics", () => {
   it("Heal scales on prepared", async () => {
     const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
     setupRound();
-    player.takeDamage(10);
+    player.maxHealth = 100;
+    player.health = 90;
     await executeRound([playerMoves.prepare, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
-    expect(player.health).toBe(player.maxHealth);
+    let healAmountPrep = player.health - 90;
+
+    player.health = 90;
+    await executeRound([nothingMove, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+    let healAmountNorm = player.health - 90;
+
+    expect(healAmountPrep).greaterThan(healAmountNorm);
+
   });
 })
 
@@ -431,6 +439,8 @@ describe("Mirror Move", () => {
   it("Mirror on self-effecting moves (e.g heal) properly target self", async () => {
     const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
 
+    player.health = player.maxHealth = 100;
+
     player.takeDamage(5);
     opponent.takeDamage(5);
 
@@ -464,4 +474,45 @@ describe("Mirror Move", () => {
 
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
+})
+
+describe("Death tests", () => {
+  it.each([0, 1, 2, 3, 4])("Player death idx %i", async (index) => {
+    const { player, setupRound, executeRound, battleUIState } = useBattleLogic(
+        generateSampleOpponent([
+            ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
+            playerMoves.attack, // Opponent attacks at the given index
+            ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
+        ])
+    );
+
+    player.health = 0.5; // Ensure the player is low enough to die from an attack
+
+    setupRound();
+
+    await executeRound(Array(5).fill(nothingMove), true); // Player does nothing
+
+    expect(battleUIState()).toBe(BattleUIState.END);
+});
+
+it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
+    const { opponent, setupRound, executeRound, battleUIState } = useBattleLogic(
+        generateSampleOpponent([
+            ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
+            nothingMove, // Opponent does nothing (player attacks)
+            ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
+        ])
+    );
+
+    opponent.health = 0.5; // Ensure the opponent is low enough to die
+
+    setupRound();
+
+    const moves = Array(5).fill(nothingMove);
+    moves[index] = playerMoves.attack; // Player attacks at this index
+
+    await executeRound(moves, true);
+
+    expect(battleUIState()).toBe(BattleUIState.END);
+});
 })

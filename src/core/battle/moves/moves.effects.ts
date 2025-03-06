@@ -20,7 +20,7 @@ export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
 }
 
 export const ApplySelfHeal: MoveSideEffect = ({self, appendActionMessage}) => {
-    const healAmount = 5 * (1 + self.getStatusLevel("prepared"));
+    const healAmount = 2 * (1 + self.getStatusLevel("prepared"));
     appendActionMessage(`${self.name} heals for ${healAmount}`);
     self.heal(healAmount);
 }
