@@ -24,10 +24,29 @@ export default function Battle(props: BattleProps) {
     })
 
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
-    const { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages } = useBattleLogic(props.opponentData);
+    const { 
+        playerMults, opponentMults, 
+        battleUIState, setBattleUIState, 
+        player, opponent, 
+        setupRound, executeRound, 
+        insight, 
+        currentStatuses, 
+        actionMessages,
+        battleResultPromise
+    } = useBattleLogic(props.opponentData);
 
     onMount(() => {
         setupRound();
+
+        // This will likely run a CB provided as a prop for resolution.
+        battleResultPromise.then((result) => {
+            if(result == "player") {
+                alert("you are winner.");
+            }
+            if(result == "opponent") {
+                alert("you are loser.");
+            }
+        });
     });
 
     return (

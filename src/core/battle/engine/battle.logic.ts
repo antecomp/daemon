@@ -5,7 +5,7 @@ import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves
 import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, deathCheckpoint } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, deathCheckpoint, deathBreaker } from "./battle.utils";
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
@@ -41,6 +41,12 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             setActionMessages(prev => prev.slice(1))
         }, NOTIFICATION_LIFESPAN);
     }
+
+    // Promise for battle resolution.
+    let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
+    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => {
+        battleResolve = resolve;
+    });
 
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
@@ -127,11 +133,9 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.takeDamage(playerDamageDealt);
             player.takeDamage(opponentDamageDealt);
 
-            // TODO - Just have death checkpoint trigger a return, do actual handling as an effect.
-            if(deathCheckpoint(player, opponent)) {
-                setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
-                return;
-            }
+            // Early check if someone died from damage
+            // we dont want to run any other effects if someone is dead.
+            if(deathBreaker(player, opponent)) return;
 
             const playerPostContext: PostMoveContext = {
                 ...playerContext,
@@ -182,12 +186,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
-        // TODO - Just have death checkpoint trigger a return, do actual handling as an effect.
-        if(deathCheckpoint(player, opponent)) {
-            setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
-            return;
-        }
-
+        if (deathBreaker(player, opponent)) return;        
         // Loop back to setup.
         setupRound();
 
@@ -196,12 +195,48 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     // Handles a few out-of-battle effects, like damage flash on opponent.
     // Also handles cleanup on battle end.
     createEffect(() => {
-        // Dependency, should trigger whenever health changes.
+        // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
         if(opponent.health > 0) {
             damageFlashOpponent();
         }
-        // TODO: Death check handling here.
+        // TODO: Player damage effect here (if any)
     })
 
-    return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages };
+    // Death Handling.....
+    // Seperate from flash effect due to accidental dependancy trigger.
+    createEffect(() => {
+        if(player.health <= 0 && opponent.health <= 0) {
+            //alert("draw");
+            // Will likely consider this a victory, repeat anim.
+            battleResolve!("draw");
+            setBattleUIState(BattleUIState.END);
+        }
+        if(player.health <= 0) {
+            //alert("you are loser.");
+            // TODO: await some death animation here.
+            battleResolve!("opponent");
+            setBattleUIState(BattleUIState.END);
+        }
+        if(opponent.health <= 0) {
+            //alert("you are winner");
+            // TODO: await some victory animation here.
+            battleResolve!("player");
+            setBattleUIState(BattleUIState.END);
+        } 
+    })
+
+    return { 
+        playerMults, 
+        opponentMults, 
+        battleUIState, 
+        setBattleUIState, 
+        player, 
+        opponent, 
+        setupRound, 
+        executeRound, 
+        insight, 
+        currentStatuses, 
+        actionMessages,
+        battleResultPromise
+    };
 }

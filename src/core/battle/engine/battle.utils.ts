@@ -221,3 +221,7 @@ export function deathCheckpoint(player: Actor, opponent: Actor) {
 
     return false;
 }
+
+export function deathBreaker(player: Actor, opponent: Actor) {
+   return (player.health == 0 || opponent.health == 0);
+}
