@@ -7,7 +7,7 @@ import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
-import { damageFlashOpponent, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
+import { damageFlashOpponent, fadeInOppSeq, fadeOutOppSeq, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -95,7 +95,9 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
+        !debugMode && await fadeOutOppSeq();
         setInsight(opponentSequence); // Visualize entire opponent sequence.
+        !debugMode && await fadeInOppSeq();
 
         opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence, player, userSelectedSequence));
         player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence, opponent, opponentSequence));
@@ -106,8 +108,6 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         // Differs from player.data which is persistent for the entire battle.
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
-
-        //!debugMode && await sleep(PREANIM_DELAY); // TODO/Alternative, little animation to indicate round start.
 
         let deathResult: "player" | "opponent" | "draw" | null = null;
 
@@ -231,7 +231,11 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         if(deathResult) {
             handleDeath(deathResult);
             return;
-        }        
+        }
+        
+        
+        // TODO: Sequence Removal Animation
+
         // Loop back to setup.
         setupRound();
 

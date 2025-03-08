@@ -3,7 +3,7 @@ import './opp-statusbar.css'
 import name_postcut from '../assets/name-postcut.png'
 import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
-import insight_label from '../assets/insight-label.png'
+// import insight_label from '../assets/insight-label.png'
 import { MoveMeta } from '@/core/battle/moves/moves.types'
 import { registerBattleUIRef } from './refRegistry'
 
@@ -55,7 +55,7 @@ export default function OppStatusBar(props: OppStatusBarProps) {
                 </div>
             </div>
             <div id="opp-hint-container" ref={sequenceViewOpponentRef}>
-                <img src={insight_label} class='insight-label' />
+                {/* <img src={insight_label} class='insight-label' /> */}
                 <For each={props.sequenceHint}>
                     {(x) => <OppHint {...x}/>}
                 </For>
