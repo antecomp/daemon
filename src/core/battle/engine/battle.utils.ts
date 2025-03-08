@@ -1,7 +1,6 @@
-import { animationData, Move, MoveContext, MoveMeta, MoveResolution, MoveType, PostMoveContext, SequenceBuffer } from "../moves/moves.types";
+import { animationData, Move, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
 import { Actor } from "./actor";
-import { BattleUIState } from "./battle.context";
-import { ActionMessageAppender, MultiplierSet } from "./battle.types";
+import { MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
 
 /** Generate a clone of a sequence with a few of the elements redacted as undefined. */
@@ -15,7 +14,10 @@ export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     return seq.map((item, index) => indices.has(index) ? undefined : item);
 }
 
-// When adding a new move type, register it here also.
+/** Base multiplier registry, these are used as the initial values for the multipliers in the mult pipeline (reduce).
+ * 
+ * If you create a new MoveType, you must add it here.
+ */
 const BASE_MULTIPLIERS: Record<MoveType, MultiplierSet> = {
     [MoveType.Aggressive]: { incoming: 1, outgoing: 1 },
     [MoveType.Passive]: { incoming: 1, outgoing: 0 },
@@ -40,6 +42,7 @@ export function computeMoveMultipliers(initialMultipliers: MultiplierSet, move: 
     );
 }
 
+/** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. */
 export function combineMultiplierSets(...sets: MultiplierSet[]) {
     return sets.reduce((acc: MultiplierSet, set) => {
         return {
@@ -121,6 +124,12 @@ export function handleImmediatePostEffects(context: PostMoveContext) {
     );
 }
 
+/** Combines the animations requested by player and opponents move, grouping and ordering them by priority
+ * @argument playerMove - The move the player is using. (Animation grabbed from here)
+ * @argument opponentMove - The move the opponent is using. (Animation grabbed from here)
+ * @argument phase - The phase of the move to grab animations for. (pre or post) - pre is before damage, post is after. Controls the required context type.
+ * @returns a Map of priority to an object containing player and opponent animations for that priority.
+ */
 export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Move, opponentMove: Move, phase: TP) {
     // Evil type magic to make this properly cast to MoveContext or PostMoveContext.
     type ContextType = TP extends "pre" ? MoveContext : PostMoveContext;
@@ -145,6 +154,11 @@ export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Mo
     return groupedAnimations;
 }
 
+/** Execute animations in order of priority. Used in tandem with mergeAndSortAnimations.
+ * @argument animations - The animations to execute, grouped by priority.
+ * @argument playerContext - The context to pass to player animations.
+ * @argument opponentContext - The context to pass to opponent animations
+ */
 export async function executeAnimations<contextType = MoveContext | PostMoveContext>(
     animations: Map<number, {player: ((ctx: contextType) => Promise<void>)[], opponent: ((ctx: contextType) => Promise<void>)[]}>, 
     playerContext: contextType,
@@ -163,6 +177,11 @@ export async function executeAnimations<contextType = MoveContext | PostMoveCont
     }
 }
 
+/** Helper to check if we have any animations.
+ * Used in battle logic to subsitute a delay for animations if there are none.
+ * @argument animations - The animations to check (grabbed from mergeAndSortAnimations)
+ * @returns true if there are any animations, false otherwise.
+ */
 export function hasAnimations(animations: Map<number, {
     player: ((ctx: PostMoveContext) => Promise<void>)[];
     opponent: ((ctx: PostMoveContext) => Promise<void>)[];

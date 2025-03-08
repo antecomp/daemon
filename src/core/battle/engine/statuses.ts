@@ -106,4 +106,3 @@ export class ManiaStatus extends Status {
         return {incoming: 1, outgoing: 2 ** level}
     }
 }
-

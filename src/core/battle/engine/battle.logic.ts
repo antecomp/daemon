@@ -127,6 +127,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             opponent.takeDamage(playerDamageDealt);
             player.takeDamage(opponentDamageDealt);
 
+            // TODO - Just have death checkpoint trigger a return, do actual handling as an effect.
             if(deathCheckpoint(player, opponent)) {
                 setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
                 return;
@@ -181,23 +182,25 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
+        // TODO - Just have death checkpoint trigger a return, do actual handling as an effect.
         if(deathCheckpoint(player, opponent)) {
             setBattleUIState(BattleUIState.END); // UI should self-immolate from here???
             return;
         }
-
-        //console.log(player, opponent);
 
         // Loop back to setup.
         setupRound();
 
     }
 
+    // Handles a few out-of-battle effects, like damage flash on opponent.
+    // Also handles cleanup on battle end.
     createEffect(() => {
         // Dependency, should trigger whenever health changes.
         if(opponent.health > 0) {
             damageFlashOpponent();
         }
+        // TODO: Death check handling here.
     })
 
     return { playerMults, opponentMults, battleUIState, setBattleUIState, player, opponent, setupRound, executeRound, insight, currentStatuses, actionMessages };
