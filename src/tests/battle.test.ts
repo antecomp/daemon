@@ -479,46 +479,46 @@ describe("Mirror Move", () => {
 // These fail due to the useEffects not being properly triggered in the test environment.
 // I'll need to figure out a way to properly test these.
 
-// describe("Death tests", () => {
-//   it.each([0, 1, 2, 3, 4])("Player death idx %i", async (index) => {
-//     const { player, setupRound, executeRound, battleUIState, battleResultPromise } = useBattleLogic(
-//         generateSampleOpponent([
-//             ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
-//             playerMoves.attack, // Opponent attacks at the given index
-//             ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
-//         ])
-//     );
+describe("Death tests", () => {
+  it.each([0, 1, 2, 3, 4])("Player death idx %i", async (index) => {
+    const { player, setupRound, executeRound, battleUIState, battleResultPromise } = useBattleLogic(
+        generateSampleOpponent([
+            ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
+            playerMoves.attack, // Opponent attacks at the given index
+            ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
+        ])
+    );
 
-//     player.health = 0.5; // Ensure the player is low enough to die from an attack
+    player.health = 0.5; // Ensure the player is low enough to die from an attack
 
-//     setupRound();
+    setupRound();
 
-//     await executeRound(Array(5).fill(nothingMove), true); // Player does nothing
+    await executeRound(Array(5).fill(nothingMove), true); // Player does nothing
 
-//     let result = await battleResultPromise;
+    let result = await battleResultPromise;
 
-//     //expect(battleUIState()).toBe(BattleUIState.END);
-//     expect(result).toBe("opponent");
-// });
+    expect(battleUIState()).toBe(BattleUIState.END);
+    expect(result).toBe("opponent");
+});
 
-// it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
-//     const { opponent, setupRound, executeRound, battleUIState } = useBattleLogic(
-//         generateSampleOpponent([
-//             ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
-//             nothingMove, // Opponent does nothing (player attacks)
-//             ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
-//         ])
-//     );
+it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
+    const { opponent, setupRound, executeRound, battleUIState } = useBattleLogic(
+        generateSampleOpponent([
+            ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
+            nothingMove, // Opponent does nothing (player attacks)
+            ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
+        ])
+    );
 
-//     opponent.health = 0.5; // Ensure the opponent is low enough to die
+    opponent.health = 0.5; // Ensure the opponent is low enough to die
 
-//     setupRound();
+    setupRound();
 
-//     const moves = Array(5).fill(nothingMove);
-//     moves[index] = playerMoves.attack; // Player attacks at this index
+    const moves = Array(5).fill(nothingMove);
+    moves[index] = playerMoves.attack; // Player attacks at this index
 
-//     executeRound(moves, true);
+    await executeRound(moves, true);
 
-//     expect(battleUIState()).toBe(BattleUIState.END);
-// });
-// })
+    expect(battleUIState()).toBe(BattleUIState.END);
+});
+})

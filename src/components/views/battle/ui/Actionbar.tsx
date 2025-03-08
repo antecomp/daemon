@@ -16,6 +16,7 @@ import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.con
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { requestOverlayAnimation } from '@/core/battle/animation/useOverlayAnim'
 import { registerBattleUIRef } from './refRegistry'
+import { opponentDeathFade } from '@/core/battle/animation/uiAnimations'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -97,7 +98,8 @@ export default function Actionbar(props: ActionbarProps) {
         <div id="battle-actionbar">
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
+                    // onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
+                    onClick={async () => {await opponentDeathFade()}}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

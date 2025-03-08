@@ -196,32 +196,11 @@ export function hasAnimations(animations: Map<number, {
     return false;
 }
 
-// Actual close logic goes here later xdddd
-// This handler is retarded, move to an effect to sync with UI
-export function handleDeath(who: "player" | "opponent") {
-    if(who == "player") {
-        alert("you are loser.");
-    }
-    if(who == "opponent") {
-        alert("you are winner.");
-    }
-}
-
-export function deathCheckpoint(player: Actor, opponent: Actor) {
-    // Done first, we will technically let the player win on both dead event.
-    if(opponent.health == 0) {
-        handleDeath("opponent");
-        return true;
-    }
-
-    if(player.health == 0) {
-        handleDeath("player");
-        return true;
-    }
-
-    return false;
-}
-
-export function deathBreaker(player: Actor, opponent: Actor) {
-   return (player.health == 0 || opponent.health == 0);
+export function isAnyoneDead(player: Actor, opponent: Actor) {
+   const p = player.health <= 0;
+   const o = opponent.health <= 0;
+   if(p && o) return "draw";
+   if(p) return "player";
+   if(o) return "opponent";
+   return null;
 }

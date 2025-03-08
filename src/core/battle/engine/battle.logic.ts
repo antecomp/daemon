@@ -5,9 +5,9 @@ import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves
 import { BattleUIState } from "./battle.context";
 import { createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, deathCheckpoint, deathBreaker } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
-import { damageFlashOpponent, highlightMovesAtIndex, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
+import { damageFlashOpponent, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 export function useBattleLogic(opponentData: DVOpponentData) {
     // Provided as context by the Battle component itself.
@@ -36,18 +36,51 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     const appendActionMessage: ActionMessageAppender = (text: string/*, icon */) => {
         setActionMessages(prev => [...prev, { text }]);
 
-        // Should be changed to some sort of pipeline thing later.
+        // Is this good enough or should we have a more reliable system?
         setTimeout(() => {
             setActionMessages(prev => prev.slice(1))
         }, NOTIFICATION_LIFESPAN);
     }
 
-    // Promise for battle resolution.
     let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
-    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => {
+    /** Promise representing the battle outcome, resolved when the player or opponent die.
+     * @resolves "player" when player wins (opponent death)
+     * @resolves "opponent" when opponent wins (player death)
+     * @resolves "draw" when both player and opponent die.
+     */
+    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => { // TODO: Remove "draw" from this due to player bias?
         battleResolve = resolve;
     });
 
+    /** UI Cleanup, Animation and Promise Resolution Handler For Battle End (Someone died)  */
+    async function handleDeath(who: "player" | "opponent" | "draw") {
+
+        // UI Cleanup
+        setPlayerMults({ incoming: 0, outgoing: 0 });
+        setOpponentMults({ incoming: 0, outgoing: 0 });
+        setCurrentStatusIcons({
+            player: [],
+            opp: []
+        });
+
+        switch(who) {
+            case "player":
+                // Player death animation goes here (await).
+                battleResolve!("opponent");
+                break;
+            case "opponent":
+                // Opponent death animation await goes here (await).
+                await opponentDeathFade();
+                battleResolve!("player");
+                break;
+            case "draw":
+                // For now let's just have player priority, draw is player victory
+                battleResolve!("player");
+                break;
+        }
+        
+        setBattleUIState(BattleUIState.END); // May be uneeded depending on how we handle resolution.
+    }
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
     function setupRound() {
@@ -75,6 +108,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
         const opponentSequenceBuffer = {};
 
         //!debugMode && await sleep(PREANIM_DELAY); // TODO/Alternative, little animation to indicate round start.
+
+        let deathResult: "player" | "opponent" | "draw" | null = null;
 
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
 
@@ -135,7 +170,13 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
             // Early check if someone died from damage
             // we dont want to run any other effects if someone is dead.
-            if(deathBreaker(player, opponent)) return;
+            deathResult = isAnyoneDead(player, opponent);
+            if(deathResult) {
+                // Do our own early UI cleanup in-scope for the current move highlighting.
+                stopHighlightingMovesAtIndex(seqHighlightAnimations);
+                handleDeath(deathResult);
+                return;
+            }
 
             const playerPostContext: PostMoveContext = {
                 ...playerContext,
@@ -186,43 +227,23 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
-        if (deathBreaker(player, opponent)) return;        
+        deathResult = isAnyoneDead(player, opponent);
+        if(deathResult) {
+            handleDeath(deathResult);
+            return;
+        }        
         // Loop back to setup.
         setupRound();
 
     }
 
     // Handles a few out-of-battle effects, like damage flash on opponent.
-    // Also handles cleanup on battle end.
     createEffect(() => {
         // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
         if(opponent.health > 0) {
             damageFlashOpponent();
         }
         // TODO: Player damage effect here (if any)
-    })
-
-    // Death Handling.....
-    // Seperate from flash effect due to accidental dependancy trigger.
-    createEffect(() => {
-        if(player.health <= 0 && opponent.health <= 0) {
-            //alert("draw");
-            // Will likely consider this a victory, repeat anim.
-            battleResolve!("draw");
-            setBattleUIState(BattleUIState.END);
-        }
-        if(player.health <= 0) {
-            //alert("you are loser.");
-            // TODO: await some death animation here.
-            battleResolve!("opponent");
-            setBattleUIState(BattleUIState.END);
-        }
-        if(opponent.health <= 0) {
-            //alert("you are winner");
-            // TODO: await some victory animation here.
-            battleResolve!("player");
-            setBattleUIState(BattleUIState.END);
-        } 
     })
 
     return { 

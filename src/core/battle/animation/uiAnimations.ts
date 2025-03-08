@@ -1,4 +1,5 @@
 import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
+import animateAsync from "@/util/animateAsync";
 
 export function highlightMovesAtIndex(moveIndex: number) {
     const playerSeqUIElement = getBattleUIRef('sequenceViewPlayer');
@@ -24,4 +25,28 @@ export function damageFlashOpponent() {
         // .onfinish = () => {
         //     opponentSprite.style.opacity = '1';
         // }
+}
+
+export async function opponentDeathFade() {
+    const opponentSprite = getBattleUIRef('opponentSprite');
+    if (!opponentSprite) return;
+
+    await animateAsync(opponentSprite, [
+        {
+            filter: `brightness(1)`,
+            opacity: `1`
+        },
+        {
+            filter: `brightness(0)`,
+            opacity: `1`
+        },
+        {
+            filter: `brightness(0)`,
+            opacity: `0`
+        }
+    ],
+    {
+     duration: 450   
+    }
+    )
 }
