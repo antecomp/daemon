@@ -166,6 +166,7 @@
                 display: flex;
                 height: 29px;
                 margin-right: -25px;
+                text-transform: capitalize;
 
                 & div {
                     background-color: black;

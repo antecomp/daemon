@@ -116,7 +116,7 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         icon: chain_icon,
         rbIcon: chain_icon_ex,
         getMove: OverwhelmMove,
-        description: `Overwhelm \n\n Test Move.`
+        description: `We are still ultimately animals. \n\n Anticipate opponent will to cling to reality. Deals damage only on defensive moves.`
     },
 
     mirror: {
@@ -148,7 +148,7 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                 return oppMoveMeta.getMove;
             }
         },
-        description: `Mirror move :)`
+        description: `Distorted truths cut like knives. \n \n Perform the same action as opponent.`
     },
 
 }
