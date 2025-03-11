@@ -18,8 +18,11 @@ import trickster_icon_ex from '../icons/trickster_ex.png'
 import { PlayerMoveMeta } from '../moves.types'
 import { Attack, Defend, Evade, Heal, NothingMove, OverwhelmMove, Prepare } from '../moves.list'
 import { CannotBeFirst } from '../moves.validators'
-import { requestOverlayAnimation } from '../../animation/useOverlayAnim'
+import { requestOverlayAnimation } from '../../animation/requestOverlayAnim'
 
+import { playSound } from '@/util/playSound'
+
+import candle_sfx from '@/assets/sfx/battle/candle.wav'
 
 
 // For now we can put all the player moves in a single table like this.
@@ -94,15 +97,22 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                         execute: async ({self}) => {
                             const preparedLevel = self.getStatusLevel("prepared")
 
-                            if(preparedLevel == 1) {
-                                await requestOverlayAnimation("slash_purpose", [-29, 0]);
-                            } else if (preparedLevel >= 2) {
-                                await requestOverlayAnimation("slash_majes", [-29, 0]);
-                            } else if (self.getStatusLevel("mania") > 0) {
-                                await requestOverlayAnimation("slash_elag", [0, 0])
-                            } else {
-                                await requestOverlayAnimation("slash_norm", [-29, 50]);
-                            }
+                            await Promise.all([
+                                (async () => {
+                                    if(preparedLevel == 1) {
+                                        await requestOverlayAnimation("slash_purpose", [-29, 0]);
+                                    } else if (preparedLevel >= 2) {
+                                        await requestOverlayAnimation("slash_majes", [-29, 0]);
+                                    } else if (self.getStatusLevel("mania") > 0) {
+                                        await requestOverlayAnimation("slash_elag", [0, 0])
+                                    } else {
+                                        await requestOverlayAnimation("slash_norm", [-29, 50]);
+                                    }
+                                })(),
+                                (async () => await playSound(candle_sfx))()
+                            ])
+
+                            
                         }
                     }
                 ]

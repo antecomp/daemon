@@ -7,7 +7,7 @@ import prae_icon from '@/core/battle/moves/icons/PRAETORIAN.png'
 import { Attack, Defend, NothingMove, Prepare } from "./moves/moves.list";
 import vortexShader from "@/shaders/backgrounds/vortex.shader";
 import { shuffleArray } from "@/util/shuffle";
-import { requestOverlayAnimation } from "./animation/useOverlayAnim";
+import { requestOverlayAnimation } from "./animation/requestOverlayAnim";
 
 const biteMove: MoveMeta = {
     displayName: "Bite",

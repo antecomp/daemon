@@ -1,5 +1,5 @@
 import { overlayAnimations } from "@/core/battle/animation/animations.reg";
-import { overlayAnimRequests } from "@/core/battle/animation/useOverlayAnim";
+import { overlayAnimRequests } from "@/core/battle/animation/requestOverlayAnim";
 import { createEffect } from "solid-js";
 
 export default function OverlayAnimator() {

@@ -9,6 +9,9 @@ import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffect
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, fadeInOppSeq, fadeOutOppSeq, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
+import { playSound } from "@/util/playSound";
+import pain_sfx from "@/assets/sfx/battle/pain.wav";
+
 export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean) {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
@@ -248,6 +251,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     createEffect(() => {
         // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
         if(opponent.health > 0) {
+            playSound(pain_sfx)
             damageFlashOpponent();
         }
         // TODO: Player damage effect here (if any)

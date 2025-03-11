@@ -17,6 +17,9 @@ import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
 import { fadeInOppSeq, fadeOutOppSeq } from '@/core/battle/animation/uiAnimations'
 
+import { playSound } from '@/util/playSound'
+import candle_sfx from '@/assets/sfx/battle/candle.wav'
+
 interface SelectedMoveProps {
     icon?: string // img url
     displayName: string
@@ -99,10 +102,7 @@ export default function Actionbar(props: ActionbarProps) {
                 <img src={eject_button} id='eject-button' 
                     // onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
                     // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
-                    onClick={async () => {
-                        await fadeOutOppSeq();
-                        await fadeInOppSeq();
-                    }}
+                    onClick={() => {playSound(candle_sfx)}}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

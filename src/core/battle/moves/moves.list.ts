@@ -2,7 +2,7 @@
  * Generic Moves 
 */
 
-import { requestOverlayAnimation } from "../animation/useOverlayAnim";
+import { requestOverlayAnimation } from "../animation/requestOverlayAnim";
 import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move, MoveType } from "./moves.types";
