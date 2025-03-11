@@ -84,9 +84,11 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     // Runs automatically on battle start, and then after every (nonfatal) round.
-    function setupRound() {
+    async function setupRound() {
         opponentSequence = opponentData.getSequence(opponent, player);
+        !debugMode && await fadeOutOppSeq();
         setInsight(generateHint(opponentSequence));
+        !debugMode && await fadeInOppSeq();
         setBattleUIState(BattleUIState.WAITING);
         console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
     }
