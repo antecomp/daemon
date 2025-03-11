@@ -164,17 +164,17 @@ function generateSampleOpponent(seq?: MoveMeta[]) {
 
 describe("useBattleLogic Hook Init", () => {
   it("setupRound test", () => {
-    const {setupRound, battleUIState, insight} = useBattleLogic(generateSampleOpponent());
+    const {setupRound, battleUIState, insight} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
     expect(battleUIState()).toBe(BattleUIState.WAITING);
     expect(insight().length).toBe(5);
   });
 
   it("Exec runs and ends", async () => {
-    const {setupRound, battleUIState, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {setupRound, battleUIState, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
 
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     // Back to waiting due to setupRound call.
     expect(battleUIState()).toBe(BattleUIState.WAITING);
@@ -184,113 +184,113 @@ describe("useBattleLogic Hook Init", () => {
 
 describe("useBattleLogic sequence eval basics", () => {
   it("Attack damage dealt", async () => {
-    const {opponent, setupRound, executeRound, player} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound, player} = useBattleLogic((generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
 
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 1);
     expect(player.health).toBe(player.maxHealth - 2);
   });
 
   it("Repeat performs attack twice", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
 
-    await executeRound([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
   it("Defend reduces incoming damage", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.defend, playerMoves.defend, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.defend, playerMoves.defend, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
 
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 0.5);
 
     opponent.health = opponent.maxHealth;
 
-    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 1); // 2x damage then halved by defend.
   });
 
   it("Heal fails based on RequiresFocus", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
     opponent.takeDamage(10);
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBeLessThan(opponent.maxHealth - 10); // 2 from attack on vuln, 10 manually decremented to verify.
     
   });
 
   it("Heal succeeds with focus", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
     opponent.takeDamage(10);
-    await executeRound([playerMoves.defend, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.defend, playerMoves.heal, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBeGreaterThan(opponent.maxHealth - 10);
   });
 
   it("Prepare adds status on success", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare])), true);
     setupRound();
-    await executeRound([playerMoves.evade, playerMoves.prepare, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.evade, playerMoves.prepare, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.getStatusLevel("prepared")).toBe(1);
   });
 
   it("Prepare fails without focus", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare])), true);
     setupRound();
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.attack], true);
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.attack]);
 
     expect(opponent.getStatusLevel("prepared")).toBe(0);
   });
 
   it("Overwhelm lands on defensive moves", async () => {
-    const {player, setupRound, executeRound, opponent} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound, opponent} = useBattleLogic((generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.defend, playerMoves.evade, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.defend, playerMoves.evade, nothingMove, nothingMove, nothingMove]);
 
     expect(player.health).toBe(player.maxHealth - 2);
     expect(opponent.health).toBe(opponent.maxHealth); // Weird bug that I noticed playtesting.
   });
 
   it("Overwhelm fails with vulnerability on non-defensive moves", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.overwhelm, playerMoves.overwhelm, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(player.health).toBe(player.maxHealth);
     expect(opponent.health).toBe(opponent.maxHealth - 1.5); // -1.5 from vuln. <- NOTE TO SELF I SHOULD PROB MAKE THIS SOME SORT OF CONFIG CONSTANT LOL.
   })
 
   it("Prepare attack does bonus damage", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
-    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.attack, nothingMove, nothingMove, nothingMove]);
     expect(opponent.health).toBe(opponent.maxHealth - 2);
     opponent.heal(999);
-    await(executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.attack, nothingMove, nothingMove], true));
+    await(executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.attack, nothingMove, nothingMove]));
     expect(opponent.health).toBe(opponent.maxHealth - 4);
   });
 
   it("Prepare wraps to next turn", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare], true);
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]);
     expect(player.getStatusLevel("prepared")).toBe(1);
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
   it("Evade negates damage with chance", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
 
     let evadeSuccessCount = 0;
@@ -298,7 +298,7 @@ describe("useBattleLogic sequence eval basics", () => {
     const testRuns = 1000; // Lower sample sizes can sometimes trigger a fail within expected range.
 
     for (let i = 0; i < testRuns; i++) {
-      await executeRound([playerMoves.evade, nothingMove, nothingMove, nothingMove, nothingMove], true);
+      await executeRound([playerMoves.evade, nothingMove, nothingMove, nothingMove, nothingMove]);
       if (player.health === player.maxHealth) {
         evadeSuccessCount++;
       } else {
@@ -313,7 +313,7 @@ describe("useBattleLogic sequence eval basics", () => {
   });
 
   it("Evade chance scales with prepare", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
 
     let evadeSuccessCount = 0;
@@ -321,7 +321,7 @@ describe("useBattleLogic sequence eval basics", () => {
     const testRuns = 1000; // Lower sample sizes can sometimes trigger a fail within expected range.
 
     for (let i = 0; i < testRuns; i++) {
-      await executeRound([playerMoves.prepare, playerMoves.evade, nothingMove, nothingMove, nothingMove], true);
+      await executeRound([playerMoves.prepare, playerMoves.evade, nothingMove, nothingMove, nothingMove]);
       if (player.health === player.maxHealth) {
         evadeSuccessCount++;
       } else {
@@ -336,38 +336,38 @@ describe("useBattleLogic sequence eval basics", () => {
   });
 
   it("Evade Gauranteed On Prepare Repeat", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, nothingMove, nothingMove]);
     expect(player.health).toBe(player.maxHealth);
   });
 
   it("Evade counterattack bonus (mania)", async () => {
-    const {player, setupRound, executeRound, opponent} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove]));
+    const {player, setupRound, executeRound, opponent} = useBattleLogic((generateSampleOpponent([nothingMove, nothingMove, playerMoves.attack, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, playerMoves.attack, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.repeat, playerMoves.evade, playerMoves.attack, nothingMove]);
     expect(player.health).toBe(player.maxHealth);
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   });
 
   it("Evade counterattack doesn't apply when not actually attacked", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {player, setupRound, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.evade], true);
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.evade]);
     expect(player.getStatusLevel("mania")).toBe(0);
     
   })
 
   it("Heal scales on prepared", async () => {
-    const {player, setupRound, executeRound} = useBattleLogic(generateSampleOpponent());
+    const {player, setupRound, executeRound} = useBattleLogic((generateSampleOpponent()), true);
     setupRound();
     player.maxHealth = 100;
     player.health = 90;
-    await executeRound([playerMoves.prepare, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.heal, nothingMove, nothingMove, nothingMove]);
     let healAmountPrep = player.health - 90;
 
     player.health = 90;
-    await executeRound([nothingMove, playerMoves.heal, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([nothingMove, playerMoves.heal, nothingMove, nothingMove, nothingMove]);
     let healAmountNorm = player.health - 90;
 
     expect(healAmountPrep).greaterThan(healAmountNorm);
@@ -381,63 +381,63 @@ describe("Mirror Move", () => {
   })
 
   it("Mirror clones basic move", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove])), true);
 
     setupRound();
 
-    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(player.health).toBe(player.maxHealth - 1);
     expect(opponent.health).toBe(opponent.maxHealth - 1);
   })
 
   it("Prepare mirror properly scales move output", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, playerMoves.attack, nothingMove, nothingMove, nothingMove])), true);
 
     setupRound();
 
-    await executeRound([playerMoves.prepare, playerMoves.mirror, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.prepare, playerMoves.mirror, nothingMove, nothingMove, nothingMove]);
 
     expect(player.health).toBe(player.maxHealth - 1);
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
   it("Mirror repeat mirrors twice", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove])), true);
 
     setupRound();
 
-    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
 
   it("Mirror on mirror fails", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]);
     expect(player.data.mirrorFatigue).toBe(true);
     expect(opponent.data.mirrorFatigue).toBe(true);
   })
 
   it("Opponent can use mirror", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove])), true);
     setupRound();
-    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.attack, nothingMove, nothingMove, nothingMove, nothingMove]);
     expect(player.health).toBe(player.maxHealth - 1);
     expect(opponent.health).toBe(opponent.maxHealth - 1);
   })
 
   it("Mirror applies status moves to self", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.prepare])), true);
     setupRound();
-    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.mirror], true);
+    await executeRound([nothingMove, nothingMove, nothingMove, nothingMove, playerMoves.mirror]);
     expect(player.getStatusLevel("prepared")).toBe(1);
     expect(opponent.getStatusLevel("prepared")).toBe(1);
   })
 
   it("Mirror on self-effecting moves (e.g heal) properly target self", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.heal, nothingMove, nothingMove, nothingMove, nothingMove])), true);
 
     player.health = player.maxHealth = 100;
 
@@ -446,7 +446,7 @@ describe("Mirror Move", () => {
 
     setupRound();
 
-    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, nothingMove, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBeGreaterThan(opponent.maxHealth -5);
     expect(player.health).toBeGreaterThan(player.maxHealth - 5);
@@ -454,11 +454,11 @@ describe("Mirror Move", () => {
   })
 
   it("Mirror on repeat, runs *opponents* last move, not our own", async () => {
-    const {player, opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove]));
+    const {player, opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.attack, playerMoves.repeat, nothingMove, nothingMove, nothingMove])), true);
 
     setupRound();
 
-    await executeRound([nothingMove, playerMoves.mirror, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([nothingMove, playerMoves.mirror, nothingMove, nothingMove, nothingMove]);
 
     expect(player.health).toBe(player.maxHealth - 2);
     expect(opponent.health).toBe(opponent.maxHealth -1); // We do opponents attack, not our nothingMove.
@@ -466,11 +466,11 @@ describe("Mirror Move", () => {
   })
 
   it("We can repeat mirror", async () => {
-    const {opponent, setupRound, executeRound} = useBattleLogic(generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove]));
+    const {opponent, setupRound, executeRound} = useBattleLogic((generateSampleOpponent([playerMoves.attack, playerMoves.attack, nothingMove, nothingMove, nothingMove])), true);
 
     setupRound();
 
-    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove], true);
+    await executeRound([playerMoves.mirror, playerMoves.repeat, nothingMove, nothingMove, nothingMove]);
 
     expect(opponent.health).toBe(opponent.maxHealth - 2);
   })
@@ -486,14 +486,15 @@ describe("Death tests", () => {
             ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
             playerMoves.attack, // Opponent attacks at the given index
             ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
-        ])
+        ]),
+        true
     );
 
     player.health = 0.5; // Ensure the player is low enough to die from an attack
 
     setupRound();
 
-    await executeRound(Array(5).fill(nothingMove), true); // Player does nothing
+    await executeRound(Array(5).fill(nothingMove)); // Player does nothing
 
     let result = await battleResultPromise;
 
@@ -507,7 +508,8 @@ it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
             ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
             nothingMove, // Opponent does nothing (player attacks)
             ...Array(4 - index).fill(nothingMove) // Fill the remaining moves
-        ])
+        ]),
+        true
     );
 
     opponent.health = 0.5; // Ensure the opponent is low enough to die
@@ -517,7 +519,7 @@ it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
     const moves = Array(5).fill(nothingMove);
     moves[index] = playerMoves.attack; // Player attacks at this index
 
-    await executeRound(moves, true);
+    await executeRound(moves);
 
     expect(battleUIState()).toBe(BattleUIState.END);
 });

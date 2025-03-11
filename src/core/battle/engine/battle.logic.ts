@@ -9,7 +9,7 @@ import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffect
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, fadeInOppSeq, fadeOutOppSeq, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
-export function useBattleLogic(opponentData: DVOpponentData) {
+export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean) {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
@@ -53,7 +53,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     });
 
     /** UI Cleanup, Animation and Promise Resolution Handler For Battle End (Someone died)  */
-    async function handleDeath(who: "player" | "opponent" | "draw", debugMode?: boolean) {
+    async function handleDeath(who: "player" | "opponent" | "draw") {
 
         // UI Cleanup
         setPlayerMults({ incoming: 0, outgoing: 0 });
@@ -92,7 +92,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...
-    async function executeRound(userSelectedSequence: PlayerMoveMeta[], debugMode?: boolean) {
+    async function executeRound(userSelectedSequence: PlayerMoveMeta[]) {
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
@@ -175,7 +175,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             if(deathResult) {
                 // Do our own early UI cleanup in-scope for the current move highlighting.
                 stopHighlightingMovesAtIndex(seqHighlightAnimations);
-                handleDeath(deathResult, debugMode);
+                handleDeath(deathResult);
                 return;
             }
 
@@ -230,7 +230,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
         deathResult = isAnyoneDead(player, opponent);
         if(deathResult) {
-            handleDeath(deathResult, debugMode);
+            handleDeath(deathResult);
             return;
         }
         
