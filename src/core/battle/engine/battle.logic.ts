@@ -53,7 +53,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
     });
 
     /** UI Cleanup, Animation and Promise Resolution Handler For Battle End (Someone died)  */
-    async function handleDeath(who: "player" | "opponent" | "draw") {
+    async function handleDeath(who: "player" | "opponent" | "draw", debugMode?: boolean) {
 
         // UI Cleanup
         setPlayerMults({ incoming: 0, outgoing: 0 });
@@ -70,8 +70,8 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
-                await damageFlashOpponent();
-                await opponentDeathFade();
+                !debugMode && await damageFlashOpponent();
+                !debugMode && await opponentDeathFade();
                 battleResolve!("player");
                 break;
             case "draw":
@@ -175,7 +175,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
             if(deathResult) {
                 // Do our own early UI cleanup in-scope for the current move highlighting.
                 stopHighlightingMovesAtIndex(seqHighlightAnimations);
-                handleDeath(deathResult);
+                handleDeath(deathResult, debugMode);
                 return;
             }
 
@@ -230,7 +230,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
 
         deathResult = isAnyoneDead(player, opponent);
         if(deathResult) {
-            handleDeath(deathResult);
+            handleDeath(deathResult, debugMode);
             return;
         }
         

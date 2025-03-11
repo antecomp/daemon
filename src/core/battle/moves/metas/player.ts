@@ -129,7 +129,6 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
             // Dangerous if we have a new displayname for mirror. Might want to have general id/movetype classifier in meta....
             if(oppMoveMeta.displayName === "mirror") {
                 context.self.data.mirrorFatigue = true; // For test/debug.
-                console.log("trigger");
                 return NothingMove; // Change to a generalized "fail" move later.
             }
 

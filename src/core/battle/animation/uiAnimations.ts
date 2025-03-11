@@ -56,7 +56,8 @@ export async function opponentDeathFade() {
         }
     ],
     {
-     duration: 450   
+     duration: 450, 
+     fill: "forwards"
     }
     )
 }
