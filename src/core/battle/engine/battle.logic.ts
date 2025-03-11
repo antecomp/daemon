@@ -70,6 +70,7 @@ export function useBattleLogic(opponentData: DVOpponentData) {
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
+                await damageFlashOpponent();
                 await opponentDeathFade();
                 battleResolve!("player");
                 break;

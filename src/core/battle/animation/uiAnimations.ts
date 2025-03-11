@@ -21,14 +21,20 @@ export function stopHighlightingMovesAtIndex(animations: { playerSeqAnim: Animat
     animations.oppSeqAnim?.cancel();
 }
 
-export function damageFlashOpponent() {
+export async function damageFlashOpponent() {
     const opponentSprite = getBattleUIRef('opponentSprite');
     if (!opponentSprite) return;
 
-    opponentSprite.animate([{ opacity: 1 }, { opacity: 0 }, { opacity: 1 }], { duration: 100, iterations: 3 })
-        // .onfinish = () => {
-        //     opponentSprite.style.opacity = '1';
-        // }
+    // opponentSprite.animate([{ opacity: 1 }, { opacity: 0 }, { opacity: 1 }], { duration: 100, iterations: 3 })
+    await animateAsync(opponentSprite, [
+        {opacity: 0},
+        {opacity: 1}
+    ],
+        {
+            duration: 100,
+            iterations: 3
+        }
+    )
 }
 
 export async function opponentDeathFade() {
