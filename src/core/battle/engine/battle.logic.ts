@@ -228,11 +228,13 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             }
 
             // Reset signal for UI
-            setPlayerMults({ incoming: 0, outgoing: 0 });
-            setOpponentMults({ incoming: 0, outgoing: 0 });
-            setCurrentStatusIcons({
-                player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
-                opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+            batch(() => {
+                setPlayerMults({ incoming: 0, outgoing: 0 });
+                setOpponentMults({ incoming: 0, outgoing: 0 });
+                setCurrentStatusIcons({
+                    player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
+                    opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+                });
             });
 
             stopHighlightingMovesAtIndex(seqHighlightAnimations);
