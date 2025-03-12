@@ -3,7 +3,7 @@ import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
-import { createEffect, createSignal } from "solid-js";
+import { batch, createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
@@ -59,11 +59,13 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     async function handleDeath(who: "player" | "opponent" | "draw") {
 
         // UI Cleanup
-        setPlayerMults({ incoming: 0, outgoing: 0 });
-        setOpponentMults({ incoming: 0, outgoing: 0 });
-        setCurrentStatusIcons({
-            player: [],
-            opp: []
+        batch(() => {
+            setPlayerMults({ incoming: 0, outgoing: 0 });
+            setOpponentMults({ incoming: 0, outgoing: 0 });
+            setCurrentStatusIcons({
+                player: [],
+                opp: []
+            });
         });
 
         switch(who) {
@@ -86,7 +88,10 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         setBattleUIState(BattleUIState.END); // May be uneeded depending on how we handle resolution.
     }
 
-    // Runs automatically on battle start, and then after every (nonfatal) round.
+    /** 
+     * Sets up a new round, fetching opponent moves, updating displayed hint, 
+     * and resetting battle state. Called at battle start and after each round. 
+     */
     async function setupRound() {
         opponentSequence = opponentData.getSequence(opponent, player);
         !debugMode && await fadeOutOppSeq();
@@ -118,6 +123,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         let deathResult: "player" | "opponent" | "draw" | null = null;
 
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
+            // Note: Can't generalize these as functions to loop over
+            // as we're flipping between player/opponent.
 
             // Get animation objects so we can call cancel on them later.
             const seqHighlightAnimations = highlightMovesAtIndex(moveIndex);
@@ -145,11 +152,14 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             const opponentFinalMultipliers = prepareMove(opponentContext);
 
             // Update UI
-            setPlayerMults(playerFinalMultipliers);
-            setOpponentMults(opponentFinalMultipliers);
-            setCurrentStatusIcons({
-                player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
-                opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+
+            batch(() => {
+                setPlayerMults(playerFinalMultipliers);
+                setOpponentMults(opponentFinalMultipliers);
+                setCurrentStatusIcons({
+                    player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
+                    opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+                });
             });
 
             // Perform animations that occur before damage output.
@@ -164,9 +174,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                     await sleep(DAMAGE_DELAY);
                 }
             }
-
-            // I know this doubling up look stupid, but you can't easily loop generalize this
-            // as we require this specific flip-floppy way of ordering the events!!!
 
             const playerDamageDealt = playerFinalMultipliers.outgoing * opponentFinalMultipliers.incoming;
             const opponentDamageDealt = playerFinalMultipliers.incoming * opponentFinalMultipliers.outgoing;
@@ -251,7 +258,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     createEffect(() => {
         // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
         if(opponent.health > 0) {
-            playSound(pain_sfx)
+            // This is temporary, as it will improperly trigger for stuff like heal
+            // need a more robust checker/cache system for this.
+            if(opponent.health != opponent.maxHealth) playSound(pain_sfx);
             damageFlashOpponent();
         }
         // TODO: Player damage effect here (if any)
