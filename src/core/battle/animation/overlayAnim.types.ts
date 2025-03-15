@@ -1,5 +1,3 @@
-
-
 /** 
  * Contains the data for an overlay animation, where an "overlay animation" is a short animation that
  * plays over the battle scene, such as a character's attack animation.

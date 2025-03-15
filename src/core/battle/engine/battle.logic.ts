@@ -45,6 +45,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         }, NOTIFICATION_LIFESPAN);
     }
 
+    // expose resolve method so we can call it when someone dies.
     let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
     /** Promise representing the battle outcome, resolved when the player or opponent die.
      * @resolves "player" when player wins (opponent death)
@@ -250,12 +251,10 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             return;
         }
         
-        
         // TODO: Sequence Removal Animation
 
         // Loop back to setup.
         setupRound();
-
     }
 
     // Handles a few out-of-battle effects, like damage flash on opponent.
@@ -270,18 +269,42 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         // TODO: Player damage effect here (if any)
     })
 
-    return { 
-        playerMults, 
-        opponentMults, 
+    return {
+        /** Simple signal getter indicating player incoming/outgoing multipliers */  
+        playerMults,
+        /** Simple signal getter indicating opponent incoming/outgoing multipliers */
+        opponentMults,
+        /** Instantiated signal for battle UI state. Reference battle.context.ts */ 
         battleUIState, 
-        setBattleUIState, 
-        player, 
+        /** Signal setter for battle UI state. Reference battle.context.ts */
+        setBattleUIState,
+        /** Player actor object */ 
+        player,
+        /** Opponent actor object */ 
         opponent, 
-        setupRound, 
+        /** Round initialization and setup function.
+         * Fetches opponent moves, updates displayed hint, and resets battle state.
+         */
+        setupRound,
+        /** Round execution function, triggered by user event.
+         * Builds sequence and executes it, updating the battle state.
+         * Core battle logic is executed here.
+         * Automatically triggers setupRound or handleDeath as needed.
+         */ 
         executeRound, 
+        /** Signal for the current "hint" of the opponent sequence. */
         insight, 
+        /** Simple object representing the current status icons for the player and opponent (for UI) */
         currentStatuses, 
+        /** Signal for the current action messages (flair text) */
         actionMessages,
+        /** Promise representing the battle outcome, resolved when the player or opponent die.
+         * 
+         * Await/then this to handle battle resolution.
+         * @resolves "player" when player wins (opponent death)
+         * @resolves "opponent" when opponent wins (player death)
+         * @resolves "draw" when both player and opponent die.
+         */
         battleResultPromise
     };
 }

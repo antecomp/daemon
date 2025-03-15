@@ -118,7 +118,6 @@ export function handleImmediatePostEffects(context: PostMoveContext) {
 
     const move = self.currentSequence[moveIndex];
     move.behaviors.immediatePostEffects?.forEach((effect) => {
-        // Just manually rebuild the context here, doesn't matter.
             effect(context)
         }
     );
@@ -196,6 +195,12 @@ export function hasAnimations(animations: Map<number, {
     return false;
 }
 
+/** Check if player or opponent has died.
+ * @returns "player" on player death
+ * @returns "opponent" on opponent death
+ * @returns "draw" on both death
+ * @returns null otherwise (no death)
+ */
 export function isAnyoneDead(player: Actor, opponent: Actor) {
    const p = player.health <= 0;
    const o = opponent.health <= 0;

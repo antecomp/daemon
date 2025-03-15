@@ -14,9 +14,8 @@ export class Actor {
     name: string;
     maxHealth: number;
     health: number;
-    // Enforce uniqueness of effect with a map, but stack multiple of the same effect in an array.
+    /** Stack of statuses applied to the actor, holding multiple instances of the same status (to track several durations). */
     statuses: Map<string, Status[]> = new Map(); 
-    //availableMoves: Move[]; // Full move pool (uneeded by Actor, moved to wrapper.)
     currentSequence: Move[]= [];
 
     // Track custom data and flags for advanced logic
@@ -27,24 +26,21 @@ export class Actor {
         [key: string]: any
     } = {};
 
-    constructor(name: string, maxHealth: number, /*availableMoves: Move[]*/) {
+    constructor(name: string, maxHealth: number) {
         this.name = name;
         this.maxHealth = maxHealth;
         this.health = maxHealth;
-        //this.availableMoves = availableMoves
     }
 
-    // Returns bool indicating if Actor is alive. Idk if ill end up using this or not.
-    // If not I should just make a quick "isDead" method.
-    public takeDamage(amount: number): boolean {
+    public takeDamage(amount: number) {
         this.health = Math.max(this.health - amount, 0);
-        return this.health <= 0;
     }
 
     public heal(amount: number) {
         this.health = Math.min(this.maxHealth, this.health + amount);
     }
 
+    /** Add a new status or stack upon existing status */
     public addStatus(status: Status) {
        const statusStack = this.statuses.get(status.type) ?? [];
 

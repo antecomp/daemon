@@ -1,14 +1,13 @@
 import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { Actor } from "./actor";
 
+/** Damage multiplier struct */
 export type MultiplierSet = {incoming: number, outgoing: number};
 
 export interface DVOpponentData {
     name: string
     icon: string
     sprite: string
-    //actor: Actor (instead generate actor on creation)
-    //moveBin: MoveMeta[]
     maxHealth: number
     // Use opponent and player state to make decisions...
     getSequence: (me: Actor, player: Actor) => MoveMeta[]
