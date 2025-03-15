@@ -1,7 +1,7 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
-import { MoveContext, MoveMeta, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
+import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { batch, createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
@@ -135,7 +135,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 index: moveIndex, 
                 opponent,
                 sequenceBuffer: playerSequenceBuffer,
-                appendActionMessage
+                appendActionMessage,
+                movePerspective: MovePerspective.Player
             }
 
             const opponentContext: MoveContext = {
@@ -144,7 +145,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 index: moveIndex, 
                 opponent: player, 
                 sequenceBuffer: opponentSequenceBuffer,
-                appendActionMessage
+                appendActionMessage,
+                movePerspective: MovePerspective.Opponent
             }
 
             // PreEffects and Mults.

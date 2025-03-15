@@ -14,10 +14,16 @@ export interface SequenceBuffer {
     [index: number]: Record<string, any>;
 }
 
+export enum MovePerspective {
+    Player,
+    Opponent
+}
+
 export interface MoveContext {
     // move: Move; // Points to the move itself (used for pipeline stuff)
     self: Actor;
     opponent: Actor;
+    movePerspective: MovePerspective; // From whos perspective is the move happening? Hint for animations.
     index: number;
     sequence: Move[];
     sequenceBuffer: SequenceBuffer; 

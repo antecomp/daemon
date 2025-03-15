@@ -1,5 +1,5 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
-import { MoveMeta } from "./moves/moves.types";
+import { MoveMeta, MovePerspective, MoveType } from "./moves/moves.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan from "@/assets/artwork/dæmons/snaek.png"
 import sample_move_icon from "@/components/views/battle/assets/placeholder_move_icon.png"
@@ -36,8 +36,15 @@ const shieldMove: MoveMeta = {
         animations: {
             pre: [{
                 priority: 1,
-                execute: async () => {
-                    await requestOverlayAnimation("shield", [0,0]);
+                execute: async ({opponent, index, movePerspective}) => {
+                    // Close enough approximation, we defend when we anticipate an aggressive move.
+                    if(movePerspective == MovePerspective.Opponent) {
+                        if (opponent.currentSequence[index].type === MoveType.Aggressive) {
+                            await requestOverlayAnimation("shield", [0,0]);
+                        }
+                    } else {
+                        //alert("Player used shield move via mirror. No anim.")
+                    }
                 }
             }]
         }
