@@ -166,3 +166,22 @@ export async function fadeInOppSeq() {
         }
     )
 }
+
+export async function fadeOutPlayerSeq() {
+    const sequenceViewPlayer = getBattleUIRef("sequenceViewPlayer");
+    if(!sequenceViewPlayer) return;
+
+    await animateAsync(sequenceViewPlayer, [
+        {
+            opacity: 1
+        },
+        {
+            opacity: 0
+        }
+    ],
+    {
+        duration: 300,
+        // Not forwards, will snap to being visible again for preview.
+    }
+    )
+}

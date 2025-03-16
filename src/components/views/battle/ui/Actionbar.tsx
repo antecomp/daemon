@@ -15,7 +15,7 @@ import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
-import { fadeInOppSeq, fadeOutOppSeq } from '@/core/battle/animation/uiAnimations'
+import { fadeInOppSeq, fadeOutOppSeq, fadeOutPlayerSeq } from '@/core/battle/animation/uiAnimations'
 
 import { playSound } from '@/util/playSound'
 import candle_sfx from '@/assets/sfx/battle/candle.wav'
@@ -83,6 +83,7 @@ export default function Actionbar(props: ActionbarProps) {
     const handleExecClick = async () => {
         if(battleUIState() != BattleUIState.READY) return;
         await props.execSequence(sequenceBuffer());
+        await fadeOutPlayerSeq();
         setSequenceBuffer([]); // Reset for next round.
     }
 
@@ -102,7 +103,8 @@ export default function Actionbar(props: ActionbarProps) {
                 <img src={eject_button} id='eject-button' 
                     // onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
                     // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
-                    onClick={() => {playSound(candle_sfx)}}
+                    //onClick={() => {playSound(candle_sfx)}}
+                    onClick={async () => {await fadeOutPlayerSeq();}}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

@@ -250,8 +250,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             handleDeath(deathResult);
             return;
         }
-        
-        // TODO: Sequence Removal Animation
 
         // Loop back to setup.
         setupRound();
@@ -260,7 +258,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     // Handles a few out-of-battle effects, like damage flash on opponent.
     createEffect(() => {
         // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
-        if(opponent.health > 0) {
+        if(opponent.health > 0) { // If it's an opponent death event we expect the death handler to do it's own animation
             // This is temporary, as it will improperly trigger for stuff like heal
             // need a more robust checker/cache system for this.
             if(opponent.health != opponent.maxHealth) playSound(pain_sfx);
@@ -274,7 +272,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         playerMults,
         /** Simple signal getter indicating opponent incoming/outgoing multipliers */
         opponentMults,
-        /** Instantiated signal for battle UI state. Reference battle.context.ts */ 
+        /** Signal for battle UI state. Reference battle.context.ts */ 
         battleUIState, 
         /** Signal setter for battle UI state. Reference battle.context.ts */
         setBattleUIState,
