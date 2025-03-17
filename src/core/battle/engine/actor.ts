@@ -22,6 +22,7 @@ export class Actor {
     // Leaving this open for whatever that is needed.
     // Moves and whatever is responsible for maintaining this data tho, be smart :)
     // TODO: This is honestly super lazy and stupid. Expand the class and define a custom schema PLEASE.
+    // Since this is only used for debug flags right now I'm leaving it.
     data: {
         [key: string]: any
     } = {};

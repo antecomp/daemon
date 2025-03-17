@@ -89,10 +89,13 @@ export function prepareMove(
 }
 
 
-// Runs once for every instance of a status (i.e multiple times if the status is stacked). TODO: change to be level based.
+// Runs once for every instance of a status (i.e multiple times if the status is stacked). WARNING: UNTESTED.
 export function performStatusPostEffects(actor: Actor, opponent: Actor) {
-    for (const effectStack of actor.statuses.values()) {
-        effectStack.forEach((status) => status.applyPostEffect && status.applyPostEffect(actor, opponent));
+    for(const [_type, statusStack] of actor.statuses) {
+        const stackCount = statusStack.length;
+        if(stackCount > 0) {
+            statusStack[0].applyPostEffect?.(actor, opponent, stackCount);
+        }
     }
 }
 

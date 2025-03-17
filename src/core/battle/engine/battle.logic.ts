@@ -52,7 +52,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
      * @resolves "opponent" when opponent wins (player death)
      * @resolves "draw" when both player and opponent die.
      */
-    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => { // TODO: Remove "draw" from this due to player bias?
+    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => {
         battleResolve = resolve;
     });
 

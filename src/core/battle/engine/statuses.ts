@@ -18,7 +18,7 @@ export abstract class Status {
     /** Applies effect multipliers based on level, where level = stack depth (amount of times effect applied) */
     abstract getStatusMultipliers(level: number): MultiplierSet;
 
-    applyPostEffect?: (_self: Actor, _opponent: Actor) => void;
+    applyPostEffect?: (self: Actor, opponent: Actor, level: number) => void;
 
     /** Reduce duration */
     tick(): boolean {
