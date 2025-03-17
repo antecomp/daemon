@@ -1,11 +1,9 @@
 import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
 import animateAsync from "@/util/animateAsync";
 
-// TODO: Maybe rename these to have some sort of convention
-// to indicate these are animation functions.
+// Naming Convention: animateTargetEffect
 
-
-export function highlightMovesAtIndex(moveIndex: number) {
+export function animateMoveHighlight(moveIndex: number) {
     const playerSeqUIElement = getBattleUIRef('sequenceViewPlayer');
     const opponentSeqUIElement = getBattleUIRef('sequenceViewOpponent');
 
@@ -16,12 +14,12 @@ export function highlightMovesAtIndex(moveIndex: number) {
     };
 }
 
-export function stopHighlightingMovesAtIndex(animations: { playerSeqAnim: Animation | undefined, oppSeqAnim: Animation | undefined }) {
+export function stopMoveHighlight(animations: { playerSeqAnim: Animation | undefined, oppSeqAnim: Animation | undefined }) {
     animations.playerSeqAnim?.cancel();
     animations.oppSeqAnim?.cancel();
 }
 
-export async function damageFlashOpponent() {
+export async function animateOpponentDamageFlash() {
     const opponentSprite = getBattleUIRef('opponentSprite');
     if (!opponentSprite) return;
 
@@ -37,7 +35,7 @@ export async function damageFlashOpponent() {
     )
 }
 
-export async function opponentDeathFade() {
+export async function animateOpponentDeathFade() {
     const opponentSprite = getBattleUIRef('opponentSprite');
     if (!opponentSprite) return;
 
@@ -65,7 +63,7 @@ export async function opponentDeathFade() {
 const ROLL_DURATION = 125;
 const ROLL_PAUSE = 25;
 
-export async function opponentSequenceRoll() {
+export async function animateOpponentSequenceRoll() {
     const sequenceViewOpponent = getBattleUIRef("sequenceViewOpponent");
     if (!sequenceViewOpponent) return;
 
@@ -81,7 +79,7 @@ export async function opponentSequenceRoll() {
     }
 }
 
-export async function playerSequenceRoll() {
+export async function animatePlayerSequenceRoll() {
     const sequenceViewPlayer = getBattleUIRef("sequenceViewPlayer");
     if (!sequenceViewPlayer) return;
 
@@ -99,7 +97,7 @@ export async function playerSequenceRoll() {
 
 
 const FADE_DURATION = 200;
-export async function opponentSequenceSwish() {
+export async function animateOpponentSequenceSwish() {
     const sequenceViewOpponent = getBattleUIRef("sequenceViewOpponent");
     if (!sequenceViewOpponent) return;
 
@@ -113,7 +111,7 @@ export async function opponentSequenceSwish() {
     }
 }
 
-export async function playerSequenceSwish() {
+export async function animatePlayerSequenceSwish() {
     const sequenceViewPlayer = getBattleUIRef("sequenceViewPlayer");
     if (!sequenceViewPlayer) return;
 
@@ -127,7 +125,7 @@ export async function playerSequenceSwish() {
     }
 }
 
-export async function fadeOutOppSeq() {
+export async function animateOpponentSequenceFadeOut() {
     const sequenceViewOpponent = getBattleUIRef("sequenceViewOpponent");
     if (!sequenceViewOpponent) return;
 
@@ -147,7 +145,7 @@ export async function fadeOutOppSeq() {
     )
 }
 
-export async function fadeInOppSeq() {
+export async function animateOpponentSequenceFadeIn() {
     const sequenceViewOpponent = getBattleUIRef("sequenceViewOpponent");
     if (!sequenceViewOpponent) return;
 
@@ -167,7 +165,7 @@ export async function fadeInOppSeq() {
     )
 }
 
-export async function fadeOutPlayerSeq() {
+export async function animatePlayerSequenceFadeOut() {
     const sequenceViewPlayer = getBattleUIRef("sequenceViewPlayer");
     if(!sequenceViewPlayer) return;
 

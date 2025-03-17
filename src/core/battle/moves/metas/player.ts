@@ -126,7 +126,7 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
         icon: chain_icon,
         rbIcon: chain_icon_ex,
         getMove: OverwhelmMove,
-        description: `We are still ultimately animals. \n\n Anticipate opponent will to cling to reality. Deals damage only on defensive moves.`
+        description: `We are still ultimately animals. \n\n Anticipate opponent will cling to reality. Deals damage only on defensive moves.`
     },
 
     mirror: {

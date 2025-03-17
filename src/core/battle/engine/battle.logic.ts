@@ -7,7 +7,7 @@ import { batch, createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
-import { damageFlashOpponent, fadeInOppSeq, fadeOutOppSeq, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
+import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
 import pain_sfx from "@/assets/sfx/battle/pain.wav";
@@ -76,8 +76,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
-                !debugMode && await damageFlashOpponent();
-                !debugMode && await opponentDeathFade();
+                !debugMode && await animateOpponentDamageFlash();
+                !debugMode && await animateOpponentDeathFade();
                 battleResolve!("player");
                 break;
             case "draw":
@@ -95,9 +95,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
      */
     async function setupRound() {
         opponentSequence = opponentData.getSequence(opponent, player);
-        !debugMode && await fadeOutOppSeq();
+        !debugMode && await animateOpponentSequenceFadeOut();
         setInsight(generateHint(opponentSequence));
-        !debugMode && await fadeInOppSeq();
+        !debugMode && await animateOpponentSequenceFadeIn();
         setBattleUIState(BattleUIState.WAITING);
         console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
     }
@@ -107,9 +107,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
-        !debugMode && await fadeOutOppSeq();
+        !debugMode && await animateOpponentSequenceFadeOut();
         setInsight(opponentSequence); // Visualize entire opponent sequence.
-        !debugMode && await fadeInOppSeq();
+        !debugMode && await animateOpponentSequenceFadeIn();
 
         opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence, player, userSelectedSequence));
         player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence, opponent, opponentSequence));
@@ -128,7 +128,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             // as we're flipping between player/opponent.
 
             // Get animation objects so we can call cancel on them later.
-            const seqHighlightAnimations = highlightMovesAtIndex(moveIndex);
+            const seqHighlightAnimations = animateMoveHighlight(moveIndex);
 
             const playerContext: MoveContext = {
                 self: player, 
@@ -189,7 +189,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             deathResult = isAnyoneDead(player, opponent);
             if(deathResult) {
                 // Do our own early UI cleanup in-scope for the current move highlighting.
-                stopHighlightingMovesAtIndex(seqHighlightAnimations);
+                stopMoveHighlight(seqHighlightAnimations);
                 handleDeath(deathResult);
                 return;
             }
@@ -240,7 +240,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 });
             });
 
-            stopHighlightingMovesAtIndex(seqHighlightAnimations);
+            stopMoveHighlight(seqHighlightAnimations);
 
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
@@ -262,7 +262,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             // This is temporary, as it will improperly trigger for stuff like heal
             // need a more robust checker/cache system for this.
             if(opponent.health != opponent.maxHealth) playSound(pain_sfx);
-            damageFlashOpponent();
+            animateOpponentDamageFlash();
         }
         // TODO: Player damage effect here (if any)
     })
