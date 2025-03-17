@@ -6,7 +6,7 @@ import { BattleUIState } from "./battle.context";
 import { batch, createEffect, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
-import { DAMAGE_DELAY, MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
+import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
 import { damageFlashOpponent, fadeInOppSeq, fadeOutOppSeq, highlightMovesAtIndex, opponentDeathFade, stopHighlightingMovesAtIndex } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
@@ -19,7 +19,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     /*  createMultible let's Solid listen for *value* changes on this object for UI updates
         Meaning we don't have to use a signal for "health" as it's a primitive
         already in Actor that we can access directly. */
-    const player = createMutable(new Actor("Arda", MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE)); // This should be extracted from game store later.
+    const player = createMutable(new Actor("Arda", PLAYER_HEALTH_PLACEHOLDER)); // This should be extracted from game store later.
     const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
 
     let opponentSequence: MoveMeta[]; // At this scope for use in setupRound and executeRound.
@@ -36,8 +36,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
     // Action messages are the little quick prompts that indicate things happening in the battle, information and flair text
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
-    const appendActionMessage: ActionMessageAppender = (text: string/*, icon */) => {
-        setActionMessages(prev => [...prev, { text }]);
+    const appendActionMessage: ActionMessageAppender = (text, icon) => {
+        setActionMessages(prev => [...prev, { text, icon }]);
 
         // Is this good enough or should we have a more reliable system?
         setTimeout(() => {

@@ -1,3 +1,8 @@
+import ai_plain_icon from '@/assets/icons/battle-alerts/plain.png'
+import ai_heal_icon from '@/assets/icons/battle-alerts/heal.png'
+import ai_focus_icon from '@/assets/icons/battle-alerts/focus.png'
+import ai_mania_icon from '@/assets/icons/battle-alerts/mania.png'
+
 // TODO: You likely want to change this to a config object to be more blatant and organized, rather than these floating consts.
 
 /** Delay before playing preanimations */
@@ -15,5 +20,16 @@ export const NOTIFICATION_LIFESPAN = 3500;
 /** Delay before the round starts */ // <- REPLACE WITH ANIM STUFF
 export const PREROUND_DELAY = 1000;
 
+/** Player starting/max health - will likely be updated/linked to a global store. */
+export const PLAYER_HEALTH_PLACEHOLDER = 10;
 
-export const MORONIC_CONST_FOR_PLAYER_STARTER_HEALTH_CHANGE_ME_PLEASE = 10;
+
+export type ActionIconTable = Record<
+    "default" | "heal" | "focus" | "mania", string
+>
+export const actionIcons: ActionIconTable = {
+    "default": ai_plain_icon,
+    "heal": ai_heal_icon,
+    "focus": ai_focus_icon,
+    "mania": ai_mania_icon
+}

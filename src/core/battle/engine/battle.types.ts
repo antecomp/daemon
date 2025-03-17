@@ -1,5 +1,6 @@
 import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { Actor } from "./actor";
+import { ActionIconTable } from "./battle.config";
 
 /** Damage multiplier struct */
 export type MultiplierSet = {incoming: number, outgoing: number};
@@ -22,8 +23,8 @@ export interface PlayerData {
 }
 
 export interface ActionMessage {
-    // icon: string // <- I think this should be a string for a lookup table of standard icons rather than named imports/urls
+    icon?: keyof ActionIconTable // <- I think this should be a string for a lookup table of standard icons rather than named imports/urls
     text: string
 }
 
-export type ActionMessageAppender = (text: string, /* icon */) => void;
+export type ActionMessageAppender = (text: string, icon?: keyof ActionIconTable) => void;

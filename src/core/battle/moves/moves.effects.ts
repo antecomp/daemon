@@ -21,8 +21,12 @@ export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
 
 export const ApplySelfHeal: MoveSideEffect = ({self, appendActionMessage}) => {
     const healAmount = 2 * (1 + self.getStatusLevel("prepared"));
-    appendActionMessage(`${self.name} heals for ${healAmount}`);
     self.heal(healAmount);
+    if(self.health == self.maxHealth) {
+        appendActionMessage(`${self.name}'s health is maxed out!`, "heal");
+    } else {
+        appendActionMessage(`${self.name} heals for ${healAmount}`, "heal");
+    }
 }
 
 export const ExtendOpponentVulnerable: MoveSideEffect = ({opponent}) => {
@@ -42,10 +46,10 @@ export const ApplySelfPrepared: MoveSideEffect = ({self, appendActionMessage}) =
     self.addStatus(new PreparedStatus(1));
     switch(self.getStatusLevel("prepared")) {
         case 1:
-            appendActionMessage(`${self.name}'s vision narrows.`)
+            appendActionMessage(`${self.name}'s vision narrows.`, "focus")
         break;    
         case 2:
-            appendActionMessage(`${self.name} is ready for anything.`)
+            appendActionMessage(`${self.name} is ready for anything.`, "focus")
     }
 }
 
@@ -54,7 +58,7 @@ export const EvadePostEffect: PostMoveSideEffect = ({damageTaken, index, sequenc
         // Confirm we actually dodged some incoming damage...
         if(damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus(1));
-            appendActionMessage(`${self.name} dodges swiftly. ${self.name} feels invigorated!`);
+            appendActionMessage(`${self.name} dodges swiftly. ${self.name} feels invigorated!`, "mania");
         }
     }
 }
