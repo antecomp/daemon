@@ -14,7 +14,6 @@ export const battleUIRefsRegistry: Record<validRefNames, HTMLElement | undefined
 /** Use this inside onMount for battle UI elements to register them for global access. */
 export function registerBattleUIRef(name: validRefNames, ref: HTMLElement | undefined) {
     battleUIRefsRegistry[name] = ref;
-    console.log(battleUIRefsRegistry); // verify (debug)
 }
 
 /** get a battle UI ref by name. Used to grab elements for performing animations. */

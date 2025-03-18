@@ -15,10 +15,7 @@ import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
-import { animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
-
-import { playSound } from '@/util/playSound'
-import candle_sfx from '@/assets/sfx/battle/candle.wav'
+import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -82,7 +79,7 @@ export default function Actionbar(props: ActionbarProps) {
 
     const handleExecClick = async () => {
         if(battleUIState() != BattleUIState.READY) return;
-        await props.execSequence(sequenceBuffer());
+        await props.execSequence(sequenceBuffer()); // wow most of the battle logic is secretely right here :)
         await animatePlayerSequenceFadeOut();
         setSequenceBuffer([]); // Reset for next round.
     }
