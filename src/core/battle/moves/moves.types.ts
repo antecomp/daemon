@@ -98,13 +98,18 @@ export type MovePLStepConditionalWrapper = (pls: MultiplierPipelineStep) => Mult
  */
 export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
+
+export interface moveAnimationStep<contextType = MoveContext | PostMoveContext> {
+    execute: (ctx: contextType) => Promise<void>; // Function to execute the animation.
+    soundEffect?: (ctx: contextType) => Promise<void>; // Function to conditionally attach a sound effect player to the animation.
+}
+
 /**
  * Represents animation data for a move, including its priority and the function
  * to execute the animation. The animation function is asynchronous.
  */
-export type animationData<T = MoveContext | PostMoveContext> = {
+export interface animationData<T = MoveContext | PostMoveContext> extends moveAnimationStep<T> {
     priority: number; // Priority of the animation.
-    execute: (ctx: T) => Promise<void>; // Function to execute the animation.
 };
 
 /**

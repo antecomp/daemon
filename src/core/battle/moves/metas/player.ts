@@ -95,25 +95,18 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                     {
                         priority: 1,
                         execute: async ({self}) => {
-                            const preparedLevel = self.getStatusLevel("prepared")
-
-                            await Promise.all([
-                                (async () => {
-                                    if(preparedLevel == 1) {
-                                        await requestOverlayAnimation("slash_purpose", [-29, 0]);
-                                    } else if (preparedLevel >= 2) {
-                                        await requestOverlayAnimation("slash_majes", [-29, 0]);
-                                    } else if (self.getStatusLevel("mania") > 0) {
-                                        await requestOverlayAnimation("slash_elag", [0, 0])
-                                    } else {
-                                        await requestOverlayAnimation("slash_norm", [-29, 50]);
-                                    }
-                                })(),
-                                (async () => await playSound(candle_sfx))()
-                            ])
-
-                            
-                        }
+                            const preparedLevel = self.getStatusLevel("prepared");
+                            if(preparedLevel == 1) {
+                                await requestOverlayAnimation("slash_purpose", [-29, 0]);
+                            } else if (preparedLevel >= 2) {
+                                await requestOverlayAnimation("slash_majes", [-29, 0]);
+                            } else if (self.getStatusLevel("mania") > 0) {
+                                await requestOverlayAnimation("slash_elag", [0, 0])
+                            } else {
+                                await requestOverlayAnimation("slash_norm", [-29, 50]);
+                            }
+                        },
+                        soundEffect: async () => await playSound(candle_sfx)
                     }
                 ]
         }

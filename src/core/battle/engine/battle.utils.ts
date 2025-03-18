@@ -1,4 +1,4 @@
-import { animationData, Move, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
+import { animationData, Move, moveAnimationStep, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
@@ -159,28 +159,35 @@ export function handleImmediatePostEffects(context: PostMoveContext) {
  * @returns a Map of priority to an object containing player and opponent animations for that priority.
  */
 export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Move, opponentMove: Move, phase: TP) {
-    // Evil type magic to make this properly cast to MoveContext or PostMoveContext.
     type ContextType = TP extends "pre" ? MoveContext : PostMoveContext;
     const playerAnimations = (playerMove.animations?.[phase] || []) as animationData<ContextType>[];
     const opponentAnimations = (opponentMove.animations?.[phase] || []) as animationData<ContextType>[];
 
-    const groupedAnimations = new Map<number, {player: ((ctx: ContextType) => Promise<void>)[], opponent: ((ctx: ContextType) => Promise<void>)[]}>();
+    const groupedAnimations = new Map<number, {player: moveAnimationStep<ContextType>[], opponent: moveAnimationStep<ContextType>[] }>();
 
     for (const animation of playerAnimations) {
         if (!groupedAnimations.has(animation.priority)) {
             groupedAnimations.set(animation.priority, {player: [], opponent: []});
         }
-        groupedAnimations.get(animation.priority)!.player.push(animation.execute as (ctx: ContextType) => Promise<void>);
+        groupedAnimations.get(animation.priority)!.player.push({
+            execute: animation.execute as (ctx: ContextType) => Promise<void>,
+            soundEffect: animation.soundEffect as (() => Promise<void>) | undefined,  // Preserve sound!
+        });
     }
 
     for (const animation of opponentAnimations) {
         if (!groupedAnimations.has(animation.priority)) {
             groupedAnimations.set(animation.priority, {player: [], opponent: []});
         }
-        groupedAnimations.get(animation.priority)!.opponent.push(animation.execute as (ctx: ContextType) => Promise<void>);
-    };
+        groupedAnimations.get(animation.priority)!.opponent.push({
+            execute: animation.execute as (ctx: ContextType) => Promise<void>,
+            soundEffect: animation.soundEffect as (() => Promise<void>) | undefined,  // Preserve sound!
+        });
+    }
+
     return groupedAnimations;
 }
+
 
 /** Execute animations in order of priority. Used in tandem with mergeAndSortAnimations.
  * @argument animations - The animations to execute, grouped by priority.
@@ -188,20 +195,30 @@ export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Mo
  * @argument opponentContext - The context to pass to opponent animations
  */
 export async function executeAnimations<contextType = MoveContext | PostMoveContext>(
-    animations: Map<number, {player: ((ctx: contextType) => Promise<void>)[], opponent: ((ctx: contextType) => Promise<void>)[]}>, 
+    animations: Map<number, {
+        player: moveAnimationStep<contextType>[];
+        opponent: moveAnimationStep<contextType>[];
+    }>,
     playerContext: contextType,
     opponentContext: contextType
 ) {
     // Sort priorities before iteration, since our Map keys are just in order of being added.
     const sortedPriorities = [...animations.keys()].sort((a, b) => a - b);
 
+    // im so tired.
     for (const priority of sortedPriorities) {
         const { player, opponent } = animations.get(priority)!;
 
         await Promise.all([
-            Promise.all(player.map((animation) => animation(playerContext))),
-            Promise.all(opponent.map((animation) => animation(opponentContext)))
-        ]);
+            // Player animations and sounds...
+            Promise.all(player.map(async ({execute, soundEffect}) => 
+                Promise.all([execute(playerContext), soundEffect?.(playerContext)])
+            )),
+            // Opponent animations and sounds...
+            Promise.all(opponent.map(({execute, soundEffect}) =>
+                Promise.all([execute(opponentContext), soundEffect?.(opponentContext)])
+            ))
+        ])
     }
 }
 
@@ -211,9 +228,11 @@ export async function executeAnimations<contextType = MoveContext | PostMoveCont
  * @returns true if there are any animations, false otherwise.
  */
 export function hasAnimations(animations: Map<number, {
-    player: ((ctx: PostMoveContext) => Promise<void>)[];
-    opponent: ((ctx: PostMoveContext) => Promise<void>)[];
-}>): boolean {
+        // Fuck off TS this is a length check I'm not working with the context
+        player: moveAnimationStep<any>[], 
+        opponent: moveAnimationStep<any>[] 
+    }>
+): boolean {
     for (const animList of animations.values()) {
         if (animList.player.length > 0
             || animList.opponent.length > 0
