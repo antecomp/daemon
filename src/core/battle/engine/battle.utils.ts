@@ -3,7 +3,11 @@ import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
 import { computeStatusMultipliers } from "./statuses";
 
-/** Generate a clone of a sequence with a few of the elements redacted as undefined. */
+/**
+ * Generate a clone of a sequence with a few of the elements redacted as undefined.
+ * @param seq - The sequence of `MoveMeta` objects to redact.
+ * @returns A new sequence where three random elements are replaced with `undefined`.
+ */
 export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     const indices = new Set<number>
 
@@ -32,7 +36,12 @@ export function getBaseMultipliers(type: MoveType): MultiplierSet {
     return BASE_MULTIPLIERS[type];
 }
 
-/** Reduce through a moves multipliers properties, returning the combined multipliers. */
+/** Reduce through a moves multipliers properties, returning the combined multipliers.
+ * @param initialMultipliers - The starting multipliers to apply.
+ * @param move - The move whose multipliers are being computed.
+ * @param context - The context in which the move is being executed.
+ * @returns The combined multipliers after applying the move's multiplier pipeline.
+ */
 export function computeMoveMultipliers(initialMultipliers: MultiplierSet, move: Move, context: MoveContext): MultiplierSet {
     if (!move.behaviors.multpipeline) return initialMultipliers; // No multipliers to apply.
 
@@ -42,7 +51,10 @@ export function computeMoveMultipliers(initialMultipliers: MultiplierSet, move: 
     );
 }
 
-/** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. */
+/** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
+ * @param sets - The multiplier sets to combine.
+ * @returns A single `MultiplierSet` with combined "incoming" and "outgoing" values.
+*/
 export function combineMultiplierSets(...sets: MultiplierSet[]) {
     return sets.reduce((acc: MultiplierSet, set) => {
         return {
@@ -52,7 +64,13 @@ export function combineMultiplierSets(...sets: MultiplierSet[]) {
     }, {incoming: 1, outgoing: 1})
 }
 
-/** Extracts the underlying Move information from MoveMeta sequence, allows us to do preprocessing logic for dynamic moves. */
+/** Extracts the underlying Move information from MoveMeta sequence, allows us to do preprocessing logic for dynamic moves.
+ * @param self - The actor performing the moves.
+ * @param seq - The sequence of `MoveMeta` objects for the actor.
+ * @param opponent - The opposing actor.
+ * @param opponentSeq - The sequence of `MoveMeta` objects for the opponent.
+ * @returns An array of `Move` objects extracted from the `MoveMeta` sequence.
+ */
 export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[], opponent: Actor, opponentSeq: MoveMeta[]): Move[] {
     return seq.map((meta, index) => {
         
@@ -65,7 +83,10 @@ export function unwrapMoveMetaSequence(self: Actor, seq: MoveMeta[], opponent: A
     })
 }
 
-/** Runs PreEffects and Mult Pipeline For A Given Move + ActorSet */
+/** Runs PreEffects and Mult Pipeline For A Given Move + Set Of Actors.
+ * @param context - The context in which the move is being prepared.
+ * @returns The final multipliers after applying all effects and pipelines.
+ */
 export function prepareMove(
     context: MoveContext,
 ): MultiplierSet {
@@ -89,7 +110,12 @@ export function prepareMove(
 }
 
 
-// Runs once for every instance of a status (i.e multiple times if the status is stacked). WARNING: UNTESTED.
+/**
+ * Runs post-effects (if any) for each status instance on an actor.
+ * Executes the post-effect of the first status in each stack, providing a "level" (stack depth) to the postEffect handler.
+ * @param actor - The actor whose statuses are being processed.
+ * @param opponent - The opposing actor.
+ */
 export function performStatusPostEffects(actor: Actor, opponent: Actor) {
     for(const [_type, statusStack] of actor.statuses) {
         const stackCount = statusStack.length;

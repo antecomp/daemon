@@ -12,6 +12,33 @@ import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOppon
 import { playSound } from "@/util/playSound";
 import pain_sfx from "@/assets/sfx/battle/pain.wav";
 
+/**
+ * A hook that provides the core battle logic for a turn-based battle system.
+ * It manages the state of the battle, including player and opponent actors, 
+ * UI signals, and the execution of battle rounds. The hook also handles animations, 
+ * status effects, and battle resolution.
+ *
+ * @param opponentData - The data for the opponent, including name and max health.
+ * @param debugMode - Optional flag to enable debug mode, which skips animations and delays.
+ * 
+ * @returns An object containing the following:
+ * 
+ * - `playerMults`: Signal getter for the player's incoming and outgoing multipliers.
+ * - `opponentMults`: Signal getter for the opponent's incoming and outgoing multipliers.
+ * - `battleUIState`: Signal for the current state of the battle UI.
+ * - `setBattleUIState`: Signal setter for the battle UI state.
+ * - `player`: The player actor object.
+ * - `opponent`: The opponent actor object.
+ * - `setupRound`: Function to initialize and set up a new round. Fetches opponent moves, updates the displayed hint, and resets the battle state.
+ * - `executeRound`: Function to execute a battle round. Processes the player's selected sequence, evaluates the battle logic, and updates the state.
+ * - `insight`: Signal for the current "hint" of the opponent's move sequence.
+ * - `currentStatuses`: Object representing the current status icons for the player and opponent (used for UI visualization).
+ * - `actionMessages`: Signal for the current action messages (flair text) displayed during the battle.
+ * - `battleResultPromise`: A promise that resolves when the battle ends, indicating the outcome:
+ *   - Resolves to `"player"` if the player wins (opponent dies).
+ *   - Resolves to `"opponent"` if the opponent wins (player dies).
+ *   - Resolves to `"draw"` if both the player and opponent die.
+ */
 export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean) {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
@@ -155,7 +182,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             const opponentFinalMultipliers = prepareMove(opponentContext);
 
             // Update UI
-
             batch(() => {
                 setPlayerMults(playerFinalMultipliers);
                 setOpponentMults(opponentFinalMultipliers);
@@ -285,9 +311,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
          */
         setupRound,
         /** Round execution function, triggered by user event.
-         * Builds sequence and executes it, updating the battle state.
-         * Core battle logic is executed here.
-         * Automatically triggers setupRound or handleDeath as needed.
+         * - Builds sequence and executes it, updating the battle state.
+         * - Core battle logic is executed here.
+         * - Automatically triggers setupRound or handleDeath as needed.
          */ 
         executeRound, 
         /** Signal for the current "hint" of the opponent sequence. */
