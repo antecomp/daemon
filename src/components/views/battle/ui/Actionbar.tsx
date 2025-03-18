@@ -88,8 +88,10 @@ export default function Actionbar(props: ActionbarProps) {
     }
 
     const resetRunes = () => {
-        if (battleUIState() == BattleUIState.READY) setBattleUIState(BattleUIState.WAITING);
-        setSequenceBuffer([]);
+        if (battleUIState() == BattleUIState.READY) {
+            setBattleUIState(BattleUIState.WAITING);
+            setSequenceBuffer([]);
+        }
     }
 
     onMount(() => {
