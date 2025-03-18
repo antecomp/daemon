@@ -2,7 +2,6 @@
  * Generic Moves 
 */
 
-import { requestOverlayAnimation } from "../animation/requestOverlayAnim";
 import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move, MoveType } from "./moves.types";
@@ -42,7 +41,7 @@ export const Heal: Move = {
     }
 }
 
-// REPEAT IS **NOT** A MOVE. IT IS A ABSTRACTION CREATED IN MOVEMETA!
+// REPEAT, MIRROR IS **NOT** A MOVE. IT IS A ABSTRACTION CREATED IN MOVEMETA!
 
 export const Prepare: Move = {
     name: "prepare",
@@ -67,8 +66,6 @@ export const NothingMove: Move = {
     type: MoveType.Passive,
     behaviors: {}
 }
-
-// TODO: Determine Mage/8th Move Idea
 
 export const OverwhelmMove: Move = {
     name: "Overwhelm",

@@ -1,7 +1,10 @@
 import { Actor } from "../engine/actor";
 import { ActionMessageAppender, MultiplierSet } from "../engine/battle.types";
 
-//export type movetype = "Aggressive" | "Passive" | "Defensive" | "Overwhelming";
+/**
+ * Represents the type of a move, which determines its behavior (base multipliers) and interaction
+ * with other moves during a battle sequence.
+ */
 export enum MoveType {
     Aggressive,
     Passive,
@@ -9,97 +12,137 @@ export enum MoveType {
     Overwhelming
 }
 
-/* Per-sequence temporary data, indexed by assigning move for inter-move ref. */
+/**
+ * Temporary data storage for a sequence of moves, indexed by the move's position
+ * in the sequence. Used for inter-move references during a battle.
+ */
 export interface SequenceBuffer {
     [index: number]: Record<string, any>;
 }
 
+/**
+ * Enum representing the perspective from which a move is being executed.
+ * Used for animations.
+ */
 export enum MovePerspective {
     Player,
     Opponent
 }
 
+/**
+ * Contextual information provided during the execution of a move. This includes
+ * details about the actors involved, the sequence of moves, and utility functions
+ * for appending action messages.
+ */
 export interface MoveContext {
-    // move: Move; // Points to the move itself (used for pipeline stuff)
-    self: Actor;
-    opponent: Actor;
-    movePerspective: MovePerspective; // From whos perspective is the move happening? Hint for animations.
-    index: number;
-    sequence: Move[];
-    sequenceBuffer: SequenceBuffer; 
-    appendActionMessage: ActionMessageAppender
+    self: Actor; // The actor performing the move.
+    opponent: Actor; // The opposing actor.
+    movePerspective: MovePerspective; // Perspective of the move (Player or Opponent).
+    index: number; // Index of the move in the sequence.
+    sequence: Move[]; // The sequence of moves being executed.
+    sequenceBuffer: SequenceBuffer; // Temporary data storage for the sequence.
+    appendActionMessage: ActionMessageAppender; // Function to append action messages.
 }
 
+/**
+ * Represents the result of a move after it has been executed, including damage dealt,
+ * damage taken, and the multipliers applied during the move.
+ */
 export interface MoveResolution {
-    damageDealt: number;
-    damageTaken: number;
-    ourMults: MultiplierSet;
-    theirMults: MultiplierSet;
+    damageDealt: number; // Amount of damage dealt to the opponent.
+    damageTaken: number; // Amount of damage taken by the actor.
+    ourMults: MultiplierSet; // Multipliers applied to the actor's move.
+    theirMults: MultiplierSet; // Multipliers applied to the opponent's move.
 }
 
+/**
+ * Combines the context of a move with its resolution, providing a complete
+ * picture of the move's execution and its effects.
+ */
 export type PostMoveContext = MoveContext & MoveResolution;
 
+/**
+ * Represents a side effect function that is executed during a move. These
+ * functions can modify the state of the battle or apply statuses.
+ */
 export type MoveSideEffect = (context: MoveContext) => void;
+
+/**
+ * Represents a side effect function that is executed after a move has been
+ * resolved. These functions can modify the state of the battle or apply
+ * statuses based on the move's resolution.
+ */
 export type PostMoveSideEffect = (context: PostMoveContext) => void;
+
+/**
+ * Represents a function that modifies the multipliers applied during a move.
+ * These functions are reduced over to calculate the final multipliers.
+ */
 export type MultiplierPipelineStep = (prevMultipliers: MultiplierSet, context: MoveContext) => MultiplierSet;
+
+/**
+ * A wrapper function that conditionally applies a side effect to a move.
+ * This can be used to add conditional logic to side effects.
+ */
 export type MoveSEConditionalWrapper<T = MoveSideEffect | PostMoveSideEffect> = (effect: T) => T;
+
+/**
+ * A wrapper function that conditionally applies a multiplier pipeline step.
+ * This can be used to add conditional logic to multiplier calculations.
+ */
 export type MovePLStepConditionalWrapper = (pls: MultiplierPipelineStep) => MultiplierPipelineStep;
+
+/**
+ * Represents a function that validates whether a sequence of moves is valid.
+ * This is used to enforce rules or conditions on move sequences.
+ */
 export type MoveValidator = (workingSeq: MoveMeta[]) => boolean;
 
+/**
+ * Represents animation data for a move, including its priority and the function
+ * to execute the animation. The animation function is asynchronous.
+ */
 export type animationData<T = MoveContext | PostMoveContext> = {
-    priority: number,
-    execute: (ctx: T) => Promise<void>
-}
+    priority: number; // Priority of the animation.
+    execute: (ctx: T) => Promise<void>; // Function to execute the animation.
+};
 
+/**
+ * Represents a move in the battle system, including its type, behaviors, and
+ * optional animations. Moves define the core mechanics of a battle.
+ */
 export interface Move {
-    /** Internally used name for the move. Generic. */
-    name: string,
-    /** Move type, used to calculate base multipliers, some moves also conditionally react to their/opposers type */
-    type: MoveType,
-    /** A table of move behavior functions ("Side Effects" and "Pipeline Steps") that compose the moves actual behavior in a turn */
+    name: string; // Internal name of the move.
+    type: MoveType; // Type of the move (e.g., Aggressive, Defensive).
     behaviors: {
-        /** Side Effects That Run *before* any multiplier/damage calculation. Namely used for applying in-turn statuses. */
-        preEffects?: MoveSideEffect[]
-        /** "pipeline steps", functions that are reduced over to calculate the final outgoing and incoming damage multipliers for this move. */
-        multpipeline?: MultiplierPipelineStep[]
-        /** Side effects immediately after damage dished out, but before any status logic. */
-        immediatePostEffects?: PostMoveSideEffect[]
-        /** Side effects that run *after* everything (including status tickdowns). Namely used to apply next-turn statuses */
-        postEffects?: PostMoveSideEffect[]
-    }
-    /** Optional animations for the move, utilize the battleUIRefsRegistry to target components to perform animations. */
+        preEffects?: MoveSideEffect[]; // Side effects executed before multiplier/damage calculation.
+        multpipeline?: MultiplierPipelineStep[]; // Functions to calculate damage multipliers.
+        immediatePostEffects?: PostMoveSideEffect[]; // Side effects executed immediately after damage calculation.
+        postEffects?: PostMoveSideEffect[]; // Side effects executed after all other logic.
+    };
     animations?: {
-        pre?: animationData<MoveContext>[],
-        post?: animationData<PostMoveContext>[]
-    }
+        pre?: animationData<MoveContext>[]; // Animations executed before the move.
+        post?: animationData<PostMoveContext>[]; // Animations executed after the move.
+    };
 }
 
-
-/** MoveMeta is a wrapper used for our actual moves. It provides additional information used by the UI (name, icon, etc)
- * 
- * However, MoveMeta also has some special logic in how it is "unwrapped." If we have Dynamic Moves, such as repeat,
- * the "getMove" property can instead be a function that returns a Move (instead of just a Move). This function is provided
- * a simple context of self, sequence and index.
+/**
+ * Wrapper for a move that includes additional metadata for UI and conditional/eval logic.
+ * Can be used to dynamically generate a move (f.e mirror/repeat utilize this).
  */
 export interface MoveMeta {
-    /** Different than move name, can be used to give cool distinct names for moves. F.e "candlelight" instead of "attack" */
-    displayName: string,
-    /** Small icon used in sequence visualization. Image url (import) */ 
-    icon: string,
-    /** Move or function that returns a move (conditional move return, i.e for repeat.) */
-    getMove: Move | ((context: {self: Actor, opponent: Actor, seq: MoveMeta[], opponentSeq: MoveMeta[], index: number}) => Move)
-    /** Conditional for RB/AI-Get Sequence, logic indicating if the move is valid at a given step / given sequence.
-     * 
-     * For example, this is used in repeat to prevent it being the first move. */
-    canPerform?: MoveValidator
-
-    /** Used for tooltip */
-    description?: string
+    displayName: string; // Display name of the move for UI purposes.
+    icon: string; // Icon representing the move in the UI.
+    getMove: Move | ((context: { self: Actor; opponent: Actor; seq: MoveMeta[]; opponentSeq: MoveMeta[]; index: number }) => Move); // Move or function to dynamically generate a move.
+    canPerform?: MoveValidator; // Validator function to determine if the move can be performed.
+    description?: string; // Description of the move for tooltips.
 }
 
+/**
+ * Specialized version of MoveMeta for player moves, including additional
+ * metadata for the runebuilder UI and a mandatory description.
+ */
 export interface PlayerMoveMeta extends MoveMeta {
-    rbIcon: string // Larger, unique icons used for runebuilder.
-
-    /** Used for tooltip. Not optional for Player Moves. */
-    description: string
+    rbIcon: string; // Icon used in the runebuilder UI.
+    description: string; // Description of the move (mandatory for player moves).
 }
