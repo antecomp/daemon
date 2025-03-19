@@ -1,4 +1,4 @@
-import { onMount, Show } from 'solid-js';
+import { createEffect, onMount, Show } from 'solid-js';
 import './ui/battle.css'
 import CornerRect from '@/components/util/corner-rect/CornerRect';
 import vtl from './assets/vtl.png'
@@ -11,6 +11,7 @@ import { useBattleLogic } from '@/core/battle/engine/battle.logic';
 import BattleCanvas from './ui/BattleCanvas';
 import ActionMessages from './ui/ActionMessages';
 import { registerBattleUIRef } from './ui/refRegistry';
+import { createMeltingEffect } from '@/hooks/createMeltEffect';
 
 interface BattleProps {
     opponentData: DVOpponentData
@@ -49,9 +50,26 @@ export default function Battle(props: BattleProps) {
         });
     });
 
+
+    // Just a temp check, obv not robust or useful
+    createEffect(() => {
+        if(player.health < player.maxHealth) {
+            damageAnim();
+        }
+    })
+
+    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect(0, 20, 0.5, true);
+
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
-            <div id="battle-container" ref={mainUIRef}>
+            {filterSVG}
+            <div 
+                id="battle-container" 
+                ref={mainUIRef}
+                style={{
+                    filter: `url(#${filterID})`
+                }}
+            >
                 <ActionMessages messages={actionMessages}/>
                 <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                     <OppStatusBar
