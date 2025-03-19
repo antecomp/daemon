@@ -86,7 +86,7 @@ export default function Actionbar(props: ActionbarProps) {
     }
 
     const resetRunes = () => {
-        if (battleUIState() == BattleUIState.READY) {
+        if (battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
             setBattleUIState(BattleUIState.WAITING);
             setSequenceBuffer([]);
         }

@@ -24,6 +24,8 @@ export default function Battle(props: BattleProps) {
         registerBattleUIRef('mainUI', mainUIRef);
     })
 
+    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect(0, 20, 0.5, true);
+
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
     const { 
         playerMults, opponentMults, 
@@ -34,7 +36,7 @@ export default function Battle(props: BattleProps) {
         currentStatuses, 
         actionMessages,
         battleResultPromise
-    } = useBattleLogic(props.opponentData);
+    } = useBattleLogic(props.opponentData, false, damageAnim);
 
     onMount(() => {
         setupRound();
@@ -49,16 +51,6 @@ export default function Battle(props: BattleProps) {
             }
         });
     });
-
-
-    // Just a temp check, obv not robust or useful
-    createEffect(() => {
-        if(player.health < player.maxHealth) {
-            damageAnim();
-        }
-    })
-
-    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect(0, 20, 0.5, true);
 
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
