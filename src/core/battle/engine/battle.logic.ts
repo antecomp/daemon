@@ -3,7 +3,7 @@ import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
-import { batch, createEffect, createSignal } from "solid-js";
+import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
@@ -116,6 +116,17 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         
         setBattleUIState(BattleUIState.END); // May be uneeded depending on how we handle resolution.
     }
+
+    // Attach animation effects that trigger when actor or opponent take damage
+    !debugMode && player.onDamageTaken(() => {
+        doPlayerDamageAnimation?.();
+        playSound(player_pain_sfx);
+    })
+
+    !debugMode && opponent.onDamageTaken(() => {
+        playSound(pain_sfx);
+        animateOpponentDamageFlash();
+    })
 
     /** 
      * Sets up a new round, fetching opponent moves, updating displayed hint, 
@@ -281,26 +292,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         // Loop back to setup.
         setupRound();
     }
-
-    // Handles a few out-of-battle effects, like damage flash on opponent.
-    createEffect(() => {
-        // Opponent flash when taking damage. Unsynced from evaluation to give accurate feedback.
-        if(opponent.health > 0) { // If it's an opponent death event we expect the death handler to do it's own animation
-            // This is temporary, as it will improperly trigger for stuff like heal
-            // need a more robust checker/cache system for this.
-            if(opponent.health != opponent.maxHealth) playSound(pain_sfx);
-            animateOpponentDamageFlash();
-        }
-    })
-
-    createEffect(() => {
-        if(player.health > 0) {
-            if(player.health != player.maxHealth) {
-                doPlayerDamageAnimation?.();
-                playSound(player_pain_sfx);
-            }
-        }
-    })
 
     return {
         /** Simple signal getter indicating player incoming/outgoing multipliers */  

@@ -18,6 +18,9 @@ export class Actor {
     statuses: Map<string, Status[]> = new Map(); 
     currentSequence: Move[]= [];
 
+    // Observer pattern to trigger callbacks when Actor takes damage.
+    private damageSubscribers = new Set<(damage: number) => void>();
+
     // Track custom data and flags for advanced logic
     // Leaving this open for whatever that is needed.
     // Moves and whatever is responsible for maintaining this data tho, be smart :)
@@ -35,6 +38,7 @@ export class Actor {
 
     public takeDamage(amount: number) {
         this.health = Math.max(this.health - amount, 0);
+        if (amount > 0) this.notifySubscribers(Math.abs(amount));
     }
 
     public heal(amount: number) {
@@ -93,6 +97,15 @@ export class Actor {
             throw new Error("Cannot select more than 5 moves in a sequence!");
         }
         this.currentSequence = selectedMoves;
+    }
+
+    /** Attach callback that fires whenever Actor takes nonzero damage. */
+    public onDamageTaken(callback: (damage: number) => void) {
+        this.damageSubscribers.add(callback);
+    }
+
+    private notifySubscribers(damage: number) {
+        for (const cb of this.damageSubscribers) cb(damage);
     }
 
 }
