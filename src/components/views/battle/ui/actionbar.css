@@ -22,6 +22,7 @@
 
         #runebuilder circle {
             pointer-events: auto;
+            transition: stroke linear 0.25s; /* fade effect for when we change the stroke colour */
         }
 
         #runebuilder line {
