@@ -1,38 +1,34 @@
 import lerp from "@/util/lerp";
-import { createSignal, onCleanup } from "solid-js";
+import { onCleanup } from "solid-js";
 
 export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1, returnEffect = false) {
     const filterID = "melting-" + String(Math.random()).substring(2, 9);
-    const [scale, setScale] = createSignal(initialScale);
-
+    let displacementMap: SVGFEDisplacementMapElement | undefined = undefined;
     let animationFrame: number;
 
     // nested callback hell just to resolve a promise lol
     async function startMeltAnimation(): Promise<void> {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const step = (reverse = false) => {
-                setScale((current) => {
-                    const target = reverse ? initialScale : maxScale;
-                    const newScale = lerp(current, target, speed);
+              if(!displacementMap) return reject();
 
-                    // Close enough, we may under/overshoot
-                    // if (Math.abs(newScale - maxScale) < 0.1) {
-                    //     resolve();
-                    //     return maxScale;
-                    // }
+              const target = reverse ? initialScale : maxScale;
+              const currentScale = parseFloat(displacementMap.getAttribute("scale") || initialScale.toString());
+              const newScale = lerp(currentScale, target, speed);
 
-                    if(Math.abs(newScale - target) < 0.1) {
-                        if(returnEffect && !reverse) {
-                            animationFrame = requestAnimationFrame(() => step(true));
-                        } else {
-                            resolve(); // Animation end.
-                        }
-                        return target;
-                    }
+              displacementMap.setAttribute("scale", newScale.toString());
+              if(Math.abs(newScale - target) < 0.1) {
+                displacementMap.setAttribute("scale", target.toString());
+                if(returnEffect && !reverse) {
+                    animationFrame = requestAnimationFrame(() => step(true)); // Trigger reverse anim
+                } else {
+                    resolve(); // Otherwise animation is done.
+                }
+                return;
+              }
 
-                    animationFrame = requestAnimationFrame(() => step(reverse));
-                    return newScale;
-                })
+              // Recurse (continue).
+              animationFrame = requestAnimationFrame(() => step(reverse));
             };
 
             // init.
@@ -68,8 +64,9 @@ export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1
                         />
                         <feDisplacementMap
                             in="SourceGraphic"
+                            ref={displacementMap}
                             in2="turbulence"
-                            scale={scale()}
+                            scale={initialScale.toString()}
                             xChannelSelector="R"
                             yChannelSelector="G"
                         />
