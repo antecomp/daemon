@@ -87,7 +87,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                                         onClick={() => {
                                             if (!rune.canPerform || rune.canPerform(props.sequenceBuffer)) props.addRune(rune);
                                         }}
-                                        onMouseEnter={() => showTooltip(<MoveTooltipContent {...rune}/>)}
+                                        onMouseEnter={() => showTooltip(() => <MoveTooltipContent {...rune}/>)}
                                         onMouseOut={() => hideTooltip()}
                                     ></circle>
                                     <image

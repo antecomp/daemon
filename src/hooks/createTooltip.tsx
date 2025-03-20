@@ -4,7 +4,7 @@ import { Portal } from "solid-js/web";
 const TOOLTIP_OFFSET = 15;
 
 export function createTooltip() {
-    const [tooltipContent, setTooltipContent] = createSignal<JSX.Element | null>(null);
+    const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
 
     const [position, setPosition] = createSignal({ x: 0, y: 0 });
 
@@ -14,8 +14,8 @@ export function createTooltip() {
         setPosition({ x: e.clientX + TOOLTIP_OFFSET, y: e.clientY + TOOLTIP_OFFSET });
     }
 
-    const showTooltip = (content: JSX.Element) => {
-        setTooltipContent(content);
+    const showTooltip = (content: () => JSX.Element) => {
+        setTooltipContent(() => content);
         document.addEventListener("mousemove", updatePosition);
     }
 
@@ -44,7 +44,8 @@ export function createTooltip() {
                         // Actual specific styling should be done in base.css
                     }}
                 >
-                    {tooltipContent()}
+                    {/* ???????????????????????? */}
+                    {tooltipContent?.()?.()}
                 </div>
             </Portal>
         </Show>
