@@ -1,7 +1,9 @@
 import lerp from "@/util/lerp";
 import { createSignal, onCleanup, Show } from "solid-js";
 
-export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1, returnEffect = false) {
+export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?: number) => Promise<void>;
+
+export function createMeltingEffect(initialScale = 0) {
     const filterID = "melting-" + String(Math.random()).substring(2, 9);
 
     // Firefox memleaks with this effect, itll properly release memory if we remove the SVG from the DOM or disable the filter.
@@ -11,7 +13,7 @@ export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1
     let animationFrame: number;
 
     // nested callback hell just to resolve a promise lol
-    async function startMeltAnimation(): Promise<void> {
+    async function startMeltAnimation(returnEffect = false, maxScale = 10, speed = 0.1): Promise<void> {
         setShowFilter(true);
         return new Promise((resolve, reject) => {
             const step = (reverse = false) => {

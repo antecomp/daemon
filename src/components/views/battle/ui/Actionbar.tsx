@@ -96,7 +96,7 @@ export default function Actionbar(props: ActionbarProps) {
         registerBattleUIRef("sequenceViewPlayer", sequenceVisConRef);
     });
 
-    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect(0, 10, 0.1, true);
+    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 
 
     return (
@@ -112,7 +112,7 @@ export default function Actionbar(props: ActionbarProps) {
                     // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
                     //onClick={() => {playSound(candle_sfx)}}
                     //onClick={async () => {await animatePlayerSequenceFadeOut();}}
-                    onClick={async () => {await startMeltAnimation(); alert("end")}}
+                    onClick={() => startMeltAnimation(true)}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

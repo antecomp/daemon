@@ -1,4 +1,4 @@
-import { createEffect, onMount, Show } from 'solid-js';
+import { onMount } from 'solid-js';
 import './ui/battle.css'
 import CornerRect from '@/components/util/corner-rect/CornerRect';
 import vtl from './assets/vtl.png'
@@ -6,7 +6,7 @@ import vtr from './assets/vtr.png'
 import OppStatusBar from './ui/OppStatusbar';
 import Actionbar from './ui/Actionbar';
 import { DVOpponentData } from '@/core/battle/engine/battle.types';
-import { BattleUIState, BattleUIStateContext } from '@/core/battle/engine/battle.context';
+import { BattleUIStateContext } from '@/core/battle/engine/battle.context';
 import { useBattleLogic } from '@/core/battle/engine/battle.logic';
 import BattleCanvas from './ui/BattleCanvas';
 import ActionMessages from './ui/ActionMessages';
@@ -24,7 +24,7 @@ export default function Battle(props: BattleProps) {
         registerBattleUIRef('mainUI', mainUIRef);
     })
 
-    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect(0, 20, 0.5, true);
+    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect();
 
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
     const { 

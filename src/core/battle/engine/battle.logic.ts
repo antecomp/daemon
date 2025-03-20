@@ -12,6 +12,7 @@ import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOppon
 import { playSound } from "@/util/playSound";
 import pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
+import { MeltAnimationFn } from "@/hooks/createMeltEffect";
 
 /**
  * A hook that provides the core battle logic for a turn-based battle system.
@@ -40,7 +41,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
  *   - Resolves to `"opponent"` if the opponent wins (player dies).
  *   - Resolves to `"draw"` if both the player and opponent die.
  */
-export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, doPlayerDamageAnimation?: () => Promise<void>) {
+export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, doPlayerDamageAnimation?: MeltAnimationFn) {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
@@ -119,7 +120,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
     // Attach animation effects that trigger when actor or opponent take damage
     !debugMode && player.onDamageTaken(() => {
-        doPlayerDamageAnimation?.();
+        doPlayerDamageAnimation?.(true, 20, 0.5);
         playSound(player_pain_sfx);
     })
 
