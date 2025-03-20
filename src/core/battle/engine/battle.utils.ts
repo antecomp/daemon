@@ -1,7 +1,6 @@
 import { animationData, Move, moveAnimationStep, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
-import { computeStatusMultipliers } from "./statuses";
 
 /**
  * Generate a clone of a sequence with a few of the elements redacted as undefined.
@@ -256,4 +255,19 @@ export function isAnyoneDead(player: Actor, opponent: Actor) {
    if(p) return "player";
    if(o) return "opponent";
    return null;
+}
+export function computeStatusMultipliers(actor: Actor): MultiplierSet {
+    let incoming = 1;
+    let outgoing = 1;
+
+    for (const [_type, statusStack] of actor.statuses) {
+        const stackCount = statusStack.length;
+        if (stackCount > 0) {
+            const statusMults = statusStack[0].getStatusMultipliers(stackCount);
+            incoming *= statusMults.incoming;
+            outgoing *= statusMults.outgoing;
+        }
+    }
+
+    return { incoming, outgoing };
 }

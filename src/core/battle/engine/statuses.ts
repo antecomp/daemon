@@ -3,49 +3,7 @@ import { MultiplierSet } from "./battle.types";
 import vuln_icon from "@/assets/icons/statuses/vuln.png"
 import prep_icon from "@/assets/icons/statuses/prep.png"
 import mania_icon from "@/assets/icons/statuses/mania.png"
-
-export abstract class Status {
-    type: string;
-    icon?: string
-    duration: number;
-
-    constructor(type: string, duration: number = 1, icon?: string) {
-        this.type = type;
-        this.duration = duration;
-        this.icon = icon
-    }
-
-    /** Applies effect multipliers based on level, where level = stack depth (amount of times effect applied) */
-    abstract getStatusMultipliers(level: number): MultiplierSet;
-
-    applyPostEffect?: (self: Actor, opponent: Actor, level: number) => void;
-
-    /** Reduce duration */
-    tick(): boolean {
-        this.duration--;
-        return this.duration <= 0;
-    }
-}
-
-export function computeStatusMultipliers(actor: Actor): MultiplierSet {
-    let incoming = 1;
-    let outgoing = 1;
-
-    for (const [_type, statusStack] of actor.statuses) {
-        const stackCount = statusStack.length;
-        if (stackCount > 0) {
-            const statusMults = statusStack[0].getStatusMultipliers(stackCount);
-            incoming *= statusMults.incoming;
-            outgoing *= statusMults.outgoing;
-        }
-    }
-
-    return { incoming, outgoing };
-}
-
-
-
-/* Effects Themselves............... (move to different file if this list gets too long.) */
+import { Status } from "./status.types";
 
 export class VulnerableStatus extends Status {
     constructor(duration: number = 1) {

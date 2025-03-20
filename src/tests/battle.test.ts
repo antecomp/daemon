@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createRoot, createSignal } from "solid-js";
 import { useBattleLogic } from "@/core/battle/engine/battle.logic";
 import { Actor } from "@/core/battle/engine/actor";
-import { Status } from "@/core/battle/engine/statuses";
+import { Status } from "@/core/battle/engine/status.types";
 import { DVOpponentData, MultiplierSet } from "@/core/battle/engine/battle.types";
 import { MoveMeta, PlayerMoveMeta } from "@/core/battle/moves/moves.types";
 import { NothingMove } from "@/core/battle/moves/moves.list";

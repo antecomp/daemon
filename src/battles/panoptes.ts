@@ -1,13 +1,13 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
-import { MoveMeta, MovePerspective, MoveType } from "./moves/moves.types";
+import { MoveMeta, MovePerspective, MoveType } from "../core/battle/moves/moves.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan from "@/assets/artwork/dæmons/snaek.png"
 import sample_move_icon from "@/components/views/battle/assets/placeholder_move_icon.png"
 import prae_icon from '@/core/battle/moves/icons/PRAETORIAN.png'
-import { Attack, Defend, NothingMove, Prepare } from "./moves/moves.list";
+import { Attack, Defend, NothingMove, Prepare } from "../core/battle/moves/moves.list";
 import vortexShader from "@/shaders/backgrounds/vortex.shader";
 import { shuffleArray } from "@/util/shuffle";
-import { requestOverlayAnimation } from "./animation/requestOverlayAnim";
+import { requestOverlayAnimation } from "../core/battle/animation/requestOverlayAnim";
 
 const biteMove: MoveMeta = {
     displayName: "Bite",

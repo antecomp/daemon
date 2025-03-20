@@ -1,4 +1,4 @@
-import { Status } from "./statuses";
+import { Status } from "./status.types";
 import { Move } from "../moves/moves.types";
 
 /**
