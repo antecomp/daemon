@@ -1,16 +1,24 @@
 import lerp from "@/util/lerp";
-import { onCleanup } from "solid-js";
+import { createSignal, onCleanup, Show } from "solid-js";
 
 export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1, returnEffect = false) {
     const filterID = "melting-" + String(Math.random()).substring(2, 9);
+
+    // Firefox memleaks with this effect, itll properly release memory if we remove the SVG from the DOM or disable the filter.
+    //      yet to resolve root cause beyond displacement map + canvas being the issue, works fine on other UI elements.
+    const [showFilter, setShowFilter] = createSignal(false);
     let displacementMap: SVGFEDisplacementMapElement | undefined = undefined;
     let animationFrame: number;
 
     // nested callback hell just to resolve a promise lol
     async function startMeltAnimation(): Promise<void> {
+        setShowFilter(true);
         return new Promise((resolve, reject) => {
             const step = (reverse = false) => {
-              if(!displacementMap) return reject();
+              if(!displacementMap) {
+                setShowFilter(false);
+                return reject();
+            }
 
               const target = reverse ? initialScale : maxScale;
               const currentScale = parseFloat(displacementMap.getAttribute("scale") || initialScale.toString());
@@ -22,6 +30,7 @@ export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1
                 if(returnEffect && !reverse) {
                     animationFrame = requestAnimationFrame(() => step(true)); // Trigger reverse anim
                 } else {
+                    setShowFilter(false);
                     resolve(); // Otherwise animation is done.
                 }
                 return;
@@ -44,35 +53,37 @@ export function createMeltingEffect(initialScale = 2, maxScale = 10, speed = 0.1
         startMeltAnimation,
         filterID,
         filterSVG: (
-            <svg
-            style={{
-                // eat rocks firefox. display: none works in chrome why must you hurt me like this,.
-                visibility: "hidden",
-                width: "0px",
-                height: "0px",
-                position: "absolute"
-            }}
-            >
-                <defs>
-                    <filter id={filterID}>
-                        <feTurbulence
-                            type="fractalNoise"
-                            baseFrequency="0.01 0.3"
-                            numOctaves="3"
-                            seed="2"
-                            result="turbulence"
-                        />
-                        <feDisplacementMap
-                            in="SourceGraphic"
-                            ref={displacementMap}
-                            in2="turbulence"
-                            scale={initialScale.toString()}
-                            xChannelSelector="R"
-                            yChannelSelector="G"
-                        />
-                    </filter>
-                </defs>
-            </svg>
+            <Show when={showFilter()}>
+                <svg
+                style={{
+                    // eat rocks firefox. display: none works in chrome why must you hurt me like this,.
+                    visibility: "hidden",
+                    width: "0px",
+                    height: "0px",
+                    position: "absolute"
+                }}
+                >
+                    <defs>
+                        <filter id={filterID}>
+                            <feTurbulence
+                                type="fractalNoise"
+                                baseFrequency="0.01 0.3"
+                                numOctaves="3"
+                                seed="2"
+                                result="turbulence"
+                            />
+                            <feDisplacementMap
+                                in="SourceGraphic"
+                                ref={displacementMap}
+                                in2="turbulence"
+                                scale={initialScale.toString()}
+                                xChannelSelector="R"
+                                yChannelSelector="G"
+                            />
+                        </filter>
+                    </defs>
+                </svg>
+            </Show>
         )
     }
 }
