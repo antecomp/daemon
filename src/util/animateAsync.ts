@@ -10,7 +10,27 @@ const animateAsync = async (
   ): Promise<Animation> => {
     return new Promise((resolve) => {
       const animation = element.animate(keyframes, options);
-      animation.onfinish = () => resolve(animation);
+
+      const duration = typeof options === "number" ? options : options?.duration || 0;
+      const endDelay = (options as KeyframeAnimationOptions)?.endDelay || 0;
+
+      // Fallback resolution after the animation's duration + endDelay
+      // Safari (webkit) has an issue where it may defer the resolution of the `onfinish` callback
+      // for animations until a user interaction occurs. This `setTimeout` acts as a safety net
+      // to ensure the animation promise resolves even if Safari delays the `onfinish` event.
+      // Strangely enough, this never seems to actually trigger in safari, 
+      // but it makes it respect the .onfinish? 
+      // I could write a book explaining the edge cases that led to this, 
+      //    like how this is only needed in setupRound when called from executeRound but not in executeRound itself or setupRounds onMount call.
+      const timeout = setTimeout(() => {
+          console.log("Forcing animation resolution");
+          resolve(animation);
+      }, Number(duration) + endDelay);
+
+      animation.onfinish = () => {
+        clearTimeout(timeout);
+        resolve(animation)
+      };
     });
 }
 

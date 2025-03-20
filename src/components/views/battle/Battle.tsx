@@ -54,7 +54,7 @@ export default function Battle(props: BattleProps) {
 
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
-            {filterSVG}
+            {/* {filterSVG} */}
             <div 
                 id="battle-container" 
                 ref={mainUIRef}
