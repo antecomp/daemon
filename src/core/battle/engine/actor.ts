@@ -1,6 +1,8 @@
 import { Status } from "./status.types";
 import { Move } from "../moves/moves.types";
 
+
+type damageCallback = (damage: number, health: number) => void;
 /**
  * Actor is a simple container tracking the health, statuses and move sequence of either the player or an opponent
  * within the battle system.
@@ -19,7 +21,8 @@ export class Actor {
     currentSequence: Move[]= [];
 
     // Observer pattern to trigger callbacks when Actor takes damage.
-    private damageSubscribers = new Set<(damage: number) => void>();
+    
+    private damageSubscribers = new Set<damageCallback>();
 
     // Track custom data and flags for advanced logic
     // Leaving this open for whatever that is needed.
@@ -100,12 +103,12 @@ export class Actor {
     }
 
     /** Attach callback that fires whenever Actor takes nonzero damage. */
-    public onDamageTaken(callback: (damage: number) => void) {
+    public onDamageTaken(callback: damageCallback) {
         this.damageSubscribers.add(callback);
     }
 
     private notifySubscribers(damage: number) {
-        for (const cb of this.damageSubscribers) cb(damage);
+        for (const cb of this.damageSubscribers) cb(damage, this.health);
     }
 
 }

@@ -7,7 +7,7 @@ import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
 import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
-import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight } from "../animation/uiAnimations";
+import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
 import pain_sfx from "@/assets/sfx/battle/pain.wav";
@@ -41,7 +41,7 @@ import { MeltAnimationFn } from "@/hooks/createMeltEffect";
  *   - Resolves to `"opponent"` if the opponent wins (player dies).
  *   - Resolves to `"draw"` if both the player and opponent die.
  */
-export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, doPlayerDamageAnimation?: MeltAnimationFn) {
+export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn) {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
@@ -101,12 +101,19 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         switch(who) {
             case "player":
                 // Player death animation goes here (await).
+                if(!debugMode && startMeltAnimation) {
+                    startMeltAnimation(false, 20, 0.01);
+                    await animateMainUIFadeOut();
+                }
                 battleResolve!("opponent");
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
-                !debugMode && await animateOpponentDamageFlash();
-                !debugMode && await animateOpponentDeathFade();
+                if(!debugMode) {
+                    playSound(pain_sfx); // Might replace with a specific killing blow sound later.
+                    await animateOpponentDamageFlash();
+                    await animateOpponentDeathFade();
+                }
                 battleResolve!("player");
                 break;
             case "draw":
@@ -119,15 +126,21 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     // Attach animation effects that trigger when actor or opponent take damage
-    !debugMode && player.onDamageTaken(() => {
-        doPlayerDamageAnimation?.(true, 20, 0.5);
-        playSound(player_pain_sfx);
-    })
+    if(!debugMode) {
+        player.onDamageTaken((_amt, health) => {
+            if(health > 0) { // We want a different animation for a killing-blow.
+                startMeltAnimation?.(true, 20, 0.5);
+                playSound(player_pain_sfx);
+            }
+        });
 
-    !debugMode && opponent.onDamageTaken(() => {
-        playSound(pain_sfx);
-        animateOpponentDamageFlash();
-    })
+        opponent.onDamageTaken((_amt, health) => {
+            if(health > 0){
+                playSound(pain_sfx);
+                animateOpponentDamageFlash();
+            }
+        });
+    }
 
     /** 
      * Sets up a new round, fetching opponent moves, updating displayed hint, 

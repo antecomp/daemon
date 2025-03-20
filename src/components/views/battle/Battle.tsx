@@ -24,7 +24,7 @@ export default function Battle(props: BattleProps) {
         registerBattleUIRef('mainUI', mainUIRef);
     })
 
-    const {startMeltAnimation: damageAnim, filterID, filterSVG} = createMeltingEffect();
+    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 
     // Hook with a bigass return to handle battle logic and pass back needed UI changes.
     const { 
@@ -36,7 +36,7 @@ export default function Battle(props: BattleProps) {
         currentStatuses, 
         actionMessages,
         battleResultPromise
-    } = useBattleLogic(props.opponentData, false, damageAnim);
+    } = useBattleLogic(props.opponentData, false, startMeltAnimation);
 
     onMount(() => {
         setupRound();

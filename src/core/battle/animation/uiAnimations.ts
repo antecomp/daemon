@@ -183,3 +183,20 @@ export async function animatePlayerSequenceFadeOut() {
     }
     )
 }
+
+export async function animateMainUIFadeOut() {
+    const mainBattleUI = getBattleUIRef("mainUI");
+    if (!mainBattleUI) return;
+
+    await animateAsync(mainBattleUI, [
+        {
+            opacity: 1
+        },
+        {
+            opacity: 0
+        }
+    ], {
+        duration: 2000,
+        fill: "forwards"
+    })
+}
