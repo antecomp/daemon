@@ -1,6 +1,6 @@
-import sleep from "@/util/sleep";
 import { stopMoveHighlight } from "../animation/uiAnimations";
-import { animationData, Move, moveAnimationStep, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
+import { Move, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
+import { computeStatusMultipliers } from "../statuses/status.utils";
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
 
@@ -111,21 +111,6 @@ export function prepareMove(
 }
 
 
-/**
- * Runs post-effects (if any) for each status instance on an actor.
- * Executes the post-effect of the first status in each stack, providing a "level" (stack depth) to the postEffect handler.
- * @param actor - The actor whose statuses are being processed.
- * @param opponent - The opposing actor.
- */
-export function performStatusPostEffects(actor: Actor, opponent: Actor) {
-    for(const [_type, statusStack] of actor.statuses) {
-        const stackCount = statusStack.length;
-        if(stackCount > 0) {
-            statusStack[0].applyPostEffect?.(actor, opponent, stackCount);
-        }
-    }
-}
-
 /** Runs Move Effects at the very end (after damage calculation and ticker) */
 export function handlePostMoveEffects(context: PostMoveContext) {
 
@@ -151,146 +136,6 @@ export function handleImmediatePostEffects(context: PostMoveContext) {
             effect(context)
         }
     );
-}
-
-/** Combines the animations requested by player and opponents move, grouping and ordering them by priority
- * @argument playerMove - The move the player is using. (Animation grabbed from here)
- * @argument opponentMove - The move the opponent is using. (Animation grabbed from here)
- * @argument phase - The phase of the move to grab animations for. (pre or post) - pre is before damage, post is after. Controls the required context type.
- * @returns a Map of priority to an object containing player and opponent animations for that priority.
- */
-export function mergeAndSortAnimations<TP extends "pre" | "post">(playerMove: Move, opponentMove: Move, phase: TP) {
-    type ContextType = TP extends "pre" ? MoveContext : PostMoveContext;
-    const playerAnimations = (playerMove.animations?.[phase] || []) as animationData<ContextType>[];
-    const opponentAnimations = (opponentMove.animations?.[phase] || []) as animationData<ContextType>[];
-
-    const groupedAnimations = new Map<number, {player: moveAnimationStep<ContextType>[], opponent: moveAnimationStep<ContextType>[] }>();
-
-    for (const animation of playerAnimations) {
-        if (!groupedAnimations.has(animation.priority)) {
-            groupedAnimations.set(animation.priority, {player: [], opponent: []});
-        }
-        groupedAnimations.get(animation.priority)!.player.push({
-            execute: animation.execute as (ctx: ContextType) => Promise<void>,
-            soundEffect: animation.soundEffect as (() => Promise<void>) | undefined,  // Preserve sound!
-        });
-    }
-
-    for (const animation of opponentAnimations) {
-        if (!groupedAnimations.has(animation.priority)) {
-            groupedAnimations.set(animation.priority, {player: [], opponent: []});
-        }
-        groupedAnimations.get(animation.priority)!.opponent.push({
-            execute: animation.execute as (ctx: ContextType) => Promise<void>,
-            soundEffect: animation.soundEffect as (() => Promise<void>) | undefined,  // Preserve sound!
-        });
-    }
-
-    return groupedAnimations;
-}
-
-
-/** Execute animations in order of priority. Used in tandem with mergeAndSortAnimations.
- * @argument animations - The animations to execute, grouped by priority.
- * @argument playerContext - The context to pass to player animations.
- * @argument opponentContext - The context to pass to opponent animations
- */
-export async function executeAnimations<contextType = MoveContext | PostMoveContext>(
-    animations: Map<number, {
-        player: moveAnimationStep<contextType>[];
-        opponent: moveAnimationStep<contextType>[];
-    }>,
-    playerContext: contextType,
-    opponentContext: contextType
-) {
-    // Sort priorities before iteration, since our Map keys are just in order of being added.
-    const sortedPriorities = [...animations.keys()].sort((a, b) => a - b);
-
-    // im so tired.
-    for (const priority of sortedPriorities) {
-        const { player, opponent } = animations.get(priority)!;
-
-        await Promise.all([
-            // Player animations and sounds...
-            Promise.all(player.map(async ({execute, soundEffect}) => 
-                Promise.all([execute(playerContext), soundEffect?.(playerContext)])
-            )),
-            // Opponent animations and sounds...
-            Promise.all(opponent.map(({execute, soundEffect}) =>
-                Promise.all([execute(opponentContext), soundEffect?.(opponentContext)])
-            ))
-        ])
-    }
-}
-
-/** Helper to check if we have any animations.
- * Used in battle logic to subsitute a delay for animations if there are none.
- * @argument animations - The animations to check (grabbed from mergeAndSortAnimations)
- * @returns true if there are any animations, false otherwise.
- */
-export function hasAnimations(animations: Map<number, {
-        // Fuck off TS this is a length check I'm not working with the context
-        player: moveAnimationStep<any>[], 
-        opponent: moveAnimationStep<any>[] 
-    }>
-): boolean {
-    for (const animList of animations.values()) {
-        if (animList.player.length > 0
-            || animList.opponent.length > 0
-        ) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
- * Handles the execution of animations for our two animation breaks (pre or post damage calc).
- * If debug mode is enabled, animations are skipped entirely.
- * 
- * @template TContext - The context type, extending either `MoveContext` or `PostMoveContext`. 
- * Associated with if we're doing the pre or post animations.
- * 
- * @param playerMove - The move performed by the player. (animation(s) grabbed from move)
- * @param opponentMove - The move performed by the opponent. (animations(s) grabbed from move)
- * @param phase - Animation phase;
- * - `pre` : before the damage is calculated (and health bars update), used to visualize the moves "in action"
- * - `post` : after damage is calculated and dished out, used to visualize any move side effects.
- * @param playerContext - The context associated with the player's move
- * @param opponentContext - The context associated with the opponent's move.
- * - Contexts are passed to animations such that they can do conditional behavior (f.e changing what spritesheet to use based on damage)
- * @param minimumAnimationTime - The delay to apply if no animations are present.
- * @param debugMode - Optional flag to disable animations for debugging/testing purposes.
- * 
- * @returns A promise that resolves once the animations (or fallback delay) are completed.
- */
-export async function handlePhaseAnimations<TContext extends MoveContext | PostMoveContext>(
-    playerMove: Move,
-    opponentMove: Move,
-    phase: "pre" | "post",
-    playerContext: TContext,
-    opponentContext: TContext,
-    minimumAnimationTime: number,
-    debugMode?: boolean,
-) {
-    if (debugMode) return; // No animations at all.
-
-    const animations = mergeAndSortAnimations(playerMove, opponentMove, phase);
-
-    // if(hasAnimations(animations)) {
-    //     await executeAnimations(animations, playerContext, opponentContext);
-    // } else {
-    //     await sleep(fallbackDelay);
-    // }
-
-   // ensurs that the function always waits for at least the specified delay, regardless of 
-   // whether animations are present or how long they take.
-    await Promise.all([
-        hasAnimations(animations)
-            ? executeAnimations(animations, playerContext, opponentContext)
-            : Promise.resolve(),
-        sleep(minimumAnimationTime)
-    ])
 }
 
 /** Check if player or opponent has died.
@@ -321,7 +166,7 @@ export function isAnyoneDead(player: Actor, opponent: Actor) {
  * @param seqHighlightAnimations - Optional animations for highlighting the sequence
  *                                 of moves. If provided, these animations will be stopped
  *                                 when a death is detected.
- *    - `seqHighlightAnimations.playerSeqAnim` - The animation for the player's sequence.
+ *   - `seqHighlightAnimations.playerSeqAnim` - The animation for the player's sequence.
  *   - `seqHighlightAnimations.oppSeqAnim` - The animation for the opponent's sequence.
  * @returns `true` if a death was detected and handled, otherwise `false`. 
  * This return is used in executeRound to trigger an escape from evaluation loop.
@@ -342,38 +187,6 @@ export function handleDeathIfNeeded(
         return true;
     }
     return false;
-}
-
-
-/** Iterates through an actors current statuses, executing their getStatusMultipliers.
- * If multiple of the same status is applied, the multiplier function is still only run once, but it is passed
- * the number of duplicate instances of that current status at that time.
- */
-export function computeStatusMultipliers(actor: Actor): MultiplierSet {
-    let incoming = 1;
-    let outgoing = 1;
-
-    for (const [_type, statusStack] of actor.statuses) {
-        const stackCount = statusStack.length;
-        if (stackCount > 0) {
-            const statusMults = statusStack[0].getStatusMultipliers(stackCount);
-            incoming *= statusMults.incoming;
-            outgoing *= statusMults.outgoing;
-        }
-    }
-
-    return { incoming, outgoing };
-}
-
-/**
- * Performs any post effects (as in, after main damage calculation) associated with the player and opponents statuses, then ticks the statuses down.
- */
-export function resolveStatuses(player: Actor, opponent: Actor) {
-    performStatusPostEffects(player, opponent);
-    performStatusPostEffects(opponent, player);
-
-    player.tickAndRemoveStatuses();
-    opponent.tickAndRemoveStatuses();
 }
 
 /**

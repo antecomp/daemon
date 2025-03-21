@@ -1,4 +1,4 @@
-import { ManiaStatus, PreparedStatus, VulnerableStatus } from "../engine/statuses";
+import { ManiaStatus, PreparedStatus, VulnerableStatus } from "../statuses/statuses"
 import { MoveSEConditionalWrapper, MoveSideEffect, PostMoveContext, PostMoveSideEffect } from "./moves.types";
 
 export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effect) => {

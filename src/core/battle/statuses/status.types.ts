@@ -1,5 +1,5 @@
-import { Actor } from "./actor";
-import { MultiplierSet } from "./battle.types";
+import { Actor } from "../engine/actor";
+import { MultiplierSet } from "../engine/battle.types";
 
 
 /**

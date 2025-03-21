@@ -1,5 +1,5 @@
-import { Actor } from "./actor";
-import { MultiplierSet } from "./battle.types";
+import { Actor } from "../engine/actor";
+import { MultiplierSet } from "../engine/battle.types";
 import vuln_icon from "@/assets/icons/statuses/vuln.png"
 import prep_icon from "@/assets/icons/statuses/prep.png"
 import mania_icon from "@/assets/icons/statuses/mania.png"

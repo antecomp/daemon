@@ -5,7 +5,9 @@ import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext
 import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded, resolveStatuses, handlePhaseAnimations } from "./battle.utils";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded } from "./battle.utils";
+import { resolveStatuses } from "../statuses/status.utils";
+import { handlePhaseAnimations } from "../animation/animations.utils";
 import { PREANIM_MIN_DURATION, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, SEQUENCE_LENGTH } from "./battle.config";
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
@@ -228,6 +230,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
             const {playerDamageDealt, opponentDamageDealt} = calculateAndApplyDamage(player, opponent, playerFinalMultipliers, opponentFinalMultipliers);
 
+            // If anyone died, trigger the handler for that and break out of execute entirely.
             if(handleDeathIfNeeded(player, opponent, handleDeath, seqHighlightAnimations)) return;
 
             const playerPostContext: PostMoveContext = {
@@ -273,7 +276,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         if(handleDeathIfNeeded(player, opponent, handleDeath)) return;
 
-        // Loop back to setup.
+        // Otherwise loop back to setup.
         setupRound();
     }
 

@@ -1,4 +1,4 @@
-import { Status } from "./status.types";
+import { Status } from "../statuses/status.types";
 import { Move } from "../moves/moves.types";
 import { SEQUENCE_LENGTH } from "./battle.config";
 
