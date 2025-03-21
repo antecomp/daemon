@@ -14,6 +14,9 @@ import pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MeltAnimationFn } from "@/hooks/createMeltEffect";
 
+import { detect } from "detect-browser";
+const browser = detect();
+
 /**
  * A hook that provides the core battle logic for a turn-based battle system.
  * It manages the state of the battle, including player and opponent actors, 
@@ -102,7 +105,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             case "player":
                 // Player death animation goes here (await).
                 if(!debugMode && startMeltAnimation) {
-                    startMeltAnimation(false, 20, 0.01);
+                    // Will need a more robust check of browser that support this effect w/ some fallback.
+                    if(browser?.name != 'safari') startMeltAnimation(false, 20, 0.01);
                     await animateMainUIFadeOut();
                 }
                 battleResolve!("opponent");
@@ -129,7 +133,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     if(!debugMode) {
         player.onDamageTaken((_amt, health) => {
             if(health > 0) { // We want a different animation for a killing-blow.
-                startMeltAnimation?.(true, 20, 0.5);
+                // Will need a more robust check of browser that support this effect w/ some fallback.
+                if(browser?.name != 'safari') startMeltAnimation?.(true, 20, 0.5);
                 playSound(player_pain_sfx);
             }
         });

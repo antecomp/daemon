@@ -12,6 +12,7 @@
   "dependencies": {
     "@solidjs/testing-library": "^0.8.10",
     "@types/node": "^22.12.0",
+    "detect-browser": "^5.3.0",
     "lume": "^0.3.0-alpha.44",
     "solid-js": "^1.9.3",
     "solid-transition-group": "^0.3.0",
