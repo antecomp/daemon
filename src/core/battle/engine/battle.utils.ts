@@ -1,3 +1,5 @@
+import sleep from "@/util/sleep";
+import { stopMoveHighlight } from "../animation/uiAnimations";
 import { animationData, Move, moveAnimationStep, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { MultiplierSet } from "./battle.types";
@@ -242,6 +244,26 @@ export function hasAnimations(animations: Map<number, {
     return false;
 }
 
+export async function handlePhaseAnimations<TContext extends MoveContext | PostMoveContext>(
+    playerMove: Move,
+    opponentMove: Move,
+    phase: "pre" | "post",
+    playerContext: TContext,
+    opponentContext: TContext,
+    fallbackDelay: number,
+    debugMode?: boolean,
+) {
+    if (debugMode) return; // No animations at all.
+
+    const animations = mergeAndSortAnimations(playerMove, opponentMove, phase);
+
+    if(hasAnimations(animations)) {
+        await executeAnimations(animations, playerContext, opponentContext);
+    } else {
+        await sleep(fallbackDelay);
+    }
+}
+
 /** Check if player or opponent has died.
  * @returns "player" on player death
  * @returns "opponent" on opponent death
@@ -256,6 +278,45 @@ export function isAnyoneDead(player: Actor, opponent: Actor) {
    if(o) return "opponent";
    return null;
 }
+
+
+/**
+ * Handles the death logic for a battle scenario by checking if either the player
+ * or the opponent has died. If a death is detected, it stops any ongoing highlight
+ * animations and invokes the provided `handleDeath` callback with the result.
+ *
+ * @param player - The player actor involved in the battle.
+ * @param opponent - The opponent actor involved in the battle.
+ * @param handleDeath - A callback function to handle the death result. It receives
+ *                      a string indicating the result: `"player"`, `"opponent"`, or `"draw"`.
+ * @param seqHighlightAnimations - Optional animations for highlighting the sequence
+ *                                 of moves. If provided, these animations will be stopped
+ *                                 when a death is detected.
+ *    - `seqHighlightAnimations.playerSeqAnim` - The animation for the player's sequence.
+ *   - `seqHighlightAnimations.oppSeqAnim` - The animation for the opponent's sequence.
+ * @returns `true` if a death was detected and handled, otherwise `false`. 
+ * This return is used in executeRound to trigger an escape from evaluation loop.
+ */
+export function handleDeathIfNeeded(
+    player: Actor,
+    opponent: Actor,
+    handleDeath: (result: "player" | "opponent" | "draw") => void,
+    seqHighlightAnimations?: {
+        playerSeqAnim: Animation | undefined;
+        oppSeqAnim: Animation | undefined;
+    },
+): boolean {
+    const deathResult = isAnyoneDead(player, opponent);
+    if(deathResult) {
+        seqHighlightAnimations && stopMoveHighlight(seqHighlightAnimations);
+        handleDeath(deathResult);
+        return true;
+    }
+    return false;
+}
+
+
+
 export function computeStatusMultipliers(actor: Actor): MultiplierSet {
     let incoming = 1;
     let outgoing = 1;
@@ -270,4 +331,25 @@ export function computeStatusMultipliers(actor: Actor): MultiplierSet {
     }
 
     return { incoming, outgoing };
+}
+
+export function resolveStatuses(player: Actor, opponent: Actor) {
+    performStatusPostEffects(player, opponent);
+    performStatusPostEffects(opponent, player);
+
+    player.tickAndRemoveStatuses();
+    opponent.tickAndRemoveStatuses();
+}
+
+/**
+ * Cross-multiplies player and opponent multipliers and performs corresponding .takeDamage on each actor.
+ */
+export function calculateAndApplyDamage(player: Actor, opponent: Actor, playerMults: MultiplierSet, opponentMults: MultiplierSet) {
+    const playerDamageDealt = playerMults.outgoing * opponentMults.incoming;
+    const opponentDamageDealt = opponentMults.outgoing * playerMults.incoming;
+
+    opponent.takeDamage(playerDamageDealt);
+    player.takeDamage(opponentDamageDealt);
+
+    return {playerDamageDealt, opponentDamageDealt};
 }

@@ -1,8 +1,8 @@
 import lerp from "@/util/lerp";
 import { createSignal, onCleanup, Show } from "solid-js";
 
+// Exposed signature for animate function.
 export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?: number) => Promise<void>;
-
 
 /**
  * Creates a melting effect using an SVG filter with a displacement map.

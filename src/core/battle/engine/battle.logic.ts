@@ -5,8 +5,8 @@ import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext
 import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
-import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, performStatusPostEffects, handleImmediatePostEffects, mergeAndSortAnimations, executeAnimations, hasAnimations, isAnyoneDead } from "./battle.utils";
-import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, PREANIM_DELAY } from "./battle.config";
+import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded, resolveStatuses, handlePhaseAnimations } from "./battle.utils";
+import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
@@ -179,8 +179,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
 
-        let deathResult: "player" | "opponent" | "draw" | null = null;
-
         for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
             // Note: Can't generalize these as functions to loop over
             // as we're flipping between player/opponent.
@@ -222,34 +220,19 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 });
             });
 
-            // Perform animations that occur before damage output.
-            const preAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "pre");
+            // Animations that occur before damage output (namely visualizing the moves themselves)
+            await handlePhaseAnimations(
+                player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], 
+                "pre",
+                playerContext,
+                opponentContext,
+                DAMAGE_DELAY,
+                debugMode
+            )
 
-            !debugMode && await sleep(PREANIM_DELAY)
+            const {playerDamageDealt, opponentDamageDealt} = calculateAndApplyDamage(player, opponent, playerFinalMultipliers, opponentFinalMultipliers);
 
-            if(!debugMode){ // Skip anims/delay for testing
-                if(hasAnimations(preAnims)) {
-                    await executeAnimations(preAnims, playerContext, opponentContext)
-                } else {
-                    await sleep(DAMAGE_DELAY);
-                }
-            }
-
-            const playerDamageDealt = playerFinalMultipliers.outgoing * opponentFinalMultipliers.incoming;
-            const opponentDamageDealt = playerFinalMultipliers.incoming * opponentFinalMultipliers.outgoing;
-
-            opponent.takeDamage(playerDamageDealt);
-            player.takeDamage(opponentDamageDealt);
-
-            // Early check if someone died from damage
-            // we dont want to run any other effects if someone is dead.
-            deathResult = isAnyoneDead(player, opponent);
-            if(deathResult) {
-                // Do our own early UI cleanup in-scope for the current move highlighting.
-                stopMoveHighlight(seqHighlightAnimations);
-                handleDeath(deathResult);
-                return;
-            }
+            if(handleDeathIfNeeded(player, opponent, handleDeath, seqHighlightAnimations)) return;
 
             const playerPostContext: PostMoveContext = {
                 ...playerContext,
@@ -270,22 +253,19 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             handleImmediatePostEffects(playerPostContext);
             handleImmediatePostEffects(opponentPostContext);
 
-            performStatusPostEffects(player, opponent);
-            performStatusPostEffects(opponent, player);
-
-            player.tickAndRemoveStatuses();
-            opponent.tickAndRemoveStatuses();
+            resolveStatuses(player, opponent);
 
             handlePostMoveEffects(playerPostContext);
             handlePostMoveEffects(opponentPostContext);
 
-            const postAnims = mergeAndSortAnimations(player.currentSequence[moveIndex], opponent.currentSequence[moveIndex], "post");
-
-            if(!debugMode) {
-                if(hasAnimations(postAnims)) {
-                    await executeAnimations(postAnims, playerPostContext, opponentPostContext)
-                }
-            }
+            await handlePhaseAnimations(
+                player.currentSequence[moveIndex], opponent.currentSequence[moveIndex],
+                "post",
+                playerPostContext,
+                opponentPostContext,
+                0,
+                debugMode
+            );
 
             // Reset signal for UI
             batch(() => {
@@ -302,11 +282,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             !debugMode && await sleep(MOVE_DELAY); // Wait before doing next move.
         }
 
-        deathResult = isAnyoneDead(player, opponent);
-        if(deathResult) {
-            handleDeath(deathResult);
-            return;
-        }
+        if(handleDeathIfNeeded(player, opponent, handleDeath)) return;
 
         // Loop back to setup.
         setupRound();
