@@ -1,6 +1,6 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
-import { ActionMessage, ActionMessageAppender, DVOpponentData, MultiplierSet } from "./battle.types";
+import { ActionMessage, ActionMessageAppender, BattleEngine, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
@@ -29,7 +29,6 @@ const browser = detect();
  * @param debugMode - Optional flag to enable debug mode, which skips animations and delays.
  * 
  * @returns An object containing the following:
- * 
  * - `playerMults`: Signal getter for the player's incoming and outgoing multipliers.
  * - `opponentMults`: Signal getter for the opponent's incoming and outgoing multipliers.
  * - `battleUIState`: Signal for the current state of the battle UI.
@@ -46,13 +45,12 @@ const browser = detect();
  *   - Resolves to `"opponent"` if the opponent wins (player dies).
  *   - Resolves to `"draw"` if both the player and opponent die.
  */
-export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn) {
+export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn): BattleEngine {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
-    /*  createMultible let's Solid listen for *value* changes on this object for UI updates
-        Meaning we don't have to use a signal for "health" as it's a primitive
-        already in Actor that we can access directly. */
+    // createMutable wraps our actor objects in a proxy that fires signals on (primitive) property updates
+    // this let's us just listen to changes in health for the UI (don't need our own signal trigger like for other stuff).
     const player = createMutable(new Actor("Arda", PLAYER_HEALTH_PLACEHOLDER)); // This should be extracted from game store later.
     const opponent = createMutable(new Actor(opponentData.name, opponentData.maxHealth));
 
@@ -92,11 +90,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
     // expose resolve method so we can call it when someone dies.
     let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
-    /** Promise representing the battle outcome, resolved when the player or opponent die.
-     * @resolves "player" when player wins (opponent death)
-     * @resolves "opponent" when opponent wins (player death)
-     * @resolves "draw" when both player and opponent die.
-     */
     const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => {
         battleResolve = resolve;
     });
@@ -281,41 +274,13 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     return {
-        /** Simple signal getter indicating player incoming/outgoing multipliers */  
-        playerMults,
-        /** Simple signal getter indicating opponent incoming/outgoing multipliers */
-        opponentMults,
-        /** Signal for battle UI state. Reference battle.context.ts */ 
-        battleUIState, 
-        /** Signal setter for battle UI state. Reference battle.context.ts */
-        setBattleUIState,
-        /** Player actor object */ 
-        player,
-        /** Opponent actor object */ 
-        opponent, 
-        /** Round initialization and setup function.
-         * Fetches opponent moves, updates displayed hint, and resets battle state.
-         */
-        setupRound,
-        /** Round execution function, triggered by user event.
-         * - Builds sequence and executes it, updating the battle state.
-         * - Core battle logic is executed here.
-         * - Automatically triggers setupRound or handleDeath as needed.
-         */ 
-        executeRound, 
-        /** Signal for the current "hint" of the opponent sequence. */
+        playerMults, opponentMults,
+        battleUIState, setBattleUIState,
+        player, opponent, 
+        setupRound, executeRound, 
         insight, 
-        /** Simple object representing the current status icons for the player and opponent (for UI) */
         currentStatuses, 
-        /** Signal for the current action messages (flair text) */
         actionMessages,
-        /** Promise representing the battle outcome, resolved when the player or opponent die.
-         * 
-         * Await/then this to handle battle resolution.
-         * @resolves "player" when player wins (opponent death)
-         * @resolves "opponent" when opponent wins (player death)
-         * @resolves "draw" when both player and opponent die.
-         */
         battleResultPromise
     };
 }
