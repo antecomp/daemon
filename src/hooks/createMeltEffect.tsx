@@ -3,6 +3,33 @@ import { createSignal, onCleanup, Show } from "solid-js";
 
 export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?: number) => Promise<void>;
 
+
+/**
+ * Creates a melting effect using an SVG filter with a displacement map.
+ * This effect can be applied to UI elements and animated with a customizable scale and speed.
+ * 
+ * Note: This effect may cause memory leaks in Firefox (when applied to canvas) unless the SVG is removed from the DOM or the filter is disabled.
+ *
+ * @param {number} [initialScale=0] - The initial scale value for the displacement map.
+ * @returns An object containing:
+ * 
+ *   `startMeltAnimation`: A function to start the melting animation. It accepts:
+ *       - `returnEffect` (optional): If true, reverses the animation after completion.
+ *       - `maxScale` (optional): The maximum scale value for the animation.
+ *       - `speed` (optional): The speed of the animation.
+ *   `filterID`: The unique ID of the SVG filter.
+ * 
+ *   `filterSVG`: The JSX element containing the SVG filter definition.
+ *
+ * @example
+ * const { startMeltAnimation, filterID, filterSVG } = createMeltingEffect(0);
+ * 
+ * // Apply the filter to an element
+ * <div style={{ filter: `url(#${filterID})` }}>Melting Content</div>
+ * 
+ * // Trigger the animation
+ * await startMeltAnimation(true, 10, 0.1);
+ */
 export function createMeltingEffect(initialScale = 0) {
     const filterID = "melting-" + String(Math.random()).substring(2, 9);
 
