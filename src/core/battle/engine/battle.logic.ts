@@ -6,7 +6,7 @@ import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded, resolveStatuses, handlePhaseAnimations } from "./battle.utils";
-import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, SEQUENCE_LENGTH } from "./battle.config";
+import { PREANIM_MIN_DURATION, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, SEQUENCE_LENGTH } from "./battle.config";
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
@@ -77,6 +77,17 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         }, NOTIFICATION_LIFESPAN);
     }
 
+    function updateUISignals(playerMults?: MultiplierSet, opponentMults?: MultiplierSet, clearStatuses?: boolean) {
+        batch(() => {
+            setPlayerMults(playerMults ?? {incoming: 0, outgoing: 0});
+            setOpponentMults(opponentMults ?? {incoming: 0, outgoing: 0});
+            setCurrentStatusIcons({
+                player: clearStatuses ? [] : Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
+                opp: clearStatuses ? [] : Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
+            });
+        })
+    }
+
     // expose resolve method so we can call it when someone dies.
     let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
     /** Promise representing the battle outcome, resolved when the player or opponent die.
@@ -92,14 +103,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     async function handleDeath(who: "player" | "opponent" | "draw") {
 
         // UI Cleanup
-        batch(() => {
-            setPlayerMults({ incoming: 0, outgoing: 0 });
-            setOpponentMults({ incoming: 0, outgoing: 0 });
-            setCurrentStatusIcons({
-                player: [],
-                opp: []
-            });
-        });
+        updateUISignals(undefined, undefined, true);
 
         switch(who) {
             case "player":
@@ -210,15 +214,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             const playerFinalMultipliers = prepareMove(playerContext);
             const opponentFinalMultipliers = prepareMove(opponentContext);
 
-            // Update UI
-            batch(() => {
-                setPlayerMults(playerFinalMultipliers);
-                setOpponentMults(opponentFinalMultipliers);
-                setCurrentStatusIcons({
-                    player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
-                    opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
-                });
-            });
+            updateUISignals(playerFinalMultipliers, opponentFinalMultipliers);
 
             // Animations that occur before damage output (namely visualizing the moves themselves)
             await handlePhaseAnimations(
@@ -226,7 +222,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 "pre",
                 playerContext,
                 opponentContext,
-                DAMAGE_DELAY,
+                PREANIM_MIN_DURATION,
                 debugMode
             )
 
@@ -267,15 +263,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 debugMode
             );
 
-            // Reset signal for UI
-            batch(() => {
-                setPlayerMults({ incoming: 0, outgoing: 0 });
-                setOpponentMults({ incoming: 0, outgoing: 0 });
-                setCurrentStatusIcons({
-                    player: Array.from(player.statuses).map(([_, stack]) => stack[0].icon!),
-                    opp: Array.from(opponent.statuses).map(([_, stack]) => stack[0].icon!)
-                });
-            });
+            // reset visualized mults to 0
+            updateUISignals();
 
             stopMoveHighlight(seqHighlightAnimations);
 

@@ -259,7 +259,7 @@ export function hasAnimations(animations: Map<number, {
  * @param playerContext - The context associated with the player's move
  * @param opponentContext - The context associated with the opponent's move.
  * - Contexts are passed to animations such that they can do conditional behavior (f.e changing what spritesheet to use based on damage)
- * @param fallbackDelay - The delay to apply if no animations are present.
+ * @param minimumAnimationTime - The delay to apply if no animations are present.
  * @param debugMode - Optional flag to disable animations for debugging/testing purposes.
  * 
  * @returns A promise that resolves once the animations (or fallback delay) are completed.
@@ -270,18 +270,27 @@ export async function handlePhaseAnimations<TContext extends MoveContext | PostM
     phase: "pre" | "post",
     playerContext: TContext,
     opponentContext: TContext,
-    fallbackDelay: number,
+    minimumAnimationTime: number,
     debugMode?: boolean,
 ) {
     if (debugMode) return; // No animations at all.
 
     const animations = mergeAndSortAnimations(playerMove, opponentMove, phase);
 
-    if(hasAnimations(animations)) {
-        await executeAnimations(animations, playerContext, opponentContext);
-    } else {
-        await sleep(fallbackDelay);
-    }
+    // if(hasAnimations(animations)) {
+    //     await executeAnimations(animations, playerContext, opponentContext);
+    // } else {
+    //     await sleep(fallbackDelay);
+    // }
+
+   // ensurs that the function always waits for at least the specified delay, regardless of 
+   // whether animations are present or how long they take.
+    await Promise.all([
+        hasAnimations(animations)
+            ? executeAnimations(animations, playerContext, opponentContext)
+            : Promise.resolve(),
+        sleep(minimumAnimationTime)
+    ])
 }
 
 /** Check if player or opponent has died.

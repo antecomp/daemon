@@ -4,7 +4,7 @@ import ai_focus_icon from '@/assets/icons/battle-alerts/focus.png'
 import ai_mania_icon from '@/assets/icons/battle-alerts/mania.png'
 
 /** Delay between showing notifications/mults and dealing damage */
-export const DAMAGE_DELAY = 500;
+export const PREANIM_MIN_DURATION = 750;
 
 /** Delay between each move. */
 export const MOVE_DELAY = 2000;
