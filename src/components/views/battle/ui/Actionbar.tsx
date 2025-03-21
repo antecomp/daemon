@@ -17,6 +17,7 @@ import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
 import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
 import { createMeltingEffect } from '@/hooks/createMeltEffect'
+import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -42,6 +43,8 @@ interface ActionbarProps {
     currentStatuses: Accessor<{player: string[], opp: string[]}>
 }
 
+// Scaling from a multiplier range of 1/5 to 5 to a nice percentage amount for visualization
+// Clamps <1/5 to 0% and >5 to 100%
 function mapMultiplier(x: number): number {
     const oldMin = 1 / 5, oldMax = 5;
     const newMin = 0, newMax = 100;
@@ -65,7 +68,7 @@ export default function Actionbar(props: ActionbarProps) {
     const [sequenceBuffer, setSequenceBuffer] = createSignal<PlayerMoveMeta[]>([]);
 
     const addRune = (toAdd: PlayerMoveMeta) => {
-        if(sequenceBuffer().length == 5) return;
+        if(sequenceBuffer().length == SEQUENCE_LENGTH) return;
         if(battleUIState() != BattleUIState.WAITING) return;
 
         setSequenceBuffer(prev => {

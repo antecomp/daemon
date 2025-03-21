@@ -1,5 +1,6 @@
 import { Status } from "./status.types";
 import { Move } from "../moves/moves.types";
+import { SEQUENCE_LENGTH } from "./battle.config";
 
 
 type damageCallback = (damage: number, health: number) => void;
@@ -96,7 +97,7 @@ export class Actor {
     }
 
     public setMoveSequence(selectedMoves: Move[]) {
-        if (selectedMoves.length > 5) {
+        if (selectedMoves.length > SEQUENCE_LENGTH) {
             throw new Error("Cannot select more than 5 moves in a sequence!");
         }
         this.currentSequence = selectedMoves;

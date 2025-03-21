@@ -3,11 +3,6 @@ import ai_heal_icon from '@/assets/icons/battle-alerts/heal.png'
 import ai_focus_icon from '@/assets/icons/battle-alerts/focus.png'
 import ai_mania_icon from '@/assets/icons/battle-alerts/mania.png'
 
-// TODO: You likely want to change this to a config object to be more blatant and organized, rather than these floating consts.
-
-/** Delay before playing preanimations */
-export const PREANIM_DELAY = 500;
-
 /** Delay between showing notifications/mults and dealing damage */
 export const DAMAGE_DELAY = 500;
 
@@ -23,6 +18,8 @@ export const PREROUND_DELAY = 1000;
 /** Player starting/max health - will likely be updated/linked to a global store. */
 export const PLAYER_HEALTH_PLACEHOLDER = 10;
 
+/** How many moves in a turn, aka the "sequence" */
+export const SEQUENCE_LENGTH = 5;
 
 export type ActionIconTable = Record<
     "default" | "heal" | "focus" | "mania", string

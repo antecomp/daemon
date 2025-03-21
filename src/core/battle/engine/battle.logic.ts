@@ -6,7 +6,7 @@ import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded, resolveStatuses, handlePhaseAnimations } from "./battle.utils";
-import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN } from "./battle.config";
+import { DAMAGE_DELAY, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, SEQUENCE_LENGTH } from "./battle.config";
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
@@ -171,15 +171,15 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         opponent.setMoveSequence(unwrapMoveMetaSequence(opponent, opponentSequence, player, userSelectedSequence));
         player.setMoveSequence(unwrapMoveMetaSequence(player, userSelectedSequence, opponent, opponentSequence));
-        if (opponent.currentSequence.length != 5) throw new Error("Opponent sequence not of correct length to evaluate");
-        if (player.currentSequence.length != 5) throw new Error("Player sequence not of correct length to evaluate"); // Should never see this.
+        if (opponent.currentSequence.length != SEQUENCE_LENGTH) throw new Error("Opponent sequence not of correct length to evaluate");
+        if (player.currentSequence.length != SEQUENCE_LENGTH) throw new Error("Player sequence not of correct length to evaluate"); // Should never see this.
 
         // Sequence buffers are Record<index, {}>'s that can be used by moves to save information relevant to subsequent moves.
         // Differs from player.data which is persistent for the entire battle.
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
 
-        for (let moveIndex = 0; moveIndex < 5; moveIndex++) {
+        for (let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
             // Note: Can't generalize these as functions to loop over
             // as we're flipping between player/opponent.
 

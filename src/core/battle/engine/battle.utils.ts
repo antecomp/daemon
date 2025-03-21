@@ -244,6 +244,26 @@ export function hasAnimations(animations: Map<number, {
     return false;
 }
 
+/**
+ * Handles the execution of animations for our two animation breaks (pre or post damage calc).
+ * If debug mode is enabled, animations are skipped entirely.
+ * 
+ * @template TContext - The context type, extending either `MoveContext` or `PostMoveContext`. 
+ * Associated with if we're doing the pre or post animations.
+ * 
+ * @param playerMove - The move performed by the player. (animation(s) grabbed from move)
+ * @param opponentMove - The move performed by the opponent. (animations(s) grabbed from move)
+ * @param phase - Animation phase;
+ * - `pre` : before the damage is calculated (and health bars update), used to visualize the moves "in action"
+ * - `post` : after damage is calculated and dished out, used to visualize any move side effects.
+ * @param playerContext - The context associated with the player's move
+ * @param opponentContext - The context associated with the opponent's move.
+ * - Contexts are passed to animations such that they can do conditional behavior (f.e changing what spritesheet to use based on damage)
+ * @param fallbackDelay - The delay to apply if no animations are present.
+ * @param debugMode - Optional flag to disable animations for debugging/testing purposes.
+ * 
+ * @returns A promise that resolves once the animations (or fallback delay) are completed.
+ */
 export async function handlePhaseAnimations<TContext extends MoveContext | PostMoveContext>(
     playerMove: Move,
     opponentMove: Move,
@@ -316,7 +336,10 @@ export function handleDeathIfNeeded(
 }
 
 
-
+/** Iterates through an actors current statuses, executing their getStatusMultipliers.
+ * If multiple of the same status is applied, the multiplier function is still only run once, but it is passed
+ * the number of duplicate instances of that current status at that time.
+ */
 export function computeStatusMultipliers(actor: Actor): MultiplierSet {
     let incoming = 1;
     let outgoing = 1;
@@ -333,6 +356,9 @@ export function computeStatusMultipliers(actor: Actor): MultiplierSet {
     return { incoming, outgoing };
 }
 
+/**
+ * Performs any post effects (as in, after main damage calculation) associated with the player and opponents statuses, then ticks the statuses down.
+ */
 export function resolveStatuses(player: Actor, opponent: Actor) {
     performStatusPostEffects(player, opponent);
     performStatusPostEffects(opponent, player);
