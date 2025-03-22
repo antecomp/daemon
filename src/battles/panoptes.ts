@@ -6,7 +6,6 @@ import sample_move_icon from "@/components/views/battle/assets/placeholder_move_
 import prae_icon from '@/core/battle/moves/icons/PRAETORIAN.png'
 import { Attack, Defend, NothingMove, Prepare } from "../core/battle/moves/moves.list";
 import vortexShader from "@/shaders/backgrounds/vortex.shader";
-import { shuffleArray } from "@/util/shuffle";
 import { requestOverlayAnimation } from "../core/battle/animation/requestOverlayAnim";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
