@@ -115,7 +115,7 @@ export default function Actionbar(props: ActionbarProps) {
                     // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
                     //onClick={() => {playSound(candle_sfx)}}
                     //onClick={async () => {await animatePlayerSequenceFadeOut();}}
-                    onClick={() => startMeltAnimation(false)}
+                    onClick={() => startMeltAnimation(true, 20, 10)}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

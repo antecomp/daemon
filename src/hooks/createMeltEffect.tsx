@@ -1,8 +1,7 @@
-import lerp from "@/util/lerp";
-import { createSignal, onCleanup, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 
 // Exposed signature for animate function.
-export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?: number) => Promise<void>;
+export type MeltAnimationFn = (pingPong?: boolean, maxScale?: number, duration?: number) => Promise<void>;
 
 /**
  * Creates a melting effect using an SVG filter with a displacement map.
@@ -14,9 +13,9 @@ export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?
  * @returns An object containing:
  * 
  *   `startMeltAnimation`: A function to start the melting animation. It accepts:
- *       - `returnEffect` (optional): If true, reverses the animation after completion.
+ *       - `pingPong` (optional): If true, animation goes initial -> max -> back to initial.
  *       - `maxScale` (optional): The maximum scale value for the animation.
- *       - `speed` (optional): The speed of the animation.
+ *       - `duration` (optional, default 1s): Duration of the animation.
  *   `filterID`: The unique ID of the SVG filter.
  * 
  *   `filterSVG`: The JSX element containing the SVG filter definition.
@@ -33,50 +32,48 @@ export type MeltAnimationFn = (returnEffect?: boolean, maxScale?: number, speed?
 export function createMeltingEffect(initialScale = 0) {
     const filterID = "melting-" + String(Math.random()).substring(2, 9);
 
-    // Firefox memleaks with this effect, itll properly release memory if we remove the SVG from the DOM or disable the filter.
-    //      yet to resolve root cause beyond displacement map + canvas being the issue, works fine on other UI elements.
     const [showFilter, setShowFilter] = createSignal(false);
-    let displacementMap: SVGFEDisplacementMapElement | undefined = undefined;
-    let animationFrame: number;
 
-    // nested callback hell just to resolve a promise lol
-    async function startMeltAnimation(returnEffect = false, maxScale = 10, speed = 0.1): Promise<void> {
+    const [animationProps, setAnimationProps] = createSignal({
+        values: `${initialScale};${initialScale}`,
+        dur: "1s" // fallback duration
+    });
+
+    let animateElement: SVGAnimateElement | undefined = undefined;
+
+    async function startMeltAnimation(pingPong = false, maxScale = 10, duration = 1): Promise<void> {
         setShowFilter(true);
-        return new Promise((resolve, reject) => {
-            const step = (reverse = false) => {
-              if(!displacementMap) {
+
+        return new Promise<void>(async (resolve, reject) => {
+            if(!animateElement) {
                 setShowFilter(false);
-                return reject();
+                return reject("Animate element not ready");
             }
 
-              const target = reverse ? initialScale : maxScale;
-              const currentScale = parseFloat(displacementMap.getAttribute("scale") || initialScale.toString());
-              const newScale = lerp(currentScale, target, speed);
+            const values = pingPong
+                ? `${initialScale};${maxScale};${initialScale}`
+                : `${initialScale};${maxScale}`
 
-              displacementMap.setAttribute("scale", newScale.toString());
-              if(Math.abs(newScale - target) < 0.1) {
-                displacementMap.setAttribute("scale", target.toString());
-                if(returnEffect && !reverse) {
-                    animationFrame = requestAnimationFrame(() => step(true)); // Trigger reverse anim
-                } else {
-                    setShowFilter(false);
-                    resolve(); // Otherwise animation is done.
-                }
-                return;
-              }
+            setAnimationProps({
+                values,
+                dur: `${duration}s`
+            });
 
-              // Recurse (continue).
-              animationFrame = requestAnimationFrame(() => step(reverse));
+            const handleEnd = () => {
+                animateElement?.removeEventListener("endEvent", handleEnd);
+                setShowFilter(false);
+                resolve();
             };
 
-            // init.
-            animationFrame = requestAnimationFrame(() => step(false));
-        });
-    }
+            animateElement.addEventListener("endEvent", handleEnd);
 
-    onCleanup(() => {
-        cancelAnimationFrame(animationFrame);
-    })
+            // Another stupid "kicker" - this time for chrome. If beginElement triggers arbitrarily early it noops,
+            // this lets the browser catch up. Await sleep(0) doesn't work. <- timeout schedules different from reqAnimFrame.
+            await new Promise(r => requestAnimationFrame(r));
+
+            animateElement.beginElement();
+        })
+    }
 
     return {
         startMeltAnimation,
@@ -84,13 +81,12 @@ export function createMeltingEffect(initialScale = 0) {
         filterSVG: (
             <Show when={showFilter()}>
                 <svg
-                style={{
-                    // eat rocks firefox. display: none works in chrome why must you hurt me like this,.
-                    visibility: "hidden",
-                    width: "0px",
-                    height: "0px",
-                    position: "absolute"
-                }}
+                    style={{
+                        visibility: "hidden",
+                        width: "0px",
+                        height: "0px",
+                        position: "absolute"
+                    }}
                 >
                     <defs>
                         <filter id={filterID}>
@@ -103,16 +99,25 @@ export function createMeltingEffect(initialScale = 0) {
                             />
                             <feDisplacementMap
                                 in="SourceGraphic"
-                                ref={displacementMap}
                                 in2="turbulence"
                                 scale={initialScale.toString()}
                                 xChannelSelector="R"
                                 yChannelSelector="G"
-                            />
+                            >
+                                <animate
+                                    ref={el => animateElement = el}
+                                    attributeName="scale"
+                                    begin="indefinite"
+                                    dur={animationProps().dur}
+                                    values={animationProps().values}
+                                    fill="freeze"
+                                />
+                            </feDisplacementMap>
                         </filter>
                     </defs>
                 </svg>
             </Show>
         )
-    }
+    };
+
 }

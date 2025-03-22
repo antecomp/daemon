@@ -105,7 +105,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 // Player death animation goes here (await).
                 if(!debugMode && startMeltAnimation) {
                     // Will need a more robust check of browser that support this effect w/ some fallback.
-                    if(browser?.name != 'safari') startMeltAnimation(false, 20, 0.01);
+                    if(browser?.name != 'safari') startMeltAnimation(false, 20, 5);
                     await animateMainUIFadeOut();
                 }
                 battleResolve!("opponent");
