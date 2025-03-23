@@ -58,4 +58,17 @@ button {
 #root {
   perspective: 0px;
   transform: perspective(0px);
+
+}
+
+.tooltip {
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
 }

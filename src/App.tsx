@@ -1,14 +1,19 @@
 import './style/base.css'
-import 'lume'
-import Main from './components/views/main/Main'
+// import 'lume'
+// import Main from './components/views/main/Main'
 import { DG_VER } from './config'
+import Battle from './components/views/battle/Battle'
+import { OPPONENT_MIMICRY } from './battles/mimicry'
+import { OPPONENT_PANOPTES } from './battles/panoptes'
+
 
 function App() {
   // Will change to switch current screen based on game triggers.
   return (
     <>
       <footer id='dg-ver'>daemon.garden ({DG_VER})</footer>
-      <Main/>
+      {/* <Main/> */}
+      <Battle opponentData={OPPONENT_MIMICRY}/>
     </>
   )
 }
