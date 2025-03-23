@@ -3,7 +3,7 @@ import { createRoot, createSignal } from "solid-js";
 import { useBattleLogic } from "@/core/battle/engine/battle.logic";
 import { Actor } from "@/core/battle/engine/actor";
 import { Status } from "@/core/battle/statuses/status.types";
-import { DVOpponentData, MultiplierSet } from "@/core/battle/engine/battle.types";
+import { BattleOutcome, DVOpponentData, MultiplierSet } from "@/core/battle/engine/battle.types";
 import { MoveMeta, PlayerMoveMeta } from "@/core/battle/moves/moves.types";
 import { NothingMove } from "@/core/battle/moves/moves.list";
 import { BattleUIState } from "@/core/battle/engine/battle.context";
@@ -499,11 +499,11 @@ describe("Death tests", () => {
     let result = await battleResultPromise;
 
     expect(battleUIState()).toBe(BattleUIState.END);
-    expect(result).toBe("opponent");
+    expect(result).toBe(BattleOutcome.Opponent);
 });
 
 it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
-    const { opponent, setupRound, executeRound, battleUIState } = useBattleLogic(
+    const { opponent, setupRound, executeRound, battleUIState, battleResultPromise } = useBattleLogic(
         generateSampleOpponent([
             ...Array(index).fill(nothingMove), // Fill with no moves until the attack index
             nothingMove, // Opponent does nothing (player attacks)
@@ -521,6 +521,9 @@ it.each([0, 1, 2, 3, 4])("Opponent death idx %i", async (index) => {
 
     await executeRound(moves);
 
+    let result = await battleResultPromise
+
     expect(battleUIState()).toBe(BattleUIState.END);
+    expect(result).toBe(BattleOutcome.Player)
 });
 })

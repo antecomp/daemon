@@ -45,6 +45,10 @@ export interface PlayerData {
     actor: Actor
 }
 
+export enum BattleOutcome {
+    Player, Opponent, Draw
+}
+
 /**
  * Represents a message (flair text) associated with an action in the battle engine.  *
  * @property {keyof ActionIconTable} [icon] - An optional key referencing an icon, registered in the ActionIconTable.
@@ -104,5 +108,5 @@ export interface BattleEngine {
          * @resolves "opponent" when opponent wins (player death)
          * @resolves "draw" when both player and opponent die.
          */
-        battleResultPromise: Promise<"draw" | "player" | "opponent">
+        battleResultPromise: Promise<BattleOutcome>
 }

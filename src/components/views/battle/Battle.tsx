@@ -5,7 +5,7 @@ import vtl from './assets/vtl.png'
 import vtr from './assets/vtr.png'
 import OppStatusBar from './ui/OppStatusbar';
 import Actionbar from './ui/Actionbar';
-import { DVOpponentData } from '@/core/battle/engine/battle.types';
+import { BattleOutcome, DVOpponentData } from '@/core/battle/engine/battle.types';
 import { BattleUIStateContext } from '@/core/battle/engine/battle.context';
 import { useBattleLogic } from '@/core/battle/engine/battle.logic';
 import BattleCanvas from './ui/BattleCanvas';
@@ -43,10 +43,10 @@ export default function Battle(props: BattleProps) {
 
         // This will likely run a CB provided as a prop for resolution.
         battleResultPromise.then((result) => {
-            if(result == "player") {
+            if(result == BattleOutcome.Player) {
                 alert("you are winner.");
             }
-            if(result == "opponent") {
+            if(result == BattleOutcome.Opponent) {
                 alert("you are loser.");
             }
         });

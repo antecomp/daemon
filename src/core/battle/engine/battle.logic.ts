@@ -1,6 +1,6 @@
 import { createMutable } from "solid-js/store";
 import { Actor } from "./actor";
-import { ActionMessage, ActionMessageAppender, BattleEngine, DVOpponentData, MultiplierSet } from "./battle.types";
+import { ActionMessage, ActionMessageAppender, BattleEngine, BattleOutcome, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
 import { batch, createSignal } from "solid-js";
@@ -89,8 +89,8 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     // expose resolve method so we can call it when someone dies.
-    let battleResolve: ((winner: "player" | "opponent" | "draw") => void) | null = null;
-    const battleResultPromise = new Promise<"player" | "opponent" | "draw">((resolve) => {
+    let battleResolve: ((winner: BattleOutcome) => void) | null = null;
+    const battleResultPromise = new Promise<BattleOutcome>((resolve) => {
         battleResolve = resolve;
     });
 
@@ -108,7 +108,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                     if(browser?.name != 'safari') startMeltAnimation(false, 20, 5);
                     await animateMainUIFadeOut();
                 }
-                battleResolve!("opponent");
+                battleResolve!(BattleOutcome.Opponent);
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
@@ -117,11 +117,11 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                     await animateOpponentDamageFlash();
                     await animateOpponentDeathFade();
                 }
-                battleResolve!("player");
+                battleResolve!(BattleOutcome.Player);
                 break;
             case "draw":
                 // For now let's just have player priority, draw is player victory
-                battleResolve!("player");
+                battleResolve!(BattleOutcome.Player);
                 break;
         }
         
