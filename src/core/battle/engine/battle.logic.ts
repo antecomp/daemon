@@ -45,7 +45,7 @@ const browser = detect();
  *   - Resolves to `"opponent"` if the opponent wins (player dies).
  *   - Resolves to `"draw"` if both the player and opponent die.
  */
-export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn): BattleEngine {
+export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn, cheatMode?: boolean): BattleEngine {
     // Provided as context by the Battle component itself.
     const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
 
@@ -146,6 +146,13 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         });
     }
 
+    // Attach hook data to window for live testing
+    if(cheatMode) {
+        console.warn("Battle's Cheat Mode Enabled!");
+        (window as any).player = player;
+        (window as any).opponent = opponent;
+    }
+
     /** 
      * Sets up a new round, fetching opponent moves, updating displayed hint, 
      * and resetting battle state. Called at battle start and after each round. 
@@ -156,7 +163,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         setInsight(generateHint(opponentSequence));
         !debugMode && await animateOpponentSequenceFadeIn();
         setBattleUIState(BattleUIState.WAITING);
-        console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
+        cheatMode && console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...

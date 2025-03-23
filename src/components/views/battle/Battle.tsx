@@ -36,7 +36,7 @@ export default function Battle(props: BattleProps) {
         currentStatuses, 
         actionMessages,
         battleResultPromise
-    } = useBattleLogic(props.opponentData, false, startMeltAnimation);
+    } = useBattleLogic(props.opponentData, false, startMeltAnimation, true);
 
     onMount(() => {
         setupRound();
