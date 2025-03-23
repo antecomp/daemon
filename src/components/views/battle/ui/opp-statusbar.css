@@ -88,6 +88,7 @@
             border-bottom: solid white 1px;
             height: 100%;
             padding: 5px;
+            text-transform: capitalize;
         }
 
         & img {

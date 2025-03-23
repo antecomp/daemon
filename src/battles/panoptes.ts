@@ -1,55 +1,30 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
-import { MoveMeta, MovePerspective, MoveType } from "../core/battle/moves/moves.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan_sprite from "@/assets/artwork/dæmons/snaek.png"
-import sample_move_icon from "@/components/views/battle/assets/placeholder_move_icon.png"
-import prae_icon from '@/core/battle/moves/icons/PRAETORIAN.png'
-import { Attack, Defend, NothingMove, Prepare } from "../core/battle/moves/moves.list";
 import vortexShader from "@/shaders/backgrounds/vortex.shader";
-import { requestOverlayAnimation } from "../core/battle/animation/requestOverlayAnim";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import stockMoves from "@/core/battle/moves/metas/stockMoves";
+import pick from "@/util/pick";
 
+const pantoptes_movebank = {
 
-// Redeclaring these moves to override their names and icons.
-const biteMove: MoveMeta = {
-    displayName: "Bite",
-    icon: sample_move_icon,
-    getMove: Attack,
-}
+    // Rename attack to be appropriate to opponent :)
+    bite: {
+        ...stockMoves.attack,
+        displayName: "bite",
+    },
 
-const nothingMove: MoveMeta = {
-    displayName: "Idle",
-    icon: sample_move_icon,
-    getMove: NothingMove
-}
+    // If we want to have multiple instances of the 
+    // same move we need to assign each a unique key for
+    // get sequence to track usage.
+    bite2: {
+        ...stockMoves.attack,
+        displayName: "bite",
+    },
 
-const prepareMove: MoveMeta = {
-    displayName: "Poise",
-    icon: sample_move_icon,
-    getMove: Prepare
-}
+    // Bulk pull in defaults.
+    ...pick(stockMoves, ['idle', 'prepare', 'defend'])
 
-const shieldMove: MoveMeta = {
-    displayName: "Guard",
-    icon: prae_icon,
-    getMove: {
-        ...Defend, // <- Inherit default behavior of defend...
-        animations: { // <- But then we can override it with new animations!
-            pre: [{
-                priority: 1,
-                execute: async ({opponent, index, movePerspective}) => {
-                    // Close enough approximation, we defend when we anticipate an aggressive move.
-                    if(movePerspective == MovePerspective.Opponent) {
-                        if (opponent.currentSequence[index].type === MoveType.Aggressive) {
-                            await requestOverlayAnimation("shield", [0,0]);
-                        }
-                    } else {
-                        //alert("Player used shield move via mirror. No anim.")
-                    }
-                }
-            }]
-        }
-    }
 }
 
 export const OPPONENT_PANOPTES: DVOpponentData = {
@@ -57,23 +32,20 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     icon: pan_icon,
     sprite: pan_sprite,
     backgroundShader: vortexShader,
-    //moveBin: [biteMove, nothingMove],
     maxHealth: 10,
-    getSequence: () => { // getSequence also has access to info about ourselves and the player to make conditional decisions.
-        return buildSequenceFromWeightMap(
+
+    // Note: getSequence also has access to info about ourselves and the player to make conditional decisions.
+    getSequence: () => 
+        buildSequenceFromWeightMap(
             // Available Moves
+            pantoptes_movebank,
+
+            // Weights indicating likelyhood that some move will succeed another... 
+            // f.e let's make him very aggressive. If he attacks once, he'll likely attack again!
             {
-                biteMove, nothingMove, prepareMove, shieldMove, 
-                // Duplicate move instances will need a unique key...
-                bite2: biteMove,
-            },
-        
-            // Map from moves to how likely other moves are of succeeding it
-            {
-                prepareMove: {biteMove: 3, bite2: 3, shieldMove: 2},
-                biteMove: {bite2: 3},
-                // Other move mappings should default to all weights of 1
+                bite: {bite2: 3},
+                bite2: {bite: 3},
+                prepare: {bite: 3, bite2: 3, defend: 3}
             }
-        );
-    },
+        )   
 }
