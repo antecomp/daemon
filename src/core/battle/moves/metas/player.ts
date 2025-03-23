@@ -8,7 +8,7 @@ import mage_icon_ex from '../icons/mage_ex.png'
 import prae_icon_ex from '../icons/prae_ex.png'
 import priestess_icon_ex from '../icons/priestess_ex.png'
 import trickster_icon_ex from '../icons/trickster_ex.png'
-import { PlayerMoveMeta } from '../moves.types'
+import { MovePerspective, PlayerMoveMeta } from '../moves.types'
 import { Attack } from '../moves.list'
 import { requestOverlayAnimation } from '../../animation/requestOverlayAnim'
 
@@ -79,7 +79,8 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                 pre: [
                     {
                         priority: 1,
-                        execute: async ({self}) => {
+                        execute: async ({self, movePerspective}) => {
+                            if(movePerspective != MovePerspective.Player) return;
                             const preparedLevel = self.getStatusLevel("prepared");
                             if(preparedLevel == 1) {
                                 await requestOverlayAnimation("slash_purpose", [-29, 0]);
