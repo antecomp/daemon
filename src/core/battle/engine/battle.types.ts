@@ -34,6 +34,22 @@ export interface DVOpponentData {
      */
     getSequence: (me: Actor, player: Actor) => MoveMeta[];
 
+
+    /**
+     * Optional method that runs before each round, allows opponent to perform side effects independent of a move.
+     * @param me - The current state of the opponent.
+     * @param player - The current state of the player.
+     */
+    preRoundBehavior?: (me: Actor, player: Actor, appendActionMessage: ActionMessageAppender) => void
+
+    /**
+     * Optional method that runs after each round, allows opponent to perform side effects independent of a move.
+     * @param me - The current state of the opponent.
+     * @param player - The current state of the player.
+     */
+    postRoundBehavior?: (me: Actor, player: Actor, appendActionMessage: ActionMessageAppender) => void
+    
+
     /** * The fragment shader used for rendering the opponent's background.  */
     backgroundShader: string;
 }

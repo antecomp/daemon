@@ -212,6 +212,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 movePerspective: MovePerspective.Opponent
             }
 
+            // Opponent pre round side effects (if any)
+            opponentData.preRoundBehavior?.(opponent, player, appendActionMessage);
+
             // PreEffects and Mults.
             const playerFinalMultipliers = prepareMove(playerContext);
             const opponentFinalMultipliers = prepareMove(opponentContext);
@@ -275,6 +278,9 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         }
 
         if(handleDeathIfNeeded(player, opponent, handleDeath)) return;
+
+        // Opponent post round side effects.
+        opponentData.postRoundBehavior?.(opponent, player, appendActionMessage);
 
         // Otherwise loop back to setup.
         setupRound();
