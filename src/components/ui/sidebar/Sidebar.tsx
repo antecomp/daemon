@@ -6,6 +6,11 @@ import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import bl from '@/assets/ui/corners/s5/bl.png'
 import br from '@/assets/ui/corners/s5/br.png'
+import { startBattle } from "@/core/battle/battleManager";
+import { OPPONENT_PANOPTES } from "@/battles/panoptes";
+import { OPPONENT_MIMICRY } from "@/battles/mimicry";
+import { OPPONENT_NEWPORTS } from "@/battles/newports";
+import { addLogMessage } from "../event-log/EventLog";
 
 export default function Sidebar() {
 
@@ -24,6 +29,16 @@ export default function Sidebar() {
                         </button>
                     )}
                 </For>
+                <hr />
+                <button onClick={() => startBattle(OPPONENT_PANOPTES, (outcome) => console.log("battle result CB: ", outcome))}>
+                    PANOPTES BATTLE
+                </button>
+                <button onClick={() => startBattle(OPPONENT_MIMICRY, () => addLogMessage("battle end callback trigger!!"))}>
+                    MIMICRY BATTLE.
+                </button>
+                <button onClick={() => startBattle(OPPONENT_NEWPORTS)}>
+                    NEWPORTS BATTLE.
+                </button>
             </CornerRect>
         </CornerRect>
     )

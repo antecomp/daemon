@@ -12,6 +12,7 @@ import BattleCanvas from './ui/BattleCanvas';
 import ActionMessages from './ui/ActionMessages';
 import { registerBattleUIRef } from './ui/refRegistry';
 import { createMeltingEffect } from '@/hooks/createMeltEffect';
+import { endBattle } from '@/core/battle/battleManager';
 
 interface BattleProps {
     opponentData: DVOpponentData
@@ -49,7 +50,10 @@ export default function Battle(props: BattleProps) {
             if(result == BattleOutcome.Opponent) {
                 alert("you are loser.");
             }
+
+            endBattle(result);
         });
+        
     });
 
     return (

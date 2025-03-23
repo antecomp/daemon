@@ -10,15 +10,14 @@ import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
 import { Accessor, createSignal, For, onMount } from 'solid-js'
-import { MultiplierSet } from '@/core/battle/engine/battle.types'
+import { BattleOutcome, MultiplierSet } from '@/core/battle/engine/battle.types'
 import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
 import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
-import { createMeltingEffect } from '@/hooks/createMeltEffect'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
-import { requestOverlayAnimation } from '@/core/battle/animation/requestOverlayAnim'
+import { endBattle } from '@/core/battle/battleManager'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -100,23 +99,13 @@ export default function Actionbar(props: ActionbarProps) {
         registerBattleUIRef("sequenceViewPlayer", sequenceVisConRef);
     });
 
-    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
-
 
     return (
         <div id="battle-actionbar"
-        style={{
-            filter: `url(#${filterID})`
-        }}
         >
-            {filterSVG}
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
-                    // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
-                    //onClick={() => {playSound(candle_sfx)}}
-                    //onClick={async () => {await animatePlayerSequenceFadeOut();}}
-                    //onClick={() => startMeltAnimation(true, 20, 10)}
+                    onClick={() => endBattle(BattleOutcome.Opponent)} // TODO: Add actual checks later lol
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

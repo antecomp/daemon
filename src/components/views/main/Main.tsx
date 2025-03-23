@@ -3,7 +3,6 @@ import EventLog from "@/components/ui/event-log/EventLog";
 import InteractionModePicker from "../../ui/interaction/InteractionModePicker";
 import Sidebar from "@/components/ui/sidebar/Sidebar";
 import './Main.css'
-import Hermes from "@/components/ui/hermes/Hermes";
 import HermesOverlay from "@/components/ui/hermes/HermesOverlay";
 
 /**
@@ -17,7 +16,6 @@ export default function Main() {
             <SceneContainer/>
             <EventLog/>
             <InteractionModePicker/>
-
             <HermesOverlay/>
         </div>
         </>
