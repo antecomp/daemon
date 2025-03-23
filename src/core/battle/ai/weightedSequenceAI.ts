@@ -18,7 +18,7 @@ export type MoveWeightMap<M extends Record<string, MoveMeta>> = {
  * of one move following another. The sequence is constructed by selecting moves
  * randomly, weighted by the provided weight map. 
  *
- * @param availableMoves - A map of available moves, where the keys are unique move
+ * @param moveBank - A map of available moves, where the keys are unique move
  *                         identifiers and the values are metadata about each move.
  *                         The keys must be unique to allow duplicate move mappings.
  * @param weightMap - A map defining the weighted chances of one move following another.
@@ -30,41 +30,57 @@ export type MoveWeightMap<M extends Record<string, MoveMeta>> = {
  *                     - Weights should be > 0, but can be fractional!
  * 
  * @throws {Error} If the number of available moves is less than the required sequence length.
+ * @throws {Error} If unable to find valid moves while building the sequence.
+ *  - Note: The valid checkers should never be so restrictive that this becomes an issue. 
+ *          In fact, we only really have one to prevent repeat from being first.
  * 
  * @returns An array of move metadata objects representing the generated sequence.
  */
 export function buildSequenceFromWeightMap<M extends Record<string, MoveMeta>>(
-    availableMoves: M, // Map of moves available (use unique key to have duplicate move mappings)
+    moveBank: M, // Map of moves available (use unique key to have duplicate move mappings)
     weightMap: MoveWeightMap<M> // moveKey -> {moveKey: number} weighted chance of other moves following each move.
 ): MoveMeta[] {
-
-    const moveKeys = Object.keys(availableMoves);
-    if (moveKeys.length < SEQUENCE_LENGTH) {
-        throw new Error("Not enough moves provided to build full sequence.");
+    const moveKeys = Object.keys(moveBank);
+    if(moveKeys.length < SEQUENCE_LENGTH) {
+        throw new Error("Not enough moves provided to build a full sequence");
     }
 
-    const availableKeys = new Set(moveKeys);
     const selectedKeys: string[] = [];
+    const workingSequence: MoveMeta[] = [];
 
-    const firstKey = pickRandom(Array.from(availableKeys));
+    // First move is picked randomly.
+    const validFirstMoves = moveKeys.filter(key => 
+        !moveBank[key].canPerform || moveBank[key].canPerform([])
+    )
+    if (validFirstMoves.length === 0) {
+        throw new Error("No valid moves available for the first step.");
+    }
+    const firstKey = pickRandom(validFirstMoves);
     selectedKeys.push(firstKey);
-    availableKeys.delete(firstKey);
+    workingSequence.push(moveBank[firstKey]);
 
-    let currentKey = firstKey;
-
-    while(selectedKeys.length < SEQUENCE_LENGTH) {
+    while(workingSequence.length < SEQUENCE_LENGTH) {
+        const currentKey = selectedKeys[selectedKeys.length - 1];
         const currentWeights = weightMap[currentKey];
 
-        // Get weights of remaining options.
-        const options = Array.from(availableKeys);
-        const weights = options.map(option => currentWeights?.[option] ?? 1); // <- default to 1 if no weight provided.
+        // Filter for valid subsequent moves.
+        const options = moveKeys.filter(key => {
+            const move = moveBank[key];
+            return !selectedKeys.includes(key) && (!move.canPerform || move.canPerform(workingSequence))
+        });
 
-        // Pick next move based on weighted options.
+        if (options.length === 0) {
+            throw new Error("No valid moves available to complete the sequence.");
+        }
+
+        // Weights default to 1 if none provided. 
+        const weights = options.map(option => currentWeights?.[option] ?? 1);
+
         const nextKey = pickRandomWeighted(options, weights);
         selectedKeys.push(nextKey);
-        availableKeys.delete(nextKey);
-        currentKey = nextKey;
+        workingSequence.push(moveBank[nextKey])
     }
 
-    return selectedKeys.map(key => availableMoves[key]);
+    return workingSequence;
+
 }
