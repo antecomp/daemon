@@ -92,7 +92,7 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                                 await requestOverlayAnimation("slash_norm", [-29, 50]);
                             }
                         },
-                        soundEffect: async () => await playSound(candle_sfx)
+                        soundEffect: async ({movePerspective}) => {if (movePerspective == MovePerspective.Player) await playSound(candle_sfx)}
                     }
                 ]
         }
