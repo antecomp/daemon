@@ -2,9 +2,11 @@ import { createProgram } from "@/util/webgl.utils"
 import { createEffect, onMount } from "solid-js"
 import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
+import { Point } from "@/extra.types"
 
 interface BattleCanvasProps {
   sprite: string // image url
+  spriteOffset?: Point
   fragmentShader: string
 }
 
@@ -72,11 +74,20 @@ export default function BattleCanvas(props: BattleCanvasProps) {
 
   })
 
+  console.log(props);
+
 
   return (
     <>
       <canvas id="battle-bg" width="1060" height="695" ref={canvasRef}></canvas>
-      <img src={props.sprite} alt="" id="battle-sprite" ref={spriteRef} />
+      <img 
+        src={props.sprite} 
+        id="battle-sprite" 
+        ref={spriteRef} 
+        style={{
+          translate: props.spriteOffset ? `${props.spriteOffset.x}px ${props.spriteOffset.y}px` : "none",
+        }}
+      />
       <OverlayAnimator />
     </>
   )

@@ -83,13 +83,13 @@ export const playerMoves: Record<string, PlayerMoveMeta> = {
                             if(movePerspective != MovePerspective.Player) return;
                             const preparedLevel = self.getStatusLevel("prepared");
                             if(preparedLevel == 1) {
-                                await requestOverlayAnimation("slash_purpose", [-29, 0]);
+                                await requestOverlayAnimation("slash_purpose", [-80, -20]);
                             } else if (preparedLevel >= 2) {
-                                await requestOverlayAnimation("slash_majes", [-29, 0]);
+                                await requestOverlayAnimation("slash_majes", [-20, -20]);
                             } else if (self.getStatusLevel("mania") > 0) {
-                                await requestOverlayAnimation("slash_elag", [0, 0])
+                                await requestOverlayAnimation("slash_elag", [20, -20])
                             } else {
-                                await requestOverlayAnimation("slash_norm", [-29, 50]);
+                                await requestOverlayAnimation("slash_norm", [0, 45]);
                             }
                         },
                         soundEffect: async ({movePerspective}) => {if (movePerspective == MovePerspective.Player) await playSound(candle_sfx)}

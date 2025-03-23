@@ -31,6 +31,10 @@ export const OPPONENT_PANOPTES: DVOpponentData = {
     name: "Panoptesian Serpent",
     icon: pan_icon,
     sprite: pan_sprite,
+    spriteOffset: {
+        x: 0,
+        y: -25
+    },
     backgroundShader: vortexShader,
     maxHealth: 10,
 

@@ -10,7 +10,7 @@ export const [overlayAnimRequests, setOverlayAnimRequests] = createSignal<Overla
  * @param position [top,left] offset to position overlay sprite
  * @returns Promise that resolves when the sprite animation is complete (frameRate * totalFrames)
  */
-export function requestOverlayAnimation(name: string, position: [number, number]): Promise<void> {
+export function requestOverlayAnimation(name: string, position: [number, number] = [0,0]): Promise<void> {
     if (!overlayAnimations[name]) {
       throw new Error(`Animation "${name}" not found`);
     }

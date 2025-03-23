@@ -3,6 +3,7 @@ import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionIconTable } from "./battle.config";
 import { BattleUIState } from "./battle.context";
+import { Point } from "@/extra.types";
 
 /** Damage multiplier struct */
 export type MultiplierSet = {incoming: number, outgoing: number};
@@ -20,6 +21,9 @@ export interface DVOpponentData {
 
     /** * The sprite asset url.  */
     sprite: string;
+
+    /** Optional offset to position sprite away from center. */
+    spriteOffset?: Point
 
     /** * The maximum health value of the opponent. Also used as initial health.  */
     maxHealth: number;

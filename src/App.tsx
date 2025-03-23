@@ -3,9 +3,8 @@ import './style/base.css'
 // import Main from './components/views/main/Main'
 import { DG_VER } from './config'
 import Battle from './components/views/battle/Battle'
-//import { OPPONENT_PANOPTES } from './battles/panoptes'
-//import { OPPONENT_NEWPORTS } from './battles/newports'
 import { OPPONENT_MIMICRY } from './battles/mimicry'
+import { OPPONENT_PANOPTES } from './battles/panoptes'
 
 
 function App() {

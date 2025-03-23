@@ -8,6 +8,8 @@ import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI"
 import distortedGridShader from "@/shaders/backgrounds/disgrid.shader";
 import { ManiaStatus } from "@/core/battle/statuses/statuses";
 
+import placeholder_sprite from "@/assets/placeholders/test_sprite.png"
+
 const mimicry_movebank = {
     ...pick(stockMoves, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
     mirror2: stockMoves.mirror,
@@ -17,7 +19,12 @@ const mimicry_movebank = {
 export const OPPONENT_MIMICRY: DVOpponentData = {
     name: "Fractured Mimicry",
     icon: mimicry_icon,
+    //sprite: placeholder_sprite,
     sprite: mimicry_sprite,
+    spriteOffset: {
+        x: -14,
+        y: 41
+    },
     backgroundShader: distortedGridShader,
     maxHealth: 15,
 

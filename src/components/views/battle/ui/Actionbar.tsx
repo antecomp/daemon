@@ -18,6 +18,7 @@ import { registerBattleUIRef } from './refRegistry'
 import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
 import { createMeltingEffect } from '@/hooks/createMeltEffect'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
+import { requestOverlayAnimation } from '@/core/battle/animation/requestOverlayAnim'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -111,11 +112,11 @@ export default function Actionbar(props: ActionbarProps) {
             {filterSVG}
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    // onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
+                    onClick={async () => {await requestOverlayAnimation("shield", [0, 0]); console.log("animation complete")}} 
                     // onClick={async () => {await Promise.all([opponentSequenceSwish(), playerSequenceSwish()])}}
                     //onClick={() => {playSound(candle_sfx)}}
                     //onClick={async () => {await animatePlayerSequenceFadeOut();}}
-                    onClick={() => startMeltAnimation(true, 20, 10)}
+                    //onClick={() => startMeltAnimation(true, 20, 10)}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

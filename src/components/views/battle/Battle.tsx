@@ -70,7 +70,7 @@ export default function Battle(props: BattleProps) {
                         icon={props.opponentData.icon}
                         sequenceHint={insight()}
                     />
-                    <BattleCanvas sprite={props.opponentData.sprite} fragmentShader={props.opponentData.backgroundShader}/>
+                    <BattleCanvas sprite={props.opponentData.sprite} spriteOffset={props.opponentData.spriteOffset} fragmentShader={props.opponentData.backgroundShader} />
                 </CornerRect>
                 <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses}} />
             </div>
