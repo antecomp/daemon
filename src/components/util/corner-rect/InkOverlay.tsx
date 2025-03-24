@@ -45,7 +45,7 @@ export function InkOverlay({ initial, final }: TriangleWaveProps) {
     const finalPointsB = generateTriangleWavePoints({...final, direction: "bottom", phase: final.width / 2});
 
     return (
-        <svg width={500} height={500} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <svg width={500} height={500} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="ink-overlay">
             <filter id="displacementFilter">
                 <feTurbulence
                     type="turbulence"
@@ -61,26 +61,37 @@ export function InkOverlay({ initial, final }: TriangleWaveProps) {
                     yChannelSelector="G" 
                 />
             </filter>
-            <polygon fill="blue" points={initialPointsA} style="filter: url(#displacementFilter)">
+            <g
+                style={
+                    {width: `100%`,
+                        rotate: `66deg`,
+                        scale: `200% 200%`,
+                        "transform-origin": `center`}
+                }
+            >
+            <polygon fill="black" points={initialPointsA} style="filter: url(#displacementFilter)">
                 <animate
                     attributeName="points"
-                    dur="2s"
-                    repeatCount="indefinite"
+                    dur="3s"
+                    // repeatCount="indefinite"
+                    fill="freeze"
                     values={`${initialPointsA}; ${finalPointsA}`}
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1"
                 />
             </polygon>
-            <polygon fill="blue" points={initialPointsB} style="filter: url(#displacementFilter)">
+            <polygon fill="black" points={initialPointsB} style="filter: url(#displacementFilter)">
                 <animate
                     attributeName="points"
-                    dur="2s"
-                    repeatCount="indefinite"
+                    dur="3s"
+                    fill="freeze"
+                    // repeatCount="indefinite"
                     values={`${initialPointsB}; ${finalPointsB}`}
                     calcMode="spline"
                     keySplines="0.42 0 0.58 1"
                 />
             </polygon>
+            </g>
         </svg>
     );
 }
