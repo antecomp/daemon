@@ -79,7 +79,7 @@ export default function BattleCanvas(props: BattleCanvasProps) {
 
   return (
     <>
-      <canvas id="battle-bg" width="1060" height="695" ref={canvasRef}></canvas>
+      <canvas id="battle-bg" width="1060" height="715" ref={canvasRef}></canvas>
       <img 
         src={props.sprite} 
         id="battle-sprite" 

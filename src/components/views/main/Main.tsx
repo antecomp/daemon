@@ -4,6 +4,7 @@ import InteractionModePicker from "../../ui/interaction/InteractionModePicker";
 import Sidebar from "@/components/ui/sidebar/Sidebar";
 import './Main.css'
 import HermesOverlay from "@/components/ui/hermes/HermesOverlay";
+import BattleOverlay from "../battle/BattleOverlay";
 
 /**
  * Main container UI/Screen for the majority of the game. It's the layout for our base scene navigation/interaction.
@@ -17,6 +18,7 @@ export default function Main() {
             <EventLog/>
             <InteractionModePicker/>
             <HermesOverlay/>
+            <BattleOverlay/>
         </div>
         </>
     )
