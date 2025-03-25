@@ -1,3 +1,5 @@
+import { OPPONENT_MIMICRY } from "@/battles/mimicry";
+import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";
 
@@ -69,6 +71,7 @@ whyFork.addCAROptions([
     }
 ])
 
+questionLoopback.addTerminationOption("Trigger", "Do the test trigger for side effect", () => alert("test"));
 questionLoopback.addTerminationOption("Option 3", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option 4", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option 5", "Another option I was too lazy to type out")
@@ -81,5 +84,7 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
+
+questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", () => startBattle(OPPONENT_MIMICRY));
 
 export default root;

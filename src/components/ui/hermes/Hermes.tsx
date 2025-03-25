@@ -74,6 +74,7 @@ export default function Hermes({root}: {root: DialogueNode}) {
   async function selectOption(option: DialogueOption) {
     setCurrentOptions([]); // Clear options
     setHoveredOption("") // Clear preview text
+    option.sideEffect?.();
     if(option.next) {
         await advanceDialogue(option.next);
     } else {

@@ -2,6 +2,12 @@ export interface DialogueOption {
     summaryText: string
     fullText: string
     next?: DialogueNode
+
+    /**
+     * Side effect that is immediately triggered when option selected.
+     * Can be used to initialize some event when we end dialogue.
+     */
+    sideEffect?: () => void;
 }
 
 /**
@@ -95,5 +101,5 @@ export type DialogueNode = {
      * @param summaryText 
      * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
      */
-    addTerminationOption(summaryText: string, fullText: string): DialogueNode
+    addTerminationOption(summaryText: string, fullText: string, sideEffect?: () => void): DialogueNode
 }

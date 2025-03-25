@@ -102,8 +102,8 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             return active;
         },
 
-        addTerminationOption(summaryText, fullText) {
-            this.options.push({summaryText, fullText})
+        addTerminationOption(summaryText, fullText, sideEffect) {
+            this.options.push({summaryText, fullText, sideEffect})
             return this;
         },
 
