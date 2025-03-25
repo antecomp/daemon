@@ -10,6 +10,8 @@ export interface DialogueOption {
     sideEffect?: () => void;
 }
 
+export type RenderOrNode = DialogueNode['render'] | DialogueNode
+
 /**
  * A DialogueNode represents a single "message" within a dialogue tree. You can generate a completely new one with the createDialogueNode FF (this is done for a root node).
  * 
@@ -102,4 +104,33 @@ export type DialogueNode = {
      * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
      */
     addTerminationOption(summaryText: string, fullText: string, sideEffect?: () => void): DialogueNode
+
+    /** Conditionally attach a child dialogue node, when a child doesn't already exist.
+     * 
+     * These can be chained for multiple conditions, the first one that is true will be attached.
+     * @param condition - boolean that determines if the child should be attached
+     * @param child - render or node to attach if the condition is true
+     * @returns - the parent node (this)
+     */
+    addChildIf(condition: boolean, child: RenderOrNode): DialogueNode
+
+    /** Attach a faillback child dialogue node if one doesn't exist, and if there's no options (usually chained with .if)
+     * @param child - render or node to attach if no other child is attached (all conditions are false)
+     * @returns - the parent node (this)
+     */
+    addFallbackChild(child: RenderOrNode): DialogueNode
+
+    /** Attach an option when condition is met
+     * @param condition - boolean that determines if the option should be attached
+     * @param option - summaryText, fullText, next: RenderOrNode, name
+     * @returns - the parent node (this)
+     */
+    addOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string }): DialogueNode
+
+    /** Attach fallback option if none exist and no "nex" is specified (used in conjunction with addOptionIf, addChildIf, etc)
+     * @param option - summaryText, fullText, next: RenderOrNode, name
+     * @returns - the parent node (this)
+     */
+    addFallbackOption(option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string }): DialogueNode
+
 }

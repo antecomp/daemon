@@ -1,6 +1,6 @@
 import { OPPONENT_MIMICRY } from "@/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
-import { createDialogueNode } from "@/core/dialogue/dialogueNode";
+import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";
 
 const characters = Object.freeze({
@@ -52,13 +52,19 @@ whatFork.addCAROptionChild("This?", "What is this?", "This as in...?", character
             summaryText: "Dialogue",
             fullText: "This dialogue system",
             // You can be as fucking evil as you want :)
-            responseAsRenderOrNode: (() => {
-                // Generate a small tree inside an IIFE, return the root of it to attach without having to save intermediary :D
-                const rtn = createDialogueNode("The dialogue system we're using right now is called Hermes", characters.VIYA)
-                rtn.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
-                    .addChild(questionLoopIntermediary)
-                return rtn;
-            })()
+            // responseAsRenderOrNode: (() => {
+            //     // Generate a small tree inside an IIFE, return the root of it to attach without having to save intermediary :D
+            //     const rtn = createDialogueNode("The dialogue system we're using right now is called Hermes", characters.VIYA)
+            //     rtn.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
+            //         .addChild(questionLoopIntermediary)
+            //     return rtn;
+            // })()
+            responseAsRenderOrNode: 
+                // Or instead of torturing yourself, use this helper function to create an inline tree.
+                createInlineDialogueTree("The dialogue system we're using right now is called Hermes", characters.VIYA, (root) => {
+                    root.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
+                        .addChild(questionLoopIntermediary)
+                })
         }
     ])
 

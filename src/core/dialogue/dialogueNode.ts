@@ -117,9 +117,66 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName }) => 
                 this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName)
             );
-        }
+        },
 
+        addChildIf(condition, child) {
+            if(condition && this.next === undefined) {
+                this.addChild(child);
+            }
+            return this;
+        },
+
+        addFallbackChild(child) {
+            if(this.next === undefined && this.options.length === 0)  {
+                this.addChild(child);
+            }
+            return this;
+        },
+
+        addOptionIf(condition, option) {
+            if(condition) {
+                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name);
+            }
+            return this;
+        },
+
+        addFallbackOption(option) {
+            if(this.options.length === 0) {
+                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name);
+            }
+            return this;
+        },
     }
 
     return node;
+}
+
+
+/**
+ * Creates an inline dialogue tree by initializing a root dialogue node and
+ * passing it to a builder function for generating the tree (adding more nodes).
+ *
+ * @param rootRender - The render function for the root dialogue node.
+ * @param rootName - The name of the root dialogue node.
+ * @param builder - A function that receives the root dialogue node and allows
+ * customization of the dialogue tree structure.
+ * @returns The root dialogue node of the constructed dialogue tree.
+ * 
+ * Motivation: .addChild returns the child node, so we cannot just inline .addChild calls, as we would lose the reference to the root node.
+ * This function allows us to create an inline dialogue tree without having to save the root node.
+ * @example
+ * ```typescript
+ * // Conditionally add an inline dialogue tree (branch) without having to save the root node.
+    someDialogueNode.addChildIf(true, 
+        createInlineDialogueTree("root of inline tree", "Inline Tree", (root) => {
+            root.addChild("I'm a child of an inline tree")
+                .addChild("I'm a grandchild of a child of an inline tree")
+        })
+    )
+ * ```
+ */
+export function createInlineDialogueTree(rootRender: DialogueNode['render'], rootName: string, builder: (root: DialogueNode) => void) {
+    const root = createDialogueNode(rootRender, rootName);
+    builder(root);
+    return root;
 }

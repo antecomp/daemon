@@ -1,4 +1,4 @@
-import { createDialogueNode } from "@/core/dialogue/dialogueNode";
+import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
 
 // You can make local enums to track the people talking
 // This is soley a helper to keep spelling/format consistent.
@@ -85,7 +85,18 @@ understandQuestionFork.addCAROptionChild(
     () => "<randomly generate a VLID here...>",
     "We'll be in touch after that to find a time and place to verify everything is working before handing off the origins.",
 ])
-.addChild("Got it", characters.ARDA);
+.addChild("Got it", characters.ARDA)
+    // .addChildIf(false, "I should never see this")
+    // .addChildIf(false, "I should see this")
+    // .addFallbackChild("Fallback")
+    .addChildIf(true, 
+        // We can generate a inline tree without a outer-scope variable reference.
+        createInlineDialogueTree("root of inline tree", "Inline Tree", (root) => {
+            root.addChild("I'm a child of an inline tree")
+                .addChild("I'm a child of a child of an inline tree")
+        })
+    )
+    .addFallbackChild("Fallback")
     
 
 export default root
