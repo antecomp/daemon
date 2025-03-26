@@ -109,8 +109,6 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         addOptions(options) {
-            // TODO: For the love of code make addChildAsOption destructure an object to remove this mess
-            // and so I can just make an interface for the constructor arguments.
             return options.map(({ summaryText, fullText, renderOrNode, name, optionConfig }) => 
                 this.addChildAsOption(summaryText, fullText, renderOrNode, name, optionConfig)
             );
@@ -144,7 +142,7 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         addFallbackChildAsOption(option) {
-            if(this.options.length === 0) {
+            if(this.options.length === 0 && this.next === undefined) {
                 this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name, option.optionConfig);
             }
             return this;
@@ -178,7 +176,7 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
     )
  * ```
  */
-export function createInlineDialogueTree(rootRender: DialogueNode['render'], rootName: string, builder: (root: DialogueNode) => void) {
+export function createInlineDialogueTree(rootRender: DialogueNode['render'], rootName: string, builder: (root: DialogueNode) => void): DialogueNode {
     const root = createDialogueNode(rootRender, rootName);
     builder(root);
     return root;

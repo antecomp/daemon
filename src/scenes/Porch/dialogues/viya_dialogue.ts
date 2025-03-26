@@ -11,6 +11,10 @@ const characters = Object.freeze({
 
 const root = createDialogueNode("Hey, welcome to daemon.garden.", characters.VIYA);
 
+// After a question is asked we go...
+//      Any more questions?
+//          yes -> question loopback
+//          no  -> end dialogue
 const questionLoopback = createDialogueNode(() => pickRandom(["Go for it.", "I'll try my best.", "Alright."]), characters.VIYA);
 const questionLoopIntermediary = createDialogueNode("Any more questions?", characters.VIYA)
 questionLoopIntermediary.addCAROptionChild("Yes", "Yes", questionLoopback)
@@ -51,16 +55,8 @@ whatFork.addCAROptionChild("This?", "What is this?", "This as in...?", character
         {
             summaryText: "Dialogue",
             fullText: "This dialogue system",
-            // You can be as fucking evil as you want :)
-            // responseAsRenderOrNode: (() => {
-            //     // Generate a small tree inside an IIFE, return the root of it to attach without having to save intermediary :D
-            //     const rtn = createDialogueNode("The dialogue system we're using right now is called Hermes", characters.VIYA)
-            //     rtn.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
-            //         .addChild(questionLoopIntermediary)
-            //     return rtn;
-            // })()
             responseAsRenderOrNode: 
-                // Or instead of torturing yourself, use this helper function to create an inline tree.
+                // Build a short inline tree to add some dialogue nodes without having to save some root variable out-of-scope.
                 createInlineDialogueTree("The dialogue system we're using right now is called Hermes", characters.VIYA, (root) => {
                     root.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
                         .addChild(questionLoopIntermediary)

@@ -7,13 +7,11 @@ export interface DialogueOption extends DialogueOptionConfig {
 export interface DialogueOptionConfig {
     /**
      * Side effect that is immediately triggered when option selected.
-     * Can be used to initialize some event when we end dialogue when used on termination options.
+     * Namely can be attached to termination options to trigger an event when the dialogue ends.
      */
     sideEffect?: () => void,
 
-    /**
-     * CB Used to filter options in realtime based on dialogue/gamestate
-     */
+    /** CB Used to filter options in realtime based on dialogue/gamestate */
     onlyShowWhen?: () => boolean
 }
 
@@ -37,7 +35,8 @@ export type RenderOrNode = DialogueNode['render'] | DialogueNode
 export type DialogueNode = {
     id: string;
     name: string
-    render: string | (() => string) // Maybe just use empty string to representing blank message for navigation nodes (f.e chaining options together with no text).
+    render: string | (() => string)
+        // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
     options: DialogueOption[]
     next?: DialogueNode
     sideEffect?: () => void,
@@ -56,6 +55,7 @@ export type DialogueNode = {
      * @param fullText Full previewed text in the dialogue box 
      * @param renderOrNode existing node or 'render' that is navigated to by this option.
      * @param name When creating a new node, name to attach to it. If none provided it will inherit from the parent.
+     * @returns ref to the child node
      */
     addChildAsOption(
         summaryText: string, fullText: string, 
@@ -111,7 +111,7 @@ export type DialogueNode = {
     /**
      * Quickly append a chain of messages as a simple array.
      * @param messages Array of either Dialogue Node Render-ers (string or function that returns a string) or obj of {name, render} for adapting the name
-     * @returns ref to the last message in the chain.
+     * @returns ref to the last node in the chain.
      */
     addMessageChain(messages: ({name: string, render: DialogueNode['render']} | DialogueNode['render'])[]): DialogueNode
 
@@ -120,12 +120,14 @@ export type DialogueNode = {
      * @param messages Array of messages
      * @param first First person to speak (name)
      * @param second Next person to speak (name)
+     * @returns ref to the last node in the chain
      */
     addBackAndFourthChain(messages: (DialogueNode['render'])[], first: string, second: string): DialogueNode
 
     /**
      * Attach a "side effect" (additional function) that will run when a node is rendered. Returns a ref back to the node.
      * @param ef The CB to run when the node is entered
+     * @returns the node back (this) for chaining
      */
     attachSideEffect(ef: () => void): DialogueNode
 
@@ -133,6 +135,7 @@ export type DialogueNode = {
      * Add a option that ends the dialogue with custom text.
      * @param summaryText 
      * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
+     * @returns the node back (this) for chaining.
      */
     addTerminationOption(summaryText: string, fullText: string, optionConfig?: DialogueOptionConfig): DialogueNode
 
@@ -158,7 +161,7 @@ export type DialogueNode = {
      */
     addChildAsOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, optionConfig?: DialogueOptionConfig }): DialogueNode
 
-    /** Attach fallback option if none exist and no "nex" is specified (used in conjunction with addOptionIf, addChildIf, etc)
+    /** Attach fallback option if none exist and no "next" is specified (used in conjunction with addOptionIf, addChildIf, etc)
      * @param option - summaryText, fullText, next: RenderOrNode, name
      * @returns - the parent node (this)
      */
