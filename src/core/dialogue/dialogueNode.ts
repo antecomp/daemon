@@ -1,4 +1,4 @@
-import { DialogueNode } from "./dialogueNode.types";
+import { DialogueNode, DialogueOptionConfig } from "./dialogueNode.types";
 import { DEFAULT_DIALOGUE_SENDER } from "../../config";
 
 let nodeCounter = 0;
@@ -35,14 +35,14 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         // Helper function to automatically attach a child as an option.
-        addChildAsOption(summaryText, fullText, renderOrNode, name?: string, onlyShowWhen?: () => boolean) {
+        addChildAsOption(summaryText, fullText, renderOrNode, name?: string, config?: DialogueOptionConfig) {
             // Attach Existing
             if(typeof renderOrNode === 'object' && 'id' in renderOrNode) {
                 this.options.push({
                     summaryText, 
                     fullText,
                     next: renderOrNode,
-                    onlyShowWhen
+                    ...config
                 })
                 return renderOrNode;
             }
@@ -58,10 +58,10 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
 
-        addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, onlyShowWhen) {
+        addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, config) {
             const callNode = createDialogueNode(fullText, senderName ?? DEFAULT_DIALOGUE_SENDER);
             this.options.push({
-                summaryText, fullText, next: callNode, onlyShowWhen
+                summaryText, fullText, next: callNode, ...config
             })
 
             // Attach existing node as response
@@ -103,22 +103,22 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             return active;
         },
 
-        addTerminationOption(summaryText, fullText, sideEffect, onlyShowWhen) {
-            this.options.push({summaryText, fullText, sideEffect, onlyShowWhen})
+        addTerminationOption(summaryText, fullText, optionConfig) {
+            this.options.push({ summaryText, fullText, ...optionConfig });
             return this;
         },
 
         addOptions(options) {
             // TODO: For the love of code make addChildAsOption destructure an object to remove this mess
             // and so I can just make an interface for the constructor arguments.
-            return options.map(({ summaryText, fullText, renderOrNode, name, onlyShowWhen }) => 
-                this.addChildAsOption(summaryText, fullText, renderOrNode, name, onlyShowWhen)
+            return options.map(({ summaryText, fullText, renderOrNode, name, optionConfig }) => 
+                this.addChildAsOption(summaryText, fullText, renderOrNode, name, optionConfig)
             );
         },
 
         addCAROptions(carOptions) {
-            return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName, onlyShowWhen }) => 
-                this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, onlyShowWhen)
+            return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig }) => 
+                this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig)
             );
         },
 
@@ -138,14 +138,14 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
 
         addChildAsOptionIf(condition, option) {
             if(condition) {
-                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name, option.onlyShowWhen);
+                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name, option.optionConfig);
             }
             return this;
         },
 
         addFallbackChildAsOption(option) {
             if(this.options.length === 0) {
-                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name, option.onlyShowWhen);
+                this.addChildAsOption(option.summaryText, option.fullText, option.next, option.name, option.optionConfig);
             }
             return this;
         },

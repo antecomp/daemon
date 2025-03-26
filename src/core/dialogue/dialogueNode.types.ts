@@ -1,14 +1,19 @@
-export interface DialogueOption {
+export interface DialogueOption extends DialogueOptionConfig {
     summaryText: string
     fullText: string
     next?: DialogueNode
+}
 
+export interface DialogueOptionConfig {
     /**
      * Side effect that is immediately triggered when option selected.
-     * Can be used to initialize some event when we end dialogue.
+     * Can be used to initialize some event when we end dialogue when used on termination options.
      */
-    sideEffect?: () => void;
+    sideEffect?: () => void,
 
+    /**
+     * CB Used to filter options in realtime based on dialogue/gamestate
+     */
     onlyShowWhen?: () => boolean
 }
 
@@ -56,7 +61,7 @@ export type DialogueNode = {
         summaryText: string, fullText: string, 
         renderOrNode: DialogueNode['render'] | DialogueNode, 
         name?: string, 
-        onlyShowWhen?: () => boolean
+        optionConfig?: DialogueOptionConfig
     ): DialogueNode;
 
     /**
@@ -68,7 +73,7 @@ export type DialogueNode = {
             summaryText: string, fullText: string, 
             renderOrNode: DialogueNode['render'] | DialogueNode, 
             name?: string, 
-            onlyShowWhen?: () => boolean
+            optionConfig?: DialogueOptionConfig
         }[]
     ): DialogueNode[];
 
@@ -87,7 +92,7 @@ export type DialogueNode = {
         responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
         senderName?: string, 
         responderName?: string,
-        onlyShowWhen?: () => boolean
+        optionConfig?: DialogueOptionConfig
     ): DialogueNode,
 
     /**
@@ -99,7 +104,7 @@ export type DialogueNode = {
             summaryText: string, fullText: string, 
             responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
             senderName?: string, responderName?: string,
-            onlyShowWhen?: () => boolean
+            optionConfig?: DialogueOptionConfig
         }[]
     ): DialogueNode[];
 
@@ -129,7 +134,7 @@ export type DialogueNode = {
      * @param summaryText 
      * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
      */
-    addTerminationOption(summaryText: string, fullText: string, sideEffect?: () => void, onlyShowWhen?: () => boolean): DialogueNode
+    addTerminationOption(summaryText: string, fullText: string, optionConfig?: DialogueOptionConfig): DialogueNode
 
     /** Conditionally attach a child dialogue node, when a child doesn't already exist.
      * 
@@ -151,12 +156,12 @@ export type DialogueNode = {
      * @param option - summaryText, fullText, next: RenderOrNode, name
      * @returns - the parent node (this)
      */
-    addChildAsOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, onlyShowWhen?: () => boolean }): DialogueNode
+    addChildAsOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, optionConfig?: DialogueOptionConfig }): DialogueNode
 
     /** Attach fallback option if none exist and no "nex" is specified (used in conjunction with addOptionIf, addChildIf, etc)
      * @param option - summaryText, fullText, next: RenderOrNode, name
      * @returns - the parent node (this)
      */
-    addFallbackChildAsOption(option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, onlyShowWhen?: () => boolean }): DialogueNode
+    addFallbackChildAsOption(option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, optionConfig?: DialogueOptionConfig }): DialogueNode
 
 }

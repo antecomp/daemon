@@ -54,7 +54,12 @@ richDadFork.addCAROptionChild(
     "It's my job to. I'm damn good at it too.",
     characters.ARDA,
     characters.MAN,
-    () => (true == true) // Check for some game flag to see if this option is available to us.
+    {
+        // Conditionally render our option based on some live gamestate
+        onlyShowWhen() {
+            return true == true
+        },
+    }
 ).addChild(resumePoint);
 
 richDadFork.addTerminationOption("Fuck you. [END CONVERSATION]", "Fuck you.");

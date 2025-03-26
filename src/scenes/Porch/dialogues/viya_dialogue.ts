@@ -77,9 +77,9 @@ whyFork.addCAROptions([
     }
 ])
 
-questionLoopback.addTerminationOption("Trigger", "Do the test trigger for side effect", () => alert("test"));
-questionLoopback.addTerminationOption("Conditionally Rendered Option", "Another option I was too lazy to type out", undefined, () => true)
-questionLoopback.addTerminationOption("Filtered option", "I should never see this", undefined, () => false)
+questionLoopback.addTerminationOption("Trigger", "Do the test trigger for side effect", {sideEffect: () => alert("test")});
+questionLoopback.addTerminationOption("Conditionally Rendered Option", "Another option I was too lazy to type out", {onlyShowWhen: () => true})
+questionLoopback.addTerminationOption("Filtered option", "I should never see this", {onlyShowWhen: () => false})
 questionLoopback.addTerminationOption("Option 5", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
@@ -91,6 +91,6 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 
-questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", () => startBattle(OPPONENT_MIMICRY));
+questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", {sideEffect: () => startBattle(OPPONENT_MIMICRY)});
 
 export default root;
