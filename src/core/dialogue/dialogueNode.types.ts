@@ -8,6 +8,8 @@ export interface DialogueOption {
      * Can be used to initialize some event when we end dialogue.
      */
     sideEffect?: () => void;
+
+    onlyShowWhen?: () => boolean
 }
 
 export type RenderOrNode = DialogueNode['render'] | DialogueNode
@@ -50,14 +52,25 @@ export type DialogueNode = {
      * @param renderOrNode existing node or 'render' that is navigated to by this option.
      * @param name When creating a new node, name to attach to it. If none provided it will inherit from the parent.
      */
-    addChildAsOption(summaryText: string, fullText: string, renderOrNode: DialogueNode['render'] | DialogueNode, name?: string): DialogueNode;
+    addChildAsOption(
+        summaryText: string, fullText: string, 
+        renderOrNode: DialogueNode['render'] | DialogueNode, 
+        name?: string, 
+        onlyShowWhen?: () => boolean
+    ): DialogueNode;
 
     /**
      * Allows adding multiple options at once.
      * @param options - Array of { summaryText, fullText, renderOrNode, name? }
      * @returns - Array of created DialogueNodes
      */
-    addOptions(options: { summaryText: string, fullText: string, renderOrNode: DialogueNode['render'] | DialogueNode, name?: string }[]): DialogueNode[];
+    addOptions(options: { 
+            summaryText: string, fullText: string, 
+            renderOrNode: DialogueNode['render'] | DialogueNode, 
+            name?: string, 
+            onlyShowWhen?: () => boolean
+        }[]
+    ): DialogueNode[];
 
     /**
      * "Call and Response" - render a node for summaryText and add it as a node, then attach an immediate response node as another child.
@@ -68,14 +81,27 @@ export type DialogueNode = {
      * @param responderName - name attached to the "response" text, if we're creating a new node for it.
      * @returns Ref to the "response" child.
      */
-    addCAROptionChild(summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, senderName?: string, responderName?: string): DialogueNode,
+    addCAROptionChild(
+        summaryText: string, 
+        fullText: string, 
+        responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
+        senderName?: string, 
+        responderName?: string,
+        onlyShowWhen?: () => boolean
+    ): DialogueNode,
 
     /**
      * Allows adding multiple Call-and-Response (CAR) options at once.
      * @param carOptions - Array of { summaryText, fullText, responseAsRenderOrNode, senderName?, responderName? }
      * @returns - Array of created response DialogueNodes
      */
-    addCAROptions(carOptions: { summaryText: string, fullText: string, responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, senderName?: string, responderName?: string }[]): DialogueNode[];
+    addCAROptions(carOptions: { 
+            summaryText: string, fullText: string, 
+            responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
+            senderName?: string, responderName?: string,
+            onlyShowWhen?: () => boolean
+        }[]
+    ): DialogueNode[];
 
     /**
      * Quickly append a chain of messages as a simple array.
@@ -103,7 +129,7 @@ export type DialogueNode = {
      * @param summaryText 
      * @param fullText - Note - you wont see this message sent, as the dialogue will terminate immediately, this is just for the typed preview.
      */
-    addTerminationOption(summaryText: string, fullText: string, sideEffect?: () => void): DialogueNode
+    addTerminationOption(summaryText: string, fullText: string, sideEffect?: () => void, onlyShowWhen?: () => boolean): DialogueNode
 
     /** Conditionally attach a child dialogue node, when a child doesn't already exist.
      * 
@@ -125,12 +151,12 @@ export type DialogueNode = {
      * @param option - summaryText, fullText, next: RenderOrNode, name
      * @returns - the parent node (this)
      */
-    addOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string }): DialogueNode
+    addChildAsOptionIf(condition: boolean, option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, onlyShowWhen?: () => boolean }): DialogueNode
 
     /** Attach fallback option if none exist and no "nex" is specified (used in conjunction with addOptionIf, addChildIf, etc)
      * @param option - summaryText, fullText, next: RenderOrNode, name
      * @returns - the parent node (this)
      */
-    addFallbackOption(option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string }): DialogueNode
+    addFallbackChildAsOption(option: { summaryText: string, fullText: string, next: RenderOrNode, name?: string, onlyShowWhen?: () => boolean }): DialogueNode
 
 }

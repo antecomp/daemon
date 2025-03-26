@@ -22,7 +22,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * instance you want to start a dialogue using DialogueService.
  * @param root - The root node of the dialogue tree
  */
-export default function Hermes({root}: {root: DialogueNode}) {
+export default function Hermes({ root }: { root: DialogueNode }) {
   // non-reactive destructure done here out of convenience, we're instantiating the signal on input anyway
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
   const addMessage = ({ name, text }: { name: string; text: string }) => {
@@ -38,8 +38,8 @@ export default function Hermes({root}: {root: DialogueNode}) {
 
   const generatePages = () =>
     Array.from({ length: numPages() }, (_, i) => (
-      <a 
-        class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`} 
+      <a
+        class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`}
         onClick={() => setCurrentOptionPage(i)}
       ></a>
     ));
@@ -47,26 +47,29 @@ export default function Hermes({root}: {root: DialogueNode}) {
 
   // Preview message for hovered option.
   const [hoveredOption, setHoveredOption] = createSignal("")
-  const {displayText: optionPreviewText} = createTypewriter(hoveredOption)
+  const { displayText: optionPreviewText } = createTypewriter(hoveredOption)
 
   /** Advances dialogue based on the current node */
   async function advanceDialogue(node: DialogueNode) {
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
     node.sideEffect && node.sideEffect();
 
-    if (node.options.length > 0) {
-      setCurrentOptions(node.options);
+    // Real-time check of if we should show the options or  not.
+    const filteredOptions = node.options.filter(option => !option.onlyShowWhen || option.onlyShowWhen());
+
+    if (filteredOptions.length > 0) {
+      setCurrentOptions(filteredOptions);
       // Stop here until an option is selected (option-select re-enters this recursion)
-      return; 
+      return;
     }
 
     if (node.next) {
       await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing (TODO: should I add some randomness here?)
       await advanceDialogue(node.next);
     } else {
-        // Generate our own termination option.
-        setCurrentOptions([{summaryText: "[END]", fullText: ""}]) 
-        setAtLeaf(true);
+      // Generate our own termination option.
+      setCurrentOptions([{ summaryText: "[END]", fullText: "" }])
+      setAtLeaf(true);
     }
   }
 
@@ -75,11 +78,11 @@ export default function Hermes({root}: {root: DialogueNode}) {
     setCurrentOptions([]); // Clear options
     setHoveredOption("") // Clear preview text
     option.sideEffect?.();
-    if(option.next) {
-        await advanceDialogue(option.next);
+    if (option.next) {
+      await advanceDialogue(option.next);
     } else {
-        // Option has no next, terminate dialogue
-        DialogueService.endDialogue();
+      // Option has no next, terminate dialogue
+      DialogueService.endDialogue();
     }
   }
 
@@ -100,25 +103,25 @@ export default function Hermes({root}: {root: DialogueNode}) {
           {optionPreviewText()}
         </div>
         {[0, 1, 2].map((index) => {
-        const option = currentOptions()[optionsOffset() + index];
-        return (
+          const option = currentOptions()[optionsOffset() + index];
+          return (
             <div
-                class={"hermes-resp-container " + (option ? "" : "inactive")}
-                onClick={() => option && selectOption(option)}
-                onMouseOver={() => option && setHoveredOption(option.fullText)}
+              class={"hermes-resp-container " + (option ? "" : "inactive")}
+              onClick={() => option && selectOption(option)}
+              onMouseOver={() => option && setHoveredOption(option.fullText)}
             >
-                <p>{option?.summaryText ?? ""}</p>
-                <span></span>
-                <img src={[topb, midb, botb][index]} alt="" />
+              <p>{option?.summaryText ?? ""}</p>
+              <span></span>
+              <img src={[topb, midb, botb][index]} alt="" />
             </div>
-        );
-    })}
+          );
+        })}
       </div>
       <div class="hermes-footer">
         <img src={ntwrk} />
         <span>S-VLID:91ae0:ffc13 R-VLID:0000:0000</span>
-        <span 
-          class={`hermes-disconnect ${(DialogueService.canCloseDialogueEarly() || atLeaf()) ? 'can-disconnect': ''}`}
+        <span
+          class={`hermes-disconnect ${(DialogueService.canCloseDialogueEarly() || atLeaf()) ? 'can-disconnect' : ''}`}
           onClick={() => (DialogueService.canCloseDialogueEarly() || atLeaf()) && DialogueService.endDialogue()}
         >
           DISCONNECT
@@ -129,7 +132,7 @@ export default function Hermes({root}: {root: DialogueNode}) {
         <div classList={{
           "hermes-pages": true,
           "hp-first": (currentOptionPage() == 0),
-          "hp-last": (currentOptionPage() == numPages() -1)
+          "hp-last": (currentOptionPage() == numPages() - 1)
         }}>
           {generatePages()}
         </div>

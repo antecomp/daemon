@@ -20,7 +20,7 @@ export default function MessageBox (props: MessageBoxProps) {
     ref && ref.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
-  if(props.text === "") return;
+  if(props.text === "") return; // Add nothing if no message text provided (can be used for traversal-only dialogue nodes/chaining)
 
   if(props.name === "VISUALIZER") return (
     <div class="visualizer-body message-body" ref={ref}>

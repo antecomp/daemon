@@ -39,7 +39,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
                         <div style={{ "margin-left": "20px", "padding-left": "10px", "border-left": "2px solid blue" }}>
                             {node.options.map((opt: DialogueOption) => (
                                 <div>
-                                    <strong>→ {opt.summaryText}</strong> ({opt.fullText})
+                                    <strong>→ {opt.summaryText}</strong> ({opt.fullText}) {opt.onlyShowWhen && (<span style="color: purple">[Conditionally Rendered]</span>)}
                                     <div style={{"padding-left": `${20 * (depth + 1)}px`}}>
                                         {opt.next ? renderDialogueTree(opt.next, visited, depth + 1) : "🍂"}
                                     </div>

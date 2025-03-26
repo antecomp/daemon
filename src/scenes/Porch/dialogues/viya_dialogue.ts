@@ -78,8 +78,8 @@ whyFork.addCAROptions([
 ])
 
 questionLoopback.addTerminationOption("Trigger", "Do the test trigger for side effect", () => alert("test"));
-questionLoopback.addTerminationOption("Option 3", "Another option I was too lazy to type out")
-questionLoopback.addTerminationOption("Option 4", "Another option I was too lazy to type out")
+questionLoopback.addTerminationOption("Conditionally Rendered Option", "Another option I was too lazy to type out", undefined, () => true)
+questionLoopback.addTerminationOption("Filtered option", "I should never see this", undefined, () => false)
 questionLoopback.addTerminationOption("Option 5", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
