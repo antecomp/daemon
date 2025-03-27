@@ -4,7 +4,6 @@ import InteractionModePicker from "../../components/ui/interaction/InteractionMo
 import Sidebar from "@/components/ui/sidebar/Sidebar";
 import './Main.css'
 import HermesOverlay from "@/components/layers/hermes/HermesOverlay";
-import BattleOverlay from "../../components/layers/battle/BattleOverlay";
 import UILayerHost from "@/components/layers/UILayerHost";
 
 /**
@@ -19,7 +18,6 @@ export default function Main() {
             <EventLog/>
             <InteractionModePicker/>
             <HermesOverlay/>
-            <BattleOverlay/>
             <UILayerHost/>
         </div>
         </>

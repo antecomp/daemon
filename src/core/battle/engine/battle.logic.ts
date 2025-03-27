@@ -89,10 +89,13 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     // expose resolve method so we can call it when someone dies.
-    let battleResolve: ((winner: BattleOutcome) => void) | null = null;
+    let resolveBattle: ((winner: BattleOutcome) => void) | null = null;
     const battleResultPromise = new Promise<BattleOutcome>((resolve) => {
-        battleResolve = resolve;
+        resolveBattle = resolve;
     });
+    
+    // TODO: Add checks to only allow during waiting/ready state.
+    const forceBattleResolve = (winner: BattleOutcome) => resolveBattle!(winner);
 
     /** UI Cleanup, Animation and Promise Resolution Handler For Battle End (Someone died)  */
     async function handleDeath(who: "player" | "opponent" | "draw") {
@@ -108,7 +111,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                     if(browser?.name != 'safari') startMeltAnimation(false, 20, 5);
                     await animateMainUIFadeOut();
                 }
-                battleResolve!(BattleOutcome.Opponent);
+                resolveBattle!(BattleOutcome.Opponent);
                 break;
             case "opponent":
                 // Opponent death animation await goes here (await).
@@ -117,11 +120,11 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                     await animateOpponentDamageFlash();
                     await animateOpponentDeathFade();
                 }
-                battleResolve!(BattleOutcome.Player);
+                resolveBattle!(BattleOutcome.Player);
                 break;
             case "draw":
                 // For now let's just have player priority, draw is player victory
-                battleResolve!(BattleOutcome.Player);
+                resolveBattle!(BattleOutcome.Player);
                 break;
         }
         
@@ -294,6 +297,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         insight, 
         currentStatuses, 
         actionMessages,
-        battleResultPromise
+        battleResultPromise,
+        forceBattleResolve
     };
 }

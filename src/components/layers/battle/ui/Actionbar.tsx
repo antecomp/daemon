@@ -10,14 +10,13 @@ import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
 import { Accessor, createSignal, For, onMount } from 'solid-js'
-import { BattleOutcome, MultiplierSet } from '@/core/battle/engine/battle.types'
+import { BattleEngine, BattleOutcome, MultiplierSet } from '@/core/battle/engine/battle.types'
 import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
 import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
-import { endBattle } from '@/core/battle/battleManager'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -41,6 +40,7 @@ interface ActionbarProps {
     playerMults: Accessor<MultiplierSet>
     opponentMults: Accessor<MultiplierSet>
     currentStatuses: Accessor<{player: string[], opp: string[]}>
+    forceBattleResolve: BattleEngine['forceBattleResolve']
 }
 
 // Scaling from a multiplier range of 1/5 to 5 to a nice percentage amount for visualization
@@ -105,7 +105,7 @@ export default function Actionbar(props: ActionbarProps) {
         >
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={() => endBattle(BattleOutcome.Opponent)} // TODO: Add actual checks later lol
+                    onClick={() => props.forceBattleResolve(BattleOutcome.Opponent)}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

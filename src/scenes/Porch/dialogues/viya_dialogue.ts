@@ -87,6 +87,7 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 
-questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", {sideEffect: () => startBattle(OPPONENT_MIMICRY)});
+questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", 
+    {sideEffect: async () => {await startBattle(OPPONENT_MIMICRY); alert("Battle result successfully awaited!")}});
 
 export default root;
