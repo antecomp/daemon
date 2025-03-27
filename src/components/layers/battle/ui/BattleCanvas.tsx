@@ -1,5 +1,5 @@
 import { createProgram } from "@/util/webgl.utils"
-import { createEffect, onMount } from "solid-js"
+import { onMount } from "solid-js"
 import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
 import { Point } from "@/extra.types"
@@ -14,12 +14,19 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   let canvasRef: HTMLCanvasElement | undefined
 
   let spriteRef: HTMLImageElement | undefined
-  onMount(() => {
-    registerBattleUIRef('opponentSprite', spriteRef);
-  })
 
-  createEffect(() => {
-    if (!canvasRef) return;
+  onMount(() => {
+    /* NOTE:
+      SolidJS's `onMount()` can run *before* ref callbacks assign their values
+      when used in layered components or fragments. To safely access `canvasRef`,
+      we defer our logic into the next microtask. This guarantees the canvas
+      element has been mounted and assigned properly.
+    */
+    queueMicrotask(() => {
+    
+    if (!canvasRef) throw new Error("[BattleCanvas]: Battle background canvas ref not loaded :(");
+
+    registerBattleUIRef('opponentSprite', spriteRef);
 
     const gl = canvasRef.getContext("webgl2");
     if (!gl) {
@@ -71,7 +78,7 @@ export default function BattleCanvas(props: BattleCanvasProps) {
     }
 
     render();
-
+  });
   })
 
   console.log(props);
@@ -79,7 +86,10 @@ export default function BattleCanvas(props: BattleCanvasProps) {
 
   return (
     <>
-      <canvas id="battle-bg" width="1060" height="715" ref={canvasRef}></canvas>
+      <canvas id="battle-bg" width="1060" height="715" 
+        ref={(el) => {canvasRef = el}}
+      >
+      </canvas>
       <img 
         src={props.sprite} 
         id="battle-sprite" 

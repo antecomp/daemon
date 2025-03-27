@@ -10,7 +10,6 @@
     margin: 0 auto;
     opacity: 0;
     animation: fade-in forwards 1s;
-    animation-delay: 3s;
 }
 
 #battle-container, #battle-view {

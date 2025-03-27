@@ -1,4 +1,4 @@
-import { OPPONENT_MIMICRY } from "@/battles/mimicry";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";

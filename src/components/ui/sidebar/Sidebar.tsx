@@ -7,10 +7,13 @@ import tr from '@/assets/ui/corners/s5/tr.png'
 import bl from '@/assets/ui/corners/s5/bl.png'
 import br from '@/assets/ui/corners/s5/br.png'
 import { startBattle } from "@/core/battle/battleManager";
-import { OPPONENT_PANOPTES } from "@/battles/panoptes";
-import { OPPONENT_MIMICRY } from "@/battles/mimicry";
-import { OPPONENT_NEWPORTS } from "@/battles/newports";
+import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
+import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { addLogMessage } from "../event-log/EventLog";
+import { pushUILayer } from "@/components/layers/UILayerStore";
+import { TestComp } from "@/components/layers/UILayerHost";
+import Battle from "@/components/layers/battle/Battle";
 
 export default function Sidebar() {
 
@@ -38,6 +41,24 @@ export default function Sidebar() {
                 </button>
                 <button onClick={() => startBattle(OPPONENT_NEWPORTS)}>
                     NEWPORTS BATTLE.
+                </button>
+                <hr />
+                Layers; <br />
+                <button onClick={() => pushUILayer({
+                    id: String(Math.random()),
+                    component: TestComp(),
+                    blockBehind: true
+                })}>
+                    Add blocking test layer
+                </button>
+                <button onClick={() => pushUILayer({
+                    id: String(Math.random()),
+                    component: TestComp(),
+                })}>
+                    Add nonblocking test layer
+                </button>
+                <button onClick={() => pushUILayer({blockBehind: true, id: 'battle', component: <Battle opponentData={OPPONENT_PANOPTES} />})}>
+                    Add battle layer
                 </button>
             </CornerRect>
         </CornerRect>
