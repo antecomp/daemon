@@ -39,7 +39,7 @@ export type DialogueNode = {
     name: string
     render: string | (() => string) // Maybe just use empty string to representing blank message for navigation nodes (f.e chaining options together with no text).
     options: DialogueOption[]
-    next?: DialogueNode
+    next?: DialogueNode | (() => DialogueNode)
     sideEffect?: () => void,
 
     /**

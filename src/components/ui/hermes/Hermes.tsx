@@ -14,6 +14,13 @@ import createTypewriter from "@/hooks/createTypewriter";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function evalDialogueNodeNext(node: DialogueNode | (() => DialogueNode)) {
+  if (typeof node == "function") {
+      return node()
+  } else {
+      return node;
+  }
+}
 
 /**
  * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
@@ -65,7 +72,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
 
     if (node.next) {
       await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing (TODO: should I add some randomness here?)
-      await advanceDialogue(node.next);
+      await advanceDialogue(evalDialogueNodeNext(node.next));
     } else {
       // Generate our own termination option.
       setCurrentOptions([{ summaryText: "[END]", fullText: "" }])
