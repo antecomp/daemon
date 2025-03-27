@@ -100,6 +100,7 @@ understandQuestionFork.addCAROptionChild(
         createInlineDialogueTree("root of inline tree", "Inline Tree", (root) => {
             root.addChild("I'm a child of an inline tree")
                 .addChild("I'm a child of a child of an inline tree")
+                .next = () => createDialogueNode("This node was rendered by a function", "Epic");
         })
     )
     .addFallbackChild("Fallback")

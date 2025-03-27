@@ -3,6 +3,14 @@ import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.
 import './dialogue-visualizer.css'
 import root from "@/tests/generateDialogue"; // Swap this out to test different dialogue components.
 
+function evalNodeNext(node: DialogueNode | (() => DialogueNode)) {
+    if (typeof node == "function") {
+        return node()
+    } else {
+        return node;
+    }
+}
+
 /**
  * Simple dialogue tree visualizer used for testing/debugging composed dialogue.
  * Also reference /tests/generateDialogue for the script that forwards a dialogue root to this component.
@@ -32,7 +40,8 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
             ) : (
                 <>
                     {/* Render the next node directly below */}
-                    {node.next && renderDialogueTree(node.next, visited, depth)}
+                    
+                    {node.next && renderDialogueTree(evalNodeNext(node.next), visited, depth)}
 
                     {/* Render options as indented choices */}
                     {node.options.length > 0 && (

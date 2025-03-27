@@ -38,7 +38,7 @@ export type DialogueNode = {
     render: string | (() => string)
         // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
     options: DialogueOption[]
-    next?: DialogueNode
+    next?: DialogueNode | (() => DialogueNode)
     sideEffect?: () => void,
 
     /**
