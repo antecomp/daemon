@@ -11,7 +11,7 @@
 .sender-container {
 	width: 240px;
 	height: 184px;
-	background: url('/src/components/ui/hermes/assets/base.png');
+	background: url('/src/components/layers/hermes/assets/base.png');
 	padding-top: 8px;
 	/* display: grid;
 	grid-template-columns: 1fr;
@@ -80,7 +80,7 @@
 }
 
 .hermes-footer {
-	background: url('/src/components/ui/hermes/assets/footerbase.png');
+	background: url('/src/components/layers/hermes/assets/footerbase.png');
 	width: 240px;
 	height: 21px;
 	display: flex;
@@ -141,7 +141,7 @@
 }
 
 /* .hermes-container::before {
-	content: url('/src/components/ui/hermes/assets/fadething.png');
+	content: url('/src/components/layers/hermes/assets/fadething.png');
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -159,7 +159,7 @@
 .message-content {
 	width: 223px;
 	height: 82px;
-	background: url('/src/components/ui/hermes/assets/message_body_bg.png');
+	background: url('/src/components/layers/hermes/assets/message_body_bg.png');
 }
 
 .message-content p {
@@ -202,7 +202,7 @@
 	position: absolute;
 	bottom: 27px;
 	left: -11px;
-	background: url('/src/components/ui/hermes/assets/pagecon.png');
+	background: url('/src/components/layers/hermes/assets/pagecon.png');
 	width: 10px;
 	height: 82px;
 	display: flex;
@@ -212,11 +212,11 @@
 }
 
 .hermes-pages.hp-first {
-	background: url('/src/components/ui/hermes/assets/pagecon_tsel.png');
+	background: url('/src/components/layers/hermes/assets/pagecon_tsel.png');
 }
 
 .hermes-pages.hp-last {
-	background: url('/src/components/ui/hermes/assets/pagecon_bsel.png');
+	background: url('/src/components/layers/hermes/assets/pagecon_bsel.png');
 }
 
 .hermes-page-opt {

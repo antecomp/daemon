@@ -1,8 +1,8 @@
 import './style/base.css'
 import 'lume'
-// import Main from './components/views/main/Main'
+// import Main from './components/layers/main/Main'
 import { DG_VER } from './config'
-import Main from './components/views/main/Main'
+import Main from './views/main/Main'
 
 
 function App() {

@@ -1,4 +1,4 @@
-import { getBattleUIRef } from "@/components/views/battle/ui/refRegistry";
+import { getBattleUIRef } from "@/components/layers/battle/ui/refRegistry";
 import animateAsync from "@/util/animateAsync";
 
 // Naming Convention: animateTargetEffect
