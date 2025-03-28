@@ -6,7 +6,7 @@ import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import bl from '@/assets/ui/corners/s5/bl.png'
 import br from '@/assets/ui/corners/s5/br.png'
-import { pushUILayer } from "@/components/layers/UILayerStore";
+import { pushUILayer } from "@/core/ui/UILayerStore";
 import { TestComp } from "@/components/layers/UILayerHost";
 import { startBattle } from "@/core/battle/battleManager";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
@@ -32,14 +32,14 @@ export default function Sidebar() {
                 Layers; <br />
                 <button onClick={() => pushUILayer({
                     id: String(Math.random()),
-                    component: TestComp(),
+                    component: () => TestComp(),
                     blockBehind: true
                 })}>
                     Add blocking test layer
                 </button>
                 <button onClick={() => pushUILayer({
                     id: String(Math.random()),
-                    component: TestComp(),
+                    component: () => TestComp(),
                 })}>
                     Add nonblocking test layer
                 </button>

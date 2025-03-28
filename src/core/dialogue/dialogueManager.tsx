@@ -1,8 +1,8 @@
 import { Gimbal, LumePosition } from "../../extra.types";
 import { Element3D, Scene } from "lume";
 import { DialogueNode } from "./dialogueNode.types";
-import { popUILayer, pushUILayer } from "@/components/layers/UILayerStore";
-import { MainUILock } from "@/components/layers/ui-layers.types";
+import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
+import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
 import hijackCamera from "@/components/lume/hijackCamera";
 import {createSignal} from "solid-js";
@@ -12,6 +12,15 @@ let activeDialogueID: string | null = null;
 // Subject to change
 let hijackCameraBody: Element3D | undefined = undefined;
 
+/**
+ * Interface representing the options for starting a dialogue.
+ * 
+ * @property overlay - The image overlay (url) to be displayed during the dialogue.
+ * @property canCloseDialogueEarly - Indicates if the dialogue can be closed early.
+ * @property lock - The lock state associated with the dialogue.
+ * @property blockBehind - Indicates if interactions with layers behind this one are blocked.
+ * @property cameraHijack - Subject to change. Contains information about camera hijacking.
+ */
 type StartDialogueOptions = {
     overlay?: string, 
     canCloseDialogueEarly?: boolean, 
