@@ -16,13 +16,6 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   let spriteRef: HTMLImageElement | undefined
 
   onMount(() => {
-    /* NOTE:
-      SolidJS's `onMount()` can run *before* ref callbacks assign their values
-      when used in layered components or fragments. To safely access `canvasRef`,
-      we defer our logic into the next microtask. This guarantees the canvas
-      element has been mounted and assigned properly.
-    */
-    queueMicrotask(() => {
     
     if (!canvasRef) throw new Error("[BattleCanvas]: Battle background canvas ref not loaded :(");
 
@@ -79,7 +72,6 @@ export default function BattleCanvas(props: BattleCanvasProps) {
 
     render();
   });
-  })
 
   console.log(props);
 

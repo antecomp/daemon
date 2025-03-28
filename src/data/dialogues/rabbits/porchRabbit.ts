@@ -1,4 +1,3 @@
-import { DialogueNode } from "@/core/dialogue/dialogueNode.types"
 import { createDialogueNode } from "@/core/dialogue/dialogueNode"
 import { DialogueService } from "@/core/dialogue/dialogueManager";
 import rabbit_overlay from "@/assets/artwork/dialogue_bgs/rabbit_overlay.png"

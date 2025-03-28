@@ -3,6 +3,7 @@ import { getUILayers } from "./UILayerStore";
 import './ui-layers.css'
 
 export default function UILayerHost() {
+
     const layers = getUILayers();
 
     return (
@@ -13,12 +14,13 @@ export default function UILayerHost() {
                         class="ui-layer"
                         style={{
                             'z-index': {'default': 50, 'bottom': 100, 'middle': 200, 'top': 300}[layer?.metaLayer ?? 'default'] + index(),
+                            ...layer.style
                         }}
                         classList={{
                             'blocking-layer': layer.blockBehind
                         }}
                     >
-                        {layer.component}
+                        {layer.component()}
                     </div>
                 )}
             </For>

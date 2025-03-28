@@ -10,10 +10,11 @@ export enum MainUILock {
 
 export type UILayer = {
     id: string
-    component: JSX.Element
+    component: () => JSX.Element
     metaLayer?: MetaLayer
     lock?: MainUILock
     blockBehind?: boolean
+    style?: JSX.CSSProperties
 }
 
 export type UILockState = {

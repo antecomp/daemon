@@ -22,7 +22,7 @@ export async function startBattle(opponentData: DVOpponentData): Promise<BattleO
         id,
         lock: MainUILock.All,
         blockBehind: true,
-        component: <Battle opponentData={opponentData} battleResultPromiseRef={resultRef} />
+        component: () => <Battle opponentData={opponentData} battleResultPromiseRef={resultRef} />
     })
 
     const result = await resultRef.current!;

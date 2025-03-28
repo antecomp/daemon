@@ -2,14 +2,12 @@ import baseobj from './models/base.obj?url'
 import basemtl from './models/base.mtl?url'
 import dmnobj from './models/diamond.obj?url'
 import dmnmtl from './models/diamond.mtl?url'
-import WadsCam from "@/components/lume/wadscam";
 import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import HeadCam from '@/components/lume/HeadCam';
 import Interactable from '@/components/lume/Interactable';
-import { DialogueService } from '@/core/dialogue/dialogueManager';
 import hijackCamera from '@/components/lume/hijackCamera';
 
 export default function Liminality() {
