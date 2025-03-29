@@ -14,6 +14,17 @@ export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBeh
     }
 }
 
+export function lerpTo(pos: [number, number, number], yaw: number, pitch: number): CameraBehavior {
+    return {
+        init({body, cam}) {
+            body.position = (x, y, z) => [lerp(x, pos[0], 0.2), lerp(y, pos[1], 0.2), lerp(z, pos[2], 0.2)];
+            body.rotation = (_xPrev, yPrev) => [0, lerp(yPrev, yaw, 0.2), 0];
+            cam.rotation = (xPrev) => [lerp(xPrev, pitch, 0.2), 0, 0];
+        },
+    }
+}
+
+
 export const oscillate = (pos: LumePosition, yaw: number, pitch: number): CameraBehavior => ({
     init({body, cam}) {
         body.position = pos;

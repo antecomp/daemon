@@ -7,8 +7,8 @@ import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
-import SlopCam from '@/components/lume/slopcam/Slopcam';
-import { playerCam } from '@/components/lume/slopcam/slopcam.behaviors';
+import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
+import { lerpTo, playerCam, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -55,7 +55,7 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={() => alert("CLICK DIAMOND")}
+            onClick={() => cameraController.setBehavior(lerpTo([0, -512, 141], 0, -22))}
             onHover={() => console.log("SLOP")}
         >
                 <lume-obj-model
