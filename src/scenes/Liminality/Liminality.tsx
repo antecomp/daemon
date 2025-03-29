@@ -6,11 +6,9 @@ import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
-import HeadCam from '@/components/lume/HeadCam';
 import Interactable from '@/components/lume/Interactable';
-import hijackCamera from '@/components/lume/hijackCamera';
-import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
-import { oscillate, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
+import SlopCam from '@/components/lume/slopcam/Slopcam';
+import { playerCam } from '@/components/lume/slopcam/slopcam.behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -24,11 +22,7 @@ export default function Liminality() {
             sceneRef && applyShader(sceneRef, 0);
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
-
         });
-        setTimeout(
-            () => cameraController.setBehavior(oscillate("100 -532 350", -45, -15)), 
-        2000);
     })
 
     return (
@@ -46,7 +40,7 @@ export default function Liminality() {
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
             {/* <HeadCam position="0 -512 350" baseOrientation={{yaw: 360, pitch: -15}} maxPitch={10} maxYaw={20}/> */}
-            <SlopCam initialBehavior={snapTo("0 -512 350", 20, -15)} />
+            <SlopCam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
 
             <lume-obj-model
                 id="base"
@@ -61,12 +55,8 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={() => {
-                let hi = hijackCamera({sceneRef, targetOrientation: {yaw: 45, pitch: 28}, targetPosition: "389 -747 370"})
-                setTimeout(() => {
-                    hi?.remove();
-                }, 10000)
-            }}
+            onClick={() => alert("CLICK DIAMOND")}
+            onHover={() => console.log("SLOP")}
         >
                 <lume-obj-model
                     id="dmn"

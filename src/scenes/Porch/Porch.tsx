@@ -13,6 +13,8 @@ import { DialogueService } from "@/core/dialogue/dialogueManager";
 import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
+import SlopCam from "@/components/lume/slopcam/Slopcam";
+import { playerCam } from "@/components/lume/slopcam/slopcam.behaviors";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -42,11 +44,15 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            <HeadCam
+            {/* <HeadCam
                 position="-230 -317 128"
                 baseOrientation={{yaw: 290, pitch: 0}}
                 maxPitch={25}
                 maxYaw={45}
+            /> */}
+
+            <SlopCam
+                initialBehavior={playerCam("-230 -317 128", 45, 25, 290, 0)}
             />
 
             <lume-ambient-light intensity={4} />
