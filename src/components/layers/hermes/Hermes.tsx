@@ -1,5 +1,5 @@
 import "./hermes.css";
-import { createSignal, For } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
@@ -95,7 +95,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
 
   onMount(() => {
     advanceDialogue(root);
-  });
+  })
 
   return (
     <div class="hermes-container">

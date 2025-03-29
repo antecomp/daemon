@@ -1,4 +1,4 @@
-import { OPPONENT_MIMICRY } from "@/battles/mimicry";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";
@@ -87,6 +87,7 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 
-questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", {sideEffect: () => startBattle(OPPONENT_MIMICRY)});
+questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", 
+    {sideEffect: async () => {await startBattle(OPPONENT_MIMICRY); alert("Battle result successfully awaited!")}});
 
 export default root;

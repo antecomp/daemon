@@ -10,7 +10,7 @@ import friendTexture from "@/assets/artwork/characters/friend.png"
 import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
-import root from "@/dialogues/rabbits/porchRabbit";
+import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 

@@ -52,7 +52,7 @@ export default function SceneContainer() {
                 <Dynamic component={scenes[currentScene()]} />
             </Suspense>
         {/* We always have an overlay on dialogue, it works as an easy blocker for mouse events AND we can show artwork when we need :) */}
-        <Show when={DialogueService.activeDialogue()}>
+        <Show when={DialogueService.currentDialogueOverlay()}>
             <div id="dialogue-overlay" style={{background: `url(${DialogueService.currentDialogueOverlay()})`}}></div>
         </Show>
         </CornerRect>

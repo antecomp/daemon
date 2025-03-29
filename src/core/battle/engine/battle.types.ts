@@ -67,6 +67,7 @@ export interface PlayerData {
 
 export enum BattleOutcome {
     Player, Opponent, Draw
+    // We should prob make a sepreate eject one here.
 }
 
 /**
@@ -128,5 +129,9 @@ export interface BattleEngine {
          * @resolves "opponent" when opponent wins (player death)
          * @resolves "draw" when both player and opponent die.
          */
-        battleResultPromise: Promise<BattleOutcome>
+        battleResultPromise: Promise<BattleOutcome>,
+        /** Exposed promise resolver to trigger an early battle end.
+         * @argument winner: BattleOutcome - who won.
+         */
+        forceBattleResolve: ((winner: BattleOutcome) => void)
 }

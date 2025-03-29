@@ -12,10 +12,11 @@ import BattleCanvas from './ui/BattleCanvas';
 import ActionMessages from './ui/ActionMessages';
 import { registerBattleUIRef } from './ui/refRegistry';
 import { createMeltingEffect } from '@/hooks/createMeltEffect';
-import { endBattle } from '@/core/battle/battleManager';
 
-interface BattleProps {
-    opponentData: DVOpponentData
+export interface BattleProps {
+    opponentData: DVOpponentData,
+    battleResultPromiseRef: {current?: Promise<BattleOutcome>}
+    // Note: we should also be able to do a ref to forceBattleResolve if we wish.
 }
 
 export default function Battle(props: BattleProps) {
@@ -36,25 +37,14 @@ export default function Battle(props: BattleProps) {
         insight, 
         currentStatuses, 
         actionMessages,
-        battleResultPromise
+        battleResultPromise,
+        forceBattleResolve
     } = useBattleLogic(props.opponentData, false, startMeltAnimation, true);
 
-    onMount(() => {
-        setupRound();
+    // Method of passing the promise up to caller (battleManager).
+    props.battleResultPromiseRef.current = battleResultPromise; 
 
-        // This will likely run a CB provided as a prop for resolution.
-        battleResultPromise.then((result) => {
-            if(result == BattleOutcome.Player) {
-                alert("you are winner.");
-            }
-            if(result == BattleOutcome.Opponent) {
-                alert("you are loser.");
-            }
-
-            endBattle(result);
-        });
-        
-    });
+    onMount(() => setupRound());
 
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
@@ -76,7 +66,7 @@ export default function Battle(props: BattleProps) {
                     />
                     <BattleCanvas sprite={props.opponentData.sprite} spriteOffset={props.opponentData.spriteOffset} fragmentShader={props.opponentData.backgroundShader} />
                 </CornerRect>
-                <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses}} />
+                <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses, forceBattleResolve}} />
             </div>
         </BattleUIStateContext.Provider>
     )
