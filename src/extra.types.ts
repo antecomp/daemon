@@ -34,3 +34,6 @@ export type VLID = `${string}:${string}` // I wish I could make this more robust
 export type LumePosition = `${number} ${number} ${number}`
 
 export type Point3DTuple = [number, number, number]; // Can convert from this to LumePosition with array.join(' ')...
+
+/** alias to string for intention readability - represents a imported asset that resolves to a URL when built */
+export type AssetURL = string;

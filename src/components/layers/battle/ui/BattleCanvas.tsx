@@ -2,12 +2,27 @@ import { createProgram } from "@/util/webgl.utils"
 import { onMount } from "solid-js"
 import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
-import { Point } from "@/extra.types"
+import { AssetURL, Point } from "@/extra.types"
+import { loadImage } from "@/util/loadImage"
 
 interface BattleCanvasProps {
-  sprite: string // image url
+  sprite: AssetURL
   spriteOffset?: Point
   fragmentShader: string
+  textureImage?: AssetURL
+}
+
+async function createTexture(gl: WebGL2RenderingContext, url: AssetURL): Promise<WebGLTexture> {
+  const img = await loadImage(url);
+
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // Flip image to match u,v coords.
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.generateMipmap(gl.TEXTURE_2D);
+
+  return texture;
 }
 
 export default function BattleCanvas(props: BattleCanvasProps) {
@@ -16,62 +31,79 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   let spriteRef: HTMLImageElement | undefined
 
   onMount(() => {
-    
-    if (!canvasRef) throw new Error("[BattleCanvas]: Battle background canvas ref not loaded :(");
-
-    registerBattleUIRef('opponentSprite', spriteRef);
-
-    const gl = canvasRef.getContext("webgl2");
-    if (!gl) {
-      console.error("WebGL not supported");
-      return;
-    }
-
-    // Vertex Shader (Static, since we just draw a fullscreen quad)
-    const vertexShaderSource = `#version 300 es
-            in vec2 position;
-      out vec2 uv;
-      void main() {
-        uv = (position + 1.0) * 0.5;
-        gl_Position = vec4(position, 0.0, 1.0);
+    async function init() {
+      if (!canvasRef) throw new Error("[BattleCanvas]: Battle background canvas ref not loaded :(");
+  
+      registerBattleUIRef('opponentSprite', spriteRef);
+  
+      const gl = canvasRef.getContext("webgl2");
+      if (!gl) {
+        console.error("WebGL not supported");
+        return;
       }
-        `;
-
-    const program = createProgram(gl, vertexShaderSource, props.fragmentShader);
-    if (!program) return;
-
-    // Full-screen quad
-    const vertices = new Float32Array([
-      -1, -1, 1, -1, -1, 1,
-      -1, 1, 1, -1, 1, 1
-    ]);
-
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-    const position = gl.getAttribLocation(program, "position");
-    gl.enableVertexAttribArray(position);
-    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
-
-    gl.useProgram(program);
-    const timeUniform = gl.getUniformLocation(program, "time");
-
-    let startTime = performance.now();
-
-    function render() {
-
-      if (!gl) return;
-
-      let currentTime = (performance.now() - startTime) / 1000.0;
-      gl.uniform1f(timeUniform, currentTime);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
+  
+      // Vertex Shader (Static, since we just draw a fullscreen quad)
+      const vertexShaderSource = `#version 300 es
+        in vec2 position;
+        out vec2 uv;
+        void main() {
+          uv = (position + 1.0) * 0.5;
+          gl_Position = vec4(position, 0.0, 1.0);
+        }
+      `;
+  
+      const program = createProgram(gl, vertexShaderSource, props.fragmentShader);
+      if (!program) return;
+  
+      const vertices = new Float32Array([
+        -1, -1, 1, -1, -1, 1,
+        -1, 1, 1, -1, 1, 1
+      ]);
+  
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  
+      const position = gl.getAttribLocation(program, "position");
+      gl.enableVertexAttribArray(position);
+      gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+  
+      gl.useProgram(program);
+  
+      const timeUniform = gl.getUniformLocation(program, "time");
+      const u_texture = gl.getUniformLocation(program, "u_texture");
+  
+      // Wait for texture (if any)
+      let texture: WebGLTexture | null = null;
+      if (props.textureImage) {
+        texture = await createTexture(gl, props.textureImage);
+        gl.uniform1i(u_texture, 0); // Set texture unit index
+      }
+  
+      let startTime = performance.now();
+  
+      function render() {
+        if (!gl) return;
+  
+        const currentTime = (performance.now() - startTime) / 1000.0;
+        gl.uniform1f(timeUniform, currentTime);
+  
+        // Texture needs to be rebound each frame.
+        if (texture) {
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+        }
+  
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(render);
+      }
+  
+      render();
     }
-
-    render();
-  });
+  
+    init();
+  });  
 
   console.log(props);
 

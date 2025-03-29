@@ -10,6 +10,7 @@ import { pushUILayer } from "@/core/ui/UILayerStore";
 import { TestComp } from "@/components/layers/UILayerHost";
 import { startBattle } from "@/core/battle/battleManager";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
+import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 
 export default function Sidebar() {
 
@@ -43,10 +44,10 @@ export default function Sidebar() {
                 })}>
                     Add nonblocking test layer
                 </button>
-                {/* <button onClick={() => pushUILayer({blockBehind: true, id: 'battle', component: <Battle opponentData={OPPONENT_PANOPTES} />})}>
-                    Add battle layer
-                </button> */}
-                <button onClick={() => startBattle(OPPONENT_PANOPTES).then((outcome) => alert(`Battle outcome handled by .then on button: ${outcome}`))}>Battle Stgart</button>
+                <hr/>
+                Battles; <br />
+                <button onClick={() => startBattle(OPPONENT_PANOPTES).then((outcome) => alert(`Battle outcome handled by .then on button: ${outcome}`))}>Panoptes</button>
+                <button onClick={() => startBattle(OPPONENT_DEBUG_ANGEL)}>Debug Angel</button>
             </CornerRect>
         </CornerRect>
     )

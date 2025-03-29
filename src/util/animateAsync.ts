@@ -20,7 +20,6 @@ const animateAsync = async (
       sleep(0);
 
       animation.onfinish = () => {
-        // clearTimeout(timeout);
         resolve(animation)
       };
     });

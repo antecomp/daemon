@@ -3,7 +3,7 @@ import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionIconTable } from "./battle.config";
 import { BattleUIState } from "./battle.context";
-import { Point } from "@/extra.types";
+import { AssetURL, Point } from "@/extra.types";
 
 /** Damage multiplier struct */
 export type MultiplierSet = {incoming: number, outgoing: number};
@@ -56,6 +56,8 @@ export interface DVOpponentData {
 
     /** * The fragment shader used for rendering the opponent's background.  */
     backgroundShader: string;
+
+    backgroundShaderTexture?: AssetURL;
 }
 
 
@@ -66,8 +68,7 @@ export interface PlayerData {
 }
 
 export enum BattleOutcome {
-    Player, Opponent, Draw
-    // We should prob make a sepreate eject one here.
+    Player, Opponent, Draw, Eject
 }
 
 /**

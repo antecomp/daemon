@@ -1,22 +1,23 @@
-import './actionbar.css'
-import Runebuilder from './Runebuilder'
-import eject_button from '../assets/eject-button.png'
-import reset_button from '../assets/reset-button.png'
-import exec_button from '../assets/exec-button.png'
-import fch_bar from '../assets/f-ch-bar.png'
-
-import ur_bar from '../assets/mult_ur.png'
-import us_bar from '../assets/mult_us.png'
-import dr_bar from '../assets/mult_dr.png'
-import ds_bar from '../assets/mult_ds.png'
 import { Accessor, createSignal, For, onMount } from 'solid-js'
 import { BattleEngine, BattleOutcome, MultiplierSet } from '@/core/battle/engine/battle.types'
 import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
 import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
+    const {READY, WAITING} = BattleUIState;
 import { playerMoves } from '@/core/battle/moves/metas/player'
 import { registerBattleUIRef } from './refRegistry'
 import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
+import Runebuilder from './Runebuilder'
+
+import './actionbar.css'
+import eject_button from '../assets/eject-button.png'
+import reset_button from '../assets/reset-button.png'
+import exec_button from '../assets/exec-button.png'
+import fch_bar from '../assets/f-ch-bar.png'
+import ur_bar from '../assets/mult_ur.png'
+import us_bar from '../assets/mult_us.png'
+import dr_bar from '../assets/mult_dr.png'
+import ds_bar from '../assets/mult_ds.png'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -69,12 +70,12 @@ export default function Actionbar(props: ActionbarProps) {
 
     const addRune = (toAdd: PlayerMoveMeta) => {
         if(sequenceBuffer().length == SEQUENCE_LENGTH) return;
-        if(battleUIState() != BattleUIState.WAITING) return;
+        if(battleUIState() != WAITING) return;
 
         setSequenceBuffer(prev => {
             const rtn = (prev.some(item => item == toAdd)) ? prev: [...prev, toAdd] // Add (enforce unique).
             if(rtn.length == 5) {
-                setBattleUIState(BattleUIState.READY)
+                setBattleUIState(READY)
                 console.log(battleUIState());
             }
             return rtn;
@@ -82,16 +83,23 @@ export default function Actionbar(props: ActionbarProps) {
     }
 
     const handleExecClick = async () => {
-        if(battleUIState() != BattleUIState.READY) return;
+        if(battleUIState() != READY) return;
         await props.execSequence(sequenceBuffer()); // wow most of the battle logic is secretely right here :)
         await animatePlayerSequenceFadeOut();
         setSequenceBuffer([]); // Reset for next round.
     }
 
     const resetRunes = () => {
-        if (battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
-            setBattleUIState(BattleUIState.WAITING);
+        if (battleUIState() == READY || battleUIState() == WAITING) {
+            setBattleUIState(WAITING);
             setSequenceBuffer([]);
+        }
+    }
+
+    const handleEject = async () => {
+        if(battleUIState() == READY || battleUIState() == WAITING /* Likely will want some battle property to explicitely allow eject. */) {
+            // Eject Animation Can Go Here
+            props.forceBattleResolve(BattleOutcome.Eject);
         }
     }
 
@@ -105,7 +113,7 @@ export default function Actionbar(props: ActionbarProps) {
         >
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={() => props.forceBattleResolve(BattleOutcome.Opponent)}
+                    onClick={handleEject}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
@@ -119,7 +127,7 @@ export default function Actionbar(props: ActionbarProps) {
                         id='exec-button'
                         src={exec_button}
                         onClick={handleExecClick}
-                        classList={{usable: (battleUIState() == BattleUIState.READY)}}
+                        classList={{usable: (battleUIState() == READY)}}
                     />
                 </div>
             </div>

@@ -2,11 +2,14 @@ import { DVOpponentData } from "@/core/battle/engine/battle.types";
 import stockMoves from "@/core/battle/moves/metas/stockMoves";
 import pick from "@/util/pick";
 
-import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
-import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
-import distortedGridShader from "@/shaders/backgrounds/disgrid.shader";
 import { ManiaStatus } from "@/core/battle/statuses/statuses";
+
+import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
+import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
+import basic_grid_bg from '@/assets/artwork/battle_bgs/clouds_wikimedia_commons.jpg';
+import testShader from "@/shaders/backgrounds/test.shader";
+
 
 const mimicry_movebank = {
     ...pick(stockMoves, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
@@ -14,16 +17,14 @@ const mimicry_movebank = {
     mirror3: stockMoves.mirror
 }
 
-export const OPPONENT_MIMICRY: DVOpponentData = {
-    name: "Fractured Mimicry",
-    icon: mimicry_icon,
+export const OPPONENT_DEBUG_ANGEL: DVOpponentData = {
+    name: "::DEBUG_ANGEL::",
+    icon: debug_angel_icon,
     //sprite: placeholder_sprite,
-    sprite: mimicry_sprite,
-    spriteOffset: {
-        x: -14,
-        y: 41
-    },
-    backgroundShader: distortedGridShader,
+    sprite: debug_angel_sprite,
+    backgroundShader: testShader,
+    backgroundShaderTexture: basic_grid_bg,
+
     maxHealth: 15,
 
     getSequence: (me) => {
