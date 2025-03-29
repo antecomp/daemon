@@ -1,7 +1,8 @@
+import { AssetURL } from '@/extra.types'
 import './move-tooltip-content.css'
 
 interface MoveTooltipContentProps {
-    icon: string // url
+    icon: AssetURL
     displayName: string
     description: string
     rb?: true

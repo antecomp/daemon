@@ -5,7 +5,7 @@ import { createEffect } from "solid-js";
 export default function OverlayAnimator() {
     let overlayConRef: HTMLDivElement | undefined;
 
-    const processedAnimations = new Set(); // Track animations already processed
+    const processedAnimations = new Set(); // Track animations already processed. Reference comment below.
     
     createEffect(() => {
         overlayAnimRequests().forEach(({name, position, id, onFinish}) => {
@@ -25,18 +25,21 @@ export default function OverlayAnimator() {
             const duration = (totalFrames / frameRate) * 1000; // Frames to ms.
 
             const sprite = document.createElement("div");
-            sprite.style.position = "absolute";
-            sprite.style.translate = `${position[0]}px ${position[1]}px`
-            sprite.style.width = `${frameWidth}px`;
-            sprite.style.height = `${frameHeight}px`;
-            sprite.style.backgroundImage = `url(${src})`;
-            sprite.style.backgroundRepeat = "no-repeat";
 
-            // Hinting for optimization
-            sprite.style.willChange = "transform, background-position";
-            sprite.style.transform = "translateZ(0)"; // Forces GPU acceleration
-            sprite.style.backfaceVisibility = "hidden"; // Optimize said GPU accel
-            sprite.style.contain = "strict"; /// ?????
+            Object.assign(sprite.style, {
+                position: "absolute",
+                translate: `${position[0]}px ${position[1]}px`,
+                width: `${frameWidth}px`,
+                height: `${frameHeight}px`,
+                backgroundImage: `url(${src})`,
+                backgroundRepeat: "no-repeat",
+
+                // Hinting for optimization
+                willChange: "transform, background-position",
+                transform: "translateZ(0)", // forces GPU acceleration
+                backfaceVisibility: "hidden", // optimize GPU acceleration
+                contain: "strict" // idk
+            } as CSSStyleDeclaration);
 
             overlayConRef?.appendChild(sprite);
 

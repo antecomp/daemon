@@ -13,14 +13,14 @@ export type MultiplierSet = {incoming: number, outgoing: number};
  * This interface defines the properties and methods required for an opponent's behavior and appearance.
  */
 export interface DVOpponentData {
-    /** * The display name of the opponent.  */
+    /** The display name of the opponent.  */
     name: string;
 
-    /** * The icon representing the opponent (top left corner of UI).  */
-    icon: string;
+    /** The icon representing the opponent (top left corner of UI).  */
+    icon: AssetURL;
 
-    /** * The sprite asset url.  */
-    sprite: string;
+    /** The sprite asset url.  */
+    sprite: AssetURL;
 
     /** Optional offset to position sprite away from center. */
     spriteOffset?: Point
@@ -38,7 +38,6 @@ export interface DVOpponentData {
      */
     getSequence: (me: Actor, player: Actor) => MoveMeta[];
 
-
     /**
      * Optional method that runs before each round, allows opponent to perform side effects independent of a move.
      * @param me - The current state of the opponent.
@@ -53,7 +52,6 @@ export interface DVOpponentData {
      */
     postRoundBehavior?: (me: Actor, player: Actor, appendActionMessage: ActionMessageAppender) => void
     
-
     /** * The fragment shader used for rendering the opponent's background.  */
     backgroundShader: string;
 

@@ -14,8 +14,6 @@ import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 
 export default function Sidebar() {
 
-    // TODO (When sidebar has more content): Have this subscribe to the dialogue signal and gray itself out when there's dialogue.
-
     return (
         <CornerRect id="sidebar" borderSize={1} borderType="solid white" corners={[tl, tr, bl, undefined]} style={{width: 'inherit', height: 'inherit'}}>
             <CornerRect id="debug-menu" borderSize={1} borderType="solid white" corners={[tl, tr, bl, br]} style={{margin: '4px', height: 'fit-content', padding: '5px'}}>
@@ -34,7 +32,8 @@ export default function Sidebar() {
                 <button onClick={() => pushUILayer({
                     id: String(Math.random()),
                     component: () => TestComp(),
-                    blockBehind: true
+                    blockBehind: true,
+                    style: {background: "#000000aa"}
                 })}>
                     Add blocking test layer
                 </button>

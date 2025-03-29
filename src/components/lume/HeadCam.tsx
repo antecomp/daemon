@@ -122,6 +122,7 @@ export default function HeadCam(props: HeadCamProps) {
         animationFrameId = requestAnimationFrame(updateCameraRotation);
     };
 
+    // Overrides target yaw and pitch if we update the props.
     createEffect(() => {
         targetYaw = props.baseOrientation.yaw;
         targetPitch = props.baseOrientation.pitch;

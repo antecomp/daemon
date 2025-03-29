@@ -1,1 +1,0 @@
-export const HERMES_MESSAGE_DELAY = 1500;

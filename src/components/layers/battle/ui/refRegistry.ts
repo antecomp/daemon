@@ -4,7 +4,7 @@ type validRefNames = 'sequenceViewPlayer' | 'sequenceViewOpponent' | 'mainUI' | 
 /** Registry used to globalize refs. Used to target elements to perform animations.
  * Do not use this registry directly, instead use the helper methods register and get.
  */
-export const battleUIRefsRegistry: Record<validRefNames, HTMLElement | undefined> = {
+const battleUIRefsRegistry: Record<validRefNames, HTMLElement | undefined> = {
     sequenceViewPlayer: undefined,
     sequenceViewOpponent: undefined,
     mainUI: undefined,

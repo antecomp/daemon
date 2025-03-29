@@ -4,12 +4,13 @@ import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 import { currentInteractionMode, setCurrentInteractionMode } from '../interaction/InteractionModePicker';
 import CornerRect from "@/components/util/corner-rect/CornerRect";
+import { DialogueService } from "@/core/dialogue/dialogueManager";
+
+import './scene-container.css'
 import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import br from '@/assets/ui/corners/s5/br.png'
 import pisstop from '@/assets/ui/corners/special/pisstop.png'
-import { DialogueService } from "@/core/dialogue/dialogueManager";
-import './scene-container.css'
 
 /**
  * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 

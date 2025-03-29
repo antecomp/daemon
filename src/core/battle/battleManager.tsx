@@ -42,5 +42,7 @@ export async function startBattle(opponentData: DVOpponentData): Promise<BattleO
     popUILayer(id);
     activeBattleID = null;
 
+    // In the future we will likely attach some (optional?) default behavior for battle results (namely loss/eject) so callers only have to check for win and handle accordingly.
+
     return result;
 }

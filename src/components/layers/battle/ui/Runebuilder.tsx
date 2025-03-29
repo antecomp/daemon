@@ -7,7 +7,7 @@ import { MoveTooltipContent } from "./MoveTooltipContent";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
-const AVAILABLE_RUNE_COUNT = 8; // Will update based on actual prop data later.
+const CENTER = SVG_DIM / 2;
 
 interface RunebuilderProps {
     availRunes: PlayerMoveMeta[],
@@ -21,14 +21,13 @@ export default function Runebuilder(props: RunebuilderProps) {
 
     const { showTooltip, hideTooltip, TooltipComponent } = createTooltip();
 
-    const CENTER = SVG_DIM / 2;
-
     const runePositions = new Map<PlayerMoveMeta, Point>();
 
     return (
         <>
             <TooltipComponent/>
             <svg width={SVG_DIM} height={SVG_DIM} id="runebuilder">
+
                 {/* Main Circle */}
                 <circle
                     cx={CENTER} cy={CENTER}
@@ -44,8 +43,8 @@ export default function Runebuilder(props: RunebuilderProps) {
                         {(rune, index) => {
 
                             const prev = props.sequenceBuffer[index()];
-                            const currRune = runePositions.get(rune);
                             const prevPos = runePositions.get(prev);
+                            const currRune = runePositions.get(rune);
 
                             if (!currRune || !prevPos) return null;
 
@@ -69,7 +68,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                         each={props.availRunes}
                     >
                         {(rune, index) => {
-                            const angle = (Math.PI * 2 * index()) / AVAILABLE_RUNE_COUNT
+                            const angle = (Math.PI * 2 * index()) / props.availRunes.length
                             const x = CENTER + RUNEBUILDER_RADIUS * Math.cos(angle);
                             const y = CENTER + RUNEBUILDER_RADIUS * Math.sin(angle);
 
@@ -80,9 +79,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                                     <circle
                                         cx={x} cy={y}
                                         r={RUNEBUILDER_RADIUS / 4}
-                                        // stroke="white"
                                         stroke={props.sequenceBuffer.includes(rune) ? "white" : "#aaa"}
-                                        // fill={(props.sequenceBuffer.includes(rune) ? "red" : "black")}
                                         fill="black"
                                         onClick={() => {
                                             if (!rune.canPerform || rune.canPerform(props.sequenceBuffer)) props.addRune(rune);
@@ -94,13 +91,11 @@ export default function Runebuilder(props: RunebuilderProps) {
                                         href={rune.rbIcon}
                                         x={x - 16}
                                         y={y - 16}
-
                                         preserveAspectRatio="xMidYMid meet"
                                     />
                                 </>
                             )
-                        }
-                        }
+                        }}
                     </For>
                 </g>
             </svg>

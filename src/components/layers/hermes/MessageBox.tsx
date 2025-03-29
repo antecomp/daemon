@@ -1,11 +1,11 @@
 import { onMount } from "solid-js";
-import dogtagFirst from "./assets/dogtag_first.png";
-import dogtagLast from "./assets/dogtag_last.png";
+import dogtag_first from "./assets/dogtag_first.png";
+import dogtag_last from "./assets/dogtag_last.png";
 
 export interface MessageBoxProps {
     name: string;
     text: string | (() => string);
-  }
+}
 
   /**
    * Simple helper component for Hermes, renders out individual messages/nodes within the dialogue tree.
@@ -31,9 +31,9 @@ export default function MessageBox (props: MessageBoxProps) {
   return (
     <div class="message-body" ref={ref}>
       <div class="message-dogtag">
-        <img src={dogtagFirst} />
+        <img src={dogtag_first} />
         <span>{props.name}</span>
-        <img src={dogtagLast} />
+        <img src={dogtag_last} />
       </div>
       <div class="message-content">
         <p>{typeof props.text === "string" ? props.text : props.text()}</p>

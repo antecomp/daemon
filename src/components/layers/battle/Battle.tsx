@@ -1,8 +1,5 @@
 import { onMount } from 'solid-js';
-import './ui/battle.css'
 import CornerRect from '@/components/util/corner-rect/CornerRect';
-import vtl from './assets/vtl.png'
-import vtr from './assets/vtr.png'
 import OppStatusBar from './ui/OppStatusbar';
 import Actionbar from './ui/Actionbar';
 import { BattleOutcome, DVOpponentData } from '@/core/battle/engine/battle.types';
@@ -13,6 +10,10 @@ import ActionMessages from './ui/ActionMessages';
 import { registerBattleUIRef } from './ui/refRegistry';
 import { createMeltingEffect } from '@/hooks/createMeltEffect';
 
+import './ui/battle.css'
+import vtl from './assets/vtl.png'
+import vtr from './assets/vtr.png'
+
 export interface BattleProps {
     opponentData: DVOpponentData,
     battleResultPromiseRef: {current?: Promise<BattleOutcome>}
@@ -22,13 +23,8 @@ export interface BattleProps {
 export default function Battle(props: BattleProps) {
 
     let mainUIRef: HTMLDivElement | undefined = undefined;
-    onMount(() => {
-        registerBattleUIRef('mainUI', mainUIRef);
-    })
-
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 
-    // Hook with a bigass return to handle battle logic and pass back needed UI changes.
     const { 
         playerMults, opponentMults, 
         battleUIState, setBattleUIState, 
@@ -44,7 +40,10 @@ export default function Battle(props: BattleProps) {
     // Method of passing the promise up to caller (battleManager).
     props.battleResultPromiseRef.current = battleResultPromise; 
 
-    onMount(() => setupRound());
+    onMount(() => {
+        registerBattleUIRef('mainUI', mainUIRef);
+        setupRound();
+    });
 
     return (
         <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
@@ -64,7 +63,7 @@ export default function Battle(props: BattleProps) {
                         icon={props.opponentData.icon}
                         sequenceHint={insight()}
                     />
-                    <BattleCanvas sprite={props.opponentData.sprite} spriteOffset={props.opponentData.spriteOffset} fragmentShader={props.opponentData.backgroundShader} textureImage={props.opponentData.backgroundShaderTexture}/>
+                    <BattleCanvas {...props.opponentData} />
                 </CornerRect>
                 <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses, forceBattleResolve}} />
             </div>

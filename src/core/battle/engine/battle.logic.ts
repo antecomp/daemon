@@ -3,6 +3,7 @@ import { Actor } from "./actor";
 import { ActionMessage, ActionMessageAppender, BattleEngine, BattleOutcome, DVOpponentData, MultiplierSet } from "./battle.types";
 import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext } from "../moves/moves.types";
 import { BattleUIState } from "./battle.context";
+    const {WAITING, EXECUTING, END} = BattleUIState
 import { batch, createSignal } from "solid-js";
 import sleep from "@/util/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded } from "./battle.utils";
@@ -12,7 +13,7 @@ import { PREANIM_MIN_DURATION, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATI
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
 import { playSound } from "@/util/playSound";
-import pain_sfx from "@/assets/sfx/battle/pain.wav";
+import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MeltAnimationFn } from "@/hooks/createMeltEffect";
 
@@ -27,6 +28,7 @@ const browser = detect();
  *
  * @param opponentData - The data for the opponent, including name and max health.
  * @param debugMode - Optional flag to enable debug mode, which skips animations and delays.
+ * @param cheatMode - Optional flag to enable chat mode, which attaches battle logic and data to `window` for use in console.
  * 
  * @returns An object containing the following:
  * - `playerMults`: Signal getter for the player's incoming and outgoing multipliers.
@@ -47,7 +49,7 @@ const browser = detect();
  */
 export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean, startMeltAnimation?: MeltAnimationFn, cheatMode?: boolean): BattleEngine {
     // Provided as context by the Battle component itself.
-    const [battleUIState, setBattleUIState] = createSignal(BattleUIState.WAITING);
+    const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(WAITING);
 
     // createMutable wraps our actor objects in a proxy that fires signals on (primitive) property updates
     // this let's us just listen to changes in health for the UI (don't need our own signal trigger like for other stuff).
@@ -102,6 +104,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         // UI Cleanup
         updateUISignals(undefined, undefined, true);
+        setBattleUIState(END);
 
         switch(who) {
             case "player":
@@ -116,7 +119,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
             case "opponent":
                 // Opponent death animation await goes here (await).
                 if(!debugMode) {
-                    playSound(pain_sfx); // Might replace with a specific killing blow sound later.
+                    playSound(opponent_pain_sfx); // Might replace with a specific killing blow sound later.
                     await animateOpponentDamageFlash();
                     await animateOpponentDeathFade();
                 }
@@ -127,8 +130,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
                 resolveBattle!(BattleOutcome.Player);
                 break;
         }
-        
-        setBattleUIState(BattleUIState.END); // May be uneeded depending on how we handle resolution.
     }
 
     // Attach animation effects that trigger when actor or opponent take damage
@@ -143,7 +144,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         opponent.onDamageTaken((_amt, health) => {
             if(health > 0){
-                playSound(pain_sfx);
+                playSound(opponent_pain_sfx);
                 animateOpponentDamageFlash();
             }
         });
@@ -154,6 +155,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         console.warn("Battle's Cheat Mode Enabled!");
         (window as any).player = player;
         (window as any).opponent = opponent;
+        (window as any).forceBattleResolve = forceBattleResolve;
     }
 
     /** 
@@ -165,14 +167,14 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         !debugMode && await animateOpponentSequenceFadeOut();
         setInsight(generateHint(opponentSequence));
         !debugMode && await animateOpponentSequenceFadeIn();
-        setBattleUIState(BattleUIState.WAITING);
+        setBattleUIState(WAITING);
         cheatMode && console.log(opponentSequence.map(m => m.displayName)); // Show all for cheating (debugging)
     }
 
     // Round exec trigger by user event (building sequence and pressing "execute")...
     async function executeRound(userSelectedSequence: PlayerMoveMeta[]) {
 
-        setBattleUIState(BattleUIState.EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
+        setBattleUIState(EXECUTING); // This state locks the UI/Conditionally renders in-battle animations
 
         !debugMode && await animateOpponentSequenceFadeOut();
         setInsight(opponentSequence); // Visualize entire opponent sequence.

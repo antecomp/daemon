@@ -8,8 +8,8 @@ import { loadImage } from "@/util/loadImage"
 interface BattleCanvasProps {
   sprite: AssetURL
   spriteOffset?: Point
-  fragmentShader: string
-  textureImage?: AssetURL
+  backgroundShader: string
+  backgroundShaderTexture?: AssetURL
 }
 
 async function createTexture(gl: WebGL2RenderingContext, url: AssetURL): Promise<WebGLTexture> {
@@ -52,7 +52,7 @@ export default function BattleCanvas(props: BattleCanvasProps) {
         }
       `;
   
-      const program = createProgram(gl, vertexShaderSource, props.fragmentShader);
+      const program = createProgram(gl, vertexShaderSource, props.backgroundShader);
       if (!program) return;
   
       const vertices = new Float32Array([
@@ -75,8 +75,8 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   
       // Wait for texture (if any)
       let texture: WebGLTexture | null = null;
-      if (props.textureImage) {
-        texture = await createTexture(gl, props.textureImage);
+      if (props.backgroundShaderTexture) {
+        texture = await createTexture(gl, props.backgroundShaderTexture);
         gl.uniform1i(u_texture, 0); // Set texture unit index
       }
   

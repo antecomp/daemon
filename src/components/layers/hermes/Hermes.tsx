@@ -1,18 +1,21 @@
-import "./hermes.css";
-import { createEffect, createSignal, For } from "solid-js";
+import { createSignal, For } from "solid-js";
 import { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
 import { MessageBoxProps } from "./MessageBox";
+import createTypewriter from "@/hooks/createTypewriter";
+import { DialogueService } from "@/core/dialogue/dialogueManager";
+import sleep from "@/util/sleep";
+
+import "./hermes.css";
 import topb from "./assets/topb.png";
 import midb from "./assets/midb.png";
 import botb from "./assets/botb.png";
-import ntwrk from "./assets/ntwrk.gif";
+import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
-import { HERMES_MESSAGE_DELAY } from "./config";
-import createTypewriter from "@/hooks/createTypewriter";
-import { DialogueService } from "@/core/dialogue/dialogueManager";
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+
+const HERMES_MESSAGE_DELAY = 1200;
 
 function evalDialogueNodeNext(node: DialogueNode | (() => DialogueNode)) {
   if (typeof node == "function") {
@@ -24,9 +27,8 @@ function evalDialogueNodeNext(node: DialogueNode | (() => DialogueNode)) {
 
 /**
  * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
- * 
- * This component is conditionally rendered (check HermesOverlay) based on the state of the DialogueService.activeDialogue signal, to spawn a new Hermes
- * instance you want to start a dialogue using DialogueService.
+ * Hermes is added as a UI layer by utilizing DialogueService.startDialogue
+ * @see dialogueManager.tsx
  * @param root - The root node of the dialogue tree
  */
 export default function Hermes({ root }: { root: DialogueNode }) {
@@ -37,7 +39,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
   };
 
   const [currentOptions, setCurrentOptions] = createSignal<DialogueOption[]>([]);
-  const [currentOptionPage, setCurrentOptionPage] = createSignal(0); // to implement...
+  const [currentOptionPage, setCurrentOptionPage] = createSignal(0);
   const optionsOffset = () => currentOptionPage() * 3;
   const numPages = () => Math.ceil(currentOptions().length / 3);
 
@@ -49,12 +51,12 @@ export default function Hermes({ root }: { root: DialogueNode }) {
         class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`}
         onClick={() => setCurrentOptionPage(i)}
       ></a>
-    ));
+  ));
 
 
   // Preview message for hovered option.
-  const [hoveredOption, setHoveredOption] = createSignal("")
-  const { displayText: optionPreviewText } = createTypewriter(hoveredOption)
+  const [hoveredOption, setHoveredOption] = createSignal("");
+  const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
 
   /** Advances dialogue based on the current node */
   async function advanceDialogue(node: DialogueNode) {
@@ -71,7 +73,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
     }
 
     if (node.next) {
-      await sleep(HERMES_MESSAGE_DELAY); // Simulate a pause before advancing (TODO: should I add some randomness here?)
+      await sleep(HERMES_MESSAGE_DELAY * (1 + Math.random() / 2)); // Simulate a pause before advancing (TODO: should I add some randomness here?)
       await advanceDialogue(evalDialogueNodeNext(node.next));
     } else {
       // Generate our own termination option.
@@ -80,7 +82,6 @@ export default function Hermes({ root }: { root: DialogueNode }) {
     }
   }
 
-  /** Handles when an option is picked */
   async function selectOption(option: DialogueOption) {
     setCurrentOptions([]); // Clear options
     setHoveredOption("") // Clear preview text
@@ -125,7 +126,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
         })}
       </div>
       <div class="hermes-footer">
-        <img src={ntwrk} />
+        <img src={ntwrk_gif} />
         <span>S-VLID:91ae0:ffc13 R-VLID:0000:0000</span>
         <span
           class={`hermes-disconnect ${(DialogueService.canCloseDialogueEarly() || atLeaf()) ? 'can-disconnect' : ''}`}

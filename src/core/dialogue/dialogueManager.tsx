@@ -37,12 +37,6 @@ type StartDialogueOptions = {
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 
-/**
- * Launch a new Hermes instance (new dialogue sequence).
- * @param rootNode, required param, a ref to the root node of the dialogue tree you want to render.
- * @param options - Start dialogue options (all optional), reference type definition for more details
- * @throws "Dialogue already in progress" error if there's already an active dialogue.
- */
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if(activeDialogueID) throw new Error("Dialogue already in progress.");
 
@@ -66,10 +60,6 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     }
 }
 
-/**
- * End the current dialogue instance.
- * @param options - End dialogue options (all optional), reference type definition for more details
- */
 function endDialogue() {
     if (!activeDialogueID) throw new Error("No active dialogue to end.");
 
@@ -85,5 +75,23 @@ function endDialogue() {
     activeDialogueID = null;
 }
 
-const DialogueService = { currentDialogueOverlay, canCloseDialogueEarly, startDialogue, endDialogue, setCurrentDialogueOverlay };
+const DialogueService = { 
+    /**
+     * Launch a new Hermes instance (new dialogue sequence).
+     * @param rootNode, required param, a ref to the root node of the dialogue tree you want to render.
+     * @param options - Start dialogue options (all optional), reference type definition for more details
+     * @throws "Dialogue already in progress" error if there's already an active dialogue.
+     */ 
+    startDialogue, 
+    /**
+     * End the current dialogue instance.
+     * @param options - End dialogue options (all optional), reference type definition for more details
+     */
+    endDialogue, 
+    
+    canCloseDialogueEarly,
+    currentDialogueOverlay, 
+    setCurrentDialogueOverlay 
+};
+
 export { DialogueService };
