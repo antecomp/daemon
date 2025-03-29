@@ -9,6 +9,8 @@ import applyShadows from '@/core/lume/applyShadows';
 import HeadCam from '@/components/lume/HeadCam';
 import Interactable from '@/components/lume/Interactable';
 import hijackCamera from '@/components/lume/hijackCamera';
+import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
+import { oscillate, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -22,7 +24,11 @@ export default function Liminality() {
             sceneRef && applyShader(sceneRef, 0);
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
-        })
+
+        });
+        setTimeout(
+            () => cameraController.setBehavior(oscillate("100 -532 350", -45, -15)), 
+        2000);
     })
 
     return (
@@ -39,7 +45,8 @@ export default function Liminality() {
             <lume-ambient-light intensity={0.0} />
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            <HeadCam position="0 -512 350" baseOrientation={{yaw: 360, pitch: -15}} maxPitch={10} maxYaw={20}/>
+            {/* <HeadCam position="0 -512 350" baseOrientation={{yaw: 360, pitch: -15}} maxPitch={10} maxYaw={20}/> */}
+            <SlopCam initialBehavior={snapTo("0 -512 350", 20, -15)} />
 
             <lume-obj-model
                 id="base"
