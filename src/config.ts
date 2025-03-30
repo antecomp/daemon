@@ -15,10 +15,10 @@ export const DITHER_MODE: number = 2;
 //export const DITHER_LUMA_CUTOFF: number = 0.12
 export const DITHER_LUMA_CUTOFF: number = 0.0
 
-export const INITIAL_SCENE = "Porch"
+export const INITIAL_SCENE = "Liminality";
 
 export const FOV = 45;
 
 export const DEFAULT_DIALOGUE_SENDER = "Arda";
 
-export const DG_VER = "InDev-02.11"
+export const DG_VER = "InDev-03.30"

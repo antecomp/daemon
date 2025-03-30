@@ -1,5 +1,5 @@
 import { LumePosition } from "@/extra.types";
-import { CameraBehavior } from "./slopcam.types";
+import { CameraBehavior } from "./multicam.types";
 import { PerspectiveCamera, Scene } from "lume";
 import * as THREE from "three";
 import lerp from "@/util/lerp";
@@ -162,8 +162,10 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
 
         exit({cam}) {
             scene.removeEventListener("mousemove", boundRunHoverRayCast);
-            // You can uncomment this to better see the cam.rotation bug.
+
+            // You can comment this to better see the cam.rotation bug.
             scene.removeEventListener("mousemove", handleMouseMove);
+
             scene.removeEventListener("click", boundHandleClick);
 
             if(previouslyHoveredObject) {
@@ -176,7 +178,14 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             
             // Reset update functions????
             // body.rotation = (x,y,z) => [x,y,z]; // unnecessary it seems?
+
+            // This works. Similarly if we instead go from playercam to lerp, that works, since that has it's own cam rotation function.
+            // The issue is explicitely with Playercam -> SnapTo since we're going from function to static.
             cam.rotation = (x,y,z) => [x,y,z]; // otherwise the cam.rotation function above continues to run.
+
+            // @ts-ignore
+            //cam.rotation = null; 
+            // ^ This and to [0,0,0] "works" but seems to bug out my YBillboard component. I'm not sure if thats a problem here or with that component.
         }
     }
 }

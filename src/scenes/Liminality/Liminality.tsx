@@ -7,9 +7,8 @@ import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
-import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
-import { lerpToAsync, playerCam } from '@/components/lume/slopcam/slopcam.behaviors';
-import sleep from '@/util/sleep';
+import Multicam, { cameraController } from '@/components/lume/multicam/Multicam';
+import { playerCam, snapTo } from '@/components/lume/multicam/multicam-behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -27,25 +26,7 @@ export default function Liminality() {
     })
 
     function handleDiamondClick() {
-        const [behavior, finished] = lerpToAsync([0, -512, 141], 0, -22);
-        cameraController.setTemporaryBehavior(behavior);
-        finished.then(() => {
-            const [behavior, nextPromise] = lerpToAsync([0, -512, 141], 0, -22);
-            cameraController.setTemporaryBehavior(behavior);
-            return nextPromise;
-        }
-        )
-        .then(() => {
-            const [behavior, nextPromise] = lerpToAsync([0, -512, 241], 0, -22);
-            cameraController.setTemporaryBehavior(behavior);
-            return nextPromise
-        })
-        .then(() => {
-            cameraController.setTemporaryBehavior(playerCam("0 -512 241", 20, 20, 0, -22));
-            sleep(1000).then(() => {
-                cameraController.clearTemporaryBehavior();
-            });
-        })
+        cameraController.setTemporaryBehavior(snapTo("0 -512 141", 0, -22));
     }
 
     return (
@@ -62,7 +43,7 @@ export default function Liminality() {
             <lume-ambient-light intensity={0.0} />
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            <SlopCam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
+            <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
 
             <lume-obj-model
                 id="base"
@@ -78,7 +59,7 @@ export default function Liminality() {
 
         <Interactable
             onClick={() => handleDiamondClick()}
-            onHover={() => console.log("SLOP")}
+            //onHover={() => console.log("Diamond Hovered")}
         >
                 <lume-obj-model
                     id="dmn"
@@ -96,8 +77,6 @@ export default function Liminality() {
                     rotation={(x: number, y: number) => [x, y+0.5]}
                 />
         </Interactable>
-
-
 
             <lume-point-light 
                 intensity={lightIntensity}

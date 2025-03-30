@@ -4,8 +4,8 @@ import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
 import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
 import {createSignal} from "solid-js";
-import { cameraController } from "@/components/lume/slopcam/Slopcam";
-import { lerpTo, snapTo } from "@/components/lume/slopcam/slopcam.behaviors";
+import { cameraController } from "@/components/lume/multicam/Multicam";
+import { lerpTo, snapTo } from "@/components/lume/multicam/multicam-behaviors";
 
 let activeDialogueID: string | null = null;
 

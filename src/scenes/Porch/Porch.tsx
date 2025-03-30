@@ -13,8 +13,8 @@ import { DialogueService } from "@/core/dialogue/dialogueManager";
 import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
-import SlopCam from "@/components/lume/slopcam/Slopcam";
-import { playerCam } from "@/components/lume/slopcam/slopcam.behaviors";
+import Multicam from "@/components/lume/multicam/Multicam";
+import { playerCam } from "@/components/lume/multicam/multicam-behaviors";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -51,7 +51,7 @@ export default function Porch() {
                 maxYaw={45}
             /> */}
 
-            <SlopCam
+            <Multicam
                 initialBehavior={playerCam("-230 -317 128", 45, 25, 290, 0)}
             />
 
