@@ -8,7 +8,7 @@ import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
-import { lerpTo, playerCam, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
+import { lerpTo, lerpToAsync, playerCam, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -24,6 +24,26 @@ export default function Liminality() {
             dmnRef && applyShadows(dmnRef);
         });
     })
+
+    function handleDiamondClick() {
+        const [behavior, finished] = lerpToAsync([0, -512, 141], 0, -22);
+        cameraController.setBehavior(behavior);
+        finished.then(() => {
+            //alert("Finished!");
+            const [behavior, nextPromise] = lerpToAsync([0, -512, 141], 0, -22);
+            cameraController.setBehavior(behavior);
+            return nextPromise;
+        }
+        )
+        .then(() => {
+            const [behavior, nextPromise] = lerpToAsync([0, -512, 241], 0, -22);
+            cameraController.setBehavior(behavior);
+            return nextPromise
+        })
+        .then(() => {
+            cameraController.setBehavior(playerCam("0 -512 241", 20, 20, 0, -22));
+        })
+    }
 
     return (
         <lume-scene
@@ -55,7 +75,7 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={() => cameraController.setBehavior(lerpTo([0, -512, 141], 0, -22))}
+            onClick={() => handleDiamondClick()}
             onHover={() => console.log("SLOP")}
         >
                 <lume-obj-model
