@@ -16,7 +16,7 @@ export default function Liminality() {
     let baseRef: ObjModel | undefined;
     let dmnRef: ObjModel | undefined;
 
-    let piss = "300";
+    const lightIntensity = "300";
 
     onMount(() => {
         requestAnimationFrame(() => {
@@ -62,7 +62,6 @@ export default function Liminality() {
             <lume-ambient-light intensity={0.0} />
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            {/* <HeadCam position="0 -512 350" baseOrientation={{yaw: 360, pitch: -15}} maxPitch={10} maxYaw={20}/> */}
             <SlopCam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
 
             <lume-obj-model
@@ -101,7 +100,7 @@ export default function Liminality() {
 
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -550 100" 
@@ -110,7 +109,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="-100 -550 -100" 
@@ -119,7 +118,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -550 -100" 
@@ -128,7 +127,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="-100 -550 100" 
@@ -137,7 +136,7 @@ export default function Liminality() {
             /> 
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="0 -700 0" 

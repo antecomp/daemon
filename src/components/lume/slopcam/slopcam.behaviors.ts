@@ -160,8 +160,9 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             }
         },
 
-        exit({body, cam}) {
+        exit({cam}) {
             scene.removeEventListener("mousemove", boundRunHoverRayCast);
+            // You can uncomment this to better see the cam.rotation bug.
             scene.removeEventListener("mousemove", handleMouseMove);
             scene.removeEventListener("click", boundHandleClick);
 
@@ -174,9 +175,8 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             previousUV = null;
             
             // Reset update functions????
-            // body.rotation = (x,y,z) => [x,y,z];
-            cam.rotation = (x,y,z) => [x,y,z];
-            // body.position = (x,y,z) => [x,y,z];
+            // body.rotation = (x,y,z) => [x,y,z]; // unnecessary it seems?
+            cam.rotation = (x,y,z) => [x,y,z]; // otherwise the cam.rotation function above continues to run.
         }
     }
 }
