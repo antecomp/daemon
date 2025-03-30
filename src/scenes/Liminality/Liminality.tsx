@@ -8,7 +8,8 @@ import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import SlopCam, { cameraController } from '@/components/lume/slopcam/Slopcam';
-import { lerpTo, lerpToAsync, playerCam, snapTo } from '@/components/lume/slopcam/slopcam.behaviors';
+import { lerpToAsync, playerCam } from '@/components/lume/slopcam/slopcam.behaviors';
+import sleep from '@/util/sleep';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -27,21 +28,23 @@ export default function Liminality() {
 
     function handleDiamondClick() {
         const [behavior, finished] = lerpToAsync([0, -512, 141], 0, -22);
-        cameraController.setBehavior(behavior);
+        cameraController.setTemporaryBehavior(behavior);
         finished.then(() => {
-            //alert("Finished!");
             const [behavior, nextPromise] = lerpToAsync([0, -512, 141], 0, -22);
-            cameraController.setBehavior(behavior);
+            cameraController.setTemporaryBehavior(behavior);
             return nextPromise;
         }
         )
         .then(() => {
             const [behavior, nextPromise] = lerpToAsync([0, -512, 241], 0, -22);
-            cameraController.setBehavior(behavior);
+            cameraController.setTemporaryBehavior(behavior);
             return nextPromise
         })
         .then(() => {
-            cameraController.setBehavior(playerCam("0 -512 241", 20, 20, 0, -22));
+            cameraController.setTemporaryBehavior(playerCam("0 -512 241", 20, 20, 0, -22));
+            sleep(1000).then(() => {
+                cameraController.clearTemporaryBehavior();
+            });
         })
     }
 

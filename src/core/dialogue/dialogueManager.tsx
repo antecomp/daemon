@@ -1,16 +1,13 @@
 import { Gimbal, LumePosition } from "../../extra.types";
-import { Element3D, Scene } from "lume";
 import { DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
 import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
-import hijackCamera from "@/components/lume/hijackCamera";
 import {createSignal} from "solid-js";
+import { cameraController } from "@/components/lume/slopcam/Slopcam";
+import { lerpTo, snapTo } from "@/components/lume/slopcam/slopcam.behaviors";
 
 let activeDialogueID: string | null = null;
-
-// Subject to change
-let hijackCameraBody: Element3D | undefined = undefined;
 
 /**
  * Interface representing the options for starting a dialogue.
@@ -28,7 +25,6 @@ type StartDialogueOptions = {
     blockBehind?: boolean,
     // Subject to change
     cameraHijack?: {
-        sceneRef: Scene  | undefined, 
         targetPosition: LumePosition, 
         targetOrientation: Omit<Gimbal, 'roll'>
     }
@@ -54,9 +50,9 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if(options?.overlay) setCurrentDialogueOverlay(options.overlay);
     setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
 
-    // SUBJECT TO CHANGE.
     if (options?.cameraHijack) {
-        hijackCameraBody = hijackCamera({ ...options.cameraHijack });
+        const { targetPosition, targetOrientation } = options.cameraHijack;
+        cameraController.setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
     }
 }
 
@@ -67,10 +63,7 @@ function endDialogue() {
     setCanCloseDialogueEarly(false);
     popUILayer(activeDialogueID);
 
-    if (hijackCameraBody) {
-        hijackCameraBody.remove();
-        hijackCameraBody = undefined;
-    }
+    cameraController.clearTemporaryBehavior();
 
     activeDialogueID = null;
 }

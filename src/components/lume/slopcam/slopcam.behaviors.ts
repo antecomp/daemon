@@ -73,6 +73,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
     let pitch = basePitch;
     
     const handleMouseMove = (e: MouseEvent) => {
+        console.log("mousemove");
         const rect = scene.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
@@ -147,18 +148,21 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             scene.addEventListener("click", boundHandleClick);
 
             body.rotation = (_xPrev, yPrev) => {
+                console.log("Running body rotation")
                 const newYaw = lerp(yPrev, yaw, 0.2);
                 return [0, newYaw, 0];
             }
 
             cam.rotation = (xPrev) => {
+                console.log("Running cam rotation")
                 const newPitch = lerp(xPrev, pitch, 0.2);
                 return [newPitch, 0, 0];
             }
         },
 
-        exit() {
+        exit({body, cam}) {
             scene.removeEventListener("mousemove", boundRunHoverRayCast);
+            scene.removeEventListener("mousemove", handleMouseMove);
             scene.removeEventListener("click", boundHandleClick);
 
             if(previouslyHoveredObject) {
@@ -168,6 +172,11 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             }
             previouslyHoveredObject = null;
             previousUV = null;
+            
+            // Reset update functions????
+            // body.rotation = (x,y,z) => [x,y,z];
+            cam.rotation = (x,y,z) => [x,y,z];
+            // body.position = (x,y,z) => [x,y,z];
         }
     }
 }

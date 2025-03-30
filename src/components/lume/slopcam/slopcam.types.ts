@@ -7,6 +7,6 @@ export interface CameraRefs {
 
 export interface CameraBehavior {
     init?: (refs: CameraRefs) => void;
-    update?: (refs: CameraRefs, dt: number) => void;
+    //update?: (refs: CameraRefs, dt: number) => void;
     exit?: (refs: CameraRefs) => void;
 }

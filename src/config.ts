@@ -15,7 +15,7 @@ export const DITHER_MODE: number = 2;
 //export const DITHER_LUMA_CUTOFF: number = 0.12
 export const DITHER_LUMA_CUTOFF: number = 0.0
 
-export const INITIAL_SCENE = "Liminality"
+export const INITIAL_SCENE = "Porch"
 
 export const FOV = 45;
 
