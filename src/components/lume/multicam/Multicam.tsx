@@ -118,7 +118,7 @@ export const cameraController = {
  * 
  * To actually manage the camera behavior, use the `cameraController`
  *
- * @param props.initialBehavior - (Optional?) The initial camera behavior
+ * @param props.initialBehavior - The initial camera behavior
  * to be applied when the component is mounted.
  *
  * @throws Will throw an error if the `bodyRef` or `camRef` is not set
@@ -127,7 +127,7 @@ export const cameraController = {
  * @returns A JSX element containing a LUME `element3d` with a nested
  * `perspective-camera`.
  */
-export default function Multicam(props: {initialBehavior?: CameraBehavior}) {
+export default function Multicam(props: {initialBehavior: CameraBehavior}) {
     let bodyRef!: Element3D;
     let camRef!: PerspectiveCamera;
 
@@ -136,9 +136,7 @@ export default function Multicam(props: {initialBehavior?: CameraBehavior}) {
         const refs: CameraRefs = {body: bodyRef, cam: camRef};
         cameraController.attachRefs(refs);
 
-        if(props.initialBehavior) {
-            cameraController.reInitialize(props.initialBehavior);
-        }
+        cameraController.reInitialize(props.initialBehavior);
     });
 
     onCleanup(() => {
