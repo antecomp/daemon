@@ -2,12 +2,14 @@ import { AssetURL } from "@/extra.types";
 
 export default class AssetManager {
     images: Map<AssetURL, HTMLImageElement>
+    buffers: Map<AssetURL, ImageBitmap>
     audioBuffers: Map<AssetURL, AudioBuffer>
     audioCtx = new window.AudioContext();
 
     constructor() {
         this.images = new Map();
         this.audioBuffers = new Map();
+        this.buffers = new Map();
     }
 
     async loadImage(src: AssetURL) {
@@ -15,9 +17,16 @@ export default class AssetManager {
 
         const img = new Image();
         img.src = src;
-        await img.decode();
+        //img.decode().then(() => createImageBitmap(img)).then(bm => this.buffers.set(src, bm));
+
+        // No await
+       // createImageBitmap(img).then(bm => this.buffers.set(src, bm));
+       //const bm = await createImageBitmap(img);
+       
 
         this.images.set(src, img);
+        //this.buffers.set(src, bm);
+        
         console.log("AssetManager loaded image:", src, img);
 
         return img;
