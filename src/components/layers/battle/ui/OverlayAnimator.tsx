@@ -49,21 +49,18 @@ export default function OverlayAnimator() {
             } as CSSStyleDeclaration);
 
             overlayConRef?.appendChild(sprite);
-
-            requestAnimationFrame(() => {
-                sprite.animate(
-                    [{ backgroundPosition: "0px" }, { backgroundPosition: `-${frameWidth * totalFrames}px` }],
-                    {
-                      duration,
-                      iterations: 1,
-                      easing: `steps(${totalFrames})`
-                    }
-                ).onfinish = () => {
-                    sprite.remove();
-                    onFinish(); // CB sent by request, used to resolve promise.
-                    processedAnimations.delete(id); // Allow new animations with this ID
+            sprite.animate(
+                [{ backgroundPosition: "0px" }, { backgroundPosition: `-${frameWidth * totalFrames}px` }],
+                {
+                    duration,
+                    iterations: 1,
+                    easing: `steps(${totalFrames})`
                 }
-            })
+            ).onfinish = () => {
+                sprite.remove();
+                onFinish(); // CB sent by request, used to resolve promise.
+                processedAnimations.delete(id); // Allow new animations with this ID
+            }
         })
     })
 

@@ -1,7 +1,7 @@
 import shit from '@/assets/animations/overlays/shit.png'
 import slashnorm from '@/assets/animations/overlays/slash/slashnorm.png'
 import slash_purpose_image from '@/assets/animations/overlays/slash/slash_purpose.png'
-import slash_mages_image from '@/assets/animations/overlays/slash/slash_majes.png'
+import slash_mages_image from '@/assets/animations/overlays/slash/slash_majes-min.png'
 import slash_elag_image from '@/assets/animations/overlays/slash/slash_elag.png'
 import shield_image from '@/assets/animations/overlays/shield/shield_opp1.png'
 import { overlayAnimationTable } from "./overlayAnim.types";
@@ -60,3 +60,4 @@ export const overlayAnimations: overlayAnimationTable = {
 export const overlayAnimationSrcMap = Object.fromEntries(
     Object.entries(overlayAnimations).map(([name, { src }]) => [name, src])
 );
+  

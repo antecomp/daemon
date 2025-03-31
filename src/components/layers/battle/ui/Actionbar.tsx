@@ -115,7 +115,7 @@ export default function Actionbar(props: ActionbarProps) {
             <div class="left">
                 <img src={eject_button} id='eject-button' 
                     //onClick={handleEject}
-                    onClick={() => requestOverlayAnimation("slash_norm", [0,0])}
+                    onClick={() => requestOverlayAnimation("slash_majes", [0,0])}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">
