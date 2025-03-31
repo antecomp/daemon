@@ -18,6 +18,7 @@ import ur_bar from '../assets/mult_ur.png'
 import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
+import { requestOverlayAnimation } from '@/core/battle/animation/requestOverlayAnim';
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -113,7 +114,8 @@ export default function Actionbar(props: ActionbarProps) {
         >
             <div class="left">
                 <img src={eject_button} id='eject-button' 
-                    onClick={handleEject}
+                    //onClick={handleEject}
+                    onClick={() => requestOverlayAnimation("slash_norm", [0,0])}
                 />
                 <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
                 <div id="rb-buttons">

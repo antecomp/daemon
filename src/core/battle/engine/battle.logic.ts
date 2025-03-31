@@ -18,7 +18,12 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MeltAnimationFn } from "@/hooks/createMeltEffect";
 
 import { detect } from "detect-browser";
+import { overlayAnimationSrcMap } from "../animation/animations.reg";
+import AssetManager from "@/util/assetmanager";
+import { requestOverlayAnimation } from "../animation/requestOverlayAnim";
 const browser = detect();
+
+export const battleAssetManager = new AssetManager();
 
 /**
  * A hook that provides the core battle logic for a turn-based battle system.
@@ -156,7 +161,21 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         (window as any).player = player;
         (window as any).opponent = opponent;
         (window as any).forceBattleResolve = forceBattleResolve;
+        (window as any).requestOverlayAnim = requestOverlayAnimation;
     }
+
+    // Preload Overlay Assets
+    const preloadOverlayAnimations = async () => {
+        try {
+            await Promise.all(
+                Object.values(overlayAnimationSrcMap).map((src) => battleAssetManager.loadImage(src))
+            )
+        } catch (err) {
+            console.error("[Noncritical Battle Error] Failed to preload overlay animations", err);
+        }
+    }
+
+    !debugMode && preloadOverlayAnimations();
 
     /** 
      * Sets up a new round, fetching opponent moves, updating displayed hint, 

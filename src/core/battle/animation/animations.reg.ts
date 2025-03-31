@@ -57,26 +57,6 @@ export const overlayAnimations: overlayAnimationTable = {
     }
 }
 
-
-// Obviously we will want to be smarter about this in the future
-// But this is a fine background init for our limited animation set for now...
-
-// Image cache
-const preloadedImages = new Map<string, HTMLImageElement>();
-
-export function preloadOverlayImages(): Promise<void[]> {
-    return Promise.all(Object.entries(overlayAnimations).map(([name, { src }]) => {
-        return new Promise<void>((resolve, reject) => {
-            const img = new Image();
-            img.src = src;
-            img.onload = async () => {
-                await img.decode(); // Ensures image is fully decoded (prevents initialization lag)
-                preloadedImages.set(name, img);
-                resolve();
-            };
-            img.onerror = reject;
-        });
-    }));
-}
-
-preloadOverlayImages();
+export const overlayAnimationSrcMap = Object.fromEntries(
+    Object.entries(overlayAnimations).map(([name, { src }]) => [name, src])
+);

@@ -1,5 +1,6 @@
 import { overlayAnimations } from "@/core/battle/animation/animations.reg";
 import { overlayAnimRequests } from "@/core/battle/animation/requestOverlayAnim";
+import { battleAssetManager } from "@/core/battle/engine/battle.logic";
 import { createEffect } from "solid-js";
 
 export default function OverlayAnimator() {
@@ -24,6 +25,12 @@ export default function OverlayAnimator() {
             const { src, frameWidth, frameHeight, totalFrames, frameRate } = config;
             const duration = (totalFrames / frameRate) * 1000; // Frames to ms.
 
+            const img = battleAssetManager.getImage(src);
+            if(!img) {
+                console.error(`[OverlayAnimator] Image for animation "${name}" not preloaded. Failed to get ${src}`);
+                return;
+            }
+
             const sprite = document.createElement("div");
 
             Object.assign(sprite.style, {
@@ -31,7 +38,7 @@ export default function OverlayAnimator() {
                 translate: `${position[0]}px ${position[1]}px`,
                 width: `${frameWidth}px`,
                 height: `${frameHeight}px`,
-                backgroundImage: `url(${src})`,
+                backgroundImage: `url(${img.src})`,
                 backgroundRepeat: "no-repeat",
 
                 // Hinting for optimization
@@ -43,20 +50,20 @@ export default function OverlayAnimator() {
 
             overlayConRef?.appendChild(sprite);
 
-            
-            sprite.animate(
-                [{ backgroundPosition: "0px" }, { backgroundPosition: `-${frameWidth * totalFrames}px` }],
-                {
-                  duration,
-                  iterations: 1,
-                  easing: `steps(${totalFrames})`
+            requestAnimationFrame(() => {
+                sprite.animate(
+                    [{ backgroundPosition: "0px" }, { backgroundPosition: `-${frameWidth * totalFrames}px` }],
+                    {
+                      duration,
+                      iterations: 1,
+                      easing: `steps(${totalFrames})`
+                    }
+                ).onfinish = () => {
+                    sprite.remove();
+                    onFinish(); // CB sent by request, used to resolve promise.
+                    processedAnimations.delete(id); // Allow new animations with this ID
                 }
-            ).onfinish = () => {
-                sprite.remove();
-                onFinish(); // CB sent by request, used to resolve promise.
-                processedAnimations.delete(id); // Allow new animations with this ID
-            }
-           
+            })
         })
     })
 
