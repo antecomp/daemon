@@ -13,6 +13,8 @@ import { DialogueService } from "@/core/dialogue/dialogueManager";
 import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
+import WadsCam from "@/components/lume/wadscam";
+import Billboard from "@/components/lume/Billboard";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -24,7 +26,7 @@ export default function Porch() {
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
-                applyShader(sceneRef, 2, 0.12);
+                // applyShader(sceneRef, 2, 0.12);
             });
         }
         if(mapRef) {
@@ -48,6 +50,10 @@ export default function Porch() {
                 maxPitch={25}
                 maxYaw={45}
             />
+
+            {/* <WadsCam 
+                defaultPosition="-230 -317 128"
+            /> */}
 
             <lume-ambient-light intensity={4} />
 
@@ -80,6 +86,12 @@ export default function Porch() {
                 mount-point="0.5 0.5 0.5"
                 color="white"
             />
+
+            <Billboard
+                texture={viyaTexture}
+                position="-100 -250 20"
+                scale={1.5}
+            ></Billboard>
 
             <YBillboard
                     texture={viyaTexture}
