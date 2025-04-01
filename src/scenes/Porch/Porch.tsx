@@ -26,7 +26,7 @@ export default function Porch() {
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
-                // applyShader(sceneRef, 2, 0.12);
+                applyShader(sceneRef, 2, 0.12);
             });
         }
         if(mapRef) {
@@ -91,6 +91,8 @@ export default function Porch() {
                 texture={viyaTexture}
                 position="-100 -250 20"
                 scale={1.5}
+                onClick={() => alert("aaaa")}
+                // onHover={(uv) => console.log(uv?.toArray().toString())}
             ></Billboard>
 
             <YBillboard
