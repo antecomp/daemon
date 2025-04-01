@@ -3,6 +3,7 @@ import { Plane, toDegrees } from "lume";
 import { MeshBasicMaterial, Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";
 import { interactionCB } from "./Interactable";
+import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
 
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");
@@ -29,7 +30,8 @@ export default function Billboard(props: {
     scale?: number,
     position: LumePosition
     onClick?: interactionCB,
-    onHover?: interactionCB
+    onHover?: interactionCB,
+    interactions?: InteractionMap;
 }) {
 
     let me!: Plane
@@ -52,14 +54,21 @@ export default function Billboard(props: {
         const img = new Image();
         img.src = me.texture!
         img.onload = () => {
-            me.size = `${(props.scale ?? 1) * img.width / 10} ${(props.scale ?? 1) * img.height / 10}`;
+            const aspect = img.width / img.height;
+            me.size = `${(props.scale ?? 1) * aspect} ${(props.scale ?? 1)}`;
             maskData = generateAlphaMask(img);
             console.log(maskData.alphaMask);
         }
 
         // Replace / Extend me with interactions config.
-        if(props.onClick) {me.three.userData.onClick = (uv: Vector2) => isOpaque(uv) && props.onClick!(uv)}
         if(props.onHover) {me.three.userData.onHover = (uv: Vector2) => isOpaque(uv) && props.onHover!(uv)}
+
+        me.three.userData.onClick = (uv: Vector2) => {
+            if(isOpaque(uv)) {
+                props.onClick?.(uv);
+                props.interactions?.[currentInteractionMode()]?.(uv);
+            }
+        }
     })
 
     return (
@@ -70,12 +79,18 @@ export default function Billboard(props: {
             texture={props.texture}
             position={props.position}
             ref={me}
-            alpha-test={0.1}
-            cast-shadow
+            opacity="0.9999999999999999" // Weird artifacts when lower than this.
+
+            cast-shadow="false"
+            // enable all of these for a correct shadow.
+            // cast-shadow
+            // alpha-test={0.1}
+            // sidedness="double"
+
             id="bbrd"
-            sidedness="double"
             receive-shadow="false"
             has="basic-material"
+            
             //@ts-ignore
             rotation={(x: number,y:number,z:number) => {
                 const camera = me.scene?.camera

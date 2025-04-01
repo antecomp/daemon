@@ -51,9 +51,9 @@ export default function Porch() {
                 maxYaw={45}
             />
 
-            {/* <WadsCam 
+             {/* <WadsCam 
                 defaultPosition="-230 -317 128"
-            /> */}
+            />  */}
 
             <lume-ambient-light intensity={4} />
 
@@ -89,37 +89,30 @@ export default function Porch() {
 
             <Billboard
                 texture={viyaTexture}
-                position="-100 -250 20"
-                scale={1.5}
-                onClick={() => alert("aaaa")}
-                // onHover={(uv) => console.log(uv?.toArray().toString())}
-            ></Billboard>
-
-            <YBillboard
-                    texture={viyaTexture}
-                    size={225}
-                    position="-90 -240 0"
-                    interactions={[
-                        () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => DialogueService.startDialogue(
-                            viya_root, 
-                            {
-                                // overlay: viya_dia_bg, 
-                                canCloseDialogueEarly: true,
-                                cameraHijack: {
-                                    sceneRef,
-                                    targetPosition: "122 -287 151",
-                                    targetOrientation: {yaw: 41, pitch: 2}
-                                }
+                position="-90 -240 0"
+                scale={225}
+                interactions={[
+                    () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
+                    () => DialogueService.startDialogue(
+                        viya_root, 
+                        {
+                            // overlay: viya_dia_bg, 
+                            canCloseDialogueEarly: true,
+                            cameraHijack: {
+                                sceneRef,
+                                targetPosition: "122 -287 151",
+                                targetOrientation: {yaw: 41, pitch: 2}
                             }
-                        ),
-                        () => addLogMessage(`She is smoking a cigarette.`)
-                    ]}
+                        }
+                    ),
+                    () => addLogMessage(`She is smoking a cigarette.`)
+                ]}
             />
+
             <Show when={showRabbit()}>
-                <YBillboard
+                <Billboard
                         texture={friendTexture}
-                        size={50}
+                        scale={50}
                         position="-70 -266 200"
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
