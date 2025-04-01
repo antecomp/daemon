@@ -72,6 +72,8 @@ export default function BattleCanvas(props: BattleCanvasProps) {
   
       const timeUniform = gl.getUniformLocation(program, "time");
       const u_texture = gl.getUniformLocation(program, "u_texture");
+      const u_resolution = gl.getUniformLocation(program, "u_resolution");
+      gl.uniform2f(u_resolution, canvasRef.width, canvasRef.height);
   
       // Wait for texture (if any)
       let texture: WebGLTexture | null = null;

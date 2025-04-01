@@ -7,7 +7,7 @@ import { ManiaStatus } from "@/core/battle/statuses/statuses";
 
 import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
 import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
-import basic_grid_bg from '@/assets/artwork/battle_bgs/clouds_wikimedia_commons.jpg';
+import basic_grid_bg from '@/assets/artwork/battle_bgs/debug_angel_bg.png';
 import testShader from "@/shaders/backgrounds/test.shader";
 
 
