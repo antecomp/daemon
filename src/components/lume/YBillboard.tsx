@@ -30,12 +30,8 @@ export default function YBillboard(props: YBillboardProps) {
     let planeMaterial: THREE.MeshBasicMaterial | null = null;
     let yawRenderTask: RenderTask | null = null;
 
-    // Offscreen canvas used for alpha collision detection
-    // Super hacky, may want to replace with a more elegant solution in the future
-    let offscreenCanvas: HTMLCanvasElement | null = null;
-    let offscreenCtx: CanvasRenderingContext2D | null = null;
-    let imageBitmap: ImageBitmap | null = null;
-
+    // Array corresponding to sprite texture holding an opacity mask
+    // Used to restrict onClick to only opaque parts of the sprite.
     let alphaMask: Uint8Array | null = null;
     let maskWidth = 0;
     let maskHeight = 0;
@@ -84,30 +80,22 @@ export default function YBillboard(props: YBillboardProps) {
                     return;
                 }
 
-                // Create offscreen canvas representation of sprite. Used for opaque check
-                // on mouse events. TODO: Is this the most elegant way of doing this???
-                offscreenCanvas = document.createElement("canvas");
-                offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});
+                // Create an offscreen canvas to process image (get pixel data to build opacity mask)
+                const offscreenCanvas = document.createElement("canvas");
+                const offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});
                 offscreenCanvas.width = texture.image.width;
                 offscreenCanvas.height = texture.image.height
                 offscreenCtx!.drawImage(texture.image, 0, 0);
-                imageBitmap = await createImageBitmap(texture.image); // Convert texture to ImageBitmap for faster pixel access
-
-
                 const imgData = offscreenCtx!.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).data;
+
                 maskWidth = offscreenCanvas.width;
                 maskHeight = offscreenCanvas.height;
                 alphaMask = new Uint8Array(maskWidth * maskHeight);
                 
                 for (let i = 0; i < maskWidth * maskHeight; i++) {
                     const alpha = imgData[i * 4 + 3];
-                    alphaMask[i] = alpha > 25 ? 1 : 0; // Use your preferred threshold
+                    alphaMask[i] = alpha > 25 ? 1 : 0;
                 }
-
-                // Remove the canvas
-                offscreenCanvas = null;
-                offscreenCtx = null;
-
 
                 // Create and append actual mesh to scene.
                 const aspect = texture.image.width / texture.image.height;
@@ -128,12 +116,13 @@ export default function YBillboard(props: YBillboardProps) {
 
         // Attach Interaction Event Listeners.
         if(!wrapperRef?.three) return;
-        wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
-            if (isOpaque(uv)) {
-                if(props.onHover) props.onHover(uv);
-            }
-        };
-
+        if(props.onHover) { // Only attach onHover if action defined (performance)
+            wrapperRef.three.userData.onHover = (uv: THREE.Vector2) => {
+                if (isOpaque(uv)) {
+                    if(props.onHover) props.onHover(uv);
+                }
+            };
+        }
         wrapperRef.three.userData.onClick = (uv: THREE.Vector2) => {
             if (isOpaque(uv)) {
                 if(props.onClick) props.onClick(uv);
@@ -157,19 +146,7 @@ export default function YBillboard(props: YBillboardProps) {
         planeMaterial = null;
         if(yawRenderTask) Motor.removeRenderTask(yawRenderTask);
 
-        // Need to dispose of offscreen canvas manually since we attach it to the document
-        if(offscreenCanvas) {
-            offscreenCanvas = null;
-        } 
-        if (offscreenCtx) {
-            offscreenCtx = null;
-        }
-
-        if (imageBitmap) {
-            imageBitmap.close();
-            imageBitmap = null;
-        }
-
+        alphaMask = null;
     });
 
     return (
