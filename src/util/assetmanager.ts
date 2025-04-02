@@ -2,12 +2,15 @@ import { AssetURL } from "@/extra.types";
 
 export default class AssetManager {
     images: Map<AssetURL, HTMLImageElement>
+    videos: Map<AssetURL, HTMLVideoElement>
+
+    // ofc I switch to something unified like howler I can remove these.
     audioBuffers: Map<AssetURL, AudioBuffer>
     audioCtx = new window.AudioContext();
-    // todo: video buffer
 
     constructor() {
         this.images = new Map();
+        this.videos = new Map();
         this.audioBuffers = new Map();
     }
 
@@ -16,17 +19,30 @@ export default class AssetManager {
 
         const img = new Image();
         img.src = src;
+
+        // Move to own function. Tbh if the images are so big that I need to decode them preemptively that's a different issue.
         // img.decode();
 
         this.images.set(src, img);
-        
-        console.log("AssetManager loaded image:", src, img);
 
         return img;
     }
 
-    getImage(src: AssetURL) {
-        return this.images.get(src);
+    async loadVideo(src: AssetURL): Promise<HTMLVideoElement> {
+        if(this.videos.has(src)) return this.videos.get(src)!;
+
+        const video = document.createElement("video");
+        video.src = src;
+        video.preload = "auto";
+        video.crossOrigin = "anonymous";
+
+        await new Promise((resolve, reject) => {
+            video.onloadeddata = () => resolve(null);
+            video.onerror = reject;
+        });
+
+        this.videos.set(src, video);
+        return video;
     }
 
     async loadAudio(src: AssetURL) {
@@ -40,11 +56,27 @@ export default class AssetManager {
         return decoded;
     }
 
+    getImage(src: AssetURL) {
+        return this.images.get(src);
+    }
+
+    getAudio(src: AssetURL) {
+        return this.audioBuffers.get(src);
+    }
+
+    getVideo(src: AssetURL) {
+        return this.videos.get(src);
+    }
+
     unloadImage(src: AssetURL) {
         this.images.delete(src);
     }
 
     unloadAudio(src: AssetURL) {
         this.audioBuffers.delete(src);
+    }
+
+    unloadVideo(src: AssetURL) {
+        this.videos.delete(src);
     }
 }
