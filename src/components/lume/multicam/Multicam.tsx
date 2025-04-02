@@ -1,4 +1,4 @@
-import { Element3D, PerspectiveCamera } from "lume";
+import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
 import { CameraBehavior, CameraRefs } from "./multicam.types";
 import { onCleanup, onMount } from "solid-js"
 
@@ -56,10 +56,10 @@ export const cameraController = {
             throw new Error("[Multicam] Camera refs not attached.");
         }
         this.currentBehavior?.exit?.(this.storedRefs);
-        console.log("[Multicam] exit state", {...this.storedRefs})
+        this._cleanupCameraRig();
         this.currentBehavior = behavior;
         this.currentBehavior?.init?.(this.storedRefs);
-        console.log("[Multicam] init state", {...this.storedRefs})
+
 
         // If we bring back update, try doing something like this;
         /*
@@ -106,7 +106,27 @@ export const cameraController = {
     // Refs attached/updated when MultiCam mounts
 	attachRefs(refs: CameraRefs) {
 		this.storedRefs = refs;
-	}
+	},
+
+    /*
+        functions for rotation/position are not disposed unless the position of the element is set to a static value
+        (as in, setting rotation to a static value doesn't remove the functions for it)
+        this is a workaround cleanup function that disposes of those functions, needed when switching from functional to static (i.e playercam to snapto)
+
+        This hard reset also seems to bug out YBillboard (may be fine once we merge the new implementation idk) - this appears to be
+        due to this change not triggering a needsUpdate() on scene (afaik the functional changes constantly call needsUpdate, making the trigger occur. Which implies the new billboards will be fine)
+    */
+    _cleanupCameraRig() {
+       if(this.storedRefs) {
+            this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
+            this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
+
+            // Except it needs to be in a setTimeout because of course it does >:(
+            setTimeout(() => {
+                this.storedRefs!.body.scene?.needsUpdate();
+            }, 100)
+        }
+    }
 }
 
 
@@ -141,6 +161,7 @@ export default function Multicam(props: {initialBehavior: CameraBehavior}) {
 
     onCleanup(() => {
         cameraController?.getBehavior()?.exit?.({body: bodyRef, cam: camRef});
+        cameraController?._cleanupCameraRig();
     });
 
     return (
