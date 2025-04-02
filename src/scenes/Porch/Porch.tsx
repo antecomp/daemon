@@ -1,4 +1,3 @@
-import HeadCam from "@/components/lume/HeadCam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
 import { ObjModel, Scene } from "lume";
@@ -7,7 +6,6 @@ import applyShader from "@/core/lume/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
-import YBillboard from "@/components/lume/YBillboard";
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueManager";
 import root from "@/data/dialogues/rabbits/porchRabbit";
@@ -15,6 +13,7 @@ import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Multicam from "@/components/lume/multicam/Multicam";
 import { playerCam } from "@/components/lume/multicam/multicam-behaviors";
+import Billboard from "@/components/lume/Billboard";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -55,6 +54,10 @@ export default function Porch() {
                 initialBehavior={playerCam("-230 -317 128", 45, 25, 290, 0)}
             />
 
+             {/* <WadsCam 
+                defaultPosition="-230 -317 128"
+            />  */}
+
             <lume-ambient-light intensity={4} />
 
             <lume-point-light 
@@ -87,31 +90,31 @@ export default function Porch() {
                 color="white"
             />
 
-            <YBillboard
-                    texture={viyaTexture}
-                    size={225}
-                    position="-90 -240 0"
-                    interactions={[
-                        () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                        () => DialogueService.startDialogue(
-                            viya_root, 
-                            {
-                                // overlay: viya_dia_bg, 
-                                canCloseDialogueEarly: true,
-                                cameraHijack: {
-                                    sceneRef,
-                                    targetPosition: "122 -287 151",
-                                    targetOrientation: {yaw: 41, pitch: 2}
-                                }
+            <Billboard
+                texture={viyaTexture}
+                position="-90 -240 0"
+                scale={225}
+                interactions={[
+                    () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
+                    () => DialogueService.startDialogue(
+                        viya_root, 
+                        {
+                            // overlay: viya_dia_bg, 
+                            canCloseDialogueEarly: true,
+                            cameraHijack: {
+                                targetPosition: "122 -287 151",
+                                targetOrientation: {yaw: 41, pitch: 2}
                             }
-                        ),
-                        () => addLogMessage(`She is smoking a cigarette.`)
-                    ]}
+                        }
+                    ),
+                    () => addLogMessage(`She is smoking a cigarette.`)
+                ]}
             />
+
             <Show when={showRabbit()}>
-                <YBillboard
+                <Billboard
                         texture={friendTexture}
-                        size={50}
+                        scale={50}
                         position="-70 -266 200"
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),

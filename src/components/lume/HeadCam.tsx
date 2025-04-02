@@ -64,6 +64,7 @@ export default function HeadCam(props: HeadCamProps) {
     
         // TODO: FIND MORE EFFECIENT/CACHED WAY OF HANDLING THIS. THIS IS INSANELY INEFFECIENT.
         if (hoveredObject) {
+            hoveredObject.userData.onHover?.(uv);
             hoveredObject.traverseAncestors(a => {
                 if (a.userData.onHover) a.userData.onHover(uv);
             });
@@ -102,6 +103,7 @@ export default function HeadCam(props: HeadCamProps) {
             const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new THREE.Vector2();
     
             // TODO: FIND MORE EFFECIENT/CACHED WAY OF HANDLING THIS. THIS IS INSANELY INEFFECIENT.
+            clickedObject.userData.onClick?.(uv);
             clickedObject.traverseAncestors(a => {
                 if (a.userData.onClick) a.userData.onClick(uv);
             });
