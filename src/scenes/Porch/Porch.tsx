@@ -108,7 +108,7 @@ export default function Porch() {
                         }
                     ),
                     () => addLogMessage(`She is smoking a cigarette.`)
-                ]}
+            ]}
             />
 
             <Show when={showRabbit()}>

@@ -121,10 +121,10 @@ export const cameraController = {
             this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
             this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
 
-            // Except it needs to be in a setTimeout because of course it does >:(
-            setTimeout(() => {
-                this.storedRefs!.body.scene?.needsUpdate();
-            }, 100)
+            // Needed for old billboard system, keeping as a reminder in case of future bugs.
+            // setTimeout(() => {
+            //     this.storedRefs!.body.scene?.needsUpdate();
+            // }, 100)
         }
     }
 }

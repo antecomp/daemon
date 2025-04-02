@@ -73,7 +73,6 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
     let pitch = basePitch;
     
     const handleMouseMove = (e: MouseEvent) => {
-        console.log("mousemove");
         const rect = scene.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
@@ -106,6 +105,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
         }
 
         if (hoveredObject) {
+            hoveredObject.userData.onHover?.(uv);
             hoveredObject.traverseAncestors(a => {
                 if (a.userData.onHover) a.userData.onHover(uv);
             });
@@ -125,6 +125,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
 
             const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new THREE.Vector2();
 
+            clickedObject.userData.onClick?.(uv);
             clickedObject.traverseAncestors(a => {
                 a.userData.onClick?.(uv);
             })
@@ -148,13 +149,11 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             scene.addEventListener("click", boundHandleClick);
 
             body.rotation = (_xPrev, yPrev) => {
-                console.log("Running body rotation")
                 const newYaw = lerp(yPrev, yaw, 0.2);
                 return [0, newYaw, 0];
             }
 
             cam.rotation = (xPrev) => {
-                console.log("Running cam rotation")
                 const newPitch = lerp(xPrev, pitch, 0.2);
                 return [newPitch, 0, 0];
             }
