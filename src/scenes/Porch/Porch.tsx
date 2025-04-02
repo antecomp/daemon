@@ -102,8 +102,10 @@ export default function Porch() {
                             // overlay: viya_dia_bg, 
                             canCloseDialogueEarly: true,
                             cameraHijack: {
-                                targetPosition: "122 -287 151",
-                                targetOrientation: {yaw: 41, pitch: 2}
+                                targetPosition: "122 -317 151",
+                                targetOrientation: {yaw: 41, pitch: 2},
+                                lerp: true,
+                                lerpSpeed: 0.06
                             }
                         }
                     ),

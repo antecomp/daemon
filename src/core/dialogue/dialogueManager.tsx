@@ -27,6 +27,8 @@ type StartDialogueOptions = {
     cameraHijack?: {
         targetPosition: LumePosition, 
         targetOrientation: Omit<Gimbal, 'roll'>
+        lerp?: boolean,
+        lerpSpeed?: number
     }
 };
 
@@ -52,7 +54,11 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     if (options?.cameraHijack) {
         const { targetPosition, targetOrientation } = options.cameraHijack;
-        cameraController.setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
+        if(options.cameraHijack.lerp) {
+            cameraController.setTemporaryBehavior(lerpTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch, options.cameraHijack.lerpSpeed));
+        } else {
+            cameraController.setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
+        }
     }
 }
 

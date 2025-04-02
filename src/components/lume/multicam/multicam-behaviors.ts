@@ -2,7 +2,7 @@ import { LumePosition } from "@/extra.types";
 import { CameraBehavior } from "./multicam.types";
 import { PerspectiveCamera, Scene } from "lume";
 import * as THREE from "three";
-import lerp from "@/util/lerp";
+import lerp, { lerpAngle } from "@/util/lerp";
 import { isCloseTo } from "@/util/isCloseTo";
 
 export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBehavior {
@@ -15,7 +15,11 @@ export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBeh
     }
 }
 
-export function lerpTo(pos: [number, number, number], yaw: number, pitch: number, onComplete?: () => void): CameraBehavior {
+export function lerpTo(pos: [number, number, number] | LumePosition, yaw: number, pitch: number, speed?: number, onComplete?: () => void,): CameraBehavior {
+    if(typeof pos === "string") {
+        pos = pos.split(" ").map(x => Number(x)) as [number, number, number];
+    }
+    speed = speed ?? 0.02;
     return {
         init({body, cam}) {
             let lerpComplete = false;
@@ -29,19 +33,19 @@ export function lerpTo(pos: [number, number, number], yaw: number, pitch: number
                 }
 
                 return [
-                    lerp(x, pos[0], 0.2),
-                    lerp(y, pos[1], 0.2),
-                    lerp(z, pos[2], 0.2)
+                    lerp(x, pos[0], speed),
+                    lerp(y, pos[1], speed),
+                    lerp(z, pos[2], speed)
                 ]
             }
 
             body.rotation = (_xPrev, yPrev) => {
-                const newYaw = lerp(yPrev, yaw, 0.2);
+                const newYaw = lerpAngle(yPrev, yaw, speed);
                 return [0, newYaw, 0];
             }
 
             cam.rotation = (xPrev) => {
-                const newPitch = lerp(xPrev, pitch, 0.2);
+                const newPitch = lerpAngle(xPrev, pitch, speed);
                 return [newPitch, 0, 0];
             }
         }
@@ -52,12 +56,13 @@ export function lerpToAsync(
     position: [number, number, number],
     yaw: number,
     pitch: number,
+    speed: number
 ): [CameraBehavior, Promise<void>] {
     let resolvePromise: () => void;
     const lerpPromise = new Promise<void>((resolve) => {
         resolvePromise = resolve;
     });
-    const behavior = lerpTo(position, yaw, pitch, () => {
+    const behavior = lerpTo(position, yaw, pitch, speed, () => {
         resolvePromise();
     });
     return [behavior, lerpPromise];
