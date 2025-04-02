@@ -6,24 +6,29 @@ import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
-import HeadCam from '@/components/lume/HeadCam';
 import Interactable from '@/components/lume/Interactable';
-import hijackCamera from '@/components/lume/hijackCamera';
+import Multicam, { cameraController } from '@/components/lume/multicam/Multicam';
+import { lerpTo, playerCam, snapTo } from '@/components/lume/multicam/multicam-behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
     let baseRef: ObjModel | undefined;
     let dmnRef: ObjModel | undefined;
 
-    let piss = "300";
+    const lightIntensity = "300";
 
     onMount(() => {
         requestAnimationFrame(() => {
             sceneRef && applyShader(sceneRef, 0);
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
-        })
+        });
     })
+
+    function handleDiamondClick() {
+        cameraController.setTemporaryBehavior(snapTo("0 -512 141", 0, -22));
+        //cameraController.setTemporaryBehavior(lerpTo([0, -512, 141], 0, -22)); // This one doesn't require the function cleanup in playercam
+    }
 
     return (
         <lume-scene
@@ -39,7 +44,7 @@ export default function Liminality() {
             <lume-ambient-light intensity={0.0} />
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            <HeadCam position="0 -512 350" baseOrientation={{yaw: 360, pitch: -15}} maxPitch={10} maxYaw={20}/>
+            <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
 
             <lume-obj-model
                 id="base"
@@ -54,12 +59,8 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={() => {
-                let hi = hijackCamera({sceneRef, targetOrientation: {yaw: 45, pitch: 28}, targetPosition: "389 -747 370"})
-                setTimeout(() => {
-                    hi?.remove();
-                }, 10000)
-            }}
+            onClick={() => handleDiamondClick()}
+            //onHover={() => console.log("Diamond Hovered")}
         >
                 <lume-obj-model
                     id="dmn"
@@ -78,10 +79,8 @@ export default function Liminality() {
                 />
         </Interactable>
 
-
-
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -550 100" 
@@ -90,7 +89,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="-100 -550 -100" 
@@ -99,7 +98,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -550 -100" 
@@ -108,7 +107,7 @@ export default function Liminality() {
             />
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="-100 -550 100" 
@@ -117,7 +116,7 @@ export default function Liminality() {
             /> 
 
             <lume-point-light 
-                intensity={piss}
+                intensity={lightIntensity}
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="0 -700 0" 

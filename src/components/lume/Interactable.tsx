@@ -26,8 +26,8 @@ export default function Interactable(props: InteractiveElementProps) {
             containerRef.three.userData.onClick = () => {
                 if(props.onClick) props.onClick();
                 
-                if(props.interactions && props.interactions[currentInteractionMode()]) {
-                    props.interactions[currentInteractionMode()]!(); // Ts doesnt like my catch for some reason.
+                if(props.interactions) {
+                    props.interactions[currentInteractionMode()]?.(); 
                  }
             };
             containerRef.three.userData.onHover = () => {
