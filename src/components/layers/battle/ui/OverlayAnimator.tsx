@@ -1,4 +1,4 @@
-import { overlayAnimations } from "@/core/battle/animation/animations.reg";
+import { overlayAnimations } from "@/core/battle/animation/overlayAnimsRegistry";
 import { overlayAnimRequests } from "@/core/battle/animation/requestOverlayAnim";
 import { createEffect } from "solid-js";
 
@@ -21,42 +21,35 @@ export default function OverlayAnimator() {
                 return;
             }
 
-            const { src, frameWidth, frameHeight, totalFrames, frameRate } = config;
-            const duration = (totalFrames / frameRate) * 1000; // Frames to ms.
+            const { src, width, height } = config;
 
-            const sprite = document.createElement("div");
+            const video = document.createElement("video");
+            video.src = src;
+            video.autoplay = true;
+            video.muted = true;
+            video.playsInline = true;
 
-            Object.assign(sprite.style, {
+            Object.assign(video.style, {
                 position: "absolute",
                 translate: `${position[0]}px ${position[1]}px`,
-                width: `${frameWidth}px`,
-                height: `${frameHeight}px`,
-                backgroundImage: `url(${src})`,
-                backgroundRepeat: "no-repeat",
+                width: width,
+                height: height,
+                mixBlendMode: "difference",
+                pointerEvents: "none",
+                willChange: "transform",
+                transform: "translateZ(0)"
+            });
 
-                // Hinting for optimization
-                willChange: "transform, background-position",
-                transform: "translateZ(0)", // forces GPU acceleration
-                backfaceVisibility: "hidden", // optimize GPU acceleration
-                contain: "strict" // idk
-            } as CSSStyleDeclaration);
+            video.onended = () => {
+                console.log("done playing!");
+                processedAnimations.delete(id);
+                video.remove();
+                onFinish();
+            };
 
-            overlayConRef?.appendChild(sprite);
+            overlayConRef?.appendChild(video);
+            video.play();
 
-            
-            sprite.animate(
-                [{ backgroundPosition: "0px" }, { backgroundPosition: `-${frameWidth * totalFrames}px` }],
-                {
-                  duration,
-                  iterations: 1,
-                  easing: `steps(${totalFrames})`
-                }
-            ).onfinish = () => {
-                sprite.remove();
-                onFinish(); // CB sent by request, used to resolve promise.
-                processedAnimations.delete(id); // Allow new animations with this ID
-            }
-           
         })
     })
 

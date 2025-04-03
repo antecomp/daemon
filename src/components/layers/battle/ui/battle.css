@@ -29,7 +29,9 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    /* idk */
+    /* transform: translate(-50%, -50%) translateZ(1px);  */
+    transform: translate(-50.5%, -50.5%);
     display: flex;
     justify-content: center;
     align-items: center;

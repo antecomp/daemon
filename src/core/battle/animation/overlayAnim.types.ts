@@ -4,10 +4,8 @@
  */
 export interface OverlayAnimData {
     src: string; // image url
-    frameWidth: number;
-    frameHeight: number;
-    frameRate: number;
-    totalFrames: number;
+    width: number;
+    height: number;
 }
 
 /** Request used internally to actually track the animation *requests* that we've called. */ 

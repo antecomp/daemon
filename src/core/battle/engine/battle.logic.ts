@@ -18,6 +18,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MeltAnimationFn } from "@/hooks/createMeltEffect";
 
 import { detect } from "detect-browser";
+import { requestOverlayAnimation } from "../animation/requestOverlayAnim";
 const browser = detect();
 
 /**
@@ -156,6 +157,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
         (window as any).player = player;
         (window as any).opponent = opponent;
         (window as any).forceBattleResolve = forceBattleResolve;
+        (window as any).requestOverlayAnim = requestOverlayAnimation;
     }
 
     /** 
