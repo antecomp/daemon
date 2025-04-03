@@ -41,6 +41,12 @@ export type DialogueNode = {
     next?: DialogueNode | (() => DialogueNode)
     sideEffect?: () => void,
 
+    /** Blocking side effect, halts dialogue flow until promise resolves,
+     * can be used to await camera movement, battles, cutscenes etc
+     * without terminating dialoguue.
+     */
+    waitFor?: () => Promise<void>
+
     /**
     * Attach a new or existing child DialogueNode to the node
     * @param renderOrNode - Either an existing node made somewhere else (reference) or a 'render' representing a new message
@@ -130,6 +136,13 @@ export type DialogueNode = {
      * @returns the node back (this) for chaining
      */
     attachSideEffect(ef: () => void): DialogueNode
+
+    /**
+     * Attach a "waitFor" async CB, a method that blocks dialogue flow until the promise resolves.
+     * @param waitFor : An async function that halts dialogue flow.
+     * @returns this node back for chaining.
+    */
+    makeNodeWaitFor(wf: () => Promise<void>): DialogueNode
 
     /**
      * Add a option that ends the dialogue with custom text.

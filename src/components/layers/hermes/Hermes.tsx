@@ -56,6 +56,10 @@ export default function Hermes({ root }: { root: DialogueNode }) {
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
     node.sideEffect && node.sideEffect();
 
+    if(node.waitFor) {
+      await node.waitFor();
+    }
+
     // Real-time check of if we should show the options or  not.
     const filteredOptions = node.options.filter(option => !option.onlyShowWhen || option.onlyShowWhen());
 

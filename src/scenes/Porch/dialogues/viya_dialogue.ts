@@ -2,6 +2,7 @@ import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/util/pickRandom";
+import { BattleOutcome } from "@/core/battle/engine/battle.types";
 
 const characters = Object.freeze({
     ARDA: "Arda",
@@ -87,7 +88,36 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 questionLoopback.addTerminationOption("Option X", "Another option I was too lazy to type out")
 
-questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", 
-    {sideEffect: async () => {await startBattle(OPPONENT_MIMICRY); alert("Battle result successfully awaited!")}});
+// questions.addTerminationOption("battle please [END]", "No questions. Start a battle with the mimicry please", 
+//     {sideEffect: async () => {await startBattle(OPPONENT_MIMICRY); alert("Battle result successfully awaited!")}});
+
+
+let mimicryResult: BattleOutcome | null = null;
+questions.addCAROptionChild(
+    "Battle Please", "No questions, start a battle with the mimicry please.",
+    createInlineDialogueTree("", "", (root) => {
+        root.makeNodeWaitFor(async () => {
+            mimicryResult = await startBattle(OPPONENT_MIMICRY);
+        })
+        .next = (() => {
+            switch(mimicryResult) {
+                case(BattleOutcome.Player):
+                    return createDialogueNode("Wow, nice job. I'm impressed.", "Viya");
+                case(BattleOutcome.Opponent):
+                    return createDialogueNode("Damn you suck at this. How are you going to survive the fringenet?", "Viya");
+                case(BattleOutcome.Draw):
+                    return createDialogueNode("Close call! Things will only get harder from here...", "Viya");
+                case(BattleOutcome.Eject):
+                    const response = createDialogueNode("Coward.", "Viya");
+                    const atLeast = response.addChild("If you're not going to fight, do you at least have some questions?")
+                        atLeast.addCAROptionChild("Yes", "Sure.", questionLoopback);
+                        atLeast.addTerminationOption("No [END]", "No fuck off");
+                    return response;
+                default:
+                    return createDialogueNode("I'm not sure what the battle outcome is, something probably broke lol.", "Viya")
+            }
+        })
+    })
+)
 
 export default root;

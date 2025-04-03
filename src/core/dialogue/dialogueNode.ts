@@ -147,6 +147,11 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
             }
             return this;
         },
+
+        makeNodeWaitFor(wf) {
+            this.waitFor = wf;
+            return this;
+        }
     }
 
     return node;
