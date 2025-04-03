@@ -1,5 +1,5 @@
-import mapobj from './models/map.obj?url';
-import mapmtl from './models/map.mtl?url';
+import mapobj from './models/map.obj';
+import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show} from "solid-js"
 import applyShader from "@/core/lume/applyShader";

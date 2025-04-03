@@ -1,4 +1,4 @@
-import { Accessor, JSX } from "solid-js";
+import { JSX } from "solid-js";
 
 /**
  * Represents the meta layer of a UI component.

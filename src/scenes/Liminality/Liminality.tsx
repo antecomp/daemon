@@ -1,7 +1,7 @@
-import baseobj from './models/base.obj?url'
-import basemtl from './models/base.mtl?url'
-import dmnobj from './models/diamond.obj?url'
-import dmnmtl from './models/diamond.mtl?url'
+import baseobj from './models/base.obj'
+import basemtl from './models/base.mtl'
+import dmnobj from './models/diamond.obj'
+import dmnmtl from './models/diamond.mtl'
 import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
