@@ -74,3 +74,11 @@ src
 │ 
 └── util                        Basic reusable utility methods (f.e pickRandom, lerp, sleep).
 ```
+
+----------------------
+
+Regarding .mtl paths;
+After building for prod, crummy workaround right now is to just go to the mtl files and change the paths to look like
+`map_Kd ../textures/whatever/path/needed.png`
+
+I will see if I can automate this later, either in vite or just as a post-build script ¯\_(ツ)_/¯
