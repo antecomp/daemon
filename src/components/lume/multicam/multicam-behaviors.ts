@@ -4,6 +4,7 @@ import { PerspectiveCamera, Scene } from "lume";
 import * as THREE from "three";
 import lerp, { lerpAngle } from "@/util/lerp";
 import { isCloseTo } from "@/util/isCloseTo";
+import { isSceneLocked } from "@/core/ui/UILayerStore";
 
 export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBehavior {
     return {
@@ -78,6 +79,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
     let pitch = basePitch;
     
     const handleMouseMove = (e: MouseEvent) => {
+        if(isSceneLocked()) return;
         const rect = scene.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
@@ -92,7 +94,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
     let previousUV: THREE.Vector2 | null = null
 
     function runHoverRaycast(camRef: PerspectiveCamera) {
-        if (!camRef || !scene) return;
+        if (!camRef || !scene || isSceneLocked() ) return;
         raycaster.setFromCamera(mouse, camRef.three);
 
         const intersects = raycaster.intersectObjects(scene.three.children, true);
@@ -123,6 +125,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
     let boundRunHoverRayCast: () => void;
 
     const handleClick = (scene: Scene) => {
+        if(isSceneLocked()) return;
         const intersects = raycaster.intersectObjects(scene.three.children, true);
         if(intersects.length > 0) {
             const clickedIntersection = intersects[0];
@@ -167,8 +170,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
         exit() {
             scene.removeEventListener("mousemove", boundRunHoverRayCast);
 
-            // You can comment this to better see the cam.rotation bug.
-            //scene.removeEventListener("mousemove", handleMouseMove);
+            scene.removeEventListener("mousemove", handleMouseMove);
 
             scene.removeEventListener("click", boundHandleClick);
 

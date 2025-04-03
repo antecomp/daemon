@@ -1,5 +1,5 @@
 import { createMemo, createSignal } from "solid-js";
-import { MainUILock, UILayer, UILockState } from "./ui-layers.types";
+import { MainUILock, UILayer } from "./ui-layers.types";
 
 const [uilayers, setUILayers] = createSignal<UILayer[]>([]);
 
@@ -39,21 +39,15 @@ export function getUILayers() {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-const sceneLocked = createMemo(() =>
+export const isSceneLocked = createMemo(() =>
     uilayers().some(l => l.lock == MainUILock.All || l.lock == MainUILock.Scene)
 )
 
-const sidebarLocked = createMemo(() =>
+export const isSidebarLocked = createMemo(() =>
     uilayers().some(l => l.lock == MainUILock.All || l.lock == MainUILock.Sidebar)
 )
 
-const uiLocked = createMemo(() => 
+export const isUILocked = createMemo(() => 
     uilayers().some(l => l.lock == MainUILock.All)
 );
-
-/**
- * Returns the lock state of the main UI components (memos).
- */
-export function getLockState(): UILockState {
-    return { sceneLocked, sidebarLocked, uiLocked };
-}
+  

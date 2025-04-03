@@ -42,16 +42,3 @@ export type UILayer = {
     blockBehind?: boolean;
     style?: JSX.CSSProperties;
 }
-
-/**
- * Represents the lock state of the main UI components.
- * 
- * @property sceneLocked - An accessor that returns whether the scene is locked.
- * @property sidebarLocked - An accessor that returns whether the sidebar is locked.
- * @property uiLocked - An accessor that returns whether the entire UI is locked.
- */
-export type UILockState = {
-    sceneLocked: Accessor<boolean>;
-    sidebarLocked: Accessor<boolean>;
-    uiLocked: Accessor<boolean>;
-}
