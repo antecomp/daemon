@@ -43,13 +43,6 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            {/* <HeadCam
-                position="-230 -317 128"
-                baseOrientation={{yaw: 290, pitch: 0}}
-                maxPitch={25}
-                maxYaw={45}
-            /> */}
-
             <Multicam
                 initialBehavior={playerCam("-230 -317 128", 45, 25, 290, 0)}
             />
@@ -104,7 +97,7 @@ export default function Porch() {
                             cameraHijack: {
                                 targetPosition: "122 -317 151",
                                 targetOrientation: {yaw: 41, pitch: 2},
-                                lerp: true,
+                                lerp: false,
                                 lerpSpeed: 0.06
                             }
                         }

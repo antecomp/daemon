@@ -7,8 +7,8 @@ import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
-import Multicam, { cameraController } from '@/components/lume/multicam/Multicam';
-import { lerpTo, playerCam, snapTo } from '@/components/lume/multicam/multicam-behaviors';
+import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
+import { lerpTo, playerCam } from '@/components/lume/multicam/multicam-behaviors';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -26,8 +26,7 @@ export default function Liminality() {
     })
 
     function handleDiamondClick() {
-        cameraController.setTemporaryBehavior(snapTo("0 -512 141", 0, -22));
-        //cameraController.setTemporaryBehavior(lerpTo([0, -512, 141], 0, -22)); // This one doesn't require the function cleanup in playercam
+        currentCameraController().setTemporaryBehavior(lerpTo("0 -512 141", 0, -22));
     }
 
     return (

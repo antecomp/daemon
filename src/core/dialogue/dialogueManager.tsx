@@ -4,7 +4,7 @@ import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
 import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
 import {createSignal} from "solid-js";
-import { cameraController } from "@/components/lume/multicam/Multicam";
+import { currentCameraController } from "@/components/lume/multicam/Multicam";
 import { lerpTo, snapTo } from "@/components/lume/multicam/multicam-behaviors";
 
 let activeDialogueID: string | null = null;
@@ -55,9 +55,9 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if (options?.cameraHijack) {
         const { targetPosition, targetOrientation } = options.cameraHijack;
         if(options.cameraHijack.lerp) {
-            cameraController.setTemporaryBehavior(lerpTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch, options.cameraHijack.lerpSpeed));
+            currentCameraController().setTemporaryBehavior(lerpTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch, options.cameraHijack.lerpSpeed));
         } else {
-            cameraController.setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
+            currentCameraController().setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
         }
     }
 }
@@ -69,7 +69,7 @@ function endDialogue() {
     setCanCloseDialogueEarly(false);
     popUILayer(activeDialogueID);
 
-    cameraController.clearTemporaryBehavior();
+    currentCameraController().stopTemporaryBehavior();
 
     activeDialogueID = null;
 }
