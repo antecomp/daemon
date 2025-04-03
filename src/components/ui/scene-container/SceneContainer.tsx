@@ -4,7 +4,7 @@ import { Dynamic } from "solid-js/web";
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 import { currentInteractionMode, setCurrentInteractionMode } from '../interaction/InteractionModePicker';
 import CornerRect from "@/components/util/corner-rect/CornerRect";
-import { DialogueService } from "@/core/dialogue/dialogueManager";
+import { DialogueService } from "@/core/dialogue/dialogueService";
 
 import './scene-container.css'
 import tl from '@/assets/ui/corners/s5/tl.png'

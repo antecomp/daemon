@@ -22,7 +22,7 @@ async function createTexture(gl: WebGL2RenderingContext, url: AssetURL): Promise
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
   gl.generateMipmap(gl.TEXTURE_2D);
 
-  return texture;
+  return texture!;
 }
 
 export default function BattleCanvas(props: BattleCanvasProps) {

@@ -1,5 +1,5 @@
 import { createDialogueNode } from "@/core/dialogue/dialogueNode"
-import { DialogueService } from "@/core/dialogue/dialogueManager";
+import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_overlay from "@/assets/artwork/dialogue_bgs/rabbit_overlay.png"
 import { setShowRabbit } from "@/scenes/Porch/Porch";
 

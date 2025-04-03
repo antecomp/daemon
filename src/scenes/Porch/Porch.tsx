@@ -7,7 +7,7 @@ import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/components/ui/event-log/EventLog";
-import { DialogueService } from "@/core/dialogue/dialogueManager";
+import { DialogueService } from "@/core/dialogue/dialogueService";
 import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";

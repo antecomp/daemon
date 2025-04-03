@@ -4,8 +4,9 @@ import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
 import { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/hooks/createTypewriter";
-import { DialogueService } from "@/core/dialogue/dialogueManager";
+import { DialogueService } from "@/core/dialogue/dialogueService";
 import sleep from "@/util/sleep";
+import { evalDialogueNodeNext } from "@/core/dialogue/dialogueNode";
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -16,14 +17,6 @@ import nameplateBorder from "./assets/nameplate_border.png";
 
 
 const HERMES_MESSAGE_DELAY = 1200;
-
-function evalDialogueNodeNext(node: DialogueNode | (() => DialogueNode)) {
-  if (typeof node == "function") {
-      return node()
-  } else {
-      return node;
-  }
-}
 
 /**
  * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
@@ -74,7 +67,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
 
     if (node.next) {
       await sleep(HERMES_MESSAGE_DELAY * (1 + Math.random() / 2)); // Simulate a pause before advancing (TODO: should I add some randomness here?)
-      await advanceDialogue(evalDialogueNodeNext(node.next));
+      await advanceDialogue(evalDialogueNodeNext(node.next)!);
     } else {
       // Generate our own termination option.
       setCurrentOptions([{ summaryText: "[END]", fullText: "" }])

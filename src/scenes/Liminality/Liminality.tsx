@@ -26,7 +26,7 @@ export default function Liminality() {
     })
 
     function handleDiamondClick() {
-        currentCameraController().setTemporaryBehavior(lerpTo("0 -512 141", 0, -22));
+        currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
     }
 
     return (

@@ -1,5 +1,5 @@
 import { hoveredItem } from "@/components/lume/Interactable";
-import { DITHER_LUMA_CUTOFF, DITHER_MODE, FOV, SCENE_DIMENSIONS } from "@/config";
+import { FOV, SCENE_DIMENSIONS } from "@/config";
 import DitherShader from "@/shaders/post-processing/dither.shader";
 //import ditherShader from "@/shaders/dither.shader";
 import { Scene } from "lume";
@@ -49,7 +49,6 @@ export default function applyShader(scene: Scene, mode?: 0 | 1 | 2, lumaCutoff?:
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
-    //ditherPass.uniforms.lumaCutoff.value = DITHER_LUMA_CUTOFF;
     ditherPass.uniforms.lumaCutoff.value = lumaCutoff ?? 0;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason

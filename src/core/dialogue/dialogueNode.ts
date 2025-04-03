@@ -181,3 +181,12 @@ export function createInlineDialogueTree(rootRender: DialogueNode['render'], roo
     builder(root);
     return root;
 }
+
+/** Simple helper to collapse a dialogue nodes next (either a ref to another node, or a function that returns the ref) to just the ref */
+export function evalDialogueNodeNext(next?: DialogueNode | (() => DialogueNode)) {
+    if (typeof next == "function") {
+        return next()
+    } else {
+        return next;
+    }
+}

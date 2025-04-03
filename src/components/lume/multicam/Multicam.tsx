@@ -18,6 +18,7 @@ class MulticamController {
         this._activeBehavior.init?.(this.storedRefs)
     }
 
+    // Actually performs the cleanup/init between cameras.
     private changeActiveBehavior(newBehavior: CameraBehavior) {
         this._activeBehavior?.exit?.(this.storedRefs);
         this.cleanupCameraRig();
@@ -32,14 +33,14 @@ class MulticamController {
         (as in, setting rotation to a static value doesn't remove the functions for it)
         this is a workaround cleanup function that disposes of those functions, needed when switching from functional to static (i.e playercam to snapto)
 
-        This hard reset also seems to bug out YBillboard (may be fine once we merge the new implementation idk) - this appears to be
-        due to this change not triggering a needsUpdate() on scene (afaik the functional changes constantly call needsUpdate, making the trigger occur. Which implies the new billboards will be fine)
+        If needed, attach a scene needsupdate here (no use now, but if you notice weird behavior on swapout, try adding that)
     */
     private cleanupCameraRig() {
         this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
         this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
     }
 
+    // Default behavior
     public setBaseBehavior(behavior: CameraBehavior) {
         this.baseBehavior = behavior;
         if(!this.tempBehavior) {
@@ -47,11 +48,13 @@ class MulticamController {
         }
     }
 
+    // Temporary override behavior (f.e dialogue uses this to reposition camera temporarily)
     public setTemporaryBehavior(behavior: CameraBehavior) {
         this.tempBehavior = behavior;
         this.changeActiveBehavior(behavior);
     }
 
+    // Revert back to default behavior, dispose of temporary behavior.
     public stopTemporaryBehavior() {
         this.tempBehavior = null;
         this.changeActiveBehavior(this.baseBehavior);

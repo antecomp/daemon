@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 
-import { createDialogueNode, createInlineDialogueTree } from '@/core/dialogue/dialogueNode';
+import { createDialogueNode, createInlineDialogueTree, evalDialogueNodeNext } from '@/core/dialogue/dialogueNode';
 
 const CHARACTER = "Viya"
 
@@ -16,7 +16,7 @@ describe("DialogueNode composition helpers", () => {
     it('addChild creates a new node and sets next', () => {
         const root = createDialogueNode("Start", CHARACTER);
         const child = root.addChild("Next message");
-        expect(root.next).toBe(child);
+        expect(evalDialogueNodeNext(root.next)).toBe(child);
         expect(typeof child.render).toBe("string");
     });
 
@@ -47,16 +47,17 @@ describe("DialogueNode composition helpers", () => {
     it('addMessageChain adds chained nodes sequentially', () => {
         const root = createDialogueNode("Start", CHARACTER);
         const last = root.addMessageChain(["A", "B", "C"]);
-        expect(root.next?.render).toBe("A");
-        expect(root.next?.next?.render).toBe("B");
+        expect(evalDialogueNodeNext(root.next)?.render).toBe("A");
+        // Bröther what the hell is this.
+        expect(evalDialogueNodeNext(evalDialogueNodeNext(root.next)?.next)?.render).toBe("B");
         expect(last.render).toBe("C");
       });
     
       it('addBackAndFourthChain alternates speakers', () => {
         const root = createDialogueNode("Hi", "A");
         const last = root.addBackAndFourthChain(["Yo", "Hey", "Sup"], "A", "B");
-        expect(root.next?.name).toBe("A");
-        expect(root.next?.next?.name).toBe("B");
+        expect(evalDialogueNodeNext(root.next)?.name).toBe("A");
+        expect(evalDialogueNodeNext(root.next)?.next?.name).toBe("B");
         expect(last.name).toBe("A");
       });
 
@@ -70,13 +71,13 @@ describe("DialogueNode composition helpers", () => {
       it('addChildIf conditionally adds next', () => {
         const root = createDialogueNode("Maybe", CHARACTER);
         root.addChildIf(true, "Conditional");
-        expect(root.next?.render).toBe("Conditional");
+        expect(evalDialogueNodeNext(root.next)?.render).toBe("Conditional");
       });
     
       it('addFallbackChild only adds if no next or options', () => {
         const root = createDialogueNode("Fallback?", CHARACTER);
         root.addFallbackChild("Fallback works");
-        expect(root.next?.render).toBe("Fallback works");
+        expect(evalDialogueNodeNext(root.next)?.render).toBe("Fallback works");
       });
     
       it('addChildAsOptionIf conditionally adds an option', () => {
@@ -115,7 +116,7 @@ describe("DialogueNode composition helpers", () => {
         expect(root.options.length).toBe(1);
         const call = root.options[0].next!;
         expect(call.render).toBe("Yep");
-        expect(call.next?.render).toBe("Cool");
+        expect(evalDialogueNodeNext(call.next)?.render).toBe("Cool");
       });
     
       it('addCAROptions adds multiple CARs', () => {
@@ -134,7 +135,8 @@ describe("DialogueNode composition helpers", () => {
           root.addChild("Step 1").addChild("Step 2");
         });
         expect(inline.render).toBe("Root");
-        expect(inline.next?.render).toBe("Step 1");
-        expect(inline.next?.next?.render).toBe("Step 2");
+        expect(evalDialogueNodeNext(inline.next)?.render).toBe("Step 1");
+        // lol
+        expect(evalDialogueNodeNext(evalDialogueNodeNext(inline.next)?.next)?.render).toBe("Step 2");
       });
 })
