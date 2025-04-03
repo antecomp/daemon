@@ -1,4 +1,4 @@
-import { overlayAnimations } from "@/core/battle/animation/animations.reg";
+import { overlayAnimations } from "@/core/battle/animation/overlayAnimsRegistry";
 import { overlayAnimRequests } from "@/core/battle/animation/requestOverlayAnim";
 import { createEffect } from "solid-js";
 

@@ -4,6 +4,7 @@ import slash_mages from '@/assets/animations/overlays/slash/slash_majes.webm'
 import slash_elag from '@/assets/animations/overlays/slash/slash_elag.webm'
 import shield from '@/assets/animations/overlays/shield/shield_opp.webm'
 import { overlayAnimationTable } from "./overlayAnim.types";
+import requestAssetPrefetch from '@/util/reqPrefetch'
 
 /** Registry of the available overlay animations. */
 export const overlayAnimations: overlayAnimationTable = {
@@ -42,3 +43,6 @@ export const overlayAnimationSrcMap = Object.fromEntries(
     Object.entries(overlayAnimations).map(([name, { src }]) => [name, src])
 );
   
+
+// Lazily just calling it here for now, we will want to be smart about it when we actually have dynamic resources.
+requestAssetPrefetch([slashnorm, slash_purpose, slash_mages, slash_elag, shield]);

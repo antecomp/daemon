@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { OverlayAnimReq } from "./overlayAnim.types";
-import { overlayAnimations } from "./animations.reg";
+import { overlayAnimations } from "./overlayAnimsRegistry";
 
 export const [overlayAnimRequests, setOverlayAnimRequests] = createSignal<OverlayAnimReq[]>([]);
 

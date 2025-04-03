@@ -1,5 +1,7 @@
 import { AssetURL } from "@/extra.types";
 
+
+// !!! Deprecated / Unused, keeping for reference. !!!
 export default class AssetManager {
     images: Map<AssetURL, HTMLImageElement>
     videos: Map<AssetURL, HTMLVideoElement>
