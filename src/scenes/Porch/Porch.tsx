@@ -98,6 +98,7 @@ export default function Porch() {
                                 targetPosition: "122 -317 151",
                                 targetOrientation: {yaw: 41, pitch: 2},
                                 lerp: true,
+                                lerpBack: true,
                                 lerpSpeed: 0.06
                             }
                         }
