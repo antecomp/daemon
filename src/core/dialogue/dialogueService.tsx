@@ -6,6 +6,7 @@ import Hermes from "@/components/layers/hermes/Hermes";
 import {createSignal} from "solid-js";
 import { currentCameraController } from "@/components/lume/multicam/Multicam";
 import { lerpTo, snapTo } from "@/components/lume/multicam/multicam-behaviors";
+import { CameraTransformCache } from "@/components/lume/multicam/multicam.types";
 
 let activeDialogueID: string | null = null;
 
@@ -35,6 +36,9 @@ type StartDialogueOptions = {
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 
+// bruh
+let originalCameraPosition = null as null | CameraTransformCache
+
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if(activeDialogueID) throw new Error("Dialogue already in progress.");
 
@@ -53,10 +57,14 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
 
     if (options?.cameraHijack) {
-        const { targetPosition, targetOrientation } = options.cameraHijack;
-        if(options.cameraHijack.lerp) {
-            currentCameraController().setTemporaryBehavior(lerpTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch, options.cameraHijack.lerpSpeed));
+        const { targetPosition, targetOrientation, lerp, lerpSpeed } = options.cameraHijack;
+        if(lerp) {
+            originalCameraPosition = currentCameraController().currentTransform;
+            currentCameraController().setTemporaryBehavior(
+                lerpTo( targetPosition, targetOrientation.yaw, targetOrientation.pitch, lerpSpeed)
+            );
         } else {
+            originalCameraPosition = null; // Prevent lerp, reset.
             currentCameraController().setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
         }
     }
@@ -69,7 +77,19 @@ function endDialogue() {
     setCanCloseDialogueEarly(false);
     popUILayer(activeDialogueID);
 
-    currentCameraController().stopTemporaryBehavior();
+    if(originalCameraPosition) {
+        currentCameraController().setTemporaryBehavior(
+            lerpTo(
+                originalCameraPosition.position, 
+                originalCameraPosition.yaw, 
+                originalCameraPosition.pitch,
+                undefined, // Maybe get from camera hijack options (would need cache for interfunction)
+                () => currentCameraController().stopTemporaryBehavior()
+            )
+        );
+    } else {
+        currentCameraController().stopTemporaryBehavior();
+    }
 
     activeDialogueID = null;
 }

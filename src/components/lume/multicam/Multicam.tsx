@@ -1,5 +1,5 @@
 import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
-import { CameraBehavior, CameraRefs } from "./multicam.types";
+import { CameraBehavior, CameraRefs, CameraTransformCache } from "./multicam.types";
 import { onCleanup, onMount } from "solid-js"
 
 
@@ -62,6 +62,14 @@ class MulticamController {
 
     get activeBehavior() {
         return this._activeBehavior;
+    }
+
+    get currentTransform(): CameraTransformCache {
+        return {
+            position: new XYZNumberValues(this.storedRefs.body.position),
+            yaw: this.storedRefs.body.rotation.y,
+            pitch: this.storedRefs.cam.rotation.x
+        }
     }
 }
 

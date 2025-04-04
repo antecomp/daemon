@@ -26,7 +26,17 @@ export default function Liminality() {
     })
 
     function handleDiamondClick() {
-        currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
+        //currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
+
+        // cache position/orientation before animation so we can return to it.
+        const returnTo = currentCameraController().currentTransform;
+        // little CB-hell, likely will use async version in most cases
+        // lerpTo other location -> lerp back to where we were -> hand control back off to base behavior (player camera)
+        currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28, undefined, () => {
+            currentCameraController().setTemporaryBehavior(lerpTo(returnTo.position, returnTo.yaw, returnTo.pitch, undefined, () => {
+                currentCameraController().stopTemporaryBehavior();
+            }))
+        }));
     }
 
     return (

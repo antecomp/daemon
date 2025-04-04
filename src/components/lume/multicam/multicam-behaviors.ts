@@ -1,6 +1,6 @@
 import { LumePosition } from "@/extra.types";
 import { CameraBehavior } from "./multicam.types";
-import { PerspectiveCamera, Scene } from "lume";
+import { PerspectiveCamera, Scene, XYZNumberValues } from "lume";
 import * as THREE from "three";
 import lerp, { lerpAngle } from "@/util/lerp";
 import { isCloseTo } from "@/util/isCloseTo";
@@ -16,10 +16,10 @@ export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBeh
     }
 }
 
-export function lerpTo(pos: [number, number, number] | LumePosition, yaw: number, pitch: number, speed?: number, onComplete?: () => void,): CameraBehavior {
-    if(typeof pos === "string") {
-        pos = pos.split(" ").map(x => Number(x)) as [number, number, number];
-    }
+export function lerpTo(posData: [number, number, number] | LumePosition | XYZNumberValues, yaw: number, pitch: number, speed?: number, onComplete?: () => void,): CameraBehavior {
+
+    const position = new XYZNumberValues(posData);
+
     speed = speed ?? 0.02;
     return {
         init({body, cam}) {
@@ -28,15 +28,15 @@ export function lerpTo(pos: [number, number, number] | LumePosition, yaw: number
             body.position = (x, y, z) => {
                 if(lerpComplete) return [x, y, z];
 
-                if(isCloseTo(x, pos[0], 0.1) && isCloseTo(y, pos[1], 0.1) && isCloseTo(z, pos[2], 0.1)) {
+                if(isCloseTo(x, position.x, 1) && isCloseTo(y, position.y, 1) && isCloseTo(z, position.z, 1)) {
                     lerpComplete = true;
                     onComplete?.();
                 }
 
                 return [
-                    lerp(x, pos[0], speed),
-                    lerp(y, pos[1], speed),
-                    lerp(z, pos[2], speed)
+                    lerp(x, position.x, speed),
+                    lerp(y, position.y, speed),
+                    lerp(z, position.z, speed)
                 ]
             }
 

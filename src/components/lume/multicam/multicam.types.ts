@@ -1,4 +1,4 @@
-import { Element3D, PerspectiveCamera } from "lume";
+import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
 
 /**
  * Simple struct for lume element references;
@@ -8,6 +8,12 @@ import { Element3D, PerspectiveCamera } from "lume";
 export interface CameraRefs {
     body: Element3D,
     cam: PerspectiveCamera
+}
+
+export interface CameraTransformCache {
+    position: XYZNumberValues,
+    yaw: number, 
+    pitch: number
 }
 
 /**
