@@ -8,8 +8,6 @@ import { currentCameraController } from "@/components/lume/multicam/Multicam";
 import { lerpTo, snapTo } from "@/components/lume/multicam/multicam-behaviors";
 import { CameraTransformCache } from "@/components/lume/multicam/multicam.types";
 
-
-
 /**
  * Interface representing the options for starting a dialogue.
  * 
@@ -37,22 +35,14 @@ type StartDialogueOptions = {
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 
-// bruh
-// let originalCameraPosition = null as null | CameraTransformCache
-// let activeDialogueID: string | null = null;
-
-interface DialogueState {
-    activeDialogue: string | null,
-    lerpData: {
+// Track information about current dialogue (used for active check, camera transforms)
+const DialogueState = {
+    activeDialogue: null as string | null,
+    lerpData: null as {
         lerpSpeed?: number,
         lerpBack?: boolean,
         originalCameraPosition: CameraTransformCache
     } | null
-}
-
-const DialogueState: DialogueState = {
-    activeDialogue: null as string | null,
-    lerpData: null
 }
 
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {

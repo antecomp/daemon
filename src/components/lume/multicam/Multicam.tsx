@@ -29,18 +29,28 @@ class MulticamController {
     }
 
     /*
-        functions for rotation/position are not disposed unless the position of the element is set to a static value
+        Lume Bug: functions for rotation/position are not disposed unless the position of the element is set to a static value
         (as in, setting rotation to a static value doesn't remove the functions for it)
-        this is a workaround cleanup function that disposes of those functions, needed when switching from functional to static (i.e playercam to snapto)
 
-        If needed, attach a scene needsupdate here (no use now, but if you notice weird behavior on swapout, try adding that)
+        This is a workaround cleanup function that disposes of those functions, 
+        needed when switching from functional to static (i.e playercam to snapto)
+
+        note: If needed, attach a scene needsupdate here 
+        (no use now, but if you notice weird behavior on swapout, try adding that)
     */
     private cleanupCameraRig() {
         this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
         this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
     }
 
-    // Default behavior
+    /**
+     * Sets the base (default) behavior for the camera and updates the active behavior
+     * if no temporary behavior is currently set.
+     * 
+     * Typically this is used if we want to reposition playerCam.
+     *
+     * @param behavior - The camera behavior to set as the base behavior.
+     */
     public setBaseBehavior(behavior: CameraBehavior) {
         this.baseBehavior = behavior;
         if(!this.tempBehavior) {
@@ -48,13 +58,25 @@ class MulticamController {
         }
     }
 
-    // Temporary override behavior (f.e dialogue uses this to reposition camera temporarily)
+    /**
+     * Temporarily sets the camera's behavior to the specified behavior.
+     * This method updates the temporary behavior and immediately changes
+     * the active behavior of the camera to match.
+     * 
+     *  f.e dialogue can use this to reposition the camera during dialogue, 
+     *  returning to player camera on dialogue end
+     *
+     * @param behavior - The new temporary camera behavior to apply.
+     */
     public setTemporaryBehavior(behavior: CameraBehavior) {
         this.tempBehavior = behavior;
         this.changeActiveBehavior(behavior);
     }
 
-    // Revert back to default behavior, dispose of temporary behavior.
+    /**
+     * Stops the temporary behavior by resetting it to null and reverts
+     * the active behavior to the base behavior.
+     */
     public stopTemporaryBehavior() {
         this.tempBehavior = null;
         this.changeActiveBehavior(this.baseBehavior);
@@ -64,6 +86,16 @@ class MulticamController {
         return this._activeBehavior;
     }
 
+    /**
+     * Gets the current transformation state of the camera.
+     *
+     * @returns {CameraTransformCache} An object containing the current position, yaw, and pitch of the camera.
+     * - `position`: An instance of `XYZNumberValues` representing the camera's position in 3D space.
+     * - `yaw`: A number representing the rotation of the camera body around the Y-axis.
+     * - `pitch`: A number representing the rotation of the camera around the X-axis.
+     * 
+     * @remark can be used to cache the camera position prior to a transform, for a smooth transition back.
+     */
     get currentTransform(): CameraTransformCache {
         return {
             position: new XYZNumberValues(this.storedRefs.body.position),
@@ -75,7 +107,19 @@ class MulticamController {
 
 let _currentCameraController!: MulticamController;
 
-// Make global so we can request a behavior change.
+/**
+ * Retrieves the current instance of the camera controller being used.
+ * 
+ * The camera controller is responsible for managing the behavior and state
+ * of the camera within the application. It provides functionality for
+ * controlling camera movements, transitions, and other camera-related
+ * operations. This function exposes the current active camera controller
+ * instance, allowing developers to interact with or query its state.
+ * 
+ * @see Multicam.tsx
+ * 
+ * @returns The current camera controller instance.
+ */
 export const currentCameraController = () => _currentCameraController;
 
 
