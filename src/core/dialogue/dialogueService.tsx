@@ -64,17 +64,22 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     if (options?.cameraHijack) {
         const { targetPosition, targetOrientation, lerp, lerpSpeed, lerpBack } = options.cameraHijack;
-        if(lerp) {
+
+        if(lerpBack) {
             DialogueState.lerpData = {
                 originalCameraPosition: currentCameraController().currentTransform,
                 lerpSpeed,
                 lerpBack
             }
+        } else {
+            DialogueState.lerpData = null; // Prevent lerp, reset.
+        }
+
+        if(lerp) {
             currentCameraController().setTemporaryBehavior(
                 lerpTo( targetPosition, targetOrientation.yaw, targetOrientation.pitch, lerpSpeed)
             );
         } else {
-            DialogueState.lerpData = null; // Prevent lerp, reset.
             currentCameraController().setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
         }
     }
