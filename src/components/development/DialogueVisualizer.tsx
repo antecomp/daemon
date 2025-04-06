@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
-import root from "@/tests/generateDialogue"; // Swap this out to test different dialogue components.
+import root from "@/scenes/Porch/dialogues/viya_dialogue"; // Swap this out to test different dialogue components.
 
 function evalNodeNext(node: DialogueNode | (() => DialogueNode)) {
     if (typeof node == "function") {
@@ -33,6 +33,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
 
             {isLeaf && <span style={{ color: "red" }}> 🍃</span>}
             {node.sideEffect && <i>[runs side effect]</i>}
+            {node.waitFor && <span>⏰ <i>Waits for some event...</i></span>}
 
             {/* Handle loopbacks */}
             {isLoop ? (

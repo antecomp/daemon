@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite'
+import string from 'vite-plugin-string'
 import solid from 'vite-plugin-solid'
 import path from "path"
 
 export default defineConfig({
-  plugins: [solid()],
+  plugins: [
+    solid(),
+    string({
+      include: ['**/*.glsl'],
+    }),
+  ],
   base: './',
   resolve: {
     alias: {

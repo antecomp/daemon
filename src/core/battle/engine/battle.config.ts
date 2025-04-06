@@ -12,9 +12,6 @@ export const MOVE_DELAY = 2000;
 /** How long an action message is on screen before fading */
 export const NOTIFICATION_LIFESPAN = 3500;
 
-/** Delay before the round starts */ // <- REPLACE WITH ANIM STUFF
-export const PREROUND_DELAY = 1000;
-
 /** Player starting/max health - will likely be updated/linked to a global store. */
 export const PLAYER_HEALTH_PLACEHOLDER = 10;
 

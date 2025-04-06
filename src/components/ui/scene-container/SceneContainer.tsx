@@ -10,10 +10,11 @@ import './scene-container.css'
 import tl from '@/assets/ui/corners/s5/tl.png'
 import tr from '@/assets/ui/corners/s5/tr.png'
 import br from '@/assets/ui/corners/s5/br.png'
-import pisstop from '@/assets/ui/corners/special/pisstop.png'
+import bl from '@/assets/ui/corners/special/ovl_top.png'
 
 /**
- * Use this atom to change/view the active rendered scene. Changing the scene will completely unmount the previous scene and 
+ * Use this atom to change/view the active rendered scene. 
+ * Changing the scene will completely unmount the previous scene and 
  * immediately load the new one.
  */
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
@@ -41,7 +42,7 @@ export default function SceneContainer() {
             onContextMenu={cycleInteractionMode} 
             borderSize={1} 
             borderType="solid white" 
-            corners={[tl, tr, pisstop, br]} 
+            corners={[tl, tr, bl, br]} 
             id="scene-container" 
             style={{
                 width: `${SCENE_DIMENSIONS.width + 2}px`, 

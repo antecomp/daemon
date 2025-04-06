@@ -10,3 +10,9 @@ declare module '*.obj' {
     const src: string
     export default src
 }
+
+// Autoresolve .glsl to string
+declare module '*.glsl' {
+    const content: string;
+    export default content;
+}

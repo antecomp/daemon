@@ -17,7 +17,8 @@
     "solid-js": "^1.9.3",
     "solid-transition-group": "^0.3.0",
     "three": "^0.173.0",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "vite-plugin-string": "^1.2.3"
   },
   "devDependencies": {
     "@types/three": "^0.173.0",

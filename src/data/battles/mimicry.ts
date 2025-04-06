@@ -5,7 +5,7 @@ import pick from "@/util/pick";
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
-import distortedGridShader from "@/shaders/backgrounds/disgrid.shader";
+import distortedGridShader from "@/shaders/backgrounds/disgrid.glsl";
 import { ManiaStatus } from "@/core/battle/statuses/statuses";
 
 const mimicry_movebank = {

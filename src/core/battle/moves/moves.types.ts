@@ -16,7 +16,7 @@ export enum MoveType {
  * Temporary data storage for a sequence of moves, indexed by the move's position
  * in the sequence. Used for inter-move references during a battle.
  */
-export interface SequenceBuffer {
+interface SequenceBuffer {
     [index: number]: Record<string, any>;
 }
 

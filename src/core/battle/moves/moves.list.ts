@@ -1,8 +1,4 @@
-/** 
- * Generic Moves 
-*/
-
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, EvadePostEffect, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, SuccessfulEvadeBonus, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move, MoveType } from "./moves.types";
 
@@ -28,7 +24,7 @@ export const Evade: Move = {
     type: MoveType.Defensive,
     behaviors: {
         multpipeline: [NegatedByOverwhelm(EvadeCheck)],
-        postEffects: [EvadePostEffect]
+        postEffects: [SuccessfulEvadeBonus]
     }
 }
 

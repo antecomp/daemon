@@ -1,7 +1,7 @@
 import CornerRect from '@/components/util/corner-rect/CornerRect';
 import tr from '@/assets/ui/corners/d1/tr.png'
 import br from '@/assets/ui/corners/d1/br.png'
-import pissbot from '@/assets/ui/corners/special/pissbot.png'
+import tl from '@/assets/ui/corners/special/ovl_bot.png'
 import { createEffect, createSignal, For, on } from "solid-js";
 import './event-log.css'
 
@@ -11,12 +11,12 @@ const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, c
  * Append a message to the "EventLog" which is the small text box at the bottom of the screen.
  * @param msg Message to append
  */
-export const addLogMessage = (msg: string, color?: string) => {
+export const addLogMessage = (text: string, color = "#aaa") => {
   // Use date to force uniqueness.
-  setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text: msg, color: color ?? '#aaa' }]);
+  setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text, color }]);
 };
 
-  // Little greeting message for demo. Remove later.
+// Little greeting message for demo. Remove later.
 setTimeout(() => {
   addLogMessage('Welcome to daemon.garden', 'teal')
 }, 50)
@@ -37,7 +37,7 @@ export default function EventLog() {
     })
   )
 
-  /* HEY REDDIT - IF YOU DONT WANT PEOPLE SCROLLJACKING. MAYBE PROVIDE AN ALTERNATIVE 🖕 */
+  // Scrolljacking since default scroll distance on every tested web browser was too large, skipping over text.
   const handleWheel = (e: WheelEvent) => {
     if(containerRef) {
       e.preventDefault();
@@ -46,7 +46,7 @@ export default function EventLog() {
   }
 
     return (
-      <CornerRect borderSize={3} borderType="double white" corners={[pissbot, tr, undefined, br]} style={{width: 'inherit', height: 'inherit'}} id="event-log">
+      <CornerRect borderSize={3} borderType="double white" corners={[tl, tr, undefined, br]} style={{width: 'inherit', height: 'inherit'}} id="event-log">
         <p class="inner" ref={containerRef} onwheel={handleWheel}>
           <For each={logMessages()}>
             {(msg) => <p class="event-message" style={{color: msg.color}}>{msg.text}</p>}

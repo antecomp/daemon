@@ -8,6 +8,8 @@ import { MoveTooltipContent } from "./MoveTooltipContent";
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
 const CENTER = SVG_DIM / 2;
+const RB_INACTIVE_COLOUR = "#999";
+const RB_ACTIVE_COLOUR = "white";
 
 interface RunebuilderProps {
     availRunes: PlayerMoveMeta[],
@@ -79,7 +81,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                                     <circle
                                         cx={x} cy={y}
                                         r={RUNEBUILDER_RADIUS / 4}
-                                        stroke={props.sequenceBuffer.includes(rune) ? "white" : "#aaa"}
+                                        stroke={props.sequenceBuffer.includes(rune) ? RB_ACTIVE_COLOUR : RB_INACTIVE_COLOUR}
                                         fill="black"
                                         onClick={() => {
                                             if (!rune.canPerform || rune.canPerform(props.sequenceBuffer)) props.addRune(rune);

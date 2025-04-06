@@ -7,8 +7,6 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    /* justify-content: end; */
-   
 
     .action-message {
         padding-left: 5px;
@@ -31,6 +29,7 @@
       top: -2px;
     }
 
+    /* Names here determined/appended by TransitionGroup */
     .fade-enter {
       opacity: 0;
       transition: opacity 1s;
@@ -50,6 +49,4 @@
       transition: opacity 1s, margin-bottom 1s;
     }
 }
-
-/* Names here determined/appended by TransitionGroup */
 
