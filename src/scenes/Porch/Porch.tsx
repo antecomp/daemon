@@ -116,7 +116,8 @@ export default function Porch() {
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
                             () => DialogueService.startDialogue(root),
-                            () => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
+                            //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
+                            (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
                         ]}
                 />
             </Show>
