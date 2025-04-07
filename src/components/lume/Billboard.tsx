@@ -3,7 +3,8 @@ import { Plane, toDegrees } from "lume";
 import { Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";
 import { interactionCB } from "../../core/interaction/interactable.types";
-import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
+import { currentInteractionMode } from "@/core/interaction/interaction"
+import { InteractionMap } from "../../core/interaction/interactable.types";
 import { InteractableObject3D } from "../../core/interaction/interactable.types";
 
 const generateAlphaMask = (image: HTMLImageElement) => {

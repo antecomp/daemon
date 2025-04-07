@@ -1,6 +1,5 @@
 import './style/base.css'
 import 'lume'
-// import Main from './components/layers/main/Main'
 import { DG_VER } from './config'
 import Main from './views/main/NewMain'
 
