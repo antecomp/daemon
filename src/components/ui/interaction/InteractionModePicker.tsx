@@ -1,9 +1,9 @@
 import { createSignal, onCleanup, onMount } from 'solid-js'
-import { Vector2 } from 'three'
 
 import msi from '@/assets/ui/InteractionModePicker/msi.png'
 import mso from '@/assets/ui/InteractionModePicker/mso.png'
 import msc from '@/assets/ui/InteractionModePicker/msc.png'
+import { interactionCB } from "@/components/lume/interactable.types"
 
 export enum InteractionMode {
     Interact,
@@ -18,8 +18,8 @@ export enum InteractionMode {
  * A map can either be an object that maps to the enum directly, or you can just shorthand as an array of [interact(), chat(), observe()]
  */
 export type InteractionMap = {
-    [mode in InteractionMode]?: (uv?: Vector2) => void
-} | [((uv?: Vector2) => void)?, ((uv?: Vector2) => void)?, ((uv?: Vector2) => void)?]
+    [mode in InteractionMode]?: interactionCB
+} | [interactionCB?, interactionCB?, interactionCB?]
 
 const interactionModeToImage = (idx: InteractionMode) => {
     return [msi, msc, mso][idx];

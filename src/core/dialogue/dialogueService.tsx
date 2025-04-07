@@ -5,7 +5,8 @@ import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
 import {createSignal} from "solid-js";
 import { currentCameraController } from "@/components/lume/multicam/Multicam";
-import { lerpTo, snapTo } from "@/components/lume/multicam/multicam-behaviors";
+import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
+import { snapTo } from "@/components/lume/multicam/behaviors/snapTo";
 import { CameraTransformCache } from "@/components/lume/multicam/multicam.types";
 
 /**
