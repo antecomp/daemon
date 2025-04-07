@@ -12,8 +12,10 @@ import { cycleInteractionMode } from "@/core/interaction/interaction";
 
 // THis will move to some sort of game store (persistent) later.
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
+(window as any).DG_setScene = setCurrentScene;
 
 export default function SceneContainer() {
+
     return (
         <CornerRect
             borderSize={2}

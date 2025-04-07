@@ -5,6 +5,7 @@ import EventLog from "./ui/EventLog"
 
 import './main.css'
 import vl_badge from './assets/vl_badge.png'
+import UILayerHost from "@/components/layers/UILayerHost"
 
 export default function Main() {
     return (
@@ -16,6 +17,7 @@ export default function Main() {
                 <EventLog/>
                 <IModePicker/>
             </div>
+            <UILayerHost/>
         </section>
     )
 }
