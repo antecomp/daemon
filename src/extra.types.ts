@@ -37,3 +37,6 @@ export type Point3DTuple = [number, number, number]; // Can convert from this to
 
 /** alias to string for intention readability - represents a imported asset that resolves to a URL when built */
 export type AssetURL = string;
+
+/** Common CSS units attached to numbers. */
+export type CSSUnit = `${number}px` | `${number}%` | `${number}vh` | `${number}vw` | `${number}em` | `${number}rem`;

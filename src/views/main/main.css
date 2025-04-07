@@ -1,11 +1,9 @@
-/* MASSIVE TODO : REMOVE ANY AND ALL MAGIC NUMBERS FROM HERE, SET THEM MANUALLY IN COMPONENT */
-
 #main {
     position: relative;
 
     display: grid;
-    grid-template-columns: auto 941px;
-    grid-template-rows: 611px 81px;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto 81px; /* 81 is the width of the imode-picker image */
 
     gap: 2px 0px;
 }
@@ -41,5 +39,27 @@
     #event-log {
         padding: 5px;
         flex-grow: 1;
+
+        .inner {
+            overflow: auto;
+            height: 100%;
+            padding: 4px;
+            padding-top: 2px;
+        }
+
+        .inner::-webkit-scrollbar {
+            display: none;
+        }
+
+        .inner p {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
     }
 }

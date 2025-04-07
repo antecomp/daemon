@@ -2,8 +2,8 @@
  * Main scene dimensions in pixels.
  */
 export const SCENE_DIMENSIONS = {
-    width: 956,
-    height: 692
+    width: 940,
+    height: 612
 }
 
 export const INITIAL_SCENE = "Porch";
