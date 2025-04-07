@@ -3,7 +3,7 @@ import { LumePosition } from "@/extra.types";
 import lerp from "@/util/lerp";
 import { Scene, PerspectiveCamera } from "lume";
 import * as THREE from "three";
-import { InteractableObject3D } from "../../interactable.types";
+import { InteractableObject3D } from "../../../../core/interaction/interactable.types";
 import { CameraBehavior } from "../multicam.types";
 
 
