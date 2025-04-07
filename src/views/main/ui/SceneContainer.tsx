@@ -12,7 +12,7 @@ export default function SceneContainer() {
             corners={[tl, tr, bl_scene, br]}
             id="scene-container"
         >
-            sfdjklsfdkjljklsdf
+            <br />The Scene goes here
         </CornerRect>
     )
 }
