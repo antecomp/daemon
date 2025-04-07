@@ -2,9 +2,12 @@ import { Element3D } from "lume";
 import {onMount, children, createSignal} from "solid-js"
 import { Object3D, Object3DEventMap, Vector2 } from "three";
 import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
+import { InteractableObject3D } from "./multicam/multicam-behaviors";
 
+
+// TODO: Move these to generic types file, we use it in multiple
 // Note - we have access to interaction mode from the atom, don't put it in this CB.
-export type interactionCB = (uv?: Vector2) => void;
+export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
 
 interface InteractiveElementProps {
     onClick?: interactionCB
@@ -23,22 +26,23 @@ export default function Interactable(props: InteractiveElementProps) {
     
     onMount(() => {
         if(containerRef && containerRef.three) {
-            containerRef.three.userData.onClick = () => {
-                if(props.onClick) props.onClick();
+            (containerRef.three as InteractableObject3D).userData.onClick = (uv, mouse) => {
+                props.onClick?.(uv, mouse);
                 
                 if(props.interactions) {
-                    props.interactions[currentInteractionMode()]?.(); 
+                    props.interactions[currentInteractionMode()]?.(uv, mouse); 
                  }
             };
-            containerRef.three.userData.onHover = () => {
-                if(props.onHover) props.onHover();
+            (containerRef.three as InteractableObject3D).userData.onHover = (uv, mouse) => {
+                props.onHover?.(uv, mouse);
+
                 // We want to make the direct child of the interact container to be the receiver of the 
                 // glow effect - this often differs from the Three object calling onHover.
                 // Ref HeadCam implementation but tldr we check every ancestor of raycast target for method in case of grouping.
                 if(containerRef.children.length > 0) setHoveredItem((containerRef.children[0] as Element3D).three);
             };
             containerRef.three.userData.onHoverLeave = () => {
-                if(props.onHoverLeave) props.onHoverLeave();
+                props.onHoverLeave?.();
                 setHoveredItem(null);
             }
         }

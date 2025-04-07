@@ -4,6 +4,7 @@ import { Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";
 import { interactionCB } from "./Interactable";
 import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
+import { InteractableObject3D } from "./multicam/multicam-behaviors";
 
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");
@@ -99,12 +100,14 @@ export default function Billboard(props: {
         }
 
         // Replace / Extend me with interactions config.
-        if(props.onHover) {me.three.userData.onHover = (uv: Vector2) => isOpaque(uv) && props.onHover!(uv)}
+        if(props.onHover) {
+            (me.three as InteractableObject3D).userData.onHover = (uv, mouse) => isOpaque(uv!) && props.onHover?.(uv, mouse)
+        }
 
-        me.three.userData.onClick = (uv: Vector2) => {
+        (me.three as InteractableObject3D).userData.onClick = (uv, mouse) => {
             if(isOpaque(uv)) {
-                props.onClick?.(uv);
-                props.interactions?.[currentInteractionMode()]?.(uv);
+                props.onClick?.(uv, mouse);
+                props.interactions?.[currentInteractionMode()]?.(uv, mouse);
             }
         }
     })

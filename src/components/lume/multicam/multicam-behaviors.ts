@@ -5,6 +5,15 @@ import * as THREE from "three";
 import lerp, { lerpAngle } from "@/util/lerp";
 import { isCloseTo } from "@/util/isCloseTo";
 import { isSceneLocked } from "@/core/ui/UILayerStore";
+import { interactionCB } from "../Interactable";
+
+export interface InteractableObject3D extends THREE.Object3D {
+    userData: {
+        onHover?: interactionCB
+        onHoverLeave?: () => void;
+        onClick?: interactionCB
+    }
+}
 
 export function snapTo(pos: LumePosition, yaw: number, pitch: number): CameraBehavior {
     return {
@@ -99,7 +108,7 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
 
         const intersects = raycaster.intersectObjects(scene.three.children, true);
         const hoveredIntersection = intersects.length > 0 ? intersects[0] : null;
-        const hoveredObject = hoveredIntersection?.object || null;
+        const hoveredObject: (InteractableObject3D | null) = hoveredIntersection?.object ?? null;
         const uv = hoveredIntersection?.uv ? hoveredIntersection.uv.clone() : new THREE.Vector2();
 
         // If the object and UV are unchanged, skip updates
@@ -107,14 +116,14 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
 
         if (previouslyHoveredObject && hoveredObject !== previouslyHoveredObject) {
             previouslyHoveredObject.traverseAncestors(a => {
-                if (a.userData.onHoverLeave) a.userData.onHoverLeave();
+                a.userData.onHoverLeave?.();
             });
         }
 
         if (hoveredObject) {
-            hoveredObject.userData.onHover?.(uv);
+            hoveredObject.userData.onHover?.(uv, mouse);
             hoveredObject.traverseAncestors(a => {
-                if (a.userData.onHover) a.userData.onHover(uv);
+                (a as InteractableObject3D).userData.onHover?.(uv, mouse)
             });
         }
 
@@ -129,13 +138,13 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
         const intersects = raycaster.intersectObjects(scene.three.children, true);
         if(intersects.length > 0) {
             const clickedIntersection = intersects[0];
-            const clickedObject = clickedIntersection.object;
+            const clickedObject: InteractableObject3D = clickedIntersection.object;
 
             const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new THREE.Vector2();
 
-            clickedObject.userData.onClick?.(uv);
-            clickedObject.traverseAncestors(a => {
-                a.userData.onClick?.(uv);
+            clickedObject.userData.onClick?.(uv, mouse);
+            clickedObject.traverseAncestors((a) => {
+                (a as InteractableObject3D).userData.onClick?.(uv, mouse);
             })
         }
     }

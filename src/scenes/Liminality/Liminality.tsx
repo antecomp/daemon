@@ -9,6 +9,7 @@ import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
 import { lerpTo, playerCam } from '@/components/lume/multicam/multicam-behaviors';
+import { Vector2 } from 'three';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -25,7 +26,10 @@ export default function Liminality() {
         });
     })
 
-    function handleDiamondClick() {
+    function handleDiamondClick(mouse: Vector2) {
+
+        alert(mouse.toArray().toString());
+
         //currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
 
         // cache position/orientation before animation so we can return to it.
@@ -68,7 +72,7 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={() => handleDiamondClick()}
+            onClick={(_uv, mouse) => handleDiamondClick(mouse)}
             //onHover={() => console.log("Diamond Hovered")}
         >
                 <lume-obj-model
