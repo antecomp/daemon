@@ -1,3 +1,4 @@
+import { CSSUnit } from '@/extra.types';
 import './CornerRect.css'
 import { JSX } from 'solid-js';
 
@@ -5,8 +6,8 @@ type BorderType = "none" | "hidden" | "dotted" | "dashed" | "solid" | "double" |
 
 interface CornerRecProps {
     children: JSX.Element;
-    width?: number,
-    height?: number,
+    width?: CSSUnit,
+    height?: CSSUnit,
     corners: [string?, string?, string?, string?], /* image imports Going top LR, bottom LR */
     borderSize: number
     borderType: `${BorderType} ${string}` // Final string for colour.
