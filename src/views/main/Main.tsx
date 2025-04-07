@@ -10,7 +10,6 @@ import UILayerHost from "@/components/layers/UILayerHost";
  */
 export default function Main() {
     return (
-        <>
         <div id="main">
             <Sidebar/>
             <SceneContainer/>
@@ -18,6 +17,5 @@ export default function Main() {
             <InteractionModePicker/>
             <UILayerHost/>
         </div>
-        </>
     )
 }

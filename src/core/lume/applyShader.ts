@@ -48,7 +48,7 @@ export default function applyShader(scene: Scene, mode?: 0 | 1 | 2, lumaCutoff?:
     const ditherPass = new ShaderPass(DitherShader);
     composer.addPass(ditherPass);
 
-    ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
+    ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height); // Grab this from the scene canvas itself?
     ditherPass.uniforms.lumaCutoff.value = lumaCutoff ?? 0;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
