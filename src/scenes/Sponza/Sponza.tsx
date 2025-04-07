@@ -3,7 +3,8 @@ import applyShader from "@/core/lume/applyShader";
 import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
-import HeadCam from "@/components/lume/HeadCam";
+import Multicam from "@/components/lume/multicam/Multicam";
+import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 
 export default function Sponza() {
     let sceneRef: Scene | undefined;
@@ -25,13 +26,8 @@ export default function Sponza() {
             physically-correct-lights 
             perspective="800"
         >
-            {/* <WadsCam/> */}
-            <HeadCam 
-                position="-5 -52 4"
-                baseOrientation={{yaw: 73, pitch: 0}}
-                maxYaw={25}
-                maxPitch={25}
-            />
+
+        <Multicam initialBehavior={playerCam("-5 -52 4", 25, 25, 73, 0)}
 
             <lume-ambient-light intensity={8} />
 
