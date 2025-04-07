@@ -3,7 +3,7 @@ import { createSignal, onCleanup, onMount } from 'solid-js'
 import msi from '@/assets/ui/InteractionModePicker/msi.png'
 import mso from '@/assets/ui/InteractionModePicker/mso.png'
 import msc from '@/assets/ui/InteractionModePicker/msc.png'
-import { interactionCB } from '@/components/lume/Interactable'
+import { interactionCB } from "@/components/lume/interactable.types"
 
 export enum InteractionMode {
     Interact,

@@ -2,9 +2,9 @@ import { AssetURL, LumePosition } from "@/extra.types";
 import { Plane, toDegrees } from "lume";
 import { Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";
-import { interactionCB } from "./Interactable";
+import { interactionCB } from "./interactable.types";
 import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
-import { InteractableObject3D } from "./multicam/multicam-behaviors";
+import { InteractableObject3D } from "./interactable.types";
 
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");

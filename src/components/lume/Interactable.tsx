@@ -1,13 +1,8 @@
 import { Element3D } from "lume";
 import {onMount, children, createSignal} from "solid-js"
-import { Object3D, Object3DEventMap, Vector2 } from "three";
+import { Object3D, Object3DEventMap } from "three";
 import { currentInteractionMode, InteractionMap } from "../ui/interaction/InteractionModePicker";
-import { InteractableObject3D } from "./multicam/multicam-behaviors";
-
-
-// TODO: Move these to generic types file, we use it in multiple
-// Note - we have access to interaction mode from the atom, don't put it in this CB.
-export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
+import { InteractableObject3D, interactionCB } from "./interactable.types";
 
 interface InteractiveElementProps {
     onClick?: interactionCB

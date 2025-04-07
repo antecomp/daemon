@@ -12,7 +12,7 @@ import root from "@/data/dialogues/rabbits/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Multicam from "@/components/lume/multicam/Multicam";
-import { playerCam } from "@/components/lume/multicam/multicam-behaviors";
+import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
@@ -97,7 +97,7 @@ export default function Porch() {
                             cameraHijack: {
                                 targetPosition: "122 -317 151",
                                 targetOrientation: {yaw: 41, pitch: 2},
-                                lerp: true,
+                                lerp: false,
                                 lerpBack: true,
                                 lerpSpeed: 0.06
                             }

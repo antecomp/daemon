@@ -8,7 +8,8 @@ import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
-import { lerpTo, playerCam } from '@/components/lume/multicam/multicam-behaviors';
+import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
+import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
 import { Vector2 } from 'three';
 
 export default function Liminality() {
