@@ -1,0 +1,44 @@
+/* MASSIVE TODO : REMOVE ANY AND ALL MAGIC NUMBERS FROM HERE, SET THEM MANUALLY IN COMPONENT */
+
+#main {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: auto 941px;
+    grid-template-rows: 611px 81px;
+
+    gap: 2px 0px;
+}
+
+#sidebar {
+    display: flex;
+
+    border-bottom: solid white 2px;
+    border-left: solid white 2px;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .sidebar-button {
+        margin-top: -17px;
+        margin-bottom: -17px;
+    }
+}
+
+#sidebar::before {
+    content: url('./assets/sidebar_top.png');
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#bottom-bar {
+    display: flex;
+    gap: 2px;
+
+    #event-log {
+        padding: 5px;
+        flex-grow: 1;
+    }
+}
