@@ -11,6 +11,7 @@ import Multicam, { currentCameraController } from '@/components/lume/multicam/Mu
 import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
 import { Vector2 } from 'three';
+import applyDGShader from '@/core/lume/dgRender';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -21,7 +22,8 @@ export default function Liminality() {
 
     onMount(() => {
         requestAnimationFrame(() => {
-            sceneRef && applyShader(sceneRef, 0);
+            // sceneRef && applyShader(sceneRef, 0);
+            sceneRef && applyDGShader(sceneRef);
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
         });
