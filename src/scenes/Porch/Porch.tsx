@@ -14,6 +14,7 @@ import applyShadows from "@/core/lume/applyShadows";
 import Multicam from "@/components/lume/multicam/Multicam";
 import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
+import applyDGShader from '@/core/lume/dgRender';
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -25,7 +26,8 @@ export default function Porch() {
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
-                applyShader(sceneRef, 2, 0.12);
+                //applyShader(sceneRef, 2, 0.12);
+                applyDGShader(sceneRef);
             });
         }
         if(mapRef) {
