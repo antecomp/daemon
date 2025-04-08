@@ -15,9 +15,10 @@ export default function applyShader(scene: Scene, mode?: 0 | 1 | 2, lumaCutoff?:
 
     const composer = new EffectComposer(scene.glRenderer);
 
-    // Omitting render resolution stuff for now. Add if needed.
     function setDimensions() {
-        composer.setPixelRatio(window.devicePixelRatio)
+        //composer.setPixelRatio(window.devicePixelRatio)
+        composer.setPixelRatio(1)
+        composer.setSize(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height)
         const resize = () => composer.setSize(scene.clientWidth, scene.clientHeight)
         const observer = new ResizeObserver(resize)
         observer.observe(scene)
@@ -32,23 +33,11 @@ export default function applyShader(scene: Scene, mode?: 0 | 1 | 2, lumaCutoff?:
     let outlinePass = new OutlinePass(new Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio), scene.three, scene.threeCamera);
     composer.addPass(outlinePass);
 
-    // const ssaoPass = new SSAOPass(scene.three, scene.threeCamera, SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height);
-    // ssaoPass.kernelRadius = 4;  // Adjust for softer/harder AO
-    // ssaoPass.minDistance = 0.001;
-    // ssaoPass.maxDistance = 0.1;
-    // composer.addPass(ssaoPass);
-
-    //console.log(scene.clientHeight); // this is 0 :(
-
-    // const effectSobel = new ShaderPass(SobelOperatorShader);
-    // effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
-    // effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
-    // composer.addPass( effectSobel );
-
     const ditherPass = new ShaderPass(DitherShader);
     composer.addPass(ditherPass);
 
     ditherPass.uniforms.screenSize.value = new Vector2(SCENE_DIMENSIONS.width, SCENE_DIMENSIONS.height); // Grab this from the scene canvas itself?
+    //ditherPass.uniforms.screenSize.value = new Vector2(scene.clientWidth, scene.clientHeight);
     ditherPass.uniforms.lumaCutoff.value = lumaCutoff ?? 0;
     //@ts-ignore
     scene.camera.fov = FOV; // FOV prop for Lume is in degrees for some reason
