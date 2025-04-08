@@ -4,6 +4,8 @@ uniform sampler2D tDiffuse;
 uniform float lumaCutoff; // Threshold at which to clamp to black.
 uniform vec2 screensize;
 uniform float gamma;
+uniform int offsetX;
+uniform int offsetY;
 varying vec2 vUv;
 
 float getDitherThreshold(vec2 coord) {
@@ -28,7 +30,7 @@ void main() {
   vec4 color = texture2D(tDiffuse, vUv);
   float brightness = dot(color.rgb, vec3(0.299, 0.587, 0.114));
   brightness = gammaCorrect(brightness, gamma);
-  float threshold = getDitherThreshold(vUv * screensize); 
+  float threshold = getDitherThreshold(vUv * screensize + vec2(offsetX, offsetY)); 
 
   // Clamp shades below some threshold to black
   if(brightness <= lumaCutoff) {
