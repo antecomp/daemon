@@ -3,7 +3,7 @@
  */
 export const SCENE_DIMENSIONS = {
     width: 940,
-    height: 612
+    height: 600
 }
 
 export const INITIAL_SCENE = "Porch";

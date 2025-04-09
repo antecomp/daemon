@@ -14,8 +14,6 @@ function updateUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sce
     //@ts-ignore
     const FOV = scene.threeCamera.fov
 
-    console.log("update uniforms detected FOV of", FOV);
-
     const HFOV = 2 * Math.atan(Math.tan(toRadians(FOV) / 2) * aspect)
 
     const body = scene.threeCamera.parent; // Parent element = body (for multicam)
@@ -38,7 +36,7 @@ function updateUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sce
 
 }
 
-export default function applyDGShader(scene: Scene) {
+export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable") {
     if(!scene.glRenderer) {
         console.warn('[applyDGShader] Scene GL instance not ready yet.');
         return;
@@ -89,7 +87,7 @@ export default function applyDGShader(scene: Scene) {
 		renderPass.camera = scene.threeCamera;
         // note: outline pass takes it's own camera, you'll need to update it too.
 
-        updateUniforms(DGPass, scene, WIDTH, HEIGHT, "quantized");
+        updateUniforms(DGPass, scene, WIDTH, HEIGHT, mode);
 		composer.render();
 	};
 }

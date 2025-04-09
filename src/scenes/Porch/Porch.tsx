@@ -15,6 +15,7 @@ import Multicam from "@/components/lume/multicam/Multicam";
 import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
+import WadsCam from '@/components/lume/wadscam';
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -56,7 +57,7 @@ export default function Porch() {
             <lume-ambient-light intensity={4} />
 
             <lume-point-light 
-                intensity="6000" 
+                intensity="5500" 
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -356 200" 
@@ -65,7 +66,7 @@ export default function Porch() {
             />
 
             <lume-point-light 
-                intensity="6000" 
+                intensity="5500" 
                 align-point="0.5 0.5" 
                 mount-point="0.5 0.5" 
                 position="100 -356 0" 
@@ -97,9 +98,9 @@ export default function Porch() {
                             // overlay: viya_dia_bg, 
                             canCloseDialogueEarly: true,
                             cameraHijack: {
-                                targetPosition: "122 -317 151",
-                                targetOrientation: {yaw: 41, pitch: 2},
-                                lerp: false,
+                                targetPosition: "-183 -322 34",
+                                targetOrientation: {yaw: -84, pitch: 0},
+                                lerp: true,
                                 lerpBack: true,
                                 lerpSpeed: 0.06
                             }
