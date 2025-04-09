@@ -20,6 +20,7 @@
     border-bottom: solid white 2px;
     border-left: solid white 2px;
 
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -28,7 +29,13 @@
     .sidebar-button {
         margin-top: -17px;
         margin-bottom: -17px;
-        /* will likely need a clip-path here to deal with overlap */
+        clip-path: polygon(0 30%, 100% 0, 100% 70%, 0% 100%);
+        transition: filter 0.5s;
+    }
+
+    .sidebar-button:hover {
+        filter: brightness(1.5);
+        cursor: pointer;
     }
 }
 
@@ -37,7 +44,7 @@
     content: url('./assets/sidebar_top.png');
     position: absolute;
     top: 0;
-    left: 0;
+    left: -2px;
 }
 
 #bottom-bar {

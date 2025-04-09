@@ -1,0 +1,6 @@
+.s-window {
+    min-height: 300px;
+    min-width: 500px;
+    background: black;
+    border: solid white 1px;
+}
