@@ -3,7 +3,7 @@ import { DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
 import { MainUILock } from "@/core/ui/ui-layers.types";
 import Hermes from "@/components/layers/hermes/Hermes";
-import {createSignal} from "solid-js";
+import {createSignal, JSX} from "solid-js";
 import { currentCameraController } from "@/components/lume/multicam/Multicam";
 import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
 import { snapTo } from "@/components/lume/multicam/behaviors/snapTo";
@@ -111,7 +111,7 @@ function endDialogue() {
     DialogueState.activeDialogue = null;
 }
 
-const DialogueService = { 
+export const DialogueService = { 
     /**
      * Launch a new Hermes instance (new dialogue sequence).
      * @param rootNode, required param, a ref to the root node of the dialogue tree you want to render.
@@ -129,5 +129,3 @@ const DialogueService = {
     currentDialogueOverlay, 
     setCurrentDialogueOverlay 
 };
-
-export { DialogueService };

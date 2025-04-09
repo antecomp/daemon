@@ -31,7 +31,6 @@ export default function SceneContainer() {
                 <Dynamic component={scenes[currentScene()]} />
             </Suspense>
 
-            {/* TODO: Should we just make this a UI layer???? */}
             <Show when={DialogueService.currentDialogueOverlay()}>
                 <div id="dialogue-overlay" style={{background: `url(${DialogueService.currentDialogueOverlay()})`}}></div>
             </Show>

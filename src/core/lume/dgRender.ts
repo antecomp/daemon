@@ -1,11 +1,12 @@
 import { FOV, SCENE_DIMENSIONS } from "@/config";
 import { Scene, toRadians } from "lume";
-import { EffectComposer, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
+import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import pp_fragshader from "@/shaders/post-processing/dg.frag.glsl"
 import pp_vertshader from "@/shaders/post-processing/pass.vert.glsl"
 import { Vector2 } from "three";
+import { hoveredItem } from "@/components/lume/Interactable";
 
-function updateUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
+function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
     
     if(mode == "normal") return;
     
@@ -24,9 +25,8 @@ function updateUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sce
     const offsetY = (sceneHeight * pitch) / toRadians(FOV);
 
     if(mode == "stable") {
-        // Try without rounding later, I'm curious.
         pass.uniforms.offsetX.value = Math.round(offsetX); 
-        pass.uniforms.offsetY.value = Math.round(offsetY)
+        pass.uniforms.offsetY.value = Math.round(offsetY);
     } else if (mode == "quantized") {
         // Ref: https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
         // Tldr only move @ 2px increments to lessen flicker. Not a resolution but it helps.
@@ -34,6 +34,10 @@ function updateUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sce
         pass.uniforms.offsetY.value = 2 & Math.floor(offsetY / 2 + 0.5);
     }
 
+}
+
+function updateOutlineUniforms(pass: OutlinePass) {
+    pass.selectedObjects = hoveredItem() ? [hoveredItem()!] : [];
 }
 
 export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable") {
@@ -64,8 +68,7 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
     const renderPass = new RenderPass(scene.three, scene.threeCamera);
 	const outputPass = new OutputPass();
 
-
-    const DGPass = new ShaderPass({
+    const effectPass = new ShaderPass({
         vertexShader: pp_vertshader,
         fragmentShader: pp_fragshader,
         uniforms: {
@@ -76,18 +79,27 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
             offsetX: {value: 0},
             offsetY: {value: 0}
         },
-    })
+    });
+
+    const outlinePass = new OutlinePass(
+        new Vector2(WIDTH, HEIGHT),
+        scene.three,
+        scene.threeCamera
+    );
 
     composer.addPass(renderPass);
-    composer.addPass(DGPass); // Dithering, gamma correction, etc...
+    composer.addPass(outlinePass);
+    composer.addPass(effectPass); // Dithering, gamma correction, etc...
 	composer.addPass(outputPass);
 
     // Always render the scene from the active camera
 	scene.drawScene = () => {
 		renderPass.camera = scene.threeCamera;
-        // note: outline pass takes it's own camera, you'll need to update it too.
+        outlinePass.renderCamera = scene.threeCamera;
 
-        updateUniforms(DGPass, scene, WIDTH, HEIGHT, mode);
+        updateDitherUniforms(effectPass, scene, WIDTH, HEIGHT, mode);
+        updateOutlineUniforms(outlinePass);
+
 		composer.render();
 	};
 }

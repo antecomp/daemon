@@ -27,7 +27,7 @@ export default function Sponza() {
             perspective="800"
         >
 
-        <Multicam initialBehavior={playerCam("-5 -52 4", 25, 25, 73, 0)}
+        <Multicam initialBehavior={playerCam("-5 -52 4", 25, 25, 73, 0)}/>
 
             <lume-ambient-light intensity={8} />
 

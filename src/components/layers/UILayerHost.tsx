@@ -27,16 +27,3 @@ export default function UILayerHost() {
         </div>
     )
 }
-
-export function TestComp() {
-    console.log("Mount");
-
-    const [count, setCount] = createSignal<number>(0);
-
-    return (
-        <div>
-            {Math.random()}
-            <button onClick={() => setCount(p => p +1)}>Count is {count()}</button>
-        </div>
-    )
-}

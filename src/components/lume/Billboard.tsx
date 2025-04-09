@@ -129,7 +129,6 @@ export default function Billboard(props: {
             // alpha-test={0.1}
             // sidedness="double"
 
-            id="bbrd"
             receive-shadow="false"
             has="basic-material"
             

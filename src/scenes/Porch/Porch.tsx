@@ -2,20 +2,18 @@ import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show} from "solid-js"
-import applyShader from "@/core/lume/applyShader";
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/views/main/ui/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import root from "@/data/dialogues/rabbits/porchRabbit";
+import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Multicam from "@/components/lume/multicam/Multicam";
 import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
-import WadsCam from '@/components/lume/wadscam';
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -27,7 +25,6 @@ export default function Porch() {
     onMount(() => {
         if(sceneRef) {
             requestAnimationFrame(() => {
-                //applyShader(sceneRef, 2, 0.12);
                 applyDGShader(sceneRef);
             });
         }
@@ -95,7 +92,6 @@ export default function Porch() {
                     () => DialogueService.startDialogue(
                         viya_root, 
                         {
-                            // overlay: viya_dia_bg, 
                             canCloseDialogueEarly: true,
                             cameraHijack: {
                                 targetPosition: "-183 -322 34",
@@ -118,7 +114,7 @@ export default function Porch() {
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
-                            () => DialogueService.startDialogue(root),
+                            () => DialogueService.startDialogue(rabbit_root),
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
                             (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
                         ]}
