@@ -1,7 +1,7 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan_sprite from "@/assets/artwork/dæmons/snaek.png"
-import vortexShader from "@/shaders/backgrounds/checkers.glsl";
+import vortexShader from "@/shaders/backgrounds/vortex.glsl";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import stockMoves from "@/core/battle/moves/metas/stockMoves";
 import pick from "@/util/pick";

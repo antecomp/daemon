@@ -34,6 +34,11 @@ export async function startBattle(opponentData: DVOpponentData): Promise<BattleO
         id,
         lock: MainUILock.All,
         blockBehind: true,
+        style: {
+            background: "black",
+            opacity: 0,
+            animation: "fadeIn 0.5s forwards"
+        },
         component: () => <Battle opponentData={opponentData} battleResultPromiseRef={resultRef} />
     })
 
