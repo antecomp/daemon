@@ -11,7 +11,27 @@ export function createTooltip() {
     let tooltipRef: HTMLDivElement | undefined;
 
     const updatePosition = (e: MouseEvent) => {
-        setPosition({ x: e.clientX + TOOLTIP_OFFSET, y: e.clientY + TOOLTIP_OFFSET });
+        if(!tooltipRef) return;
+
+        let x = e.clientX + TOOLTIP_OFFSET;
+        let y = e.clientY + TOOLTIP_OFFSET;
+
+        const { width, height } = tooltipRef.getBoundingClientRect();
+
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        // Check if going beyond right boundary, if so, flip to left side
+        if (x + width > windowWidth) {
+            x = e.clientX - width - TOOLTIP_OFFSET;
+        }
+
+        // Check if going beyond bottom boundary, if so, flip to top side
+        if (y + height > windowHeight) {
+            y = e.clientY - height - TOOLTIP_OFFSET;
+        }
+
+        setPosition({ x, y });
     }
 
     const showTooltip = (content: () => JSX.Element) => {
@@ -44,7 +64,6 @@ export function createTooltip() {
                         // Actual specific styling should be done in base.css
                     }}
                 >
-                    {/* ???????????????????????? */}
                     {tooltipContent?.()?.()}
                 </div>
             </Portal>
@@ -52,5 +71,4 @@ export function createTooltip() {
     );
 
     return { showTooltip, hideTooltip, TooltipComponent };
-
 }
