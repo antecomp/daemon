@@ -21,7 +21,7 @@ export const OPPONENT_MIMICRY: DVOpponentData = {
     sprite: mimicry_sprite,
     spriteOffset: {
         x: -14,
-        y: 41
+        y: 15
     },
     backgroundShader: distortedGridShader,
     maxHealth: 15,

@@ -4,6 +4,7 @@ import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
 import { AssetURL, Point } from "@/extra.types"
 import { loadImage } from "@/util/loadImage"
+import { SCENE_DIMENSIONS } from "@/config"
 
 interface BattleCanvasProps {
   sprite: AssetURL
@@ -112,7 +113,7 @@ export default function BattleCanvas(props: BattleCanvasProps) {
 
   return (
     <>
-      <canvas id="battle-bg" width="1060" height="715" 
+      <canvas id="battle-bg" width="985" height={SCENE_DIMENSIONS.height + 26} 
         ref={(el) => {canvasRef = el}}
       >
       </canvas>

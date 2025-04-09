@@ -1,7 +1,7 @@
 #battle-actionbar {
     display: grid;
-    grid-template-columns: 320px 744px;
-    /* grid-template-rows: auto px; change to absolute later? */
+    position: absolute; /* don't consume dom space (causes overflow) */
+    grid-template-columns: 320px 669px;
     height: 113px;
     translate: 0px -60px;
 
