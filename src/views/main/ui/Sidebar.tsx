@@ -3,7 +3,6 @@ import sidebar_button_active from "../assets/sidebar_button_active.png"
 import { createSignal, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
-import IModePicker from "./IMode";
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;
@@ -12,10 +11,10 @@ function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffs
       const centerAbove = (totalBoxes / 2) - 1;
       const distance = index - centerAbove;
   
-      if (distance === 0) return -HEIGHT / 2;
-      if (distance === 1) return HEIGHT / 2;
+      if (distance === 0) return -HEIGHT / 2 + staticOffset;
+      if (distance === 1) return HEIGHT / 2 + staticOffset;
   
-      return staticOffset + Math.sign(distance) * ((Math.abs(distance) - 1) * HEIGHT + HEIGHT / 2);
+      return Math.sign(distance) * ((Math.abs(distance) - 1) * HEIGHT + HEIGHT / 2) + staticOffset;
     } else {
       const center = Math.floor(totalBoxes / 2);
       return staticOffset + (index - center) * HEIGHT;
@@ -32,11 +31,11 @@ export default function Sidebar() {
     const menuItems = [
         {
             id: "inventory",
-            content: () => <div><p style={{margin: "auto 0"}}>hhhh</p></div>,
-        },
-        {
-            id: "settings",
-            content: IModePicker,
+            content: () => <div style={{height: '200px', width: '300px'}}>
+                <p style={{margin: "auto 0"}}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                </div>,
         },
         {
             id: "slop",
@@ -44,7 +43,7 @@ export default function Sidebar() {
         }
     ];
 
-    const toggleMenu = (id: string) => {
+    const toggleMenu = (id: string | null) => {
         setOpenWindow(prev => (prev === id ? null : id));
     };
 
@@ -75,6 +74,7 @@ export default function Sidebar() {
                             -17
                         )
                     }
+                    closeWindow={() => toggleMenu(openWindow())}
                 />
             </Show>
         </div>

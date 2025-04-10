@@ -29,7 +29,7 @@
     .sidebar-button {
         margin-top: -17px;
         margin-bottom: -17px;
-        clip-path: polygon(0 30%, 100% 0, 100% 70%, 0% 100%);
+        clip-path: polygon(0% 30%, 105% -3%, 100% 70%, -1% 105%);
         transition: filter 0.5s;
     }
 
