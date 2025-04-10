@@ -19,9 +19,8 @@ function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffs
       const center = Math.floor(totalBoxes / 2);
       return staticOffset + (index - center) * HEIGHT;
     }
-  }
+}
   
-
 
 export default function Sidebar() {
 

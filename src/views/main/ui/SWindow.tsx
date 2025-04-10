@@ -4,6 +4,7 @@ import top_corner from "../assets/swindow-top.png";
 import swindow_button_frame from "../assets/swindow_button_frame.png"
 import swindow_slopcorner from "../assets/swindow-slopborder.png"
 import swindow_button from "../assets/swindow_button.png"
+import swindow_bot_corner from "../assets/swindow_bot_corner.png"
 
 export function Swindow(props: {
     anchorRef: HTMLElement;
@@ -38,6 +39,10 @@ export function Swindow(props: {
             <div class="swindow-content">
                 {props.children}
             </div>
+            <footer>
+                <span/>
+                <img src={swindow_bot_corner}/>
+            </footer>
         </div>
     )
 }
