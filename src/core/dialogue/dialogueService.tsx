@@ -113,6 +113,7 @@ function endDialogue() {
     }
 
     DialogueState.activeDialogue = null;
+    DialogueState.lerpData = null;
 }
 
 export const DialogueService = { 
