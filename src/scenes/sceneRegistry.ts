@@ -15,7 +15,7 @@ export type SceneRegistry = {
  */
 export const scenes: SceneRegistry = { // Change any type to something proper later.
     LumeTest: lazy(() => import("./DefaultScene/DefaultScene")),
-    // AnotherScene: lazy(() => import("./AnotherScene/AnotherScene")),
+    AnotherScene: lazy(() => import("./AnotherScene/AnotherScene")),
     // ThirdScene: lazy(() => import("./ThirdScene/ThirdScene")),
     // Sponza: lazy(() => import("./Sponza/Sponza")),
     Porch: lazy(() => import("./Porch/Porch")),

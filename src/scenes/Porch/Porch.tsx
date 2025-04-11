@@ -33,6 +33,8 @@ export default function Porch() {
         }
     })
 
+    const staticPlayerCam = playerCam("-230 -317 128", 45, 25, 290, 0);
+
     return (
         <lume-scene
             webgl
@@ -44,7 +46,7 @@ export default function Porch() {
         >
 
             <Multicam
-                initialBehavior={playerCam("-230 -317 128", 45, 25, 290, 0)}
+                initialBehavior={staticPlayerCam}
             />
 
              {/* <WadsCam 

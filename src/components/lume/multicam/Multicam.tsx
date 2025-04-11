@@ -1,6 +1,7 @@
 import { Element3D, PerspectiveCamera, XYZNumberValues } from "lume";
 import { CameraBehavior, CameraRefs, CameraTransformCache } from "./multicam.types";
-import { onCleanup, onMount } from "solid-js"
+import { createEffect, onCleanup, onMount } from "solid-js"
+import { E } from "vitest/dist/chunks/reporters.6vxQttCV.js";
 
 
 class MulticamController {
@@ -41,6 +42,8 @@ class MulticamController {
     private cleanupCameraRig() {
         this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
         this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
+        this.storedRefs.body.rotation = new XYZNumberValues(this.storedRefs.body.rotation);
+        this.storedRefs.cam.rotation = new XYZNumberValues(this.storedRefs.cam.rotation);
     }
 
     /**
@@ -144,9 +147,19 @@ export default function Multicam(props: {initialBehavior: CameraBehavior}) {
     let body!: Element3D;
     let cam!: PerspectiveCamera;
 
+    let lastBehavior = props.initialBehavior;
+
     onMount(() => {
         _currentCameraController = new MulticamController(props.initialBehavior, {body, cam});
     });
+
+    //Changes in initialBehavior - Janky and calls multiple times, manually switchout instead?
+    createEffect(() => {
+        if (_currentCameraController && props.initialBehavior !== lastBehavior) {
+            console.log("Trigger");
+            _currentCameraController.setBaseBehavior(props.initialBehavior);
+        }
+    })
 
     onCleanup(() => {
         _currentCameraController.activeBehavior.exit?.({body, cam}); // In case we need to remove some event listeners.
