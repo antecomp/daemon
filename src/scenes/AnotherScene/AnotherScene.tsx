@@ -1,37 +1,18 @@
 import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
-//import WadsCam from '../../components/util/wadscam'
-import HeadCam from '@/components/lume/HeadCam'
-import { createSignal, onMount } from 'solid-js'
+import { createSignal, Match, onMount, Switch } from 'solid-js'
 import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
-import applyShader from '@/core/lume/applyShader'
-//import WadsCam from '@/components/lume/wadscam'
-import { InteractionMode } from '@/components/ui/interaction/InteractionModePicker'
+import applyDGShader from '@/core/lume/dgRender'
+import Multicam from '@/components/lume/multicam/Multicam'
+import { playerCam } from '@/components/lume/multicam/behaviors/playercam'
+import { InteractionMode } from '@/core/interaction/interactable.types'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
 
-    const [camLayout, _setCamLayout] = createSignal({
-        position: "35 -192 144",
-        orientation: {
-            yaw: 18,
-            pitch: 0
-        }
-    })
-
     const [humanYaw, setHumanYaw] = createSignal(0);
-
-    // setTimeout(() => {
-    //     setCamLayout({
-    //         position: "0, -128, -10",
-    //         orientation: {
-    //             yaw: 160,
-    //             pitch: 10
-    //         }
-    //     })
-    // }, 5000)
 
     onMount(() => {
         if (sceneRef) {
@@ -39,10 +20,14 @@ export default function AnotherScene() {
             // this call before the scenes openGlRenderer is setup
             // We have to do this arbitrary delay to force a wait.
             requestAnimationFrame(() => {
-                applyShader(sceneRef);
+                applyDGShader(sceneRef);
             });
         }
-    })
+    });
+
+    const [loc, setLoc] = createSignal(0);
+
+    setTimeout(() => setLoc(1), 5000)
 
     return(
         <lume-scene 
@@ -58,14 +43,14 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-			<HeadCam
-				baseOrientation={camLayout().orientation}
-				position={camLayout().position}
-				maxYaw={70}
-				maxPitch={15}
-			/>
-
-            {/* <WadsCam></WadsCam> */}
+            <Switch>
+                <Match when={loc() == 0}>
+                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 18, 0)}/>
+                </Match>
+                <Match when={loc() == 1}>
+                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 180, 5)}/>
+                </Match>
+            </Switch>
 
             <lume-point-light 
                 intensity="1200" 

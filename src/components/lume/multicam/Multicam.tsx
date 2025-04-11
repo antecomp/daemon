@@ -41,6 +41,8 @@ class MulticamController {
     private cleanupCameraRig() {
         this.storedRefs.body.position = new XYZNumberValues(this.storedRefs.body.position);
         this.storedRefs.cam.position = new XYZNumberValues(this.storedRefs.cam.position);
+        this.storedRefs.body.rotation = new XYZNumberValues(this.storedRefs.body.rotation);
+        this.storedRefs.cam.rotation = new XYZNumberValues(this.storedRefs.cam.rotation);
     }
 
     /**
