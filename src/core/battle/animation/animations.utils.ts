@@ -1,4 +1,4 @@
-import sleep from "@/util/sleep";
+import sleep from "@/utils/sleep";
 import { animationData, Move, moveAnimationStep, MoveContext, PostMoveContext } from "../moves/moves.types";
 
 /** Combines the animations requested by player and opponents move, grouping and ordering them by priority

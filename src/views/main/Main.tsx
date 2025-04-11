@@ -5,11 +5,11 @@ import EventLog from "./ui/EventLog"
 
 import './main.css'
 import vl_badge from './assets/vl_badge.png'
-import UILayerHost from "@/components/layers/UILayerHost"
+import UILayerHost from "@/layers/UILayerHost"
 
 export default function Main() {
     return (
-        <section id="main">
+        <main>
             <Sidebar/>
             <SceneContainer/>
             <img src={vl_badge} />
@@ -18,6 +18,6 @@ export default function Main() {
                 <IModePicker/>
             </div>
             <UILayerHost/>
-        </section>
+        </main>
     )
 }

@@ -1,5 +1,5 @@
-import { createSignal, For } from "solid-js";
-import { getUILayers } from "../../core/ui/UILayerStore";
+import { For } from "solid-js";
+import { getUILayers } from "./UILayerStore";
 import './ui-layers.css'
 
 export default function UILayerHost() {

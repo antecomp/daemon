@@ -1,6 +1,6 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
 import stockMoves from "@/core/battle/moves/metas/stockMoves";
-import pick from "@/util/pick";
+import pick from "@/utils/pick";
 
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from "@/core/battle/statuses/statuses";

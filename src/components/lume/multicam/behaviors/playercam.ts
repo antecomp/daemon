@@ -1,6 +1,6 @@
-import { isSceneLocked } from "@/core/ui/UILayerStore";
+import { isSceneLocked } from "@/layers/UILayerStore";
 import { LumePosition } from "@/extra.types";
-import lerp from "@/util/lerp";
+import lerp from "@/utils/lerp";
 import { Scene, PerspectiveCamera } from "lume";
 import * as THREE from "three";
 import { InteractableObject3D } from "../../../../core/interaction/interactable.types";

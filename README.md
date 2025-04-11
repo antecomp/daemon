@@ -1,4 +1,4 @@
-Code for the [https://daemon.garden](daemon.garden) web-game by omnidisplay ([https://omni.vi](omni.vi)).
+Code for the [daemon.garden](https://daemon.garden) web-game by omnidisplay ([omni.vi](https://omni.vi)).
 
 ## Commands 
 
@@ -13,7 +13,11 @@ Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
 
 Builds the app for production to the `dist` folder.<br>
 
-Currently we have a stupid thing to disable inlining due to misconfigurations with mtl files. Hopefully that can be fixed in the future.
+Regarding .mtl paths;
+After building for prod, crummy workaround right now is to just go to the mtl files and change the paths to look like
+`map_Kd ../textures/whatever/path/needed.png`
+
+I will see if I can automate this later, either in vite or just as a post-build script `¯\_(ツ)_/¯`
 
 ### `npm run test`
 
@@ -21,64 +25,80 @@ Runs all tests. This automatically re-runs whenever the code updates so it's bes
 
 ## Project Structure
 ```
-src
-├── assets                      Static Game Assets
-│   ├── animations              Spritesheets (name change likely)
-│   │   └── overlays
-│   ├── artwork                 Flat artwork (sprites and backgrounds)
-│   │   ├── characters
-│   │   ├── dæmons
-│   │   └── dialogue_bgs
-│   ├── fonts
-│   ├── icons
-│   ├── sfx
-│   └── ui                      *Common* UI asset images (f.e border designs).
-├── components
-│   ├── development             Helper components for development (debug stuff)
-│   ├── lume                    3D scene general utility components (f.e camera stuff)
-│   ├── ui                      Specific UI components, (will likely move to views/main)
-│   ├── util                    Reusable general components. (f.e CornerRect)
-│   └── views                   Overarching Game View Container Components.
-│       ├── battle                  View folders contain any view-specific components.
-│       │   ├── assets              Assets that only components in this view need.
-│       │   └── ui                  Sub-components used just by this view (f.e "BattleCanvas.tsx")
-│       │                               Convention of ComponentName.tsx and component-name.css in here...
-│       └── main
-├── core                        Game logic code. Usually general code + some hook to utilize it.
-│   ├── battle
-│   │   ├── animation           Animation *code*, little async functions to trigger battle animations
-│   │   ├── engine              Core systems for battle, contains actual useBattleLogic hook.
-│   │   ├── moves               Move data and configuration, general.
-│   │   │   ├── icons
-│   │   │   └── metas           Specific configuration of move metadata wrappers (stuff like icons/animations)
-│   │   └── statuses            Status logic and basic statuses.
+├── assets                  Static Assets.
+│   ├── animations          
+│   │   └── overlays        Short animations that play in-battle (f.e slash), use webms
 │   │
-│   ├── dialogue                Dialogue (i.e "Hermes") logic. Methods for creating dialogue + dialogue traversal hook.      
-│   └── lume                    Lume/ThreeJS Helpers and hooks (i.e applyShader)
+│   ├── artwork
+│   │   ├── battle_bgs      Image backgrounds, used as texture input for background shaders.
+│   │   ├── characters
+│   │   ├── dæmons          Opponent artwork in battle
+│   │   └── dialogue_bgs
+│   │
+│   ├── fonts
+│   │
+│   ├── icons               Common, reusable icons. Currently just used for battle stuff.
+│   │   ├── battle-alerts
+│   │   └── statuses
+│   │
+│   ├── placeholders        Placeholder assets of any variety, in this bin out of laziness.
+│   │
+│   ├── sfx                 Soundbites.
+│   │   └── battle
+│   │
+│   └── ui                  Common, reusable UI assets (such as the cut corner decorations)
+│       └── corners
 │
-├── dialogues                   Global Dialogues (Just samples for now, may remove this)
+├── components              Common, reusable components.
+│   ├── development         Testing and visualizing components, not for prod.
+│   ├── lume
+│   │   └── multicam
+│   │       └── behaviors
+│   └── util
+│       └── corner-rect
 │
-├── hooks                       Utility hooks (more general than those provided by core)
+├── core                    Overarching game logic systems, should be self-contained & then linked to the UI with a hook.
+│   │                       Will often have Manager/Service singletons for instantiating/tracking usage in UI, separate from logic.
+│   ├── battle
+│   │   ├── ai
+│   │   ├── animation
+│   │   ├── engine
+│   │   ├── moves
+│   │   │   ├── icons
+│   │   │   └── metas
+│   │   └── statuses
+│   │
+│   ├── dialogue
+│   │
+│   ├── interaction
+│   │
+│   └── lume
 │
-├── scenes                      Components for handling individual 3D scenes in the game and their local logic.
-│   └── SceneName
-│       ├── dialogues           Dialogue code associated with just this scene
-│       └── models              Models associated with just this scene (may change)
+├── data                    Static scripts to interface with core logic, such as battles, dialogues...
+│   └── battles
 │
-├── shaders
-│   ├── backgrounds             Battle background fragment shaders.
-│   └── post-processing         Shaders for 3D scenes (screenspace render-passes, such as dithering).
-├── style                       *global* css stuff.
+├── hooks                   Reusable UI hooks, f.e createTypewriter.
+│
+├── layers                  Large self-contained UI components. Also contains the layer manager system.
+│   ├── battle
+│   └── hermes
+│
+├── scenes                  3D (lume JSX) scenes.
+│   ├── SceneName           Organized into a folder by the same name, this would contain SceneName.tsx
+│   │   ├── dialogues       Scene-owned data such as dialogues or battles can be contained here.
+│   │   └── models          Scene-owned 3D models and assets are kept here.
+│   │
+│   ├── shared_models       (might move this to /assets/ proper)
+│   └── shared_textures     (might move this to /assets/ proper)
+│
+├── shaders                 Shaders, saved as glsl files (imported with ?raw)
+│   ├── backgrounds         Battle background fragment shaders, painted on a fullscreen quad.
+│   └── post-processing     3D scene post processing shaders.
+│
+├── styles
 ├── tests
-├── (extra.types.ts)            *global* general types (f.e CoordinatePair)
-│ 
-└── util                        Basic reusable utility methods (f.e pickRandom, lerp, sleep).
+├── utils                   Short reusable utilily functions (lerp, pickRandom, sleep...)
+│
+└── views                   Entry points (currently just main)
+    └── main
 ```
-
-----------------------
-
-Regarding .mtl paths;
-After building for prod, crummy workaround right now is to just go to the mtl files and change the paths to look like
-`map_Kd ../textures/whatever/path/needed.png`
-
-I will see if I can automate this later, either in vite or just as a post-build script ¯\_(ツ)_/¯

@@ -1,8 +1,8 @@
-import { BattleProps } from "@/components/layers/battle/Battle";
+import { BattleProps } from "@/layers/battle/Battle";
 import { BattleOutcome, DVOpponentData } from "./engine/battle.types";
-import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
-import { MainUILock } from "@/core/ui/ui-layers.types";
-import Battle from "@/components/layers/battle/Battle";
+import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
+import { MainUILock } from "@/layers/ui-layers.types";
+import Battle from "@/layers/battle/Battle";
 
 let activeBattleID: string | null = null;
 

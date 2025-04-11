@@ -4,7 +4,7 @@ import pan_sprite from "@/assets/artwork/dæmons/snaek.png"
 import vortexShader from "@/shaders/backgrounds/vortex.glsl";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import stockMoves from "@/core/battle/moves/metas/stockMoves";
-import pick from "@/util/pick";
+import pick from "@/utils/pick";
 
 const pantoptes_movebank = {
 

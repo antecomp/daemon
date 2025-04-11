@@ -1,9 +1,9 @@
-import { createProgram } from "@/util/webgl.utils"
+import { createProgram } from "@/utils/webgl.utils"
 import { onMount } from "solid-js"
 import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
 import { AssetURL, Point } from "@/extra.types"
-import { loadImage } from "@/util/loadImage"
+import { loadImage } from "@/utils/loadImage"
 import { SCENE_DIMENSIONS } from "@/config"
 
 interface BattleCanvasProps {

@@ -1,6 +1,6 @@
 import { LumePosition } from "@/extra.types";
-import { isCloseTo } from "@/util/isCloseTo";
-import lerp, { lerpAngle } from "@/util/lerp";
+import { isCloseTo } from "@/utils/isCloseTo";
+import lerp, { lerpAngle } from "@/utils/lerp";
 import { XYZNumberValues } from "lume";
 import { CameraBehavior } from "../multicam.types";
 

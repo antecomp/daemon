@@ -4,7 +4,7 @@ import slash_mages from '@/assets/animations/overlays/slash/slash_majes.webm'
 import slash_elag from '@/assets/animations/overlays/slash/slash_elag.webm'
 import shield from '@/assets/animations/overlays/shield/shield_opp.webm'
 import { overlayAnimationTable } from "./overlayAnim.types";
-import requestAssetPrefetch from '@/util/reqPrefetch'
+import requestAssetPrefetch from '@/utils/reqPrefetch'
 
 /** Registry of the available overlay animations. */
 export const overlayAnimations: overlayAnimationTable = {

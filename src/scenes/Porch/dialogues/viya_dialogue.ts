@@ -1,7 +1,7 @@
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
-import pickRandom from "@/util/pickRandom";
+import pickRandom from "@/utils/pickRandom";
 import { BattleOutcome } from "@/core/battle/engine/battle.types";
 
 const characters = Object.freeze({

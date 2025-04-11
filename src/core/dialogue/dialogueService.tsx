@@ -1,8 +1,8 @@
 import { Gimbal, LumePosition } from "../../extra.types";
 import { DialogueNode } from "./dialogueNode.types";
-import { popUILayer, pushUILayer } from "@/core/ui/UILayerStore";
-import { MainUILock } from "@/core/ui/ui-layers.types";
-import Hermes from "@/components/layers/hermes/Hermes";
+import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
+import { MainUILock } from "@/layers/ui-layers.types";
+import Hermes from "@/layers/hermes/Hermes";
 import {createSignal, JSX} from "solid-js";
 import { currentCameraController } from "@/components/lume/multicam/Multicam";
 import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
