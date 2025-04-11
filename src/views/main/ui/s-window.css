@@ -1,0 +1,71 @@
+.s-window footer {
+    display: flex;
+    translate: 0px -1px;
+    filter: drop-shadow(1px 1px 0px black);
+
+    & span {
+        flex-grow: 1;
+        background: black;
+        border-left: solid white 1px;
+        border-bottom: solid white 1px;
+    }
+
+}
+
+.swindow-hb {
+    display: flex;
+    flex-direction: row;
+
+    & span {
+        flex-grow: 1;
+        border-top: solid 1px white;
+        background: black;
+    }
+}
+
+.swindow-hm {
+    display: flex;
+
+    & span {
+        border-left: solid 1px white;
+        flex-grow: 1;
+        z-index: 1;
+        background: black;
+    }
+
+    & img {
+        z-index: 1;
+    }
+}
+
+.s-window::after {
+    content: url("../assets/window_inset.png");
+    position: absolute;
+    left: -3px;
+    top: 50%;
+    transform: translateY(-53%);
+}
+
+.swindow-content {
+    border: solid white 1px;
+    outline: solid black 1px;
+    border-top: none;
+    border-bottom: none;
+    background: black;
+    padding-left: 8px;
+    /* height: 200px;
+    width: 300px; */
+    min-width: 250px;
+    min-height: 125px;
+}
+
+.swindow-button {
+    position: absolute;
+    right: 6px;
+    top: 0;
+}
+
+.swindow-button:active {
+    right: 7px;
+    top: 1px;
+}
