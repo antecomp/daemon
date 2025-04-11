@@ -39,6 +39,7 @@ const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 // Track information about current dialogue (used for active check, camera transforms)
 const DialogueState = {
     activeDialogue: null as string | null,
+    hijack: false,
     lerpData: null as {
         lerpSpeed?: number,
         lerpBack?: boolean,
@@ -65,6 +66,7 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     if (options?.cameraHijack) {
         const { targetPosition, targetOrientation, lerp, lerpSpeed, lerpBack } = options.cameraHijack;
+        DialogueState.hijack = true;
 
         if(lerpBack) {
             DialogueState.lerpData = {
@@ -83,6 +85,8 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
         } else {
             currentCameraController().setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
         }
+    } else {
+        DialogueState.hijack = false;
     }
 }
 
@@ -104,7 +108,7 @@ function endDialogue() {
                 () => currentCameraController().stopTemporaryBehavior()
             )
         );
-    } else {
+    } else if (DialogueState.hijack) {
         currentCameraController().stopTemporaryBehavior();
     }
 
