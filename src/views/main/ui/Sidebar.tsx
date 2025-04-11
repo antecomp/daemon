@@ -3,6 +3,7 @@ import sidebar_button_active from "../assets/sidebar_button_active.png"
 import { createSignal, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
+import DebugMenu from "@/components/development/DebugMenu";
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;
@@ -37,8 +38,8 @@ export default function Sidebar() {
                 </div>,
         },
         {
-            id: "slop",
-            content: () => <div>aaaa</div>
+            id: "debug",
+            content: DebugMenu
         }
     ];
 

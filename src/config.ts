@@ -4,7 +4,7 @@ export const SCENE_DIMENSIONS = {
     height: 600
 }
 
-export const INITIAL_SCENE = "AnotherScene";
+export const INITIAL_SCENE = "Porch";
 
 export const FOV = 45;
 

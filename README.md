@@ -91,7 +91,7 @@ Runs all tests. This automatically re-runs whenever the code updates so it's bes
 │   ├── shared_models       (might move this to /assets/ proper)
 │   └── shared_textures     (might move this to /assets/ proper)
 │
-├── shaders                 Shaders, saved as glsl files (imported with ?raw)
+├── shaders                 Shaders, saved as glsl files (imported as string)
 │   ├── backgrounds         Battle background fragment shaders, painted on a fullscreen quad.
 │   └── post-processing     3D scene post processing shaders.
 │
