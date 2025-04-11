@@ -86,23 +86,28 @@ export function playerCam(pos: LumePosition, maxYaw: number, maxPitch: number, b
             body.rotation = `0 ${yaw} 0`;
             cam.rotation = `${pitch}, 0, 0`;
 
-            scene = body.scene as unknown as Scene;
+            // Scene isn't always attached right away - likely an indicator that I should be grabbing it some other way lol.
+            requestAnimationFrame(() => {
+                scene = body.scene as unknown as Scene;
 
-            scene.addEventListener("mousemove", handleMouseMove);
-            boundRunHoverRayCast = () => runHoverRaycast(cam);
-            scene.addEventListener("mousemove", boundRunHoverRayCast);
-            boundHandleClick = () => handleClick(scene);
-            scene.addEventListener("click", boundHandleClick);
+                scene.addEventListener("mousemove", handleMouseMove);
+                boundRunHoverRayCast = () => runHoverRaycast(cam);
+                scene.addEventListener("mousemove", boundRunHoverRayCast);
+                boundHandleClick = () => handleClick(scene);
+                scene.addEventListener("click", boundHandleClick);
+    
+                body.rotation = (_xPrev, yPrev) => {
+                    const newYaw = lerp(yPrev, yaw, 0.2);
+                    return [0, newYaw, 0];
+                };
+    
+                cam.rotation = (xPrev) => {
+                    const newPitch = lerp(xPrev, pitch, 0.2);
+                    return [newPitch, 0, 0];
+                };
+            })
 
-            body.rotation = (_xPrev, yPrev) => {
-                const newYaw = lerp(yPrev, yaw, 0.2);
-                return [0, newYaw, 0];
-            };
 
-            cam.rotation = (xPrev) => {
-                const newPitch = lerp(xPrev, pitch, 0.2);
-                return [newPitch, 0, 0];
-            };
         },
 
         exit() {

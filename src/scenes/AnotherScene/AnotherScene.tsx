@@ -1,25 +1,16 @@
 import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
-import { createSignal, onMount } from 'solid-js'
+import { createSignal, Match, onMount, Switch } from 'solid-js'
 import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
 import applyDGShader from '@/core/lume/dgRender'
 import Multicam from '@/components/lume/multicam/Multicam'
 import { playerCam } from '@/components/lume/multicam/behaviors/playercam'
-import { LumePosition } from '@/extra.types'
 import { InteractionMode } from '@/core/interaction/interactable.types'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
-
-    const [camLayout, setCamLayout] = createSignal({
-        position: "35 -192 144" as LumePosition,
-        orientation: {
-            yaw: 18,
-            pitch: 0
-        }
-    })
 
     const [humanYaw, setHumanYaw] = createSignal(0);
 
@@ -34,19 +25,9 @@ export default function AnotherScene() {
         }
     });
 
-    setTimeout(() => {
-        console.log("Call");
-        setCamLayout(prev =>
-            ({
-                ...prev,
-                // position: "25 -172 154" as LumePosition,
-                orientation: {
-                    yaw: 118,
-                    pitch: 0
-                }
-            })
-        )
-    }, 2000) 
+    const [loc, setLoc] = createSignal(0);
+
+    setTimeout(() => setLoc(1), 5000)
 
     return(
         <lume-scene 
@@ -62,7 +43,14 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-            <Multicam initialBehavior={playerCam(camLayout().position, 70, 15, camLayout().orientation.yaw, camLayout().orientation.pitch)}/>
+            <Switch>
+                <Match when={loc() == 0}>
+                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 18, 0)}/>
+                </Match>
+                <Match when={loc() == 1}>
+                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 180, 5)}/>
+                </Match>
+            </Switch>
 
             <lume-point-light 
                 intensity="1200" 
