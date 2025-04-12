@@ -1,5 +1,8 @@
 import { Gimbal } from "@/extra.types";
+import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
+import { onCleanup, onMount, Scene } from "lume";
+import { Vector2 } from "three";
 
 type XYZ = [number, number, number];
 
@@ -29,7 +32,38 @@ export default function NewCam(props: {
     overridePos?: XYZ, overrideOri?: Omit<Gimbal, "roll">
     animate?: boolean;
     speed?: number
+
+    // playercam
+    maxYaw: number,
+    maxPitch: number,
+    sceneRef: Scene
 }) {
+
+    const mouse = new Vector2();
+    const mouseOffset = {yaw: 0, pitch: 0};
+
+    function handleMouseMove(e: MouseEvent) {
+        if(props.overrideOri || props.overridePos || isSceneLocked()) return;
+        
+        const rect = props.sceneRef.getBoundingClientRect();
+        const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+
+        mouseOffset.yaw = -xNorm * props.maxYaw + props.baseOri.yaw;
+        mouseOffset.pitch = yNorm * props.maxPitch + props.baseOri.pitch;
+
+        mouse.set(xNorm, -yNorm);
+    }
+
+    onMount(() => {
+        props.sceneRef.addEventListener("mousemove", handleMouseMove);
+    });
+
+    onCleanup(() => {
+        props.sceneRef.removeEventListener("mousemove", handleMouseMove);
+    });
+
+
     return (
         <lume-element3d 
             id="cam_body" align-point="0.5 0.5"
@@ -48,12 +82,16 @@ export default function NewCam(props: {
 
             //@ts-expect-error
             rotation={(prevX, prevY, prevZ, _t, dt) => {
-                const targetYaw = props.overrideOri?.yaw ?? props.baseOri.yaw;
+                const baseYaw = props.baseOri.yaw;
+                const effectiveYaw = props.overrideOri
+                  ? props.overrideOri.yaw
+                  : baseYaw + mouseOffset.yaw;
                 return updateCameraTransform(
                     [prevX, prevY, prevZ],
-                    [prevX, targetYaw, prevZ],
+                    [prevX, effectiveYaw, prevZ],
                     dt,
-                    props.animate ?? false,
+                    //props.animate ?? false,
+                    ((props.overrideOri == undefined) || (props.animate ?? false)),
                     props.speed ?? 10
                 )
             }}
@@ -64,12 +102,16 @@ export default function NewCam(props: {
 
                 //@ts-expect-error
                 rotation={(prevX, prevY, prevZ, _t, dt) => {
-                    const targetPitch = props.overrideOri?.pitch ?? props.baseOri.pitch;
+                    const basePitch = props.baseOri.pitch;
+                    const effectivePitch = props.overrideOri
+                      ? props.overrideOri.pitch
+                      : basePitch + mouseOffset.pitch;
                     return updateCameraTransform(
                         [prevX, prevY, prevZ],
-                        [targetPitch, prevY, prevZ],
+                        [effectivePitch, prevY, prevZ],
                         dt,
-                        props.animate ?? false,
+                        //props.animate ?? false,
+                        ((props.overrideOri == undefined) || (props.animate ?? false)),
                         props.speed ?? 10
                     )
                 }}

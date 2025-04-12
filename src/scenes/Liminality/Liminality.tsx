@@ -36,6 +36,12 @@ export default function Liminality() {
             setOVOri({pitch, yaw});
             setAnimCam(animate);
         }
+
+        (window as any).DG_stopSlop = () => {
+            setOVPos(undefined);
+            setOVOri(undefined);
+            setAnimCam(true);
+        }
     })
 
     function handleDiamondClick(mouse: Vector2) {
@@ -70,7 +76,13 @@ export default function Liminality() {
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
             {/* <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} /> */}
-            <NewCam basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: -15}} overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}/>
+            <NewCam 
+                basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: 0}} 
+                overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}
+
+                maxYaw={20} maxPitch={20}
+                sceneRef={sceneRef!}
+            />
 
             <lume-obj-model
                 id="base"
