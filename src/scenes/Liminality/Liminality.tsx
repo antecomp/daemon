@@ -2,16 +2,16 @@ import baseobj from './models/base.obj'
 import basemtl from './models/base.mtl'
 import dmnobj from './models/diamond.obj'
 import dmnmtl from './models/diamond.mtl'
-import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
-import { onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
-import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
 import { Vector2 } from 'three';
 import applyDGShader from '@/core/lume/dgRender';
+import NewCam from '@/components/lume/Newcam';
+import { Gimbal } from '@/extra.types';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -20,6 +20,10 @@ export default function Liminality() {
 
     const lightIntensity = "300";
 
+    const [ovPos, setOVPos] = createSignal<[number, number, number]>();
+    const [ovOri, setOVOri] = createSignal<Omit<Gimbal, "roll">>();
+    const [animCam, setAnimCam] = createSignal(false);
+
     onMount(() => {
         requestAnimationFrame(() => {
             // sceneRef && applyShader(sceneRef, 0);
@@ -27,6 +31,11 @@ export default function Liminality() {
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
         });
+        (window as any).DG_updateSlop = (x: number, y: number, z: number, pitch: number, yaw: number, animate: boolean) => {
+            setOVPos([x,y,z]);
+            setOVOri({pitch, yaw});
+            setAnimCam(animate);
+        }
     })
 
     function handleDiamondClick(mouse: Vector2) {
@@ -60,7 +69,8 @@ export default function Liminality() {
             <lume-ambient-light intensity={0.0} />
 
             {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
+            {/* <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} /> */}
+            <NewCam basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: -15}} overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}/>
 
             <lume-obj-model
                 id="base"
