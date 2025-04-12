@@ -10,10 +10,9 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
-import Multicam from "@/components/lume/multicam/Multicam";
-import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
+import NewCam from '@/components/lume/Newcam';
 
 export const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -31,9 +30,7 @@ export default function Porch() {
         if(mapRef) {
             applyShadows(mapRef);
         }
-    })
-
-    const staticPlayerCam = playerCam("-230 -317 128", 45, 25, 290, 0);
+    });
 
     return (
         <lume-scene
@@ -45,13 +42,13 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            <Multicam
-                initialBehavior={staticPlayerCam}
+            <NewCam
+                basePos={[-230, -317, 128]}
+                baseOri={{yaw: -30, pitch: 0}}
+                maxYaw={45}
+                maxPitch={20}
+                sceneRef={sceneRef!}
             />
-
-             {/* <WadsCam 
-                defaultPosition="-230 -317 128"
-            />  */}
 
             <lume-ambient-light intensity={4} />
 

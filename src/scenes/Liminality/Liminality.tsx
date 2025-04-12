@@ -6,9 +6,6 @@ import { ObjModel, Scene } from "lume";
 import { createSignal, onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
-import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
-import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
-import { Vector2 } from 'three';
 import applyDGShader from '@/core/lume/dgRender';
 import NewCam from '@/components/lume/Newcam';
 import { Gimbal } from '@/extra.types';
@@ -43,23 +40,6 @@ export default function Liminality() {
             setAnimCam(true);
         }
     })
-
-    function handleDiamondClick(mouse: Vector2) {
-
-        alert(mouse.toArray().toString());
-
-        //currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
-
-        // cache position/orientation before animation so we can return to it.
-        const returnTo = currentCameraController().currentTransform;
-        // little CB-hell, likely will use async version in most cases
-        // lerpTo other location -> lerp back to where we were -> hand control back off to base behavior (player camera)
-        currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28, undefined, () => {
-            currentCameraController().setTemporaryBehavior(lerpTo(returnTo.position, returnTo.yaw, returnTo.pitch, undefined, () => {
-                currentCameraController().stopTemporaryBehavior();
-            }))
-        }));
-    }
 
     return (
         <lume-scene
@@ -97,8 +77,17 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={(_uv, mouse) => handleDiamondClick(mouse)}
             //onHover={() => console.log("Diamond Hovered")}
+            onClick={(uv, mouse) => {
+                console.log("diamond click:", uv, mouse);
+                setAnimCam(true);
+                setOVPos([200, -712, 350]);
+                setOVOri({pitch: 20, yaw: 30});
+                setTimeout(() => {
+                    setOVPos(undefined);
+                    setOVOri(undefined);
+                }, 2000);
+            }}
         >
                 <lume-obj-model
                     id="dmn"

@@ -1,12 +1,13 @@
+import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
-import { onCleanup, onMount, Scene } from "lume";
-import { Vector2 } from "three";
+import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect } from "lume";
+import { Object3D, Raycaster, Vector2 } from "three";
 
 type XYZ = [number, number, number];
 
-function updateCameraTransform(
+function getCameraTransform(
     prev: [number, number, number],
     target: [number, number, number],
     dt: number,
@@ -39,8 +40,60 @@ export default function NewCam(props: {
     sceneRef: Scene
 }) {
 
+    const raycaster = new Raycaster();
     const mouse = new Vector2();
     const mouseOffset = {yaw: 0, pitch: 0};
+
+    let previouslyHoveredObject: Object3D | null = null;
+    let previousUV: Vector2 | null = null;
+
+    let camRef!: PerspectiveCamera;
+
+    function runHoverRaycast() {
+        if( props.overrideOri || props.overridePos || isSceneLocked()) return;
+        raycaster.setFromCamera(mouse, camRef.three);
+
+        const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
+        const hoveredIntersection = intersects.length > 0 ? intersects[0] : null;
+        const hoveredObject: (InteractableObject3D | null) = hoveredIntersection?.object ?? null;
+        const uv = hoveredIntersection?.uv ? hoveredIntersection.uv.clone() : new Vector2();
+
+        // If the object and UV are unchanged, skip updates
+        if (hoveredObject === previouslyHoveredObject && previousUV?.equals(uv)) return;
+
+        if (previouslyHoveredObject && hoveredObject !== previouslyHoveredObject) {
+            previouslyHoveredObject.traverseAncestors(a => {
+                a.userData.onHoverLeave?.();
+            });
+        }
+
+        if (hoveredObject) {
+            hoveredObject.userData.onHover?.(uv, mouse);
+            hoveredObject.traverseAncestors(a => {
+                (a as InteractableObject3D).userData.onHover?.(uv, mouse);
+            });
+        }
+
+        // Update previous tracking variables
+        previouslyHoveredObject = hoveredObject;
+        previousUV = uv;
+    }
+
+    function handleClick() {
+        if(isSceneLocked() || props.overrideOri || props.overridePos) return;
+        const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
+        if (intersects.length > 0) {
+            const clickedIntersection = intersects[0];
+            const clickedObject: InteractableObject3D = clickedIntersection.object;
+
+            const uv = clickedIntersection.uv ? clickedIntersection.uv.clone() : new Vector2();
+
+            clickedObject.userData.onClick?.(uv, mouse);
+            clickedObject.traverseAncestors((a) => {
+                (a as InteractableObject3D).userData.onClick?.(uv, mouse);
+            });
+        }
+    }
 
     function handleMouseMove(e: MouseEvent) {
         if(props.overrideOri || props.overridePos || isSceneLocked()) return;
@@ -57,11 +110,26 @@ export default function NewCam(props: {
 
     onMount(() => {
         props.sceneRef.addEventListener("mousemove", handleMouseMove);
+        props.sceneRef.addEventListener("click", handleClick);
     });
 
     onCleanup(() => {
         props.sceneRef.removeEventListener("mousemove", handleMouseMove);
+        props.sceneRef.removeEventListener("click", handleClick);
     });
+
+    createEffect(() => {
+        if((props.overrideOri || props.overridePos) && previouslyHoveredObject) {
+            if (previouslyHoveredObject) {
+                previouslyHoveredObject.traverseAncestors(a => {
+                    if (a.userData.onHoverLeave) a.userData.onHoverLeave();
+                });
+            }
+
+            previouslyHoveredObject = null;
+            previousUV = null;
+        }
+    })
 
 
     return (
@@ -71,7 +139,7 @@ export default function NewCam(props: {
             //@ts-expect-error
             position={(prevX, prevY, prevZ, _t, dt) => {
                 const targetPosition = props.overridePos ?? props.basePos;
-                return updateCameraTransform(
+                return getCameraTransform(
                     [prevX, prevY, prevZ],
                     targetPosition,
                     dt,
@@ -86,7 +154,7 @@ export default function NewCam(props: {
                 const effectiveYaw = props.overrideOri
                   ? props.overrideOri.yaw
                   : baseYaw + mouseOffset.yaw;
-                return updateCameraTransform(
+                return getCameraTransform(
                     [prevX, prevY, prevZ],
                     [prevX, effectiveYaw, prevZ],
                     dt,
@@ -99,14 +167,19 @@ export default function NewCam(props: {
         >
             <lume-perspective-camera 
                 id="cam_head" active 
+                ref={camRef}
 
                 //@ts-expect-error
                 rotation={(prevX, prevY, prevZ, _t, dt) => {
+
+                    // lazy, may be a better place for this
+                    runHoverRaycast();
+
                     const basePitch = props.baseOri.pitch;
                     const effectivePitch = props.overrideOri
                       ? props.overrideOri.pitch
                       : basePitch + mouseOffset.pitch;
-                    return updateCameraTransform(
+                    return getCameraTransform(
                         [prevX, prevY, prevZ],
                         [effectivePitch, prevY, prevZ],
                         dt,
