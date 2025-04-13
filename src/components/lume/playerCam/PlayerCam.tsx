@@ -172,7 +172,6 @@ export default function PlayerCam(props: {
                 [prevX, prevY, prevZ],
                 [prevX, effectiveYaw, prevZ],
                 dt,
-                //props.animate ?? false,
                 ((props.overrideOri == undefined) || (props.animate ?? false)),
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )
@@ -190,7 +189,6 @@ export default function PlayerCam(props: {
                 [prevX, prevY, prevZ],
                 [effectivePitch, prevY, prevZ],
                 dt,
-                //props.animate ?? false,
                 ((props.overrideOri == undefined) || (props.animate ?? false)),
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )

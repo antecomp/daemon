@@ -20,7 +20,6 @@ export default function Porch() {
     let sceneRef: Scene | undefined;
 
     const [showRabbit, setShowRabbit] = createSignal(true);
-    //const {overrideOri, overridePos, setOverrides, clearOverrides, anim} = createOverrideStore();
 
     const {cameraControlSignals, cameraController} = createCameraController(
         [-230, -317, 128],
@@ -124,7 +123,7 @@ export default function Porch() {
                                 )
                             },
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
-                            (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
+                            (uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}. For the rabbit this is ${uv.toArray()}`)
                         ]}
                 />
             </Show>

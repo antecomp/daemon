@@ -2,6 +2,13 @@ import { Gimbal } from "@/extra.types";
 import { XYZ } from "./PlayerCam";
 import { createMemo, createSignal } from "solid-js";
 
+/**
+ * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
+ * modifying the camera state.
+ * @param initialPos [number, number, number], XYZ original coordinates.
+ * @param initialOri {yaw: number, pitch: number}, original orientation
+ * @param maxTilts {maxYaw: number, maxPitch: number} - limit on head tilts/
+ */
 export default function createCameraController(
     initialPos: XYZ,
     initialOri: Omit<Gimbal, "roll">,
