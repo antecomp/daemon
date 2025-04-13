@@ -5,14 +5,15 @@ import { createMemo, createSignal } from "solid-js";
 export default function createCameraController(
     initialPos: XYZ,
     initialOri: Omit<Gimbal, "roll">,
-    maxYaw: number,
-    maxPitch: number
+    maxTilts: {maxYaw: number, maxPitch: number}
 ) {
     const [basePos, setBasePos] = createSignal(initialPos);
     const [baseOri, setBaseOri] = createSignal(initialOri);
     const [shouldAnim, setShouldAnim] = createSignal(false);
     const [overridePos, setOverridePos] = createSignal<XYZ | undefined>();
     const [overrideOri, setOverrideOri] = createSignal<Omit<Gimbal, "roll"> | undefined>();
+    const [maxYaw, setMaxYaw] = createSignal(maxTilts.maxYaw);
+    const [maxPitch, setMaxPitch] = createSignal(maxTilts.maxPitch);
 
     function setOverrides(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean) {
         pos && setOverridePos(pos);
@@ -26,10 +27,12 @@ export default function createCameraController(
         setOverridePos(undefined);
     }
 
-    function setBase(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean) {
+    function setBase(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
         pos && setBasePos(pos);
         ori && setBaseOri(ori);
         anim && setShouldAnim(anim);
+        tilts && setMaxPitch(tilts.maxPitch);
+        tilts && setMaxYaw(tilts.maxYaw);
     }
 
     // Create a reactive object that resolves signal values dynamically
@@ -39,8 +42,8 @@ export default function createCameraController(
         overrideOri: overrideOri(),
         overridePos: overridePos(),
         animate: shouldAnim(),
-        maxYaw,
-        maxPitch,
+        maxYaw: maxYaw(),
+        maxPitch: maxPitch(),
     }));
     
     return {

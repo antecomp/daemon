@@ -13,7 +13,7 @@ import {createSignal} from "solid-js";
  * @property blockBehind - Indicates if interactions with layers behind this one are blocked.
  * @property cameraHijack - Subject to change. Contains information about camera hijacking.
  */
-type StartDialogueOptions = {
+export type StartDialogueOptions = {
     overlay?: string, 
     canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,

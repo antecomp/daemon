@@ -14,6 +14,7 @@ import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
+import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -24,7 +25,7 @@ export default function Porch() {
     const {cameraControlSignals, cameraController} = createCameraController(
         [-230, -317, 128],
         {yaw: -72, pitch: 0},
-        45, 30
+        {maxYaw: 45, maxPitch: 30}
     );
 
     (window as any).PRCH_CM = cameraController;
@@ -96,19 +97,14 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        cameraController.setOverrides(
+                        startDialogueWithCamOvr(
+                            cameraController,
                             [-183, -322, 34],
                             {yaw: -84, pitch: 0},
-                            true
-                        )
-                        DialogueService.startDialogue(
-                            viya_root, 
-                            {
-                                canCloseDialogueEarly: true,
-                            }
-                        ).then(
-                            () => cameraController.clearOverrides(true)
-                        );
+                            viya_root,
+                            true,
+                            {canCloseDialogueEarly: true}
+                        ).then(() => console.log("Viya dialogue done!"))
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)
             ]}
