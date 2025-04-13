@@ -54,8 +54,6 @@ export default function Liminality() {
         >
             <lume-ambient-light intensity={0.0} />
 
-            {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            {/* <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} /> */}
             <NewCam 
                 basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: 0}} 
                 overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}
