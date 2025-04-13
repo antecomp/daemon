@@ -44,9 +44,9 @@ export default function Porch() {
 
             <NewCam
                 basePos={[-230, -317, 128]}
-                baseOri={{yaw: -30, pitch: 0}}
+                baseOri={{yaw: -72, pitch: 0}}
                 maxYaw={45}
-                maxPitch={20}
+                maxPitch={30}
                 sceneRef={sceneRef!}
             />
 

@@ -102,8 +102,8 @@ export default function NewCam(props: {
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
 
-        mouseOffset.yaw = -xNorm * props.maxYaw + props.baseOri.yaw;
-        mouseOffset.pitch = yNorm * props.maxPitch + props.baseOri.pitch;
+        mouseOffset.yaw = -xNorm * props.maxYaw;
+        mouseOffset.pitch = yNorm * props.maxPitch;
 
         mouse.set(xNorm, -yNorm);
     }
