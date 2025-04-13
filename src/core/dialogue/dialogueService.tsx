@@ -18,6 +18,7 @@ type StartDialogueOptions = {
     canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
+    ctx?: Record<string, any>
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
@@ -34,7 +35,7 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
         id,
         lock: options?.lock ?? MainUILock.All,
         blockBehind: options?.blockBehind,
-        component: () => <Hermes root={rootNode} />,
+        component: () => <Hermes root={rootNode} ctx={options?.ctx} />,
         style: {right: 0}
     });
 

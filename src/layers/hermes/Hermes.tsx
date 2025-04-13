@@ -24,7 +24,7 @@ const HERMES_MESSAGE_DELAY = 1200;
  * @see dialogueManager.tsx
  * @param root - The root node of the dialogue tree
  */
-export default function Hermes({ root }: { root: DialogueNode }) {
+export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Record<string, any> }) {
   // non-reactive destructure done here out of convenience, we're instantiating the signal on input anyway
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
   const addMessage = ({ name, text }: { name: string; text: string }) => {
@@ -54,7 +54,7 @@ export default function Hermes({ root }: { root: DialogueNode }) {
   /** Advances dialogue based on the current node */
   async function advanceDialogue(node: DialogueNode) {
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
-    node.sideEffect && node.sideEffect();
+    node.sideEffect && node.sideEffect(ctx);
 
     await node.waitFor?.();
 

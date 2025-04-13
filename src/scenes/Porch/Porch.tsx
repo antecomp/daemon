@@ -14,10 +14,10 @@ import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
 import NewCam from '@/components/lume/Newcam';
 
-export const [showRabbit, setShowRabbit] = createSignal(true);
-
 export default function Porch() {
     let sceneRef: Scene | undefined;
+
+    const [showRabbit, setShowRabbit] = createSignal(true);
 
     let mapRef: ObjModel | undefined;
 
@@ -106,7 +106,7 @@ export default function Porch() {
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
-                            () => DialogueService.startDialogue(rabbit_root),
+                            () => DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}),
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
                             (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
                         ]}
