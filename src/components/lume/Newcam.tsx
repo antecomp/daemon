@@ -7,7 +7,7 @@ import { Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
-const DEFAULT_CAMERA_SPEED = 10;
+const DEFAULT_CAMERA_SPEED = 7;
 
 // Helper function to return updated x,y,z values given current and target.
 // will either lerp or snap (based on animate bool).

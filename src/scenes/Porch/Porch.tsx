@@ -96,12 +96,18 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-
+                        setOverrides({
+                            pos: [-183, -322, 34],
+                            ori: {yaw: -84, pitch: 0},
+                            anim: true
+                        })
                         DialogueService.startDialogue(
                             viya_root, 
                             {
                                 canCloseDialogueEarly: true,
                             }
+                        ).then(
+                            () => clearOverrides(true)
                         );
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)
