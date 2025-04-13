@@ -1,10 +1,8 @@
-//import WadsCam from "@/components/lume/wadscam";
-import applyShader from "@/core/lume/applyShader";
 import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
-import Multicam from "@/components/lume/multicam/Multicam";
-import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
+import NewCam from "@/components/lume/Newcam";
+import applyDGShader from "@/core/lume/dgRender";
 
 export default function Sponza() {
     let sceneRef: Scene | undefined;
@@ -12,7 +10,7 @@ export default function Sponza() {
     onMount(() => {
         if (sceneRef) {
             requestAnimationFrame(() => {
-                applyShader(sceneRef);
+                applyDGShader(sceneRef);
             });
         }
     })
@@ -27,7 +25,7 @@ export default function Sponza() {
             perspective="800"
         >
 
-        <Multicam initialBehavior={playerCam("-5 -52 4", 25, 25, 73, 0)}/>
+        <NewCam basePos={[-5, -52, 4]} baseOri={{pitch: 0, yaw: 73}} sceneRef={sceneRef!} maxPitch={25} maxYaw={25}/>
 
             <lume-ambient-light intensity={8} />
 

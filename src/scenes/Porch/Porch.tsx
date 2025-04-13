@@ -1,7 +1,7 @@
 import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
-import {onMount, createSignal, Show} from "solid-js"
+import {onMount, createSignal, Show,} from "solid-js"
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
@@ -13,11 +13,15 @@ import applyShadows from "@/core/lume/applyShadows";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
 import NewCam from '@/components/lume/Newcam';
+import { createOverrideStore } from '@/components/lume/camOverrideUtil';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
 
     const [showRabbit, setShowRabbit] = createSignal(true);
+    const {overrideOri, overridePos, setOverrides, clearOverrides, anim} = createOverrideStore();
+    (window as any).PRCH_setOverrides = setOverrides;
+    (window as any).PRCH_clearOverrides = clearOverrides;
 
     let mapRef: ObjModel | undefined;
 
@@ -48,6 +52,9 @@ export default function Porch() {
                 maxYaw={45}
                 maxPitch={30}
                 sceneRef={sceneRef!}
+                overrideOri={overrideOri()}
+                overridePos={overridePos()}
+                animate={anim()}
             />
 
             <lume-ambient-light intensity={4} />
@@ -89,7 +96,7 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        
+
                         DialogueService.startDialogue(
                             viya_root, 
                             {

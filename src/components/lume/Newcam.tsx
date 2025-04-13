@@ -5,7 +5,7 @@ import lerp from "@/utils/lerp";
 import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect, Element3D } from "lume";
 import { Object3D, Raycaster, Vector2 } from "three";
 
-type XYZ = [number, number, number]; // just a lazy local type for the tuple.
+export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
 const DEFAULT_CAMERA_SPEED = 10;
 
