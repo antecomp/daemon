@@ -2,7 +2,7 @@ import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
-import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect } from "lume";
+import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect, Element3D } from "lume";
 import { Object3D, Raycaster, Vector2 } from "three";
 
 type XYZ = [number, number, number];
@@ -48,6 +48,7 @@ export default function NewCam(props: {
     let previousUV: Vector2 | null = null;
 
     let camRef!: PerspectiveCamera;
+    let bodyRef!: Element3D
 
     function runHoverRaycast() {
         if( props.overrideOri || props.overridePos || isSceneLocked()) return;
@@ -111,6 +112,64 @@ export default function NewCam(props: {
     onMount(() => {
         props.sceneRef.addEventListener("mousemove", handleMouseMove);
         props.sceneRef.addEventListener("click", handleClick);
+
+        // Imperative set of initial values, updater functions take off from here.
+        bodyRef.position = props.overridePos ?? props.basePos
+        bodyRef.rotation = props.overrideOri
+            ? `0 ${props.overrideOri.yaw} 0`
+            : `0 ${props.baseOri.yaw} 0`
+        
+        camRef.rotation = props.overrideOri
+            ? `${props.overrideOri.pitch} 0 0`
+            : `${props.baseOri.pitch} 0 0`
+
+
+        bodyRef.position = (prevX, prevY, prevZ, _t, dt) => {
+            const targetPosition = props.overridePos ?? props.basePos;
+            return getCameraTransform(
+                [prevX, prevY, prevZ],
+                targetPosition,
+                dt,
+                props.animate ?? false,
+                props.speed ?? 10
+            )
+        }
+
+        bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
+            const baseYaw = props.baseOri.yaw;
+            const effectiveYaw = props.overrideOri
+              ? props.overrideOri.yaw
+              : baseYaw + mouseOffset.yaw;
+            return getCameraTransform(
+                [prevX, prevY, prevZ],
+                [prevX, effectiveYaw, prevZ],
+                dt,
+                //props.animate ?? false,
+                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.speed ?? 10
+            )
+        }
+
+        camRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
+
+            // lazy, may be a better place for this
+            runHoverRaycast();
+
+            const basePitch = props.baseOri.pitch;
+            const effectivePitch = props.overrideOri
+              ? props.overrideOri.pitch
+              : basePitch + mouseOffset.pitch;
+            return getCameraTransform(
+                [prevX, prevY, prevZ],
+                [effectivePitch, prevY, prevZ],
+                dt,
+                //props.animate ?? false,
+                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.speed ?? 10
+            )
+        }
+
+
     });
 
     onCleanup(() => {
@@ -133,62 +192,8 @@ export default function NewCam(props: {
 
 
     return (
-        <lume-element3d 
-            id="cam_body" align-point="0.5 0.5"
-
-            //@ts-expect-error
-            position={(prevX, prevY, prevZ, _t, dt) => {
-                const targetPosition = props.overridePos ?? props.basePos;
-                return getCameraTransform(
-                    [prevX, prevY, prevZ],
-                    targetPosition,
-                    dt,
-                    props.animate ?? false,
-                    props.speed ?? 10
-                )
-            }}
-
-            //@ts-expect-error
-            rotation={(prevX, prevY, prevZ, _t, dt) => {
-                const baseYaw = props.baseOri.yaw;
-                const effectiveYaw = props.overrideOri
-                  ? props.overrideOri.yaw
-                  : baseYaw + mouseOffset.yaw;
-                return getCameraTransform(
-                    [prevX, prevY, prevZ],
-                    [prevX, effectiveYaw, prevZ],
-                    dt,
-                    //props.animate ?? false,
-                    ((props.overrideOri == undefined) || (props.animate ?? false)),
-                    props.speed ?? 10
-                )
-            }}
-
-        >
-            <lume-perspective-camera 
-                id="cam_head" active 
-                ref={camRef}
-
-                //@ts-expect-error
-                rotation={(prevX, prevY, prevZ, _t, dt) => {
-
-                    // lazy, may be a better place for this
-                    runHoverRaycast();
-
-                    const basePitch = props.baseOri.pitch;
-                    const effectivePitch = props.overrideOri
-                      ? props.overrideOri.pitch
-                      : basePitch + mouseOffset.pitch;
-                    return getCameraTransform(
-                        [prevX, prevY, prevZ],
-                        [effectivePitch, prevY, prevZ],
-                        dt,
-                        //props.animate ?? false,
-                        ((props.overrideOri == undefined) || (props.animate ?? false)),
-                        props.speed ?? 10
-                    )
-                }}
-            />
+        <lume-element3d id="cam_body" align-point="0.5 0.5" ref={bodyRef}>
+            <lume-perspective-camera id="cam_head" active ref={camRef} />
         </lume-element3d>
     )
 }
