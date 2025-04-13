@@ -116,7 +116,6 @@ export default function Porch() {
                         position="-70 -266 200"
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
-                            //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
                             () => {
                                 DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}).then(
                                     () => console.log("Rabbit dialogue complete")

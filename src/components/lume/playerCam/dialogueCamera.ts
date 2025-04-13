@@ -6,7 +6,7 @@ import { XYZ } from "./PlayerCam";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";
 
-export function startDialogueWithCamOvr(
+export async function startDialogueWithCamOvr(
     cameraController: ReturnType<typeof createCameraController>['cameraController'],
     pos: XYZ,
     ori: Omit<Gimbal, "roll">,
@@ -17,7 +17,9 @@ export function startDialogueWithCamOvr(
     cameraController.setOverrides(pos, ori, anim);
 
     // Using .finally to trigger camera return on error also.
-    return DialogueService.startDialogue(dialogueRoot, dialogueOptions).finally(() => {
+    try {
+        return await DialogueService.startDialogue(dialogueRoot, dialogueOptions);
+    } finally {
         cameraController.clearOverrides(anim);
-    });
+    }
 }
