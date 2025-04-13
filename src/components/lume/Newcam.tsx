@@ -124,7 +124,8 @@ export default function NewCam(props: {
     }
 
     function handleMouseMove(e: MouseEvent) {
-        // This always runs regardless of mode, so we'll return to where the mouse truly is on override end.
+        // Omitting override from guard on purpose, we want to lerp back to the most recent mouse position on end.
+        if(isSceneLocked()) return;
         const rect = props.sceneRef.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;

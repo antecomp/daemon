@@ -92,13 +92,6 @@ export default function Porch() {
                         viya_root, 
                         {
                             canCloseDialogueEarly: true,
-                            cameraHijack: {
-                                targetPosition: "-183 -322 34",
-                                targetOrientation: {yaw: -84, pitch: 0},
-                                lerp: true,
-                                lerpBack: true,
-                                lerpSpeed: 0.06
-                            }
                         }
                     ),
                     () => addLogMessage(`She is smoking a cigarette.`)

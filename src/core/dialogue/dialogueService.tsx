@@ -1,13 +1,8 @@
-import { Gimbal, LumePosition } from "../../extra.types";
 import { DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
 import { MainUILock } from "@/layers/ui-layers.types";
 import Hermes from "@/layers/hermes/Hermes";
-import {createSignal, JSX} from "solid-js";
-import { currentCameraController } from "@/components/lume/multicam/Multicam";
-import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
-import { snapTo } from "@/components/lume/multicam/behaviors/snapTo";
-import { CameraTransformCache } from "@/components/lume/multicam/multicam.types";
+import {createSignal} from "solid-js";
 
 /**
  * Interface representing the options for starting a dialogue.
@@ -23,35 +18,17 @@ type StartDialogueOptions = {
     canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
-    // Subject to change
-    cameraHijack?: {
-        targetPosition: LumePosition, 
-        targetOrientation: Omit<Gimbal, 'roll'>
-        lerp?: boolean,
-        lerpSpeed?: number,
-        lerpBack?: boolean
-    }
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
-
-// Track information about current dialogue (used for active check, camera transforms)
-const DialogueState = {
-    activeDialogue: null as string | null,
-    hijack: false,
-    lerpData: null as {
-        lerpSpeed?: number,
-        lerpBack?: boolean,
-        originalCameraPosition: CameraTransformCache
-    } | null
-}
+let activeDialogue = null as string | null;
 
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
-    if(DialogueState.activeDialogue) throw new Error("Dialogue already in progress.");
+    if(activeDialogue) throw new Error("Dialogue already in progress.");
 
     const id = `dialogue-${Date.now()}`;
-    DialogueState.activeDialogue = id;
+    activeDialogue = id;
 
     pushUILayer({
         id,
@@ -63,57 +40,16 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     if(options?.overlay) setCurrentDialogueOverlay(options.overlay);
     setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
-
-    if (options?.cameraHijack) {
-        const { targetPosition, targetOrientation, lerp, lerpSpeed, lerpBack } = options.cameraHijack;
-        DialogueState.hijack = true;
-
-        if(lerpBack) {
-            DialogueState.lerpData = {
-                originalCameraPosition: currentCameraController().currentTransform,
-                lerpSpeed,
-                lerpBack
-            }
-        } else {
-            DialogueState.lerpData = null; // Prevent lerp, reset.
-        }
-
-        if(lerp) {
-            currentCameraController().setTemporaryBehavior(
-                lerpTo( targetPosition, targetOrientation.yaw, targetOrientation.pitch, lerpSpeed)
-            );
-        } else {
-            currentCameraController().setTemporaryBehavior(snapTo(targetPosition, targetOrientation.yaw, targetOrientation.pitch));
-        }
-    } else {
-        DialogueState.hijack = false;
-    }
 }
 
 function endDialogue() {
-    if (!DialogueState.activeDialogue) throw new Error("No active dialogue to end.");
+    if (!activeDialogue) throw new Error("No active dialogue to end.");
 
     setCurrentDialogueOverlay(null);
     setCanCloseDialogueEarly(false);
-    popUILayer(DialogueState.activeDialogue);
+    popUILayer(activeDialogue);
 
-    if(DialogueState.lerpData?.lerpBack) {
-        const {originalCameraPosition, lerpSpeed} = DialogueState.lerpData
-        currentCameraController().setTemporaryBehavior(
-            lerpTo(
-                originalCameraPosition.position, 
-                originalCameraPosition.yaw, 
-                originalCameraPosition.pitch,
-                lerpSpeed, // Maybe get from camera hijack options (would need cache for interfunction)
-                () => currentCameraController().stopTemporaryBehavior()
-            )
-        );
-    } else if (DialogueState.hijack) {
-        currentCameraController().stopTemporaryBehavior();
-    }
-
-    DialogueState.activeDialogue = null;
-    DialogueState.lerpData = null;
+    activeDialogue = null;
 }
 
 export const DialogueService = { 
