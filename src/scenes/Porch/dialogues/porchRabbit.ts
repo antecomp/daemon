@@ -1,7 +1,6 @@
 import { createDialogueNode } from "@/core/dialogue/dialogueNode"
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_overlay from "@/assets/artwork/dialogue_bgs/rabbit_overlay.png"
-import { setShowRabbit } from "@/scenes/Porch/Porch";
 
 const RABBIT = "The Rabbit"
 
@@ -20,9 +19,9 @@ rabbitMonologue.addMessageChain([
     "Tread safely, Asuramancer.",
     {render: "The rabbit vanishes.", name: "VISUALIZER"},
 ]).attachSideEffect(
-    () => {
+    (ctx) => {
         DialogueService.setCurrentDialogueOverlay(null) // Remove overlay early...
-        setShowRabbit(false);
+        ctx?.setShowRabbit(false);
     }
 )
 

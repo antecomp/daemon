@@ -52,8 +52,6 @@ Runs all tests. This automatically re-runs whenever the code updates so it's bes
 ├── components              Common, reusable components.
 │   ├── development         Testing and visualizing components, not for prod.
 │   ├── lume
-│   │   └── multicam
-│   │       └── behaviors
 │   └── util
 │       └── corner-rect
 │

@@ -1,13 +1,12 @@
 import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
-import { createSignal, Match, onMount, Switch } from 'solid-js'
+import { createSignal, onMount } from 'solid-js'
 import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
 import applyDGShader from '@/core/lume/dgRender'
-import Multicam from '@/components/lume/multicam/Multicam'
-import { playerCam } from '@/components/lume/multicam/behaviors/playercam'
 import { InteractionMode } from '@/core/interaction/interactable.types'
+import PlayerCam from '@/components/lume/playerCam/PlayerCam'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
@@ -25,10 +24,6 @@ export default function AnotherScene() {
         }
     });
 
-    const [loc, setLoc] = createSignal(0);
-
-    setTimeout(() => setLoc(1), 5000)
-
     return(
         <lume-scene 
             webgl
@@ -43,14 +38,7 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-            <Switch>
-                <Match when={loc() == 0}>
-                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 18, 0)}/>
-                </Match>
-                <Match when={loc() == 1}>
-                    <Multicam initialBehavior={playerCam("35 -192 144", 80, 20, 180, 5)}/>
-                </Match>
-            </Switch>
+            <PlayerCam basePos={[35, -192, 144]} baseOri={{pitch: 0, yaw: 18}} sceneRef={sceneRef!} maxPitch={20} maxYaw={80}/>
 
             <lume-point-light 
                 intensity="1200" 

@@ -2,16 +2,13 @@ import baseobj from './models/base.obj'
 import basemtl from './models/base.mtl'
 import dmnobj from './models/diamond.obj'
 import dmnmtl from './models/diamond.mtl'
-import applyShader from "@/core/lume/applyShader";
 import { ObjModel, Scene } from "lume";
-import { onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
-import Multicam, { currentCameraController } from '@/components/lume/multicam/Multicam';
-import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
-import { lerpTo } from "@/components/lume/multicam/behaviors/lerpTo";
-import { Vector2 } from 'three';
 import applyDGShader from '@/core/lume/dgRender';
+import PlayerCam from '@/components/lume/playerCam/PlayerCam';
+import { Gimbal } from '@/extra.types';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -20,6 +17,10 @@ export default function Liminality() {
 
     const lightIntensity = "300";
 
+    const [ovPos, setOVPos] = createSignal<[number, number, number]>();
+    const [ovOri, setOVOri] = createSignal<Omit<Gimbal, "roll">>();
+    const [animCam, setAnimCam] = createSignal(false);
+
     onMount(() => {
         requestAnimationFrame(() => {
             // sceneRef && applyShader(sceneRef, 0);
@@ -27,24 +28,18 @@ export default function Liminality() {
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
         });
+        (window as any).DG_updateSlop = (x: number, y: number, z: number, pitch: number, yaw: number, animate: boolean) => {
+            setOVPos([x,y,z]);
+            setOVOri({pitch, yaw});
+            setAnimCam(animate);
+        }
+
+        (window as any).DG_stopSlop = () => {
+            setOVPos(undefined);
+            setOVOri(undefined);
+            setAnimCam(true);
+        }
     })
-
-    function handleDiamondClick(mouse: Vector2) {
-
-        alert(mouse.toArray().toString());
-
-        //currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28));
-
-        // cache position/orientation before animation so we can return to it.
-        const returnTo = currentCameraController().currentTransform;
-        // little CB-hell, likely will use async version in most cases
-        // lerpTo other location -> lerp back to where we were -> hand control back off to base behavior (player camera)
-        currentCameraController().setTemporaryBehavior(lerpTo("389 -747 370", 45, 28, undefined, () => {
-            currentCameraController().setTemporaryBehavior(lerpTo(returnTo.position, returnTo.yaw, returnTo.pitch, undefined, () => {
-                currentCameraController().stopTemporaryBehavior();
-            }))
-        }));
-    }
 
     return (
         <lume-scene
@@ -59,8 +54,13 @@ export default function Liminality() {
         >
             <lume-ambient-light intensity={0.0} />
 
-            {/* <WadsCam defaultPosition='0 -502 503'/> */}
-            <Multicam initialBehavior={playerCam("0 -512 350", 20, 20, 0, -15)} />
+            <PlayerCam 
+                basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: 0}} 
+                overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}
+
+                maxYaw={20} maxPitch={20}
+                sceneRef={sceneRef!}
+            />
 
             <lume-obj-model
                 id="base"
@@ -75,8 +75,17 @@ export default function Liminality() {
             />
 
         <Interactable
-            onClick={(_uv, mouse) => handleDiamondClick(mouse)}
             //onHover={() => console.log("Diamond Hovered")}
+            onClick={(uv, mouse) => {
+                console.log("diamond click:", uv, mouse);
+                setAnimCam(true);
+                setOVPos([200, -712, 350]);
+                setOVOri({pitch: 20, yaw: 30});
+                setTimeout(() => {
+                    setOVPos(undefined);
+                    setOVOri(undefined);
+                }, 2000);
+            }}
         >
                 <lume-obj-model
                     id="dmn"

@@ -1,0 +1,70 @@
+import { Gimbal } from "@/extra.types";
+import { XYZ } from "./PlayerCam";
+import { createMemo, createSignal } from "solid-js";
+
+/**
+ * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
+ * modifying the camera state.
+ * @param initialPos [number, number, number], XYZ original coordinates.
+ * @param initialOri {yaw: number, pitch: number}, original orientation
+ * @param maxTilts {maxYaw: number, maxPitch: number} - limit on head tilts/
+ */
+export default function createCameraController(
+    initialPos: XYZ,
+    initialOri: Omit<Gimbal, "roll">,
+    maxTilts: {maxYaw: number, maxPitch: number}
+) {
+    const [basePos, setBasePos] = createSignal(initialPos);
+    const [baseOri, setBaseOri] = createSignal(initialOri);
+    const [shouldAnim, setShouldAnim] = createSignal(false);
+    const [overridePos, setOverridePos] = createSignal<XYZ | undefined>();
+    const [overrideOri, setOverrideOri] = createSignal<Omit<Gimbal, "roll"> | undefined>();
+    const [maxYaw, setMaxYaw] = createSignal(maxTilts.maxYaw);
+    const [maxPitch, setMaxPitch] = createSignal(maxTilts.maxPitch);
+
+    function setOverrides(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean) {
+        pos && setOverridePos(pos);
+        ori && setOverrideOri(ori);
+        anim && setShouldAnim(anim);
+    }
+
+    function clearOverrides(anim?: boolean) {
+        anim && setShouldAnim(anim);
+        setOverrideOri(undefined);
+        setOverridePos(undefined);
+    }
+
+    function setBase(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
+        pos && setBasePos(pos);
+        ori && setBaseOri(ori);
+        anim && setShouldAnim(anim);
+        tilts && setMaxPitch(tilts.maxPitch);
+        tilts && setMaxYaw(tilts.maxYaw);
+    }
+
+    // Create a reactive object that resolves signal values dynamically
+    const cameraControlSignals = createMemo(() => ({
+        basePos: basePos(),
+        baseOri: baseOri(),
+        overrideOri: overrideOri(),
+        overridePos: overridePos(),
+        animate: shouldAnim(),
+        maxYaw: maxYaw(),
+        maxPitch: maxPitch(),
+    }));
+    
+    return {
+        // Signals to spread into playercam component
+        cameraControlSignals,
+        // Camera controller
+        cameraController: {
+            setOverrides,
+            clearOverrides,
+            setBase,
+            setBasePos,
+            setBaseOri,
+            setOverridePos,
+            setOverrideOri,
+        },
+    }
+}

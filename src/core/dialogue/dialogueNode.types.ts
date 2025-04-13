@@ -9,7 +9,7 @@ export interface DialogueOptionConfig {
      * Side effect that is immediately triggered when option selected.
      * Namely can be attached to termination options to trigger an event when the dialogue ends.
      */
-    sideEffect?: () => void,
+    sideEffect?: (ctx?: Record<string, any>) => void,
 
     /** CB Used to filter options in realtime based on dialogue/gamestate */
     onlyShowWhen?: () => boolean
@@ -39,7 +39,7 @@ export type DialogueNode = {
         // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
     options: DialogueOption[]
     next?: DialogueNode | (() => DialogueNode)
-    sideEffect?: () => void,
+    sideEffect?: (ctx?: Record<string, any>) => void,
 
     /** Blocking side effect, halts dialogue flow until promise resolves,
      * can be used to await camera movement, battles, cutscenes etc
@@ -132,10 +132,10 @@ export type DialogueNode = {
 
     /**
      * Attach a "side effect" (additional function) that will run when a node is rendered. Returns a ref back to the node.
-     * @param ef The CB to run when the node is entered
+     * @param ef The CB to run when the node is entered. ef takes a generic "context" object that can be used to reference other game methods
      * @returns the node back (this) for chaining
      */
-    attachSideEffect(ef: () => void): DialogueNode
+    attachSideEffect(ef: (ctx?: Record<string, any>) => void): DialogueNode
 
     /**
      * Attach a "waitFor" async CB, a method that blocks dialogue flow until the promise resolves.

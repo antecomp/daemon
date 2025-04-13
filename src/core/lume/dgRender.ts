@@ -17,7 +17,7 @@ function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: numbe
 
     const HFOV = 2 * Math.atan(Math.tan(toRadians(FOV) / 2) * aspect)
 
-    const body = scene.threeCamera.parent; // Parent element = body (for multicam)
+    const body = scene.threeCamera.parent; // Parent element = body
     const yaw = body?.rotation?.y ?? 0.0; // fallback to 0
     const pitch = scene.threeCamera.rotation.x;
 

@@ -1,7 +1,7 @@
 import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
-import {onMount, createSignal, Show} from "solid-js"
+import {onMount, createSignal, Show,} from "solid-js"
 import starfield from "../shared_textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
@@ -10,15 +10,24 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
-import Multicam from "@/components/lume/multicam/Multicam";
-import { playerCam } from "@/components/lume/multicam/behaviors/playercam";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
-
-export const [showRabbit, setShowRabbit] = createSignal(true);
+import PlayerCam from '@/components/lume/playerCam/PlayerCam';
+import createCameraController from '@/components/lume/playerCam/createCameraController';
+import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
+
+    const [showRabbit, setShowRabbit] = createSignal(true);
+
+    const {cameraControlSignals, cameraController} = createCameraController(
+        [-230, -317, 128],
+        {yaw: -72, pitch: 0},
+        {maxYaw: 45, maxPitch: 30}
+    );
+
+    (window as any).PRCH_CM = cameraController;
 
     let mapRef: ObjModel | undefined;
 
@@ -31,9 +40,7 @@ export default function Porch() {
         if(mapRef) {
             applyShadows(mapRef);
         }
-    })
-
-    const staticPlayerCam = playerCam("-230 -317 128", 45, 25, 290, 0);
+    });
 
     return (
         <lume-scene
@@ -45,13 +52,10 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            <Multicam
-                initialBehavior={staticPlayerCam}
+            <PlayerCam
+                {...cameraControlSignals()}
+                sceneRef={sceneRef!}
             />
-
-             {/* <WadsCam 
-                defaultPosition="-230 -317 128"
-            />  */}
 
             <lume-ambient-light intensity={4} />
 
@@ -91,19 +95,16 @@ export default function Porch() {
                 scale={225}
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                    () => DialogueService.startDialogue(
-                        viya_root, 
-                        {
-                            canCloseDialogueEarly: true,
-                            cameraHijack: {
-                                targetPosition: "-183 -322 34",
-                                targetOrientation: {yaw: -84, pitch: 0},
-                                lerp: true,
-                                lerpBack: true,
-                                lerpSpeed: 0.06
-                            }
-                        }
-                    ),
+                    () => {
+                        startDialogueWithCamOvr(
+                            cameraController,
+                            [-183, -322, 34],
+                            {yaw: -84, pitch: 0},
+                            viya_root,
+                            true,
+                            {canCloseDialogueEarly: true}
+                        ).then(() => console.log("Viya dialogue done!"))
+                    },
                     () => addLogMessage(`She is smoking a cigarette.`)
             ]}
             />
@@ -116,9 +117,13 @@ export default function Porch() {
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
-                            () => DialogueService.startDialogue(rabbit_root),
+                            () => {
+                                DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}).then(
+                                    () => console.log("Rabbit dialogue complete")
+                                )
+                            },
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
-                            (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
+                            (uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}. For the rabbit this is ${uv.toArray()}`)
                         ]}
                 />
             </Show>
