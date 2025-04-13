@@ -12,16 +12,22 @@ import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Billboard from "@/components/lume/Billboard";
 import applyDGShader from '@/core/lume/dgRender';
-import NewCam from '@/components/lume/Newcam';
-import { createOverrideStore } from '@/components/lume/camOverrideUtil';
+import PlayerCam from '@/components/lume/playerCam/PlayerCam';
+import createCameraController from '@/components/lume/playerCam/createCameraController';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
 
     const [showRabbit, setShowRabbit] = createSignal(true);
-    const {overrideOri, overridePos, setOverrides, clearOverrides, anim} = createOverrideStore();
-    (window as any).PRCH_setOverrides = setOverrides;
-    (window as any).PRCH_clearOverrides = clearOverrides;
+    //const {overrideOri, overridePos, setOverrides, clearOverrides, anim} = createOverrideStore();
+
+    const {cameraControlSignals, cameraController} = createCameraController(
+        [-230, -317, 128],
+        {yaw: -72, pitch: 0},
+        45, 30
+    );
+
+    (window as any).PRCH_CM = cameraController;
 
     let mapRef: ObjModel | undefined;
 
@@ -46,15 +52,9 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            <NewCam
-                basePos={[-230, -317, 128]}
-                baseOri={{yaw: -72, pitch: 0}}
-                maxYaw={45}
-                maxPitch={30}
+            <PlayerCam
+                {...cameraControlSignals()}
                 sceneRef={sceneRef!}
-                overrideOri={overrideOri()}
-                overridePos={overridePos()}
-                animate={anim()}
             />
 
             <lume-ambient-light intensity={4} />
@@ -96,18 +96,18 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        setOverrides({
-                            pos: [-183, -322, 34],
-                            ori: {yaw: -84, pitch: 0},
-                            anim: true
-                        })
+                        cameraController.setOverrides(
+                            [-183, -322, 34],
+                            {yaw: -84, pitch: 0},
+                            true
+                        )
                         DialogueService.startDialogue(
                             viya_root, 
                             {
                                 canCloseDialogueEarly: true,
                             }
                         ).then(
-                            () => clearOverrides(true)
+                            () => cameraController.clearOverrides(true)
                         );
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)

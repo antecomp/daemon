@@ -6,7 +6,7 @@ import Interactable from '@/components/lume/Interactable'
 import { Scene } from 'lume'
 import applyDGShader from '@/core/lume/dgRender'
 import { InteractionMode } from '@/core/interaction/interactable.types'
-import NewCam from '@/components/lume/Newcam'
+import PlayerCam from '@/components/lume/playerCam/PlayerCam'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;
@@ -38,7 +38,7 @@ export default function AnotherScene() {
             fog-far="750"
         >
 
-            <NewCam basePos={[35, -192, 144]} baseOri={{pitch: 0, yaw: 18}} sceneRef={sceneRef!} maxPitch={20} maxYaw={80}/>
+            <PlayerCam basePos={[35, -192, 144]} baseOri={{pitch: 0, yaw: 18}} sceneRef={sceneRef!} maxPitch={20} maxYaw={80}/>
 
             <lume-point-light 
                 intensity="1200" 

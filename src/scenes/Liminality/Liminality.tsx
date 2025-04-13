@@ -7,7 +7,7 @@ import { createSignal, onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import applyDGShader from '@/core/lume/dgRender';
-import NewCam from '@/components/lume/Newcam';
+import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import { Gimbal } from '@/extra.types';
 
 export default function Liminality() {
@@ -54,7 +54,7 @@ export default function Liminality() {
         >
             <lume-ambient-light intensity={0.0} />
 
-            <NewCam 
+            <PlayerCam 
                 basePos={[0, -512, 350]} baseOri={{pitch: 0, yaw: 0}} 
                 overridePos={ovPos()} overrideOri={ovOri()} animate={animCam()}
 

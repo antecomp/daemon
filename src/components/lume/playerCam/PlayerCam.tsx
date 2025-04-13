@@ -57,7 +57,7 @@ function getCameraTransform(
  *
  * @returns A JSX element representing the camera system.
  */
-export default function NewCam(props: {
+export default function PlayerCam(props: {
     basePos: XYZ, baseOri: Omit<Gimbal, "roll">, 
     overridePos?: XYZ, overrideOri?: Omit<Gimbal, "roll">
     animate?: boolean;
