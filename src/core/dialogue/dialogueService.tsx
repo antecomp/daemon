@@ -23,7 +23,9 @@ type StartDialogueOptions = {
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
+
 let activeDialogue = null as string | null;
+let dialogueCompletionResolver: (() => void) | null = null;
 
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if(activeDialogue) throw new Error("Dialogue already in progress.");
@@ -41,6 +43,10 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     if(options?.overlay) setCurrentDialogueOverlay(options.overlay);
     setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
+
+    return new Promise<void>((resolve) => {
+        dialogueCompletionResolver = resolve;
+    })
 }
 
 function endDialogue() {
@@ -51,6 +57,10 @@ function endDialogue() {
     popUILayer(activeDialogue);
 
     activeDialogue = null;
+    if(dialogueCompletionResolver) {
+        dialogueCompletionResolver();
+        dialogueCompletionResolver = null;
+    }
 }
 
 export const DialogueService = { 

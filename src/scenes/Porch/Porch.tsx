@@ -88,12 +88,15 @@ export default function Porch() {
                 scale={225}
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
-                    () => DialogueService.startDialogue(
-                        viya_root, 
-                        {
-                            canCloseDialogueEarly: true,
-                        }
-                    ),
+                    () => {
+                        
+                        DialogueService.startDialogue(
+                            viya_root, 
+                            {
+                                canCloseDialogueEarly: true,
+                            }
+                        );
+                    },
                     () => addLogMessage(`She is smoking a cigarette.`)
             ]}
             />
@@ -106,7 +109,11 @@ export default function Porch() {
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             //() => addLogMessage(`The rabbit doesn't seem enthused by your conversational efforts.`),
-                            () => DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}),
+                            () => {
+                                DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}).then(
+                                    () => console.log("Rabbit dialogue complete")
+                                )
+                            },
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
                             (_uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}`)
                         ]}

@@ -9,7 +9,7 @@ export interface DialogueOptionConfig {
      * Side effect that is immediately triggered when option selected.
      * Namely can be attached to termination options to trigger an event when the dialogue ends.
      */
-    sideEffect?: () => void,
+    sideEffect?: (ctx?: Record<string, any>) => void,
 
     /** CB Used to filter options in realtime based on dialogue/gamestate */
     onlyShowWhen?: () => boolean
