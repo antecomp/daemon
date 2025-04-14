@@ -25,19 +25,19 @@ export default function createCameraController(
     function setOverrides(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean) {
         pos && setOverridePos(pos);
         ori && setOverrideOri(ori);
-        anim && setShouldAnim(anim);
+        (anim != undefined) && setShouldAnim(anim);
     }
 
     function clearOverrides(anim?: boolean) {
-        anim && setShouldAnim(anim);
+        (anim != undefined) && setShouldAnim(anim);
         setOverrideOri(undefined);
         setOverridePos(undefined);
     }
 
     function setBase(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
+        (anim != undefined) && setShouldAnim(anim);
         pos && setBasePos(pos);
         ori && setBaseOri(ori);
-        anim && setShouldAnim(anim);
         tilts && setMaxPitch(tilts.maxPitch);
         tilts && setMaxYaw(tilts.maxYaw);
     }
@@ -68,3 +68,5 @@ export default function createCameraController(
         },
     }
 }
+
+export type CameraController = ReturnType<typeof createCameraController>['cameraController']

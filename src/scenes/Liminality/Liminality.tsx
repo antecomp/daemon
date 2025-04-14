@@ -3,12 +3,11 @@ import basemtl from './models/base.mtl'
 import dmnobj from './models/diamond.obj'
 import dmnmtl from './models/diamond.mtl'
 import { ObjModel, Scene } from "lume";
-import { createSignal, onMount } from "solid-js";
+import { onMount } from "solid-js";
 import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
-import { Gimbal } from '@/extra.types';
 import NavigationPlane from '@/components/lume/NavigationPlane';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
@@ -53,6 +52,10 @@ export default function Liminality() {
                 {...cameraControlSignals()}
                 sceneRef={sceneRef!}
             />
+
+            {/* <WadsCam
+                defaultPosition='20 -600 20'
+            /> */}
 
             <lume-obj-model
                 id="base"
@@ -102,8 +105,19 @@ export default function Liminality() {
                 newOri={{yaw: -109, pitch: -8}}
                 planeSize={100}
                 anim={true}
-                // show={true}
+                show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
+            />
+
+            <NavigationPlane
+                {...{cameraController}}
+                planePosition={[0, -512, 250]}
+                planeRotation={{pitch: 0, yaw: -90}}
+                show={true}
+                anim={false}
+                planeSize={200}
+                newPos={[0, -512, 350]}
+                newOri={{yaw: 0, pitch: 0}}
             />
 
             <lume-point-light
