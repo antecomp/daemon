@@ -3,7 +3,7 @@ import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
-import { onCleanup, onMount, createEffect } from "solid-js";
+import { onCleanup, onMount, createEffect, untrack } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
@@ -213,6 +213,23 @@ export default function PlayerCam(props: {
 
             previouslyHoveredObject = null;
             previousUV = null;
+        }
+    });
+
+    createEffect(() => {
+        //const anim = untrack(() => props.animate) // doesn't work
+        if(props.baseOri) {
+            // Okay just to make things more fucking confusing this;
+            // - runs 3 fucking times
+            // - runs even when we don't fucking touch baseOri, just doing an override.
+
+            // if I do props.baseOri.pitch then it
+            // - runs once on plane2
+            // - runs twice going back to location 1
+            // - doesn't run on override (diamond click)
+
+            // WHAT THE FUCK IS HAPPENING 🗣️🗣️🗣️
+            alert("trigger base");
         }
     })
 
