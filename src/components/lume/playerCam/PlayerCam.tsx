@@ -2,7 +2,8 @@ import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
-import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect, Element3D } from "lume";
+import { Scene, PerspectiveCamera, Element3D } from "lume";
+import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
@@ -163,6 +164,8 @@ export default function PlayerCam(props: {
             )
         }
 
+        let mouseInter = {yaw: 0, pitch: 0};
+
         bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
@@ -172,7 +175,7 @@ export default function PlayerCam(props: {
                 [prevX, prevY, prevZ],
                 [prevX, effectiveYaw, prevZ],
                 dt,
-                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.animate ?? false,
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )
         }
@@ -189,7 +192,7 @@ export default function PlayerCam(props: {
                 [prevX, prevY, prevZ],
                 [effectivePitch, prevY, prevZ],
                 dt,
-                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.animate ?? false,
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )
         }
