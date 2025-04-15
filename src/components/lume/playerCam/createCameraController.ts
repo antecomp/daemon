@@ -52,6 +52,19 @@ export default function createCameraController(
         maxYaw: maxYaw(),
         maxPitch: maxPitch(),
     }));
+
+    const currentBase = () => ({
+        pos: basePos(),
+        ori: baseOri
+    });
+
+    const currentOverride = () => {
+        if (!overrideOri() || !overridePos()) return null;
+        return {
+            pos: overridePos()!,
+            ori: overrideOri()!
+        }
+    }
     
     return {
         // Signals to spread into playercam component
@@ -65,6 +78,7 @@ export default function createCameraController(
             setBaseOri,
             setOverridePos,
             setOverrideOri,
+            currentBase, currentOverride
         },
     }
 }

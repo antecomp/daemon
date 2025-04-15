@@ -44,7 +44,8 @@ export default function NavigationPlane(props: {
         <lume-plane
             align-point="0.5 0.5"
             mount-point="0.5 0.5"
-            size={`${props.planeSize} ${props.planeSize}`}
+            // Hacky approach but hey it works!
+            size={props.cameraController.currentBase().pos.toString() == props.newPos?.toString() ? `0 0` : `${props.planeSize} ${props.planeSize}`}
             has="basic-material"
             opacity={props.show ? 0.25 : 0}
             ref={planeRef}

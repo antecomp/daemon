@@ -111,7 +111,7 @@ export default function Liminality() {
 
             <NavigationPlane
                 {...{cameraController}}
-                planePosition={[0, -512, 250]}
+                planePosition={[0, -512, 350]}
                 planeRotation={{pitch: 0, yaw: -90}}
                 show={true}
                 anim={false}
