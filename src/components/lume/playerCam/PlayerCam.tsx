@@ -1,9 +1,9 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
-import lerp from "@/utils/lerp";
-import { onCleanup, onMount, Scene, PerspectiveCamera, createEffect, Element3D } from "lume";
-import { Object3D, Raycaster, Vector2 } from "three";
+import { Scene, PerspectiveCamera, Element3D } from "lume";
+import { onCleanup, onMount, createEffect } from "solid-js";
+import { MathUtils, Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
@@ -20,11 +20,10 @@ function getCameraTransform(
   ): [number, number, number] {
     if (animate) {
         const dtInSec = dt / 1000;
-        const factor = 1 - Math.exp(-speed * dtInSec); // Change me later probably.
       return [
-        lerp(prev[0], target[0], factor),
-        lerp(prev[1], target[1], factor),
-        lerp(prev[2], target[2], factor),
+        MathUtils.damp(prev[0], target[0], speed, dtInSec),
+        MathUtils.damp(prev[1], target[1], speed, dtInSec),
+        MathUtils.damp(prev[2], target[2], speed, dtInSec),
       ];
     } else {
       return target;
@@ -163,16 +162,26 @@ export default function PlayerCam(props: {
             )
         }
 
+        let mouseInter = {yaw: 0, pitch: 0};
+
         bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
+
+            // When animate on, let cameraControl handle joint lerping
+            // otherwise we lerp just the mouse and add it static.
+            mouseInter.yaw = (props.animate)
+                ? mouseOffset.yaw
+                : MathUtils.damp(mouseInter.yaw, mouseOffset.yaw, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
+
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
               ? props.overrideOri.yaw
-              : baseYaw + mouseOffset.yaw;
+              : baseYaw + mouseInter.yaw;
+
             return getCameraTransform(
                 [prevX, prevY, prevZ],
                 [prevX, effectiveYaw, prevZ],
                 dt,
-                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.animate ?? false,
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )
         }
@@ -181,15 +190,22 @@ export default function PlayerCam(props: {
             // Side effect, also run raycast when we update rotation. Only needed in one place.
             runHoverRaycast();
 
+            // When animate on, let cameraControl handle joint lerping
+            // otherwise we lerp just the mouse and add it static.
+            mouseInter.pitch = (props.animate)
+                ? mouseOffset.pitch
+                : MathUtils.damp(mouseInter.pitch, mouseOffset.pitch, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
+
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri
               ? props.overrideOri.pitch
-              : basePitch + mouseOffset.pitch;
+              : basePitch + mouseInter.pitch;
+
             return getCameraTransform(
                 [prevX, prevY, prevZ],
                 [effectivePitch, prevY, prevZ],
                 dt,
-                ((props.overrideOri == undefined) || (props.animate ?? false)),
+                props.animate ?? false,
                 props.speed ?? DEFAULT_CAMERA_SPEED
             )
         }
@@ -211,7 +227,7 @@ export default function PlayerCam(props: {
             previouslyHoveredObject = null;
             previousUV = null;
         }
-    })
+    });
 
     return (
         <lume-element3d id="cam_body" align-point="0.5 0.5" ref={bodyRef}>

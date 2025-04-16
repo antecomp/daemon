@@ -114,7 +114,6 @@ export default function Billboard(props: {
     })
 
     return (
-        <>
         <lume-plane
             align-point="0.5 0.5"
             mount-point="0.5 0.5"
@@ -132,7 +131,7 @@ export default function Billboard(props: {
             receive-shadow="false"
             has="basic-material"
             
-            //@ts-ignore - This is a valid property, just not in the typesfile.
+            //@ts-expect-error - This is a valid property, just not in the typesfile.
             rotation={(x: number,y:number,z:number) => {
                 const camera = me.scene?.camera
                 const cameraWorldPos = new Vector3().setFromMatrixPosition(camera!.three.matrixWorld);
@@ -145,6 +144,5 @@ export default function Billboard(props: {
                 return [0, toDegrees(yaw), 0]
             }}
         />
-        </>
     )
 }
