@@ -9,6 +9,7 @@ import { Object3D, Raycaster, Vector2 } from "three";
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
 const DEFAULT_CAMERA_SPEED = 7;
+const DEFAULT_CAMERA_ROTATION_SPEED = 0.5;
 
 // Helper function to return updated x,y,z values given current and target.
 // will either lerp or snap (based on animate bool).
@@ -167,10 +168,18 @@ export default function PlayerCam(props: {
         let mouseInter = {yaw: 0, pitch: 0};
 
         bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
+
+            // When animate on, let cameraControl handle joint lerping
+            // otherwise we lerp just the mouse and add it static.
+            mouseInter.yaw = (props.animate)
+                ? mouseOffset.yaw
+                : lerp(mouseInter.yaw, mouseOffset.yaw, 0.15);
+
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
               ? props.overrideOri.yaw
-              : baseYaw + mouseOffset.yaw;
+              : baseYaw + mouseInter.yaw;
+
             return getCameraTransform(
                 [prevX, prevY, prevZ],
                 [prevX, effectiveYaw, prevZ],
@@ -184,10 +193,17 @@ export default function PlayerCam(props: {
             // Side effect, also run raycast when we update rotation. Only needed in one place.
             runHoverRaycast();
 
+            // When animate on, let cameraControl handle joint lerping
+            // otherwise we lerp just the mouse and add it static.
+            mouseInter.pitch = (props.animate)
+                ? mouseOffset.pitch
+                : lerp(mouseInter.pitch, mouseOffset.pitch, 0.15);
+
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri
               ? props.overrideOri.pitch
-              : basePitch + mouseOffset.pitch;
+              : basePitch + mouseInter.pitch;
+
             return getCameraTransform(
                 [prevX, prevY, prevZ],
                 [effectivePitch, prevY, prevZ],
