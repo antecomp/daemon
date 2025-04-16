@@ -1,15 +1,13 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
-import lerp from "@/utils/lerp";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
-import { onCleanup, onMount, createEffect, untrack } from "solid-js";
-import { Object3D, Raycaster, Vector2 } from "three";
+import { onCleanup, onMount, createEffect } from "solid-js";
+import { MathUtils, Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
 const DEFAULT_CAMERA_SPEED = 7;
-const DEFAULT_CAMERA_ROTATION_SPEED = 0.5;
 
 // Helper function to return updated x,y,z values given current and target.
 // will either lerp or snap (based on animate bool).
@@ -22,11 +20,10 @@ function getCameraTransform(
   ): [number, number, number] {
     if (animate) {
         const dtInSec = dt / 1000;
-        const factor = 1 - Math.exp(-speed * dtInSec); // Change me later probably.
       return [
-        lerp(prev[0], target[0], factor),
-        lerp(prev[1], target[1], factor),
-        lerp(prev[2], target[2], factor),
+        MathUtils.damp(prev[0], target[0], speed, dtInSec),
+        MathUtils.damp(prev[1], target[1], speed, dtInSec),
+        MathUtils.damp(prev[2], target[2], speed, dtInSec),
       ];
     } else {
       return target;
@@ -173,7 +170,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.yaw = (props.animate)
                 ? mouseOffset.yaw
-                : lerp(mouseInter.yaw, mouseOffset.yaw, 0.15);
+                : MathUtils.damp(mouseInter.yaw, mouseOffset.yaw, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
 
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
@@ -197,7 +194,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.pitch = (props.animate)
                 ? mouseOffset.pitch
-                : lerp(mouseInter.pitch, mouseOffset.pitch, 0.15);
+                : MathUtils.damp(mouseInter.pitch, mouseOffset.pitch, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
 
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri
@@ -231,23 +228,6 @@ export default function PlayerCam(props: {
             previousUV = null;
         }
     });
-
-    createEffect(() => {
-        //const anim = untrack(() => props.animate) // doesn't work
-        if(props.baseOri) {
-            // Okay just to make things more fucking confusing this;
-            // - runs 3 fucking times
-            // - runs even when we don't fucking touch baseOri, just doing an override.
-
-            // if I do props.baseOri.pitch then it
-            // - runs once on plane2
-            // - runs twice going back to location 1
-            // - doesn't run on override (diamond click)
-
-            // WHAT THE FUCK IS HAPPENING 🗣️🗣️🗣️
-            alert("trigger base");
-        }
-    })
 
     return (
         <lume-element3d id="cam_body" align-point="0.5 0.5" ref={bodyRef}>
