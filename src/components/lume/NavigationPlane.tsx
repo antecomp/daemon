@@ -16,6 +16,8 @@ import { InteractableObject3D } from "@/core/interaction/interactable.types";
  * @prop anim - should the camera transition be animated
  * @prop planePosition - where the navigation plane is
  * @prop planeSize - 3D size of the navigation plane (square)
+ * @prop sidedness - sidedness of the plane, front, back or both. 
+ *                      backside cull of plane means raycast will *not* hit it. If we need to hit the plane from both sides, then use "both"
  * @prop show whether to show the plane or not, mainly used for testing/placement debugging.
  * @prop planeRotation - how the plane is oriented. If nothing is provided, the plane will automatically always face the player (billboard).
  */
