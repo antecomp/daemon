@@ -11,7 +11,7 @@ import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import NavigationPlane from '@/components/lume/NavigationPlane';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
-import WadsCam from '@/components/lume/wadscam';
+// import WadsCam from '@/components/lume/wadscam';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -100,10 +100,21 @@ export default function Liminality() {
 
             <NavigationPlane
                 {...{cameraController}}
-                planePosition={[-150, -500, 0]}
+                planePosition={[-250, -500, 0]}
                 newPos={[-217, -512, 0]}
                 newOri={{yaw: -109, pitch: -8}}
-                planeSize={100}
+                planeSize={[450, 100]}
+                anim={true}
+                show={true}
+                planeRotation={{pitch: 0, yaw: 0}}
+            />
+
+            <NavigationPlane
+                {...{cameraController}}
+                planePosition={[250, -500, 0]}
+                newPos={[217, -512, 0]}
+                newOri={{yaw: 109, pitch: -8}}
+                planeSize={[450, 100]}
                 anim={true}
                 show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
@@ -118,6 +129,7 @@ export default function Liminality() {
                 planeSize={200}
                 newPos={[0, -512, 350]}
                 newOri={{yaw: 0, pitch: 0}}
+                sidedness='double'
             />
 
             <lume-point-light

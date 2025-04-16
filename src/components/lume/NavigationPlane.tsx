@@ -26,9 +26,10 @@ export default function NavigationPlane(props: {
     anim?: boolean
     planePosition: XYZ 
     tilts?: {maxYaw: number, maxPitch: number}
-    planeSize: number // just assume square for now? Good enough?
+    planeSize: number | [number, number] // just assume square for now? Good enough?
     show?: boolean
     planeRotation?: Omit<Gimbal, "roll"> // defaults to billboard otherwise.
+    sidedness?: "front" | "double" | "back"
 }) {
     let planeRef!: Plane
 
@@ -38,20 +39,32 @@ export default function NavigationPlane(props: {
         (planeRef.three as InteractableObject3D).userData.onClick = () => {
             props.cameraController.setBase(props.newPos, props.newOri, props.anim, props.tilts);
         }
-    })
+    });
+
+    const getPlaneSize = () => {
+        // Hide plane when we are at it's desired location. 
+        // Hacky but avoids weird ref detach issues while stopping the raycaster from hitting.
+        if(props.cameraController.currentBase().pos.toString() == props.newPos?.toString()) return `0 0`;
+
+        if(Array.isArray(props.planeSize)) { // [x,y]
+            return props.planeSize.join(' ');
+        } else { // just one dimension, clone it.
+            return `${props.planeSize} ${props.planeSize}`
+        }
+    }
 
     return (
         <lume-plane
             align-point="0.5 0.5"
             mount-point="0.5 0.5"
-            // Hacky approach but hey it works!
-            size={props.cameraController.currentBase().pos.toString() == props.newPos?.toString() ? `0 0` : `${props.planeSize} ${props.planeSize}`}
+            size={getPlaneSize()}
             has="basic-material"
             opacity={props.show ? 0.25 : 0}
             ref={planeRef}
             position={props.planePosition.toString()}
             cast-shadow="false"
-            //@ts-expect-error
+            sidedness={props.sidedness}
+            //@ts-expect-error - valid to put updater function here but TS doesn't recognize it.
             rotation={!props.planeRotation ? (x: number, y:number, z: number) => {
                 const camera = planeRef.scene?.camera
                 const cameraWorldPos = new Vector3().setFromMatrixPosition(camera!.three.matrixWorld);
