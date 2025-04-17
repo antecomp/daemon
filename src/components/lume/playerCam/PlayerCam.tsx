@@ -1,13 +1,14 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
+import lerp from "@/utils/lerp";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { MathUtils, Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
-const DEFAULT_CAMERA_SPEED = 7;
+const DEFAULT_CAMERA_SPEED = 4;
 
 // Helper function to return updated x,y,z values given current and target.
 // will either lerp or snap (based on animate bool).
@@ -21,9 +22,9 @@ function getCameraTransform(
     if (animate) {
         const dtInSec = dt / 1000;
       return [
-        MathUtils.damp(prev[0], target[0], speed, dtInSec),
-        MathUtils.damp(prev[1], target[1], speed, dtInSec),
-        MathUtils.damp(prev[2], target[2], speed, dtInSec),
+        lerp(prev[0], target[0], speed * dtInSec),
+        lerp(prev[1], target[1], speed * dtInSec),
+        lerp(prev[2], target[2], speed * dtInSec),
       ];
     } else {
       return target;
@@ -170,7 +171,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.yaw = (props.animate)
                 ? mouseOffset.yaw
-                : MathUtils.damp(mouseInter.yaw, mouseOffset.yaw, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
+                : lerp(mouseInter.yaw, mouseOffset.yaw, props.speed ?? DEFAULT_CAMERA_SPEED * (dt / 1000));
 
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
@@ -194,7 +195,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.pitch = (props.animate)
                 ? mouseOffset.pitch
-                : MathUtils.damp(mouseInter.pitch, mouseOffset.pitch, props.speed ?? DEFAULT_CAMERA_SPEED, dt / 1000);
+                : lerp(mouseInter.pitch, mouseOffset.pitch, props.speed ?? DEFAULT_CAMERA_SPEED * (dt / 1000));
 
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri
