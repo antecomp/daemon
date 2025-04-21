@@ -4,11 +4,11 @@ import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
-import { createSignal, Show, Suspense } from "solid-js";
+import { createSignal, ErrorBoundary, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { scenes } from "@/scenes/sceneRegistry";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { cycleInteractionMode } from "@/core/interaction/interaction";
+import { loadScene } from "@/scenes/loadScene";
 
 // THis will move to some sort of game store (persistent) later.
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
@@ -27,9 +27,20 @@ export default function SceneContainer() {
 
             onContextMenu={cycleInteractionMode}
         >
-            <Suspense fallback={<p>Loading scene...</p>}>
-                <Dynamic component={scenes[currentScene()]} />
-            </Suspense>
+            
+            <ErrorBoundary 
+                fallback={(err, reset) => (
+                    <>
+                      <p>Error loading scene: {err.message}</p>
+                      <button onClick={reset}>Try again</button>
+                      <button onClick={() => {setCurrentScene(INITIAL_SCENE); reset()}}>Return To Initial Scene</button>
+                    </>
+                  )}
+            >
+                <Suspense fallback={<p>Loading scene...</p>}>
+                    <Dynamic component={loadScene(currentScene())} />
+                </Suspense>
+            </ErrorBoundary>
 
             <Show when={DialogueService.currentDialogueOverlay()}>
                 <div id="dialogue-overlay" style={{background: `url(${DialogueService.currentDialogueOverlay()})`}}></div>

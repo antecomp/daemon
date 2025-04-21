@@ -4,7 +4,7 @@ import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
-import { MathUtils, Object3D, Raycaster, Vector2 } from "three";
+import { Object3D, Raycaster, Vector2 } from "three";
 
 export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
 
