@@ -9,12 +9,18 @@ import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { cycleInteractionMode } from "@/core/interaction/interaction";
 import { loadScene } from "@/scenes/loadScene";
+import { ContextMenu } from "./SceneMenu/scenemenu.types";
+import { MenuContext } from "./SceneMenu/SceneMenuContext";
 
 // THis will move to some sort of game store (persistent) later.
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 (window as any).DG_setScene = setCurrentScene;
 
 export default function SceneContainer() {
+
+    const [currentMenu, setCurrentMenu] = createSignal<ContextMenu>(null);
+    const spawnMenu = (menu: ContextMenu) => setCurrentMenu(menu);
+    const closeMenu = () => setCurrentMenu(null);
 
     return (
         <CornerRect
@@ -27,23 +33,25 @@ export default function SceneContainer() {
 
             onContextMenu={cycleInteractionMode}
         >
-            
-            <ErrorBoundary 
+
+            <ErrorBoundary
                 fallback={(err, reset) => (
                     <>
-                      <p>Error loading scene: {err.message}</p>
-                      <button onClick={reset}>Try again</button>
-                      <button onClick={() => {setCurrentScene(INITIAL_SCENE); reset()}}>Return To Initial Scene</button>
+                        <p>Error loading scene: {err.message}</p>
+                        <button onClick={reset}>Try again</button>
+                        <button onClick={() => { setCurrentScene(INITIAL_SCENE); reset() }}>Return To Initial Scene</button>
                     </>
-                  )}
+                )}
             >
-                <Suspense fallback={<p>Loading scene...</p>}>
-                    <Dynamic component={loadScene(currentScene())} />
-                </Suspense>
+                <MenuContext.Provider value={{ spawnMenu, closeMenu }}>
+                    <Suspense fallback={<p>Loading scene...</p>}>
+                        <Dynamic component={loadScene(currentScene())} />
+                    </Suspense>
+                </MenuContext.Provider>
             </ErrorBoundary>
 
             <Show when={DialogueService.currentDialogueOverlay()}>
-                <div id="dialogue-overlay" style={{background: `url(${DialogueService.currentDialogueOverlay()})`}}></div>
+                <div id="dialogue-overlay" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
             </Show>
         </CornerRect>
     )
