@@ -1,0 +1,48 @@
+/* WHO LET HIM COOK!? HE'S BURNING THE WHOLE HOUSE DOWN!!!! */
+
+.scenemenu-container {
+    width: fit-content;
+}
+
+.scenemenu-prompt-body {
+    display: flex;
+
+    p {
+        border-top: solid 2px white;
+        border-bottom: solid 2px white;
+        margin-top: 19px;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        span {
+            text-align: center;
+            margin-left: -4px;
+            transform: perspective(0px);
+        }
+    }
+
+    & img:last-of-type {
+        margin-top: 19px;
+    }
+}
+
+.scenemenu-options {
+    border-left: solid 2px white;
+    margin-left: 16px;
+    padding-left: 2px;
+    gap: 2px;
+
+    display: flex;
+    flex-direction: column;
+
+    & div {
+        border: solid 1px white;
+    }
+
+    /* kill me */
+    & div:first-of-type {
+        margin-top: -1px;
+    }
+}

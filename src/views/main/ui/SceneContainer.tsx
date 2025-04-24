@@ -9,7 +9,7 @@ import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { cycleInteractionMode } from "@/core/interaction/interaction";
 import { loadScene } from "@/scenes/loadScene";
-import { ContextMenu } from "./SceneMenu/scenemenu.types";
+import { SceneContextMenu } from "./SceneMenu/scenemenu.types";
 import { MenuContext } from "./SceneMenu/SceneMenuContext";
 
 // THis will move to some sort of game store (persistent) later.
@@ -18,8 +18,8 @@ export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 
 export default function SceneContainer() {
 
-    const [currentMenu, setCurrentMenu] = createSignal<ContextMenu>(null);
-    const spawnMenu = (menu: ContextMenu) => setCurrentMenu(menu);
+    const [currentMenu, setCurrentMenu] = createSignal<SceneContextMenu>(null);
+    const spawnMenu = (menu: SceneContextMenu) => setCurrentMenu(menu);
     const closeMenu = () => setCurrentMenu(null);
 
     return (

@@ -4,8 +4,9 @@ export type MenuOption = {
     onSelect: () => void;
 }
 
-export type ContextMenu = {
+export type SceneContextMenu = {
     prompt: string,
+    width: number,
     options: MenuOption[]
     position?: {x: number, y: number}
 } | null;

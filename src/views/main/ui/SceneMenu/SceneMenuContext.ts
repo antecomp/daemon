@@ -1,8 +1,8 @@
 import { createContext, useContext } from "solid-js";
-import { ContextMenu } from "./scenemenu.types"
+import { SceneContextMenu } from "./scenemenu.types"
 
 type MenuContextType = {
-    spawnMenu: (menu: ContextMenu) => void;
+    spawnMenu: (menu: SceneContextMenu) => void;
     closeMenu: () => void;
 }
 

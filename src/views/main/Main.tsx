@@ -6,6 +6,7 @@ import EventLog from "./ui/EventLog"
 import './main.css'
 import vl_badge from './assets/vl_badge.png'
 import UILayerHost from "@/layers/UILayerHost"
+import SceneMenu from "./ui/SceneMenu/SceneMenu.tsx"
 
 export default function Main() {
     return (
@@ -18,6 +19,7 @@ export default function Main() {
                 <IModePicker/>
             </div>
             <UILayerHost/>
+            <SceneMenu currentMenu={null}/>
         </main>
     )
 }
