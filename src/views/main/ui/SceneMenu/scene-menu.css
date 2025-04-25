@@ -70,19 +70,6 @@
     }
 }
 
-/* From Transition Group */
-.slidedown-enter, .slideup-exited {
-    visibility: hidden;
-    margin-top: -20px;
-    transition: margin-top 1s;
-}
-
-.slidedown-entered, .slideup-exit {
-    visibility: visible;
-    margin-top: -1px;
-    transition: margin-top 1s;
-}
-
 @keyframes slidedown {
     to {
         visibility: visible;
