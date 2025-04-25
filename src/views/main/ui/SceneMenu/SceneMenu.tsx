@@ -27,19 +27,17 @@ export default function SceneMenu(props: {
                         <img src={scenemenubody_right}/>
                 </div>
                 <div class="scenemenu-options">
-                    {/* <div class="scenemenu-option" style={{"--n": 0}}>egg</div>
-                    <div class="scenemenu-option" style={{"--n": 1}}>egg2</div> */}
-                    <For each={props.currentMenu?.options ?? []}>
-                        {(option, index) => 
-                            <div 
-                                class="scenemenu-option" 
-                                style={{"--n": index()}}
-                                onClick={() => {option.onSelect?.(closeMenu); closeMenu()}}
-                            >
-                                    {option.label}
-                            </div>
-                        }
-                    </For>
+                        <For each={props.currentMenu?.options ?? []}>
+                            {(option, index) => 
+                                <div 
+                                    class="scenemenu-option" 
+                                    style={{"--n": index()}}
+                                    onClick={() => {option.onSelect?.(closeMenu); closeMenu()}}
+                                >
+                                        {option.label}
+                                </div>
+                            }
+                        </For>
                 </div>
             </div>
         </Show>

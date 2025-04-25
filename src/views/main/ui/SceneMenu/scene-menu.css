@@ -8,6 +8,11 @@
 
 .scenemenu-prompt-body {
     display: flex;
+    z-index: 101;
+    position: relative;
+
+    opacity: 0;
+    animation: fadein 0.25s forwards;
 
     p {
         border-top: solid 2px white;
@@ -49,6 +54,12 @@
         cursor: pointer;
         position: relative;
         height: 17px;
+        z-index: calc(100 - var(--n));
+
+        visibility: hidden;
+        margin-top: -20px;
+        animation: slidedown forwards 0.25s;
+        animation-delay: 0.10s; /* purposefully early */
     }
 
     .scenemenu-option::after {
@@ -57,9 +68,30 @@
         right: -17px;
         top: -1px;
     }
+}
 
-    /* kill me */
-    & div:first-of-type {
+/* From Transition Group */
+.slidedown-enter, .slideup-exited {
+    visibility: hidden;
+    margin-top: -20px;
+    transition: margin-top 1s;
+}
+
+.slidedown-entered, .slideup-exit {
+    visibility: visible;
+    margin-top: -1px;
+    transition: margin-top 1s;
+}
+
+@keyframes slidedown {
+    to {
+        visibility: visible;
         margin-top: -1px;
+    }
+}
+
+@keyframes fadein {
+    to {
+        opacity: 1;
     }
 }
