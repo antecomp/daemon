@@ -83,12 +83,28 @@ export default function Liminality() {
                 //     )
                 //     sleep(2000).then(() => cameraController.clearOverrides())
                 // }}
-                onClick={(uv, mouse) => {
-                    spawnMenu({
-                        prompt: `${uv.toArray().toString()} og ${mouse.toArray().toString()}`,
-                        options: []
-                    })
-                }}
+                interactions={[(_uv, mouse) => {
+                    spawnMenu(
+                        `Approach The Reliquary?`,
+                        [
+                            {
+                                label: "Yes",
+                                onSelect: () => {
+                                    cameraController.setOverrides(
+                                        [200, -712, 350],
+                                        { pitch: 20, yaw: 30 },
+                                        true
+                                    )
+                                    sleep(2000).then(() => cameraController.clearOverrides())
+                                }
+                            },
+                            {
+                                label: "Nah",
+                                // implicit just close.
+                            }
+                        ]
+                    , mouse, 150)
+                }]}
             >
                 <lume-obj-model
                     id="dmn"
@@ -114,7 +130,7 @@ export default function Liminality() {
                 newOri={{yaw: -109, pitch: -8}}
                 planeSize={[450, 100]}
                 anim={true}
-                show={true}
+                // show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
             />
 
@@ -125,7 +141,7 @@ export default function Liminality() {
                 newOri={{yaw: 109, pitch: -8}}
                 planeSize={[450, 100]}
                 anim={true}
-                show={true}
+                // show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
             />
 
@@ -133,7 +149,7 @@ export default function Liminality() {
                 {...{cameraController}}
                 planePosition={[0, -512, 350]}
                 planeRotation={{pitch: 0, yaw: -90}}
-                show={true}
+                // show={true}
                 anim={false}
                 planeSize={200}
                 newPos={[0, -512, 350]}

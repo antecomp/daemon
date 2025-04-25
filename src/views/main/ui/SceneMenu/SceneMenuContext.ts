@@ -1,8 +1,9 @@
 import { createContext, useContext } from "solid-js";
-import { SceneContextMenu } from "./scenemenu.types"
+import { MenuOption } from "./scenemenu.types"
+import { Vector2 } from "three";
 
 type MenuContextType = {
-    spawnMenu: (menu: SceneContextMenu) => void;
+    spawnMenu: (prompt: string, options: MenuOption[], mouse: Vector2, width?: number) => void;
     closeMenu: () => void;
 }
 

@@ -1,12 +1,12 @@
 export type MenuOption = {
     label: string,
     //icon: AssetURL,
-    onSelect: () => void;
+    onSelect?: (closeMenu: () => void) => void;
 }
 
 export type SceneContextMenu = {
     prompt: string,
-    width: number,
+    width?: number,
     options: MenuOption[]
-    position?: {x: number, y: number}
+    position: {x: number, y: number}
 } | null;

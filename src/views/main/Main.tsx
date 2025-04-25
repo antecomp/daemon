@@ -19,7 +19,6 @@ export default function Main() {
                 <IModePicker/>
             </div>
             <UILayerHost/>
-            <SceneMenu currentMenu={null}/>
         </main>
     )
 }
