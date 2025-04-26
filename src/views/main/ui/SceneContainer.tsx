@@ -10,7 +10,7 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 import { cycleInteractionMode } from "@/core/interaction/interaction";
 import { loadScene } from "@/scenes/loadScene";
 import { MenuOption, SceneContextMenu } from "./SceneMenu/scenemenu.types";
-import { MenuContext } from "./SceneMenu/SceneMenuContext";
+import { SceneMenuContext } from "./SceneMenu/SceneMenuContext";
 import SceneMenu from "./SceneMenu/SceneMenu";
 import { Vector2 } from "three";
 
@@ -33,7 +33,7 @@ export default function SceneContainer() {
     const closeMenu = () => setCurrentMenu(null);
 
     return (
-        <MenuContext.Provider value={{ spawnMenu, closeMenu }}>
+        <SceneMenuContext.Provider value={{ spawnMenu, closeMenu }}>
             <CornerRect
                 borderSize={2}
                 borderType="solid white"
@@ -64,6 +64,6 @@ export default function SceneContainer() {
                 </Show>
                 <SceneMenu currentMenu={currentMenu()}/>
             </CornerRect>
-        </MenuContext.Provider>
+        </SceneMenuContext.Provider>
     )
 }

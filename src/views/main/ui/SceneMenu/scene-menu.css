@@ -8,13 +8,14 @@
 
 .scenemenu-prompt-body {
     display: flex;
+    /* Options are 100 and subtract by index, this puts it above them as they slide in */
     z-index: 101;
     position: relative;
 
     opacity: 0;
     animation: fadein 0.25s forwards;
 
-    p {
+    & p {
         border-top: solid 2px white;
         border-bottom: solid 2px white;
         margin-top: 19px;

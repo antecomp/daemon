@@ -1,7 +1,7 @@
 export type MenuOption = {
     label: string,
     //icon: AssetURL,
-    onSelect?: (closeMenu: () => void) => void;
+    onSelect?: () => void;
 }
 
 export type SceneContextMenu = {

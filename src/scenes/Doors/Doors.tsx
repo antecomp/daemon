@@ -24,27 +24,34 @@ export default function Doors() {
         {maxPitch: 20, maxYaw: 20}
     )
 
-    const {spawnMenu} = useSceneMenu()!;
+    const {spawnMenu} = useSceneMenu();
 
     onMount(() => {
-        requestAnimationFrame(() => {
-            // sceneRef && applyShader(sceneRef, 0);
-            sceneRef && applyDGShader(sceneRef);
-        })
+        requestAnimationFrame(() => applyDGShader(sceneRef))
     })
 
     const [isDoorOpen, setDoorOpen] = createSignal(false);
 
     const doorClickHandler = (_uv: any, mouse: Vector2) => {
-        if (isDoorOpen()) return;
-        spawnMenu(
-            "Open the doors?", 
-            [
-                {label: "Yes", onSelect: () => {setDoorOpen(true); addLogMessage("The doors sqeak loudly as they swing open")}},
-                {label: "No"}
-            ],
-            mouse
-        )
+        if (!isDoorOpen()) {
+            spawnMenu(
+                "Open the doors?", 
+                [
+                    {label: "Yes", onSelect: () => {setDoorOpen(true); addLogMessage("The doors sqeak loudly as they swing open")}},
+                    {label: "No"}
+                ],
+                mouse
+            )
+        } else {
+            spawnMenu(
+                "Close the doors?",
+                [
+                    {label: "Yes", onSelect: () => setDoorOpen(false)},
+                    {label: "No"}
+                ],
+                mouse
+            )
+        }
     }
 
     return (
@@ -57,9 +64,7 @@ export default function Doors() {
                 sceneRef={sceneRef}
             />
 
-            <Interactable
-                onClick={doorClickHandler}
-            >
+            <Interactable onClick={doorClickHandler}>
                 <lume-plane
                     align-point="0.5 0.5"
                     mount-point="0.5 0.5"
@@ -71,14 +76,12 @@ export default function Doors() {
                     texture={door_r}
 
                     //@ts-expect-error
-                    rotation={isDoorOpen() ? (x,y,z, _t, dt) => [
-                        x, lerp(y, -90, 5 * (dt/1000)) , z
-                    ] : "0 0 0"}
+                    rotation={(x,y,z, _t, dt) => [
+                        x, isDoorOpen() ? lerp(y, -90, 5 * (dt/1000)) : lerp(y, 0, 5 * (dt/1000)) , z
+                    ]}
                 />
             </Interactable>
-            <Interactable
-                onClick={doorClickHandler}
-            >
+            <Interactable onClick={doorClickHandler}>
                 <lume-plane
                     align-point="0.5 0.5"
                     mount-point="0.5 0.5"
@@ -91,12 +94,11 @@ export default function Doors() {
                     texture={door_l}
 
                     //@ts-expect-error
-                    rotation={isDoorOpen() ? (x,y,z, _t, dt) => [
-                        x, lerp(y, 90, 5 * (dt/1000)) , z
-                    ] : "0 0 0"}
+                    rotation={(x,y,z, _t, dt) => [
+                        x, isDoorOpen() ? lerp(y, 90, 5 * (dt/1000)) : lerp(y, 0, 5 * (dt/1000)) , z
+                    ]}
                 />
             </Interactable>
-
 
             <Billboard
                 texture={friendTexture}
