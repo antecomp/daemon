@@ -1,6 +1,5 @@
 export type MenuOption = {
     label: string,
-    //icon: AssetURL,
     onSelect?: () => void;
 }
 

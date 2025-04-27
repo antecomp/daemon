@@ -47,27 +47,50 @@
     flex-direction: column;
 
     .scenemenu-option {
-        border: solid 1px white;
+        /* border: solid 1px white; */
         background: black;
-        padding-left: 4px;
         border-right: none;
-        width: calc(100% - (18px * (var(--n) + 1)));
+        width: calc(100% - (20px * (var(--n) + 1)) - 5px);
         cursor: pointer;
         position: relative;
-        height: 17px;
+        /* height: 15px; */
         z-index: calc(100 - var(--n));
 
         visibility: hidden;
         margin-top: -20px;
         animation: slidedown forwards 0.25s;
         animation-delay: 0.10s; /* purposefully early */
+
+        display: flex;
+        gap: 1px;
+        align-items: center;
+        grid-template-columns: fit-content auto;
+
+        & img {
+            border: solid 1px white;
+        }
+
+        & span {
+            height: 20px;
+            border-top: solid 1px white;
+            border-bottom: solid 1px white;
+            border-left: solid 1px white;
+            padding-left: 4px;
+            flex-grow: 1;
+        }
+
+        transition: translate 0.25s;
     }
 
     .scenemenu-option::after {
         content: url('./assets/option_tail.png');
         position: absolute;
-        right: -17px;
-        top: -1px;
+        right: -20px;
+        top: 0;
+    }
+
+    .scenemenu-option:hover {
+        translate: 2px;
     }
 }
 

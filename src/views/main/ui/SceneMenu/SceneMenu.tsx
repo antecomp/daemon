@@ -5,6 +5,9 @@ import './scene-menu.css'
 import { For, Show } from "solid-js";
 import { useSceneMenu } from "./SceneMenuContext";
 
+import default_option_icon from "./assets/option_icon_circle.png"
+import x_option_icon from "./assets/option_icon_x.png"
+
 const MENU_OFFSET = 26;
 
 export default function SceneMenu(props: {
@@ -36,7 +39,8 @@ export default function SceneMenu(props: {
                                 style={{ "--n": index() }}
                                 onClick={() => { option.onSelect?.(); closeMenu() }}
                             >
-                                {option.label}
+                                <img src={option.onSelect ? default_option_icon : x_option_icon}/>
+                                <span>{option.label}</span>
                             </div>
                         }
                     </For>
