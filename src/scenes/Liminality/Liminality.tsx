@@ -11,6 +11,7 @@ import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import NavigationPlane from '@/components/lume/NavigationPlane';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
+import { useSceneMenu } from '@/views/main/ui/SceneMenu/SceneMenuContext';
 // import WadsCam from '@/components/lume/wadscam';
 
 export default function Liminality() {
@@ -19,6 +20,8 @@ export default function Liminality() {
     let dmnRef: ObjModel | undefined;
 
     const lightIntensity = "300";
+
+    const {spawnMenu} = useSceneMenu()!;
 
     const { cameraControlSignals, cameraController } = createCameraController(
         [0, -512, 350],
@@ -71,15 +74,37 @@ export default function Liminality() {
 
             <Interactable
                 //onHover={() => console.log("Diamond Hovered")}
-                onClick={(uv, mouse) => {
-                    console.log("diamond click:", uv, mouse);
-                    cameraController.setOverrides(
-                        [200, -712, 350],
-                        { pitch: 20, yaw: 30 },
-                        true
-                    )
-                    sleep(2000).then(() => cameraController.clearOverrides())
-                }}
+                // onClick={(uv, mouse) => {
+                //     console.log("diamond click:", uv, mouse);
+                //     cameraController.setOverrides(
+                //         [200, -712, 350],
+                //         { pitch: 20, yaw: 30 },
+                //         true
+                //     )
+                //     sleep(2000).then(() => cameraController.clearOverrides())
+                // }}
+                interactions={[(_uv, mouse) => {
+                    spawnMenu(
+                        `Approach The Reliquary?`,
+                        [
+                            {
+                                label: "Yes",
+                                onSelect: () => {
+                                    cameraController.setOverrides(
+                                        [200, -712, 350],
+                                        { pitch: 20, yaw: 30 },
+                                        true
+                                    )
+                                    sleep(2000).then(() => cameraController.clearOverrides())
+                                }
+                            },
+                            {
+                                label: "Nah",
+                                // implicit just close.
+                            }
+                        ]
+                    , mouse, 150)
+                }]}
             >
                 <lume-obj-model
                     id="dmn"
@@ -105,7 +130,7 @@ export default function Liminality() {
                 newOri={{yaw: -109, pitch: -8}}
                 planeSize={[450, 100]}
                 anim={true}
-                show={true}
+                // show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
             />
 
@@ -116,7 +141,7 @@ export default function Liminality() {
                 newOri={{yaw: 109, pitch: -8}}
                 planeSize={[450, 100]}
                 anim={true}
-                show={true}
+                // show={true}
                 planeRotation={{pitch: 0, yaw: 0}}
             />
 
@@ -124,7 +149,7 @@ export default function Liminality() {
                 {...{cameraController}}
                 planePosition={[0, -512, 350]}
                 planeRotation={{pitch: 0, yaw: -90}}
-                show={true}
+                // show={true}
                 anim={false}
                 planeSize={200}
                 newPos={[0, -512, 350]}

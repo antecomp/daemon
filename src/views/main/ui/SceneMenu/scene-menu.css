@@ -1,0 +1,108 @@
+/* WHO LET HIM COOK!? HE'S BURNING THE WHOLE HOUSE DOWN!!!! */
+
+.scenemenu-container {
+    width: fit-content;
+    padding: 20px;
+    position: absolute;
+}
+
+.scenemenu-prompt-body {
+    display: flex;
+    /* Options are 100 and subtract by index, this puts it above them as they slide in */
+    z-index: 101;
+    position: relative;
+
+    opacity: 0;
+    animation: fadein 0.25s forwards;
+
+    & p {
+        border-top: solid 2px white;
+        border-bottom: solid 2px white;
+        margin-top: 19px;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: black;
+
+        span {
+            text-align: center;
+            margin-left: -4px;
+            transform: perspective(0px);
+        }
+    }
+
+    & img:last-of-type {
+        margin-top: 19px;
+    }
+}
+
+.scenemenu-options {
+    border-left: solid 2px white;
+    margin-left: 16px;
+    padding-left: 2px;
+    gap: 2px;
+
+    display: flex;
+    flex-direction: column;
+
+    .scenemenu-option {
+        /* border: solid 1px white; */
+        background: black;
+        border-right: none;
+        width: calc(100% - (20px * (var(--n) + 1)) - 5px);
+        cursor: pointer;
+        position: relative;
+        /* height: 15px; */
+        z-index: calc(100 - var(--n));
+
+        visibility: hidden;
+        margin-top: -20px;
+        animation: slidedown forwards 0.25s;
+        animation-delay: 0.10s; /* purposefully early */
+
+        display: flex;
+        gap: 1px;
+        align-items: center;
+        grid-template-columns: fit-content auto;
+
+        & img {
+            border: solid 1px white;
+        }
+
+        & span {
+            height: 20px;
+            border-top: solid 1px white;
+            border-bottom: solid 1px white;
+            border-left: solid 1px white;
+            padding-left: 4px;
+            flex-grow: 1;
+        }
+
+        transition: translate 0.25s;
+    }
+
+    .scenemenu-option::after {
+        content: url('./assets/option_tail.png');
+        position: absolute;
+        right: -20px;
+        top: 0;
+    }
+
+    .scenemenu-option:hover {
+        translate: 2px;
+    }
+}
+
+@keyframes slidedown {
+    to {
+        visibility: visible;
+        margin-top: -1px;
+    }
+}
+
+@keyframes fadein {
+    to {
+        opacity: 1;
+    }
+}

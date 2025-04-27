@@ -10,8 +10,7 @@ interface InteractiveElementProps {
     onHover?: interactionCB
     interactions?: InteractionMap
     onHoverLeave?: () => void,
-    //children: any
-    children: any,
+    children: any, // change this?    
 }
 
 export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
