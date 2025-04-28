@@ -58,12 +58,10 @@
 
             /* change to require some sort of "active" class*/
             #reset-button:active {
-                cursor: pointer;
                 translate: 2px 0px;
             }
 
             #exec-button:active {
-                cursor: pointer;
                 translate: 2px 0px;
             }
 

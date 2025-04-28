@@ -26,7 +26,7 @@
 	padding: 1px;
 	padding-left: 3px;
 	line-height: 120%;
-	cursor: default;
+	/* cursor: default; */
 }
 
 .sender-container.inactive {
@@ -55,7 +55,7 @@
 	height: 27px;
 	align-items: center;
 	opacity: 0.5;
-	cursor: pointer;
+	cursor: var(--cursor_pointer);
 	margin-bottom: 1px;
 	user-select: none;
 }
@@ -85,7 +85,6 @@
 	height: 21px;
 	display: flex;
   	align-items: center;
-	cursor: default;
 }
 
 /* .sender-container.inactive + .hermes-footer {
@@ -104,7 +103,7 @@
 }
 
 .sender-container.inactive + .hermes-footer .hermes-disconnect {
-	cursor: default;
+	cursor: inherit;
 }
 
 .hermes-disconnect {
@@ -112,11 +111,11 @@
 	padding: 8px;
  	padding-right: 2px;
 	color: var(--altfgc);
-	cursor:default;
+	cursor: inherit;
 }
 
 .hermes-disconnect.can-disconnect {
-	cursor: pointer !important;
+	cursor: var(--cursor_pointer);
 	color: var(--fgc);
 }
 
@@ -137,7 +136,7 @@
 	overflow-x: hidden;
 	/* overflow: hidden; */
 	scrollbar-width: none;
-	cursor: default;
+	cursor: inherit;
 }
 
 /* ref: https://github.com/philipwalton/flexbugs/issues/53 */
@@ -216,13 +215,13 @@
 	display: block;
 	height: auto;
 	flex-grow: 1;
-	cursor: pointer;
+	cursor: var(--cursor_pointer);
 	
 }
 
 .hpo-active {
 	background-color: white;
-	cursor: default;
+	cursor: inherit;
 }
 
 .visualizer-body {

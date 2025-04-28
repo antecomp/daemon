@@ -51,7 +51,7 @@
         background: black;
         border-right: none;
         width: calc(100% - (20px * (var(--n) + 1)) - 5px);
-        cursor: pointer;
+        cursor: var(--cursor_pointer);
         position: relative;
         /* height: 15px; */
         z-index: calc(100 - var(--n));
