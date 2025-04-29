@@ -15,7 +15,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeSpeed;
 
-  --cursor_default: url('../assets/ui/cursors/pr_stock.png'), auto;
+  --cursor_default: url('../assets/ui/cursors/pra.png'), auto;
   --cursor_pointer: url('../assets/ui/cursors/point.png'), auto;
 }
 
