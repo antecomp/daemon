@@ -6,6 +6,8 @@ import { Vector3 } from "three";
 import { onMount } from "solid-js"
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 
+import nav_cursor from "@/assets/ui/cursors/nav.png"
+
 /**
  * An invisible 3D interactive plane, used to configure clickable areas that move the player around the scene.
  * Uses the cameraController interface to update camera base position/orientation when clicked.
@@ -36,11 +38,11 @@ export default function NavigationPlane(props: {
     let planeRef!: Plane
 
     onMount(() => {
-        // TODO: Probably some hover event that we use to indicate to the player that this is a navigation area.
-        //          Do this when you work on the cursor stuff.
         (planeRef.three as InteractableObject3D).userData.onClick = () => {
             props.cameraController.setBase(props.newPos, props.newOri, props.anim, props.tilts);
         }
+
+        (planeRef.three as InteractableObject3D).userData.cursor = nav_cursor;
     });
 
     const getPlaneSize = () => {

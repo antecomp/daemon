@@ -2,6 +2,7 @@ import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Gimbal } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
+import { setHoverCursor } from "@/views/main/ui/SceneContainer";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
@@ -104,6 +105,7 @@ export default function PlayerCam(props: {
 
         // Update previous tracking variables
         previouslyHoveredObject = hoveredObject;
+        setHoverCursor(hoveredObject?.userData.cursor);
         previousUV = uv;
     }
 
@@ -226,6 +228,7 @@ export default function PlayerCam(props: {
             }
 
             previouslyHoveredObject = null;
+            setHoverCursor(undefined);
             previousUV = null;
         }
     });
