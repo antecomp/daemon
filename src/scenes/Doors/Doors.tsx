@@ -14,6 +14,7 @@ import Billboard from "@/components/lume/Billboard";
 
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/views/main/ui/EventLog";
+import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 
 export default function Doors() {
     let sceneRef!: Scene;
@@ -101,6 +102,7 @@ export default function Doors() {
             </Interactable>
 
             <Billboard
+                interactions={[() => {console.log("egg"); setCurrentScene("Porch")}]}
                 texture={friendTexture}
                 scale={70}
                 position="-50 0 -100"

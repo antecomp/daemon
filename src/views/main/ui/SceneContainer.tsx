@@ -71,7 +71,6 @@ export default function SceneContainer() {
                     cursor: `url(${currentCursor()}), auto`
                 }}
             >
-
                 <ErrorBoundary
                     fallback={(err, reset) => (
                         <>

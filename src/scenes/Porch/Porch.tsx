@@ -15,6 +15,7 @@ import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
+import { useAmbienceManager } from '@/hooks/useAmbienceManager';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -41,6 +42,8 @@ export default function Porch() {
             applyShadows(mapRef);
         }
     });
+
+    useAmbienceManager({src: "PWL/pw_celesta_meloD.mp3"})
 
     return (
         <lume-scene

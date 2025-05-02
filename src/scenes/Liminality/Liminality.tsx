@@ -12,6 +12,7 @@ import NavigationPlane from '@/components/lume/NavigationPlane';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
 import { useSceneMenu } from '@/views/main/ui/SceneMenu/SceneMenuContext';
+import { useAmbienceManager } from '@/hooks/useAmbienceManager';
 // import WadsCam from '@/components/lume/wadscam';
 
 export default function Liminality() {
@@ -37,6 +38,8 @@ export default function Liminality() {
             dmnRef && applyShadows(dmnRef);
         });
     })
+
+    useAmbienceManager({src: "PWL/crystalline_loop.mp3"})
 
     return (
         <lume-scene
