@@ -1,3 +1,4 @@
+import { AssetURL } from "@/extra.types";
 import * as THREE from "three";
 import { Vector2 } from "three";
 
@@ -7,6 +8,7 @@ export interface InteractableObject3D extends THREE.Object3D {
         onHover?: interactionCB;
         onHoverLeave?: () => void;
         onClick?: interactionCB;
+        cursor?: AssetURL;
     };
 }
 

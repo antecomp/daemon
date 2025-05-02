@@ -16,19 +16,16 @@ export default function IModePicker() {
                     shape="poly" 
                     coords=" 0,0, 0,80, 80,80"
                     onClick={() => setCurrentInteractionMode(InteractionMode.Interact)}
-                    style={{cursor: "pointer"}}
                 />
                 <area 
                     shape="poly" 
                     coords="0,0, 80,0, 39,39" 
                     onClick={() => setCurrentInteractionMode(InteractionMode.Chat)}
-                    style={{cursor: "pointer"}}
                 />
                 <area 
                     shape="poly" 
                     coords="40,40, 80,0, 80,80" 
                     onClick={() => setCurrentInteractionMode(InteractionMode.Observe)}
-                    style={{cursor: "pointer"}}
                 />
             </map>
         </div>

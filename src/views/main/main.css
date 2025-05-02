@@ -35,7 +35,7 @@ main {
 
     .sidebar-button:hover {
         filter: brightness(1.5);
-        cursor: pointer;
+        cursor: var(--cursor_pointer);
     }
 }
 
