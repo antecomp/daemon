@@ -1,6 +1,6 @@
 import { AssetURL } from '@/extra.types';
 import { Howl } from 'howler';
-import { onCleanup, onMount } from 'solid-js';
+import { createEffect, onCleanup, onMount } from 'solid-js';
 
 type AmbientSound = {
     src: AssetURL;
@@ -30,4 +30,42 @@ export function useAmbienceManager(ambience: AmbientSound | null) {
       howl.fade(howl.volume(), 0, FADE_DURATION);
       setTimeout(() => howl.stop(), FADE_DURATION);
     });
-  }
+}
+
+// Used in conjunction with createMutable. If you wrap the audioConfig input in mutable, then
+// changing src will fire a crossfade between tracks.
+export function useReactiveAmbienceManager(audioConfig: AmbientSound) {
+  let currentHowl: Howl | null = null;
+  let currentSrc: string | null = null;
+
+  createEffect(() => {
+    const src = audioConfig.src;
+    const volume = audioConfig.volume ?? 0.5;
+
+    // Only update volume
+    if (src === currentSrc && currentHowl) {
+      currentHowl.fade(currentHowl.volume(), volume, FADE_DURATION);
+      return;
+    }
+
+    // Crossfade to new track
+    const oldHowl = currentHowl;
+    currentHowl = new Howl({ src: [src], loop: true, volume: 0 });
+    currentHowl.play();
+    currentHowl.fade(0, volume, FADE_DURATION);
+    currentSrc = src;
+
+    if (oldHowl) {
+      oldHowl.fade(oldHowl.volume(), 0, FADE_DURATION);
+      setTimeout(() => oldHowl.stop(), FADE_DURATION);
+    }
+  });
+
+  onCleanup(() => {
+    if (currentHowl) {
+      currentHowl.fade(currentHowl.volume(), 0, FADE_DURATION);
+      const toStop = currentHowl;
+      setTimeout(() => toStop.stop(), FADE_DURATION);
+    }
+  });
+}
