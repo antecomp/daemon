@@ -44,11 +44,11 @@ export default function Porch() {
         }
     });
 
-    const test = createMutable({src: "PWL/pw_celesta_meloD.mp3"})
+    const test = createMutable({src: "PWL/erokia-786215.wav"})
     createReactiveAmbientAudio(test);
     setTimeout(() => { // Will crossfade between tracks
-        test.src = "PWL/crystalline_loop.mp3"
-    }, 50000);
+        test.src = "PWL/erokia-496757.wav"
+    }, 30000);
 
     return (
         <lume-scene

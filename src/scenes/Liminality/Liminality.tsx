@@ -39,7 +39,7 @@ export default function Liminality() {
         });
     })
 
-    createAmbientAudio({src: "PWL/crystalline_loop.mp3"})
+    createAmbientAudio({src: "PWL/loop_a.wav"})
 
     return (
         <lume-scene
