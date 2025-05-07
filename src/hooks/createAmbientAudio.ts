@@ -9,12 +9,16 @@ type AmbientSound = {
 
 const FADE_DURATION = 1000;
 
-// This is extremely rudimentary, one ambience per scene. 
-// Ofc we will need to be smarter if we have more specialized systems. Good enough for now.
-export function useAmbienceManager(ambience: AmbientSound | null) {
-    if (!ambience) return;
+/** Creates a single ambient audio track that fades in on component mount and fades out on unmount
+ * @param audioConfig - An object specifying the audio source and optional volume level (volume defaults to 0.5).
+ * 
+ * @example
+ * createAmbientAudio({ src: 'path/to/sound.mp3', volume: 0.6 });
+*/
+export function createAmbientAudio(audioConfig: AmbientSound | null) {
+    if (!audioConfig) return;
   
-    const { src, volume = 0.5 } = ambience;
+    const { src, volume = 0.5 } = audioConfig;
     const howl = new Howl({
       src: [src],
       loop: true,
@@ -32,9 +36,14 @@ export function useAmbienceManager(ambience: AmbientSound | null) {
     });
 }
 
-// Used in conjunction with createMutable. If you wrap the audioConfig input in mutable, then
-// changing src will fire a crossfade between tracks.
-export function useReactiveAmbienceManager(audioConfig: AmbientSound) {
+/**
+ * Reactively manages ambient audio playback, supporting crossfading between different tracks.
+ * To be used with a mutable-wrapped object
+ * - @ref createMutable - https://docs.solidjs.com/reference/store-utilities/create-mutable
+ * Listens to changes in audioConfig.src and will crossfade between audio sources
+ * Also listens to changes in audioConfig.volume and will fade between volume levels 
+ */
+export function createReactiveAmbientAudio(audioConfig: AmbientSound) {
   let currentHowl: Howl | null = null;
   let currentSrc: string | null = null;
 
