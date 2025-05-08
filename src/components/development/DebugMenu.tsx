@@ -1,3 +1,4 @@
+import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { MusicManager } from "@/core/audio/musicManager";
 import { startBattle } from "@/core/battle/battleManager";
 import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
@@ -9,8 +10,10 @@ import { For } from "solid-js";
 
 export default function DebugMenu() {
 
-    const testSong = MusicManager.pushTrack({src: "PWL/erokia-496757.wav"});
-    setTimeout(() => testSong.src = "PWL/loop_a.wav", 5000);
+    //const testSong = MusicManager.pushTrack({src: "PWL/erokia-496757.wav"});
+
+    //const testSong = createMusicTrack({src: "PWL/erokia-496757.wav"});
+    //setTimeout(() => testSong.src = "PWL/loop_a.wav", 5000);
 
     return (
         <div id="debug-menu">

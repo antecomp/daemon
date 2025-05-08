@@ -4,13 +4,13 @@ import { createEffect, createSignal } from "solid-js"
 import { createMutable } from "solid-js/store";
 import { Howl } from "howler";
 
-type TrackEntry = {
+export type MusicTrackEntry = {
     id: string,
     src: AssetURL,
     volume?: number,
 }
 
-const [stack, setStack] = createSignal<TrackEntry[]>([]);
+const [stack, setStack] = createSignal<MusicTrackEntry[]>([]);
 const FADE_DURATION = 1000;
 const DEFAULT_VOLUME = 0.5;
 
@@ -18,6 +18,7 @@ let currentHowl: Howl | null = null;
 let currentID: string | null = null;
 
 createEffect(() => {
+    console.log("ACTIVATE");
     const top = stack()[stack().length - 1];
     if(!top) { // Array cleared or doesn't yet exist.
         if(currentHowl) {
@@ -34,7 +35,7 @@ createEffect(() => {
         // fade to new volume
         currentHowl.fade(currentHowl.volume(), volume ?? DEFAULT_VOLUME, FADE_DURATION);
         //@ts-expect-error - ._src not in types file, but it exists.
-        if(currentHowl._src !== src) {
+        if(currentHowl._src !== src) { // src changed, fade to new song.
             currentHowl.fade(currentHowl.volume(), 0, FADE_DURATION);
             setTimeout(() => {
                 currentHowl?.stop();
@@ -65,7 +66,7 @@ createEffect(() => {
 export const MusicManager = {
 
     // Wrap it mutable and return it so we can reactively update track if desired.
-    pushTrack(entry: Omit<TrackEntry, 'id'>): TrackEntry {
+    pushTrack(entry: Omit<MusicTrackEntry, 'id'>): MusicTrackEntry {
         const id = nanoid();
         const track = createMutable({id, ...entry});
         setStack(s => [...s, track]);

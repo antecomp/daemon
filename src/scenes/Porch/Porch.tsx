@@ -15,8 +15,8 @@ import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
-import { createReactiveAmbientAudio } from '@/hooks/createAmbientAudio';
 import { createMutable } from 'solid-js/store';
+import { createMusicTrack } from '@/core/audio/createMusicTrack';
 
 export default function Porch() {
     let sceneRef: Scene | undefined;
@@ -44,8 +44,7 @@ export default function Porch() {
         }
     });
 
-    const test = createMutable({src: "PWL/erokia-786215.wav"})
-    createReactiveAmbientAudio(test);
+    const test = createMusicTrack({src: "PWL/erokia-786215.wav"})
     setTimeout(() => { // Will crossfade between tracks
         test.src = "PWL/erokia-496757.wav"
     }, 30000);
