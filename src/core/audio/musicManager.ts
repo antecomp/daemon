@@ -18,20 +18,24 @@ let currentHowl: Howl | null = null;
 let currentID: string | null = null;
 
 createEffect(() => {
-    console.log("ACTIVATE");
     const top = stack()[stack().length - 1];
-    if(!top) { // Array cleared or doesn't yet exist.
-        if(currentHowl) {
-            currentHowl.fade(currentHowl.volume(), 0, FADE_DURATION);
-            setTimeout(() => {currentHowl?.stop(); currentHowl == null}, FADE_DURATION)
+    if (!top) {
+        if (currentHowl) {
+          const toFade = currentHowl;
+          toFade.fade(toFade.volume(), 0, FADE_DURATION);
+          setTimeout(() => {
+            toFade.stop();
+            if (currentHowl === toFade) currentHowl = null;
+          }, FADE_DURATION);
         }
         return;
-    };
+    }
 
     const {src, volume} = top;
 
     // Change in state of the entry itself, but same entry
     if(currentID === top.id && currentHowl) {
+        console.log("I am eating rocks and shitting them out")
         // fade to new volume
         currentHowl.fade(currentHowl.volume(), volume ?? DEFAULT_VOLUME, FADE_DURATION);
         //@ts-expect-error - ._src not in types file, but it exists.
@@ -47,6 +51,8 @@ createEffect(() => {
         }
         return;
     }
+
+    console.log("kill me");
 
     const oldHowl = currentHowl;
     const newHowl = new Howl({src: [src], loop: true, volume: 0});
