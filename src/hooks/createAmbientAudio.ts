@@ -15,9 +15,7 @@ const FADE_DURATION = 1000;
  * @example
  * createAmbientAudio({ src: 'path/to/sound.mp3', volume: 0.6 });
 */
-export function createAmbientAudio(audioConfig: AmbientSound | null) {
-    if (!audioConfig) return;
-  
+export function createAmbientAudio(audioConfig: AmbientSound) {
     const { src, volume = 0.5 } = audioConfig;
     const howl = new Howl({
       src: [src],
