@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Test Assets I Probably Don't Have The Rights To Haphazardly Upload To Github lol
+public/PWL/*
