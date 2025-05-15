@@ -36,7 +36,7 @@ export default function DebugMenu() {
             <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-496757.wav"})}>SONG 1</button>
             <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-786215.wav"})}>SONG 2</button>
             <button onClick={() => MusicManager.wipeTracks()}>Stop All Music</button>
-            <button onclick={() => MusicManager.$debug_pop()}>Pop Song</button>
+            <button onclick={() => MusicManager._debug_pop()}>Pop Song</button>
         </div>
     )
 }

@@ -18,6 +18,7 @@ import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 
 export default function Doors() {
     let sceneRef!: Scene;
+    let doorsOpenedBefore = false;
 
     const {cameraControlSignals} = createCameraController(
         [-50, -22, 354],
@@ -38,7 +39,7 @@ export default function Doors() {
             spawnMenu(
                 "Open the doors?", 
                 [
-                    {label: "Yes", onSelect: () => {setDoorOpen(true); addLogMessage("The doors sqeak loudly as they swing open")}},
+                    {label: "Yes", onSelect: () => {setDoorOpen(true); if(!doorsOpenedBefore) {addLogMessage("The doors sqeak loudly as they swing open"); doorsOpenedBefore = true}}},
                     {label: "No"}
                 ],
                 mouse
