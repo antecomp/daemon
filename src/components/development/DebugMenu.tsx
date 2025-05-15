@@ -1,12 +1,14 @@
-import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { MusicManager } from "@/core/audio/musicManager";
 import { startBattle } from "@/core/battle/battleManager";
 import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
+import { playTextScene } from "@/layers/textscene/TextScene";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
+
+const eggggg = (["take it from me pal this isnt", "what you want to be", "I know far more than you can imagine"]).map(e => ({text: e}));
 
 export default function DebugMenu() {
 
@@ -37,6 +39,8 @@ export default function DebugMenu() {
             <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-786215.wav"})}>SONG 2</button>
             <button onClick={() => MusicManager.wipeTracks()}>Stop All Music</button>
             <button onclick={() => MusicManager._debug_pop()}>Pop Song</button>
+            <h2>TEXT SCENE</h2>
+            <button onclick={() => playTextScene(eggggg)}>egg</button>
         </div>
     )
 }
