@@ -21,7 +21,7 @@ export default function DebugMenu() {
         <div id="debug-menu">
             <h2>Scenes</h2>
             <For each={[
-                "Liminality", "Porch", "AnotherScene", "DefaultScene", "Sponza", "Doors"
+                "Liminality", "Porch", "AnotherScene", "DefaultScene", "Sponza", "Doors", "BarScene"
             ]}>
                 {sceneName => <button onClick={() => setCurrentScene(sceneName)}>{sceneName}</button>}
             </For>
