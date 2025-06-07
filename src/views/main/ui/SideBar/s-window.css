@@ -39,7 +39,7 @@
 }
 
 .s-window::after {
-    content: url("../assets/window_inset.png");
+    content: url("./assets/window_inset.png");
     position: absolute;
     left: -3px;
     top: 50%;

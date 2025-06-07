@@ -16,37 +16,6 @@ main {
     background-position: bottom left !important;
 }
 
-#sidebar {
-    border-bottom: solid white 2px;
-    border-left: solid white 2px;
-
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .sidebar-button {
-        margin-top: -17px;
-        margin-bottom: -17px;
-        clip-path: polygon(0% 30%, 105% -3%, 100% 70%, -1% 105%);
-        transition: filter 0.5s;
-    }
-
-    .sidebar-button:hover {
-        filter: brightness(1.5);
-        cursor: var(--cursor_pointer);
-    }
-}
-
-/* little triangle decorator at the top */
-#sidebar::before {
-    content: url('./assets/sidebar_top.png');
-    position: absolute;
-    top: 0;
-    left: -2px;
-}
-
 #bottom-bar {
     display: flex;
     gap: 2px;

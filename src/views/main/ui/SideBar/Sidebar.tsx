@@ -1,9 +1,10 @@
-import sidebar_button_placeholder from "../assets/sidebar_button.png";
-import sidebar_button_active from "../assets/sidebar_button_active.png"
+import sidebar_button_placeholder from "./assets/sidebar_button.png";
+import sidebar_button_active from "./assets/sidebar_button_active.png"
 import { createSignal, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DebugMenu from "@/components/development/DebugMenu";
+import './sidebar.css'
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;

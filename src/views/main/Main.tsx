@@ -1,4 +1,4 @@
-import Sidebar from "./ui/Sidebar"
+import Sidebar from "./ui/SideBar/Sidebar.tsx"
 import SceneContainer from "./ui/SceneContainer"
 import IModePicker from "./ui/IMode"
 import EventLog from "./ui/EventLog"
