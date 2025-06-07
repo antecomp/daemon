@@ -4,11 +4,17 @@ import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
-import { playTextScene } from "@/layers/textscene/TextScene";
+import { playTextScene } from "@/layers/textoverlay/TextOverlay";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
-const eggggg = (["take it from me pal this isnt", "what you want to be", "I know far more than you can imagine"]).map(e => ({text: e}));
+//const eggggg = (["take it from me pal this isnt", "what you want to be", "I know far more than you can imagine"]).map(e => ({text: e}));
+const eggggg = ([
+    "This is a general test of the text scene system.",
+    "You can click to advance the text.",
+    "You can also skip the typing animation by clicking.",
+    "This is the last line of text, this should close the text scene.",
+]).map(e => ({text: e}));
 
 export default function DebugMenu() {
 
