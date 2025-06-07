@@ -3,18 +3,18 @@ import { popUILayer, pushUILayer } from "../UILayerStore"
 import { nanoid } from "nanoid"
 import createTypewriter from "@/hooks/createTypewriter";
 
-interface TextSceneLine {
+interface TextOverlayLine {
     text: string,
     color?: string,
     sideEffect?: () => void,
     //image?: string
 }
+export type TextOverlaySequence = TextOverlayLine[]
 
 const TEXT_FADE_DURATION = 300;
 
-
 export default function TextScene(props: {
-    sequence: TextSceneLine[],
+    sequence: TextOverlayLine[],
     id?: string
 }) {
 
@@ -22,7 +22,7 @@ export default function TextScene(props: {
     const currentLineText = () => props.sequence[currentLine()]?.text ?? "";
     const {displayText, skipTypingAnimation, isFinished} = createTypewriter(currentLineText);
 
-    let textElement!: HTMLParagraphElement
+    let textElement!: HTMLParagraphElement // ref used to apply fade anim.
 
     createEffect(() => { // Handle end of sequence.
         if(currentLine() >= props.sequence.length) {
@@ -36,6 +36,7 @@ export default function TextScene(props: {
         if(isFinished()) {
             if (fadeLock) return;
             fadeLock = true;
+            props.sequence[currentLine()]?.sideEffect?.();
             textElement.animate(
                 [
                     {opacity: "1"},
@@ -64,6 +65,9 @@ export default function TextScene(props: {
                 "justify-content": "center",
                 "align-items": "center"
             }}
+
+            class="fademein"
+            data-fade-duration="1000" // or remove - defaults to 500ms by current css setup
         >
             <p
                 ref={textElement}
@@ -80,17 +84,11 @@ export default function TextScene(props: {
     )
 }
 
-export function playTextScene(sequence: TextSceneLine[]) {
+export function playTextOverlay(sequence: TextOverlayLine[]) {
     const id = "text-scene" + nanoid();
     pushUILayer({
         id, 
         component: () => TextScene({sequence, id}),
         blockBehind: true,
-        style: {
-            // background: "black",
-            // display: "flex",
-            // "justify-content": "center",
-            // "align-items": "center"
-        }
     })
 }

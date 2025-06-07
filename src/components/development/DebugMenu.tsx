@@ -4,24 +4,20 @@ import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
-import { playTextScene } from "@/layers/textoverlay/TextOverlay";
+import { playTextOverlay, TextOverlaySequence } from "@/layers/textoverlay/TextOverlay";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
-//const eggggg = (["take it from me pal this isnt", "what you want to be", "I know far more than you can imagine"]).map(e => ({text: e}));
 const eggggg = ([
     "This is a general test of the text scene system.",
     "You can click to advance the text.",
     "You can also skip the typing animation by clicking.",
     "This is the last line of text, this should close the text scene.",
-]).map(e => ({text: e}));
+]).map(e => ({text: e})) as TextOverlaySequence;
+eggggg[2].color = "red";
+eggggg[0].sideEffect = () => alert("Side Effect Triggered");
 
 export default function DebugMenu() {
-
-    //const testSong = MusicManager.pushTrack({src: "PWL/erokia-496757.wav"});
-
-    //const testSong = createMusicTrack({src: "PWL/erokia-496757.wav"});
-    //setTimeout(() => testSong.src = "PWL/loop_a.wav", 5000);
 
     return (
         <div id="debug-menu">
@@ -33,10 +29,7 @@ export default function DebugMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_DEBUG_ANGEL,
-                OPPONENT_NEWPORTS,
-                OPPONENT_PANOPTES,
-                OPPONENT_MIMICRY
+                OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY
             ]}>
                 {opp => <button onClick={() => startBattle(opp)}>{opp.name}</button>}
             </For>
@@ -46,7 +39,7 @@ export default function DebugMenu() {
             <button onClick={() => MusicManager.wipeTracks()}>Stop All Music</button>
             <button onclick={() => MusicManager._debug_pop()}>Pop Song</button>
             <h2>TEXT SCENE</h2>
-            <button onclick={() => playTextScene(eggggg)}>egg</button>
+            <button onclick={() => playTextOverlay(eggggg)}>egg</button>
         </div>
     )
 }
