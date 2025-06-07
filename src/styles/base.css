@@ -80,3 +80,8 @@ button {
     opacity: 1;
   }
 }
+
+.fademein {
+  opacity: 0;
+  animation: fade-in forwards attr(data-fade-duration ms, 500ms);
+}
