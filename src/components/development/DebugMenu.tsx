@@ -1,5 +1,6 @@
 import { MusicManager } from "@/core/audio/musicManager";
 import { startBattle } from "@/core/battle/battleManager";
+import { OPPONENT_ANTHOUSAI } from "@/data/battles/anthousai";
 import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
@@ -29,7 +30,7 @@ export default function DebugMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY
+                OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY, OPPONENT_ANTHOUSAI
             ]}>
                 {opp => <button onClick={() => startBattle(opp)}>{opp.name}</button>}
             </For>

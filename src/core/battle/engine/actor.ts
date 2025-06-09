@@ -42,11 +42,15 @@ export class Actor {
 
     public takeDamage(amount: number) {
         this.health = Math.max(this.health - amount, 0);
-        if (amount > 0) this.notifySubscribers(Math.abs(amount));
+        if (amount > 0) this.notifyDamageSubscribers(Math.abs(amount));
     }
 
     public heal(amount: number) {
         this.health = Math.min(this.maxHealth, this.health + amount);
+    }
+
+    get healthPercent() {
+        return this.health / this.maxHealth * 100;
     }
 
     /** Add a new status or stack upon existing status */
@@ -108,7 +112,7 @@ export class Actor {
         this.damageSubscribers.add(callback);
     }
 
-    private notifySubscribers(damage: number) {
+    private notifyDamageSubscribers(damage: number) {
         for (const cb of this.damageSubscribers) cb(damage, this.health);
     }
 
