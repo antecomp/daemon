@@ -13,6 +13,7 @@ import createCameraController from '@/components/lume/playerCam/createCameraCont
 import sleep from '@/utils/sleep';
 import { useSceneMenu } from '@/views/main/ui/SceneMenu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
+import NavigationGraph from '@/components/lume/NavigationGraph';
 // import WadsCam from '@/components/lume/wadscam';
 
 export default function Liminality() {
@@ -76,16 +77,6 @@ export default function Liminality() {
             />
 
             <Interactable
-                //onHover={() => console.log("Diamond Hovered")}
-                // onClick={(uv, mouse) => {
-                //     console.log("diamond click:", uv, mouse);
-                //     cameraController.setOverrides(
-                //         [200, -712, 350],
-                //         { pitch: 20, yaw: 30 },
-                //         true
-                //     )
-                //     sleep(2000).then(() => cameraController.clearOverrides())
-                // }}
                 interactions={[(_uv, mouse) => {
                     spawnMenu(
                         `Approach The Reliquary?`,
@@ -126,38 +117,43 @@ export default function Liminality() {
                 />
             </Interactable>
 
-            <NavigationPlane
-                {...{cameraController}}
-                planePosition={[-250, -500, 0]}
-                newPos={[-217, -512, 0]}
-                newOri={{yaw: -109, pitch: -8}}
-                planeSize={[450, 100]}
-                anim={true}
-                // show={true}
-                planeRotation={{pitch: 0, yaw: 0}}
-            />
-
-            <NavigationPlane
-                {...{cameraController}}
-                planePosition={[250, -500, 0]}
-                newPos={[217, -512, 0]}
-                newOri={{yaw: 109, pitch: -8}}
-                planeSize={[450, 100]}
-                anim={true}
-                // show={true}
-                planeRotation={{pitch: 0, yaw: 0}}
-            />
-
-            <NavigationPlane
-                {...{cameraController}}
-                planePosition={[0, -512, 350]}
-                planeRotation={{pitch: 0, yaw: -90}}
-                // show={true}
-                anim={false}
-                planeSize={200}
-                newPos={[0, -512, 350]}
-                newOri={{yaw: 0, pitch: 0}}
-                sidedness='double'
+            <NavigationGraph
+                initial="init"
+                cameraController={cameraController}
+                graph={{
+                    init: {
+                        planePosition:[0, -512, 350],
+                        planeRotation:{pitch: 0, yaw: -90},
+                        // show:true,
+                        anim:true,
+                        show: true,
+                        planeSize:200,
+                        newPos:[0, -512, 350],
+                        newOri:{yaw: 0, pitch: 0},
+                        sidedness:'double',
+                        connected: ["l", "r"]
+                    },
+                    l: {
+                        planePosition:[250, -500, 0],
+                        newPos:[217, -512, 0],
+                        newOri:{yaw: 109, pitch: -8},
+                        planeSize:[450, 100],
+                        anim:true,
+                        show:true,
+                        planeRotation:{pitch: 0, yaw: 0},
+                        connected: ["init", "r"] // try commenting this out to verify init not shown (deadend)
+                    },
+                    r: {
+                        planePosition:[-250, -500, 0],
+                        newPos:[-217, -512, 0],
+                        newOri:{yaw: -109, pitch: -8},
+                        planeSize:[450, 100],
+                        anim:true,
+                        show:true,
+                        planeRotation:{pitch: 0, yaw: 0},
+                        connected: []
+                    }
+                }}
             />
 
             <lume-point-light

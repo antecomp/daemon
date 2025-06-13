@@ -1,4 +1,4 @@
-import { Gimbal } from "@/extra.types";
+import { Gimbal, Orientation } from "@/extra.types";
 import { CameraController } from "./playerCam/createCameraController";
 import { XYZ } from "./playerCam/PlayerCam";
 import { Plane, toDegrees } from "lume";
@@ -7,6 +7,20 @@ import { onMount } from "solid-js"
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 
 import nav_cursor from "@/assets/ui/cursors/nav.png"
+
+export interface NavigationPlaneData {
+    cameraController: CameraController,
+    newPos?: XYZ
+    newOri?: Omit<Gimbal, "roll">
+    anim?: boolean
+    planePosition: XYZ 
+    tilts?: {maxYaw: number, maxPitch: number}
+    planeSize: number | [number, number] // just assume square for now? Good enough?
+    show?: boolean
+    planeRotation?: Orientation// defaults to billboard otherwise.
+    sidedness?: "front" | "double" | "back"
+    onClick?: () => void
+}
 
 /**
  * An invisible 3D interactive plane, used to configure clickable areas that move the player around the scene.
@@ -22,24 +36,15 @@ import nav_cursor from "@/assets/ui/cursors/nav.png"
  *                      backside cull of plane means raycast will *not* hit it. If we need to hit the plane from both sides, then use "both"
  * @prop show whether to show the plane or not, mainly used for testing/placement debugging.
  * @prop planeRotation - how the plane is oriented. If nothing is provided, the plane will automatically always face the player (billboard).
+ * @prop onClick - side effect to run when the plane is clicked (navigated to)
  */
-export default function NavigationPlane(props: {
-    cameraController: CameraController,
-    newPos?: XYZ
-    newOri?: Omit<Gimbal, "roll">
-    anim?: boolean
-    planePosition: XYZ 
-    tilts?: {maxYaw: number, maxPitch: number}
-    planeSize: number | [number, number] // just assume square for now? Good enough?
-    show?: boolean
-    planeRotation?: Omit<Gimbal, "roll"> // defaults to billboard otherwise.
-    sidedness?: "front" | "double" | "back"
-}) {
+export default function NavigationPlane(props: NavigationPlaneData) {
     let planeRef!: Plane
 
     onMount(() => {
         (planeRef.three as InteractableObject3D).userData.onClick = () => {
             props.cameraController.setBase(props.newPos, props.newOri, props.anim, props.tilts);
+            props.onClick?.();
         }
 
         (planeRef.three as InteractableObject3D).userData.cursor = nav_cursor;
