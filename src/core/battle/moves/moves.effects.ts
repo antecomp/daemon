@@ -7,9 +7,10 @@ export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effe
         if(context.damageTaken <= 0) {
             effect(context)
         } else {
-            // Indicate loss of focus if subsequent moves require it.
-            // context.appendActionMessage(`${context.self.name}'s focus was shattered! Failed ${context.self.currentSequence[context.index].name}.`)
-            // ^ - we run RequiresFocus multiple times in a move. We have to delegate this status message somehow!!
+            // If already true we've already run this focus failure once before, thus have already displayed action message.
+            if(!context.sequenceBuffer[context.index]['focusLost']) {
+                context.appendActionMessage(`${context.self.name}'s focus was shattered! Failed ${context.self.currentSequence[context.index].name}.`);
+            }
             context.sequenceBuffer[context.index]['focusLost'] = true;
         }
     }   

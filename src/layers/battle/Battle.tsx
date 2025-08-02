@@ -59,13 +59,13 @@ export default function Battle(props: BattleProps) {
                 <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                     <OppStatusBar
                         name={opponent.name.toUpperCase()}
-                        health={opponent.health / props.opponentData.maxHealth * 100}
+                        health={opponent.healthPercent}
                         icon={props.opponentData.icon}
                         sequenceHint={insight()}
                     />
                     <BattleCanvas {...props.opponentData} />
                 </CornerRect>
-                <Actionbar execSequence={executeRound} playerHealth={player.health / player.maxHealth * 100} {...{playerMults, opponentMults, currentStatuses, forceBattleResolve}} />
+                <Actionbar execSequence={executeRound} playerHealth={player.healthPercent} {...{playerMults, opponentMults, currentStatuses, forceBattleResolve}} />
             </div>
         </BattleUIStateContext.Provider>
     )

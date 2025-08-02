@@ -5,6 +5,7 @@ import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DebugMenu from "@/components/development/DebugMenu";
 import './sidebar.css'
+import { isSidebarLocked } from "@/layers/UILayerStore";
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;
@@ -57,7 +58,7 @@ export default function Sidebar() {
                         ref={el => buttonRefs.set(item.id, el)}
                         class="sidebar-button" 
                         id={item.id}
-                        onClick={() => toggleMenu(item.id)}
+                        onClick={() => !isSidebarLocked() && toggleMenu(item.id)}
                     />
                 )}
             </For>
