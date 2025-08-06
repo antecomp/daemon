@@ -1,5 +1,6 @@
 export default function lerp(start: number, end: number, factor: number) {
-    return start + (end - start) * factor;
+    const clampedFactor = Math.min(Math.max(factor, 0), 1); // [0,1] Clamp
+    return start + (end - start) * clampedFactor;
 }
 
 export function lerpBySpeed(start: number, end: number, unitsPerFrame: number): number {
