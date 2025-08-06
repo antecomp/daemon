@@ -11,14 +11,12 @@ import root from "@/scenes/BarScene/dialogues/man_dialogue";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
-const eggggg = ([
-    "This is a general test of the text scene system.",
-    "You can click to advance the text.",
-    "You can also skip the typing animation by clicking.",
-    "This is the last line of text, this should close the text scene.",
-]).map(e => ({text: e})) as TextOverlaySequence;
-eggggg[2].color = "red";
-eggggg[0].sideEffect = () => alert("Side Effect Triggered");
+const eggggg: TextOverlaySequence = [
+    {text: [{word: "This is the first line, one color", color: "red"}]}, 
+    {text: [{word: "This uses the default colour"}]},
+    {text: [{word: "Now we split into "}, {word: "Two colours", color: "red"}]}
+]
+eggggg[0].sideEffect = () => console.log("Side Effect Triggered");
 
 export default function DebugMenu() {
 

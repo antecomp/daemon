@@ -1,13 +1,11 @@
-import { createEffect, createSignal } from "solid-js"
+import { createSignal } from "solid-js"
 import { popUILayer, pushUILayer } from "../UILayerStore"
 import { nanoid } from "nanoid"
-import createTypewriter from "@/hooks/createTypewriter";
+import createColorTypewriter, { ColoredWord } from "@/hooks/createColorTypewriter";
 
 interface TextOverlayLine {
-    text: string,
-    color?: string,
-    sideEffect?: () => void,
-    //image?: string
+    text: ColoredWord[],
+    sideEffect?: () => void
 }
 export type TextOverlaySequence = TextOverlayLine[]
 
@@ -19,35 +17,32 @@ export default function TextScene(props: {
 }) {
 
     const [currentLine, setCurrentLine] = createSignal(0);
-    const currentLineText = () => props.sequence[currentLine()]?.text ?? "";
-    const {displayText, skipTypingAnimation, isFinished} = createTypewriter(currentLineText);
+    const currentLineText = () => props.sequence[currentLine()].text;
+    const {displayText, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineText);
 
     let textElement!: HTMLParagraphElement // ref used to apply fade anim.
-
-    createEffect(() => { // Handle end of sequence.
-        if(currentLine() >= props.sequence.length) {
-            console.log("AAAAA");
-            props.id && popUILayer(props.id);
-        }
-    })
 
     let fadeLock = false; // Prevent triggering fade if it's already ongoing.
     function handleClick() {
         if(isFinished()) {
-            if (fadeLock) return;
-            fadeLock = true;
-            props.sequence[currentLine()]?.sideEffect?.();
-            textElement.animate(
-                [
-                    {opacity: "1"},
-                    {opacity: "0"}
-                ],
-                {duration: TEXT_FADE_DURATION}
-            )
-            setTimeout(() => {
-                setCurrentLine(prev => prev + 1);
-                fadeLock = false;
-            }, TEXT_FADE_DURATION)
+            if (currentLine() >= props.sequence.length - 1) { // end
+                props.id && popUILayer(props.id);   
+            } else { // advance to next line.
+                if (fadeLock) return;
+                fadeLock = true;
+                props.sequence[currentLine()]?.sideEffect?.();
+                textElement.animate(
+                    [
+                        {opacity: "1"},
+                        {opacity: "0"}
+                    ],
+                    {duration: TEXT_FADE_DURATION}
+                )
+                setTimeout(() => {
+                    setCurrentLine(prev => prev + 1);
+                    fadeLock = false;
+                }, TEXT_FADE_DURATION)
+            }
         } else {
             skipTypingAnimation();
         }
@@ -72,7 +67,6 @@ export default function TextScene(props: {
             <p
                 ref={textElement}
                 style={{
-                    color: props.sequence[currentLine()]?.color,
                     "font-size": "32px",
                     "user-select": "none",
                     "padding": "20px"
