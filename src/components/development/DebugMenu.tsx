@@ -18,6 +18,17 @@ const eggggg: TextOverlaySequence = [
 ]
 eggggg[0].sideEffect = () => console.log("Side Effect Triggered");
 
+const dmnintro: TextOverlaySequence = [
+    {text: [{word: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {word: "THE DAEMONS", color: "red"}]},
+    {text: [{word: "and continue to live unaffected by them."}]},
+    {text: [{word: "They are more numerous than we are, and they stand over us like mounds of earth surrounding a pit."}]},
+    {text: [{word: "Each and every one of us has a thousand daemons to his left and ten thousand to his right."}]},
+    {text: [{word: "THE DAEMONVEIL ", color: "red"}, {word: "protects man from these daemons,"}]},
+    {text: [{word: "As it says in the verse:"}]},
+    {text: [{word: 'A thousand may fall at your side and ten thousand at your right hand;'}]},
+    {text: [{word: 'they will not approach you.'}]},
+]
+
 export default function DebugMenu() {
 
     return (
@@ -41,6 +52,7 @@ export default function DebugMenu() {
             <button onclick={() => MusicManager._debug_pop()}>Pop Song</button>
             <h2>TEXT SCENE</h2>
             <button onclick={() => playTextOverlay(eggggg)}>egg</button>
+            <button onclick={() => playTextOverlay(dmnintro)}>intro</button>
             <h2>DIALOGUE</h2>
             <button onClick={() => DialogueService.startDialogue(root)}>Man Dialogue</button>
         </div>

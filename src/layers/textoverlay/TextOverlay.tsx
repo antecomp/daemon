@@ -69,7 +69,8 @@ export default function TextScene(props: {
                 style={{
                     "font-size": "32px",
                     "user-select": "none",
-                    "padding": "20px"
+                    "padding": "20px",
+                    "text-align": "center"
                 }}
             >
                 {displayText()}

@@ -15,7 +15,6 @@ import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
-import { createMutable } from 'solid-js/store';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 
 export default function Porch() {
