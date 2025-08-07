@@ -6,6 +6,7 @@ import island1 from "./models/island_1.fbx?url"
 import island2 from "./models/island_2.fbx?url"
 import island3 from "./models/island_3.fbx?url"
 import island4 from "./models/island_4.fbx?url"
+import player_ref from '../shared_models/player_ref.fbx?url'
 
 export default function Crumbling() {
     let sceneRef: Scene | undefined;
@@ -37,11 +38,11 @@ export default function Crumbling() {
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
             />
-            {/* <WadsCam/> */}
-            <lume-camera-rig 
+            <WadsCam/>
+            {/* <lume-camera-rig 
                 align-point="0.5 0.5"
                 min-distance="-100"
-            />
+            /> */}
 
             <lume-fbx-model src={island1}
                 align-point="0.5 0.5"
@@ -81,7 +82,14 @@ export default function Crumbling() {
                 size="10 10 10"
                 position="150 -10 125"
             />
-            <lume-box></lume-box>
+            
+            <lume-fbx-model
+                src={player_ref}
+                rotation={`0 0 0`}
+                align-point="0.5 0.5"
+                position="10 1 2"
+                scale="0.1 0.1 0.1"
+            ></lume-fbx-model>
         </lume-scene>
     )
 }
