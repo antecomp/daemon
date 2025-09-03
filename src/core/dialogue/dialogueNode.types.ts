@@ -1,3 +1,5 @@
+// TODO: RENAME `RESPONSEASRENDERORNODE` TO JUST "response" and add JSDoc to clarify types instead!!
+
 export interface DialogueOption extends DialogueOptionConfig {
     summaryText: string
     fullText: string

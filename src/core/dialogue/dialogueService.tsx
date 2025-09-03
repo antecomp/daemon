@@ -11,7 +11,6 @@ import {createSignal} from "solid-js";
  * @property canCloseDialogueEarly - Indicates if the dialogue can be closed early.
  * @property lock - The lock state associated with the dialogue.
  * @property blockBehind - Indicates if interactions with layers behind this one are blocked.
- * @property cameraHijack - Subject to change. Contains information about camera hijacking.
  */
 export type StartDialogueOptions = {
     overlay?: string, 

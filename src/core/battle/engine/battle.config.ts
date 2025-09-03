@@ -27,3 +27,5 @@ export const actionIcons: ActionIconTable = {
     "focus": ai_focus_icon,
     "mania": ai_mania_icon
 }
+
+export const HINT_AMOUNT = 3; // How many of the opponents moves should we show for the hint?

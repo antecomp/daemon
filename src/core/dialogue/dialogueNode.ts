@@ -195,3 +195,12 @@ export function evalDialogueNodeNext(next?: DialogueNode | (() => DialogueNode))
         return next;
     }
 }
+
+/** Empty string "" indicates to Hermes that no message should be shown. 
+ * This can be used to traverse the dialogue tree without adding new messages,
+ * for example this is useful when questions need to be chained together, without a "message" being sent for each piece;
+ * @example
+ * const whatFork = questionLoopback.addChildAsOption("What...", "What...", EMPTY_RENDER);
+ * whatFork.addChildAsOption( questions can go here...)
+ *  */
+export const EMPTY_RENDER = "";

@@ -34,7 +34,7 @@ const browser = detect();
  * @returns An object containing the following:
  * - `playerMults`: Signal getter for the player's incoming and outgoing multipliers.
  * - `opponentMults`: Signal getter for the opponent's incoming and outgoing multipliers.
- * - `battleUIState`: Signal for the current state of the battle UI.
+ * - `battleUIState`: Signal for the current state of the battle UI. Used for conditional rendering/locking UI.
  * - `setBattleUIState`: Signal setter for the battle UI state.
  * - `player`: The player actor object.
  * - `opponent`: The opponent actor object.
@@ -189,6 +189,7 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
 
         // Sequence buffers are Record<index, {}>'s that can be used by moves to save information relevant to subsequent moves.
         // Differs from player.data which is persistent for the entire battle.
+        // TODO: Consider making an explicit type for this.
         const playerSequenceBuffer = {};
         const opponentSequenceBuffer = {};
 

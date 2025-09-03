@@ -1,6 +1,6 @@
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/battleManager";
-import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
+import { createDialogueNode, createInlineDialogueTree, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/utils/pickRandom";
 import { BattleOutcome } from "@/core/battle/engine/battle.types";
 
@@ -25,7 +25,7 @@ const questions = root.addChild("I imagine you have a lot of questions right now
 questions.addCAROptionChild("Yes", "Yeah I do.", questionLoopback);
 questions.addTerminationOption("No [END CONVERSATION]", "Nah not really.")
 
-const whatFork = questionLoopback.addChildAsOption("What...", "What...", "") // Just use empty string options like this to chain.
+const whatFork = questionLoopback.addChildAsOption("What...", "What...", EMPTY_RENDER) // Just use empty string options like this to chain.
     const whatGame = whatFork.addCAROptionChild("Game?", "What is this game?", "daemon.garden is a point and click RPG created by omni.vi", characters.ARDA, characters.VIYA);
     whatGame.addMessageChain(["Episode 0 takes place in the year 2095.", "Long after the mysterious 'VI-LINK' device has become widespread."])
         .addCAROptions([
@@ -65,7 +65,7 @@ whatFork.addCAROptionChild("This?", "What is this?", "This as in...?", character
         }
     ])
 
-const whyFork = questionLoopback.addChildAsOption("Why...", "Why...", "")
+const whyFork = questionLoopback.addChildAsOption("Why...", "Why...", EMPTY_RENDER)
 whyFork.addCAROptions([
     {
         summaryText: "Game Style",
@@ -92,10 +92,10 @@ questionLoopback.addTerminationOption("Option X", "Another option I was too lazy
 //     {sideEffect: async () => {await startBattle(OPPONENT_MIMICRY); alert("Battle result successfully awaited!")}});
 
 
-let mimicryResult: BattleOutcome | null = null;
 questions.addCAROptionChild(
     "Battle Please", "No questions, start a battle with the mimicry please.",
-    createInlineDialogueTree("", "", (root) => {
+    createInlineDialogueTree(EMPTY_RENDER, EMPTY_RENDER, (root) => {
+        let mimicryResult: BattleOutcome | null = null; // Make an effort to make the closure as close to the relevant nodes as possible, don't have a ton of global lets!
         root.makeNodeWaitFor(async () => {
             mimicryResult = await startBattle(OPPONENT_MIMICRY);
         })
