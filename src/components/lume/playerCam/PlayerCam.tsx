@@ -126,7 +126,7 @@ export default function PlayerCam(props: {
     }
 
     function handleMouseMove(e: MouseEvent) {
-        // Omitting override from guard on purpose, we want to lerp back to the most recent mouse position on end.
+        // Keep guard - feels for natural that the camera moves after we move the mouse, not right when the lock is released.
         if(isSceneLocked()) return;
         const rect = props.sceneRef.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;

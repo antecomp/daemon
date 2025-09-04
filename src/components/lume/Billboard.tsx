@@ -119,6 +119,8 @@ export default function Billboard(props: {
             texture={props.texture}
             position={props.position}
             ref={me}
+            // Makes transparent parts of the image transparent while maintaining opacity of other pieces. 
+            // Without this our billboard has black background.
             opacity="0.9999999999999999" // Weird artifacts when lower than this.
 
             cast-shadow="false"

@@ -52,7 +52,7 @@ export default function NavigationPlane(props: NavigationPlaneData) {
 
     const getPlaneSize = () => {
         // Hide plane when we are at it's desired location. 
-        // Hacky but avoids weird ref detach issues while stopping the raycaster from hitting.
+        // Hacky but avoids weird ref detach issues while stopping the raycaster from hitting. (Visibility doesn't stop raycast!)
         if(props.cameraController.currentBase().pos.toString() == props.newPos?.toString()) return `0 0`;
 
         if(Array.isArray(props.planeSize)) { // [x,y]
