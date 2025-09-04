@@ -1,5 +1,5 @@
 import { Element3D } from "lume";
-import {onMount, children, createSignal} from "solid-js"
+import {onMount, createSignal} from "solid-js"
 import { Object3D, Object3DEventMap } from "three";
 import { currentInteractionMode } from "@/core/interaction/interaction";
 import { InteractionMap } from "../../core/interaction/interactable.types";
@@ -16,8 +16,7 @@ interface InteractiveElementProps {
 export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
 export default function Interactable(props: InteractiveElementProps) {
-    let containerRef: Element3D | undefined;
-    const resolved = children(() => props.children)
+    let containerRef: Element3D | undefined; // Keeping undefined as potential state to remind myself of potential races with mounting.
     
     onMount(() => {
         if(containerRef && containerRef.three) {
@@ -48,7 +47,7 @@ export default function Interactable(props: InteractiveElementProps) {
             ref={containerRef}
             align-point="0.5 0.5"
         >
-            {resolved()}
+            {props.children}
         </lume-element3d>
     )
     

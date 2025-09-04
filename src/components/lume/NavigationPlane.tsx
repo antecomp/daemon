@@ -1,4 +1,4 @@
-import { Gimbal, Orientation } from "@/extra.types";
+import { Orientation } from "@/extra.types";
 import { CameraController } from "./playerCam/createCameraController";
 import { XYZ } from "./playerCam/PlayerCam";
 import { Plane, toDegrees } from "lume";
@@ -11,7 +11,7 @@ import nav_cursor from "@/assets/ui/cursors/nav.png"
 export interface NavigationPlaneData {
     cameraController: CameraController,
     newPos?: XYZ
-    newOri?: Omit<Gimbal, "roll">
+    newOri?: Orientation
     anim?: boolean
     planePosition: XYZ 
     tilts?: {maxYaw: number, maxPitch: number}

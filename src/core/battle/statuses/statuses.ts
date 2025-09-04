@@ -9,7 +9,7 @@ export class VulnerableStatus extends Status {
         super("vulnerable", duration, vuln_icon);
     }
 
-    override getStatusMultipliers(level: number): MultiplierSet {
+    getStatusMultipliers(level: number): MultiplierSet {
         // Change this based on whatever balancing you want.
         return { incoming: 1.5 ** level, outgoing: 1 }; // Increases damage taken
     }
@@ -36,7 +36,6 @@ export class ManiaStatus extends Status {
         return {incoming: 1, outgoing: 2 ** level}
     }
 }
-
 
 // ==== Below are some unused examples ====
 
