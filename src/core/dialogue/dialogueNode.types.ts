@@ -1,9 +1,18 @@
 // TODO: RENAME `RESPONSEASRENDERORNODE` TO JUST "response" and add JSDoc to clarify types instead!!
 
+import { Accessor } from "solid-js"
+
 export interface DialogueOption extends DialogueOptionConfig {
     summaryText: string
     fullText: string
     next?: DialogueNode
+}
+
+/** Context data passed from Hermes (and the caller by proxy) to each dialogue node at render/usage, allows passing local context to the dialogue at runtime */
+export interface DialogueContext {
+    flags?: Record<string, string | boolean | number>
+    signals?: Record<string, Accessor<any>>
+    actions?: Record<string, () => void>
 }
 
 export interface DialogueOptionConfig {
@@ -11,13 +20,18 @@ export interface DialogueOptionConfig {
      * Side effect that is immediately triggered when option selected.
      * Namely can be attached to termination options to trigger an event when the dialogue ends.
      */
-    sideEffect?: (ctx?: Record<string, any>) => void,
+    sideEffect?: (ctx?: DialogueContext) => void,
 
     /** CB Used to filter options in realtime based on dialogue/gamestate */
-    onlyShowWhen?: () => boolean
+    onlyShowWhen?: (ctx?: DialogueContext) => boolean
 }
 
-export type RenderOrNode = DialogueNode['render'] | DialogueNode
+/** A 'render' of a Dialogue node (determining the content of a message) is either just a plain string, or a function that returns a string (for contextual changes of message) */
+export type DialogueRender = string | ((ctx?: DialogueContext) => string)
+
+/** Many of the methods for attaching new nodes allow you to either attach an existing DialogueNode (created elsewhere)
+ * or just provide a DialogueRender instance, and a new node will be built from that automatically. */
+export type RenderOrNode = DialogueRender | DialogueNode
 
 /**
  * A DialogueNode represents a single "message" within a dialogue tree. You can generate a completely new one with the createDialogueNode FF (this is done for a root node).
@@ -37,17 +51,17 @@ export type RenderOrNode = DialogueNode['render'] | DialogueNode
 export type DialogueNode = {
     id: string;
     name: string
-    render: string | (() => string)
+    render: DialogueRender
         // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
     options: DialogueOption[]
-    next?: DialogueNode | (() => DialogueNode)
-    sideEffect?: (ctx?: Record<string, any>) => void,
+    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
+    sideEffect?: (ctx?: DialogueContext) => void,
 
     /** Blocking side effect, halts dialogue flow until promise resolves,
      * can be used to await camera movement, battles, cutscenes etc
      * without terminating dialoguue.
      */
-    waitFor?: () => Promise<void>
+    waitFor?: (ctx?: DialogueContext) => Promise<void>
 
     /**
     * Attach a new or existing child DialogueNode to the node
@@ -55,7 +69,7 @@ export type DialogueNode = {
     * @param name - name to attach to the new message. If none provided, it will inherit from the parent.
     * @returns node - a reference to the newly created dialogue node   
     */
-    addChild(renderOrNode: DialogueNode['render'] | DialogueNode, name?: string): DialogueNode;
+    addChild(renderOrNode: DialogueRender | DialogueNode, name?: string): DialogueNode;
 
     /**
      * Attach a new or existing child Dialogue node as the result of a dialogue option.
@@ -67,7 +81,7 @@ export type DialogueNode = {
      */
     addChildAsOption(
         summaryText: string, fullText: string, 
-        renderOrNode: DialogueNode['render'] | DialogueNode, 
+        renderOrNode: DialogueRender | DialogueNode, 
         name?: string, 
         optionConfig?: DialogueOptionConfig
     ): DialogueNode;
@@ -79,7 +93,7 @@ export type DialogueNode = {
      */
     addOptions(options: { 
             summaryText: string, fullText: string, 
-            renderOrNode: DialogueNode['render'] | DialogueNode, 
+            renderOrNode: DialogueRender | DialogueNode, 
             name?: string, 
             optionConfig?: DialogueOptionConfig
         }[]
@@ -97,7 +111,7 @@ export type DialogueNode = {
     addCAROptionChild(
         summaryText: string, 
         fullText: string, 
-        responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
+        responseAsRenderOrNode: DialogueRender | DialogueNode, 
         senderName?: string, 
         responderName?: string,
         optionConfig?: DialogueOptionConfig
@@ -110,7 +124,7 @@ export type DialogueNode = {
      */
     addCAROptions(carOptions: { 
             summaryText: string, fullText: string, 
-            responseAsRenderOrNode: DialogueNode['render'] | DialogueNode, 
+            responseAsRenderOrNode: DialogueRender | DialogueNode, 
             senderName?: string, responderName?: string,
             optionConfig?: DialogueOptionConfig
         }[]
@@ -121,7 +135,7 @@ export type DialogueNode = {
      * @param messages Array of either Dialogue Node Render-ers (string or function that returns a string) or obj of {name, render} for adapting the name
      * @returns ref to the last node in the chain.
      */
-    addMessageChain(messages: ({name: string, render: DialogueNode['render']} | DialogueNode['render'])[]): DialogueNode
+    addMessageChain(messages: ({name: string, render: DialogueRender} | DialogueRender)[]): DialogueNode
 
     /**
      * Generates a message chain where the names are set to alternate between two values automatically. Used for back-and-fourth dialogue.
@@ -130,21 +144,21 @@ export type DialogueNode = {
      * @param second Next person to speak (name)
      * @returns ref to the last node in the chain
      */
-    addBackAndFourthChain(messages: (DialogueNode['render'])[], first: string, second: string): DialogueNode
+    addBackAndFourthChain(messages: (DialogueRender)[], first: string, second: string): DialogueNode
 
     /**
      * Attach a "side effect" (additional function) that will run when a node is rendered. Returns a ref back to the node.
      * @param ef The CB to run when the node is entered. ef takes a generic "context" object that can be used to reference other game methods
      * @returns the node back (this) for chaining
      */
-    attachSideEffect(ef: (ctx?: Record<string, any>) => void): DialogueNode
+    attachSideEffect(ef: (ctx?: DialogueContext) => void): DialogueNode
 
     /**
      * Attach a "waitFor" async CB, a method that blocks dialogue flow until the promise resolves.
      * @param waitFor : An async function that halts dialogue flow.
      * @returns this node back for chaining.
     */
-    makeNodeWaitFor(wf: () => Promise<void>): DialogueNode
+    makeNodeWaitFor(wf: (ctx?: DialogueContext) => Promise<void>): DialogueNode
 
     /**
      * Add a option that ends the dialogue with custom text.
@@ -159,13 +173,13 @@ export type DialogueNode = {
      * These can be chained for multiple conditions, the first one that is true will be attached.
      * @param condition - boolean that determines if the child should be attached
      * @param child - render or node to attach if the condition is true
-     * @returns - the parent node (this)
+     * @returns - the parent node (this) <- Be careful when chaining! This won't return the child!
      */
     addChildIf(condition: boolean, child: RenderOrNode): DialogueNode
 
     /** Attach a faillback child dialogue node if one doesn't exist, and if there's no options (usually chained with .if)
      * @param child - render or node to attach if no other child is attached (all conditions are false)
-     * @returns - the parent node (this)
+     * @returns - the parent node (this) <- Be careful when chaining! This won't return the child!
      */
     addFallbackChild(child: RenderOrNode): DialogueNode
 

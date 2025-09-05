@@ -1,4 +1,4 @@
-import { createDialogueNode } from "@/core/dialogue/dialogueNode"
+import { createDialogueNode, VISUALIZER } from "@/core/dialogue/dialogueNode"
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_overlay from "@/assets/artwork/dialogue_bgs/rabbit_overlay.png"
 
@@ -14,14 +14,14 @@ rabbitMonologue.addMessageChain([
     "before the corporeal thoughts.",
     "We feasted upon the tears of angels.",
     "And now we are starving.",
-    {render: "The rabbit pauses.", name: "VISUALIZER"},
+    {render: "The rabbit pauses.", name: VISUALIZER},
     {render: "We have taken an interest in your journey", name: RABBIT},
     "Tread safely, Asuramancer.",
-    {render: "The rabbit vanishes.", name: "VISUALIZER"},
+    {render: "The rabbit vanishes.", name: VISUALIZER},
 ]).attachSideEffect(
     (ctx) => {
         DialogueService.setCurrentDialogueOverlay(null) // Remove overlay early...
-        ctx?.setShowRabbit(false);
+        ctx?.actions?.hideRabbit();
     }
 )
 

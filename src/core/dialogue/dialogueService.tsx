@@ -1,4 +1,4 @@
-import { DialogueNode } from "./dialogueNode.types";
+import { DialogueContext, DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
 import { MainUILock } from "@/layers/ui-layers.types";
 import Hermes from "@/layers/hermes/Hermes";
@@ -17,7 +17,7 @@ export type StartDialogueOptions = {
     canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
-    ctx?: Record<string, any>
+    ctx?: DialogueContext
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);

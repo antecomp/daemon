@@ -1,4 +1,4 @@
-import { createDialogueNode, createInlineDialogueTree } from "@/core/dialogue/dialogueNode";
+import { createDialogueNode, createInlineDialogueTree, VISUALIZER } from "@/core/dialogue/dialogueNode";
 
 // You can make local enums to track the people talking
 // This is soley a helper to keep spelling/format consistent.
@@ -13,10 +13,10 @@ const root = createDialogueNode(
     `
         A man finally sits down at the table across from me. He's bald, wearing a suit and a large pair of sunglasses. 
     `,
-    "VISUALIZER"
+    VISUALIZER
 )
 
-const resumePoint = createDialogueNode("he leans forward", "VISUALIZER");
+const resumePoint = createDialogueNode("he leans forward", VISUALIZER);
 
 const richDadFork = root
     .addChild(
@@ -81,7 +81,7 @@ understandQuestionFork.addCAROptionChild(
     characters.MAN
 ).addMessageChain([
     {render: "Right. Moving on.", name: characters.ARDA},
-    {render: "he glares before shifting back in his seat", name: "VISUALIZER"},
+    {render: "he glares before shifting back in his seat", name: VISUALIZER},
     {render: "Moving on...", name: characters.MAN},
     "Expect a cached delivered to your preferred home node in the next few days.",
     "This is a DV mod specifically for your XA-3. Mods embedded stenographically on top of some old porn.",

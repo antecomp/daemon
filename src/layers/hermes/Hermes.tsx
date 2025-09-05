@@ -1,5 +1,5 @@
 import { createSignal, For } from "solid-js";
-import { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
+import { DialogueContext, DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
 import { MessageBoxProps } from "./MessageBox";
@@ -24,7 +24,7 @@ const HERMES_MESSAGE_DELAY = 1200;
  * @see dialogueManager.tsx
  * @param root - The root node of the dialogue tree
  */
-export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Record<string, any> }) {
+export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: DialogueContext }) {
   // non-reactive destructure done here out of convenience, we're instantiating the signal on input anyway
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
   const addMessage = ({ name, text }: { name: string; text: string }) => {
@@ -56,12 +56,12 @@ export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Record
     addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
     node.sideEffect && node.sideEffect(ctx);
 
-    await node.waitFor?.();
+    await node.waitFor?.(ctx);
 
     // Potential Logic Error? Not sure - What happens if we terminate dialogue mid waitfor?
 
     // Real-time check of if we should show the options or  not.
-    const filteredOptions = node.options.filter(option => !option.onlyShowWhen || option.onlyShowWhen());
+    const filteredOptions = node.options.filter(option => !option.onlyShowWhen || option.onlyShowWhen(ctx));
 
     if (filteredOptions.length > 0) {
       setCurrentOptions(filteredOptions);
@@ -71,7 +71,7 @@ export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Record
 
     if (node.next) {
       await sleep(HERMES_MESSAGE_DELAY * (1 + Math.random() / 2)); // Simulate a pause before advancing (TODO: should I add some randomness here?)
-      await advanceDialogue(evalDialogueNodeNext(node.next)!);
+      await advanceDialogue(evalDialogueNodeNext(node.next, ctx)!);
     } else {
       // Generate our own termination option.
       setCurrentOptions([{ summaryText: "[END]", fullText: "" }])

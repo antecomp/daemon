@@ -1,4 +1,4 @@
-import { DialogueNode, DialogueOptionConfig } from "./dialogueNode.types";
+import { DialogueContext, DialogueNode, DialogueOptionConfig } from "./dialogueNode.types";
 import { DEFAULT_DIALOGUE_SENDER } from "../../config";
 
 let nodeCounter = 0;
@@ -188,9 +188,9 @@ export function createInlineDialogueTree(rootRender: DialogueNode['render'], roo
 }
 
 /** Simple helper to collapse a dialogue nodes next (either a ref to another node, or a function that returns the ref) to just the ref */
-export function evalDialogueNodeNext(next?: DialogueNode | (() => DialogueNode)) {
+export function evalDialogueNodeNext(next: DialogueNode['next'], ctx?: DialogueContext) {
     if (typeof next == "function") {
-        return next()
+        return next(ctx)
     } else {
         return next;
     }
@@ -204,3 +204,6 @@ export function evalDialogueNodeNext(next?: DialogueNode | (() => DialogueNode))
  * whatFork.addChildAsOption( questions can go here...)
  *  */
 export const EMPTY_RENDER = "";
+
+/** Special Sender Name that indicates to the message renderer to format the message in a gray box instead of as a message. */
+export const VISUALIZER = "VISUALIZER";
