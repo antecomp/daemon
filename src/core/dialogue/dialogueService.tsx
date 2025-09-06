@@ -17,7 +17,7 @@ export type StartDialogueOptions = {
     canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
-    ctx?: DialogueContext
+    ctx?: DialogueContext 
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
@@ -49,7 +49,8 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 }
 
 function endDialogue() {
-    if (!activeDialogue) throw new Error("No active dialogue to end.");
+    // soft warn instead of a full error - a conflict shouldn't crash the game, but is worth warning us about.
+    if (!activeDialogue) {console.warn("Close Dialogue Called, but no active dialogue was detected!"); return;}
 
     setCurrentDialogueOverlay(null);
     setCanCloseDialogueEarly(false);

@@ -84,7 +84,7 @@ export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Dialog
     setHoveredOption("") // Clear preview text
     option.sideEffect?.(ctx);
     if (option.next) {
-      await advanceDialogue(option.next);
+      await advanceDialogue(evalDialogueNodeNext(option.next, ctx)!);
     } else {
       // Option has no next, terminate dialogue
       DialogueService.endDialogue();

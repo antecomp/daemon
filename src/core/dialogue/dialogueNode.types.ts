@@ -5,7 +5,7 @@ import { Accessor } from "solid-js"
 export interface DialogueOption extends DialogueOptionConfig {
     summaryText: string
     fullText: string
-    next?: DialogueNode
+    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
 }
 
 /** Context data passed from Hermes (and the caller by proxy) to each dialogue node at render/usage, allows passing local context to the dialogue at runtime */
