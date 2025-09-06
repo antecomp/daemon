@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import { createSignal, For, onCleanup } from "solid-js";
 import { DialogueContext, DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
@@ -6,7 +6,7 @@ import { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/hooks/createTypewriter";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import sleep from "@/utils/sleep";
-import { evalDialogueNodeNext } from "@/core/dialogue/dialogueNode";
+import { EMPTY_RENDER, evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode";
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -16,7 +16,11 @@ import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 
 
-const HERMES_MESSAGE_DELAY = 1200;
+//const HERMES_MESSAGE_DELAY = 1200;
+
+// Reply beat for CAR after a player selects an option.
+// [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
+const CAR_DELAY_MS = 1200;
 
 /**
  * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
@@ -24,18 +28,19 @@ const HERMES_MESSAGE_DELAY = 1200;
  * @see dialogueManager.tsx
  * @param root - The root node of the dialogue tree
  */
-export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: DialogueContext }) {
-  // non-reactive destructure done here out of convenience, we're instantiating the signal on input anyway
+export default function Hermes(
+  // Destructure out of laziness. All of this should be static anyways.
+  { root, ctx }: { root: DialogueNode, ctx?: DialogueContext }
+) {
   const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
-  const addMessage = ({ name, text }: { name: string; text: string }) => {
-    setMessages((prev) => [...prev, { name, text }]);
-  };
+  const addMessage = ({ name, text }: { name: string; text: string }) => setMessages((prev) => [...prev, { name, text }]);
 
   const [currentOptions, setCurrentOptions] = createSignal<DialogueOption[]>([]);
   const [currentOptionPage, setCurrentOptionPage] = createSignal(0);
   const optionsOffset = () => currentOptionPage() * 3;
   const numPages = () => Math.ceil(currentOptions().length / 3);
 
+  // Helper function to generate pagination for options (little thingy on the side.)
   const generatePages = () =>
     Array.from({ length: numPages() }, (_, i) => (
       <a
@@ -44,48 +49,155 @@ export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Dialog
       ></a>
   ));
 
-
   // Preview message for hovered option.
   const [hoveredOption, setHoveredOption] = createSignal("");
   const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
 
-  /** Advances dialogue based on the current node */
+  // Helper functions to extract and setup option stuff.
+  function visibleOptionsOf(node: DialogueNode, ctx?: DialogueContext): DialogueOption[] {
+    return node.options.filter(o => !o.onlyShowWhen || o.onlyShowWhen(ctx));
+  }
+
+  function showOptions(opts: DialogueOption[]) {
+    setCurrentOptionPage(0);
+    setCurrentOptions(opts);
+    setCanClickNext(false);
+    pendingNextNode = null;
+  }
+
+
+  // Next-button state. (This is for linear, non-empty nodes. I.e a chain of .nexts with no option)
+  const [canClickNext, setCanClickNext] = createSignal(false);
+  // caches the node to be rendered for when we click next.
+  let pendingNextNode: DialogueNode | null = null;
+
+  // Prevent continuation after unmmount
+  let stopped = false;
+  onCleanup(() => {stopped = true});
+
+  // Da big traversal shieeeeeettttttt
   async function advanceDialogue(node: DialogueNode) {
-    addMessage({ name: node.name, text: (typeof node.render === 'string') ? node.render : node.render() });
+    if (stopped) return;
+    
+    // Renda'
+    const text = (typeof node.render === 'string') ? node.render : node.render()
+    addMessage({ name: node.name, text});
+
     node.sideEffect && node.sideEffect(ctx);
+    if (stopped) return; // Just in case the side effect does a close action lol.
 
-    await node.waitFor?.(ctx);
+    // waitFor overtakes progression, it is up to the dialogue writer to time things accordingly with the body of this.
+    if(node.waitFor) {
+      // while waiting, hide options/next
+      setCurrentOptions([]);
+      setCanClickNext(false);
+      pendingNextNode = null;
 
-    // Potential Logic Error? Not sure - What happens if we terminate dialogue mid waitfor?
+      await node.waitFor(ctx);
+      if (stopped) return;
 
-    // Real-time check of if we should show the options or  not.
-    const filteredOptions = node.options.filter(option => !option.onlyShowWhen || option.onlyShowWhen(ctx));
+      // Node has options...
+      const options = visibleOptionsOf(node, ctx);
+      if(options.length > 0) {
+        showOptions(options)
+        return;
+      }
 
-    if (filteredOptions.length > 0) {
-      setCurrentOptions(filteredOptions);
-      // Stop here until an option is selected (option-select re-enters this recursion)
+      // Node has next. We instantly and automatically run through this one.
+      // Remember the timing should be handled by waitFors methid here!
+      if(node.next) {
+        const n = evalDialogueNodeNext(node.next, ctx)!;
+        await advanceDialogue(n);
+        return;
+      }
+
+      // Otherwise autogen terminator for leaf...
+      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
+
       return;
     }
 
-    if (node.next) {
-      await sleep(HERMES_MESSAGE_DELAY * (1 + Math.random() / 2)); // Simulate a pause before advancing (TODO: should I add some randomness here?)
-      await advanceDialogue(evalDialogueNodeNext(node.next, ctx)!);
-    } else {
-      // Generate our own termination option.
-      setCurrentOptions([{ summaryText: "[END]", fullText: "" }])
+    // Options
+    const options = visibleOptionsOf(node, ctx);
+    if (options.length > 0) {
+      showOptions(options);
+      return;
     }
+
+    // Next flow.
+    if (node.next) {
+      const next = evalDialogueNodeNext(node.next, ctx)!;
+
+      // EMPTY_RENDER nodes auto-advance.
+      if (isDialogueNodeEmpty(node)) {
+        await advanceDialogue(next);
+        return;
+      }
+
+      // Click to advance...
+      setCurrentOptions([]);
+      pendingNextNode = next;
+      setCanClickNext(true);
+      return;
+    }
+
+    // Fallback (leaf), generate terminator option.
+    setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
   }
 
   async function selectOption(option: DialogueOption) {
-    setCurrentOptions([]); // Clear options
-    setHoveredOption("") // Clear preview text
+    if(stopped) return;
+
+    // Clear/Reset.
+    setCurrentOptions([]); 
+    setHoveredOption("") 
+    setCurrentOptionPage(0);
+
     option.sideEffect?.(ctx);
-    if (option.next) {
-      await advanceDialogue(evalDialogueNodeNext(option.next, ctx)!);
-    } else {
-      // Option has no next, terminate dialogue
-      DialogueService.endDialogue();
+    if(stopped) return;
+
+    // Termination Option -> kill this dialogue NOW.
+    if (!option.next) {
+      if(!stopped) DialogueService.endDialogue();
+      return;
     }
+
+    // Option next is an EMPTY_RENDER, auto-advance (for chaining options without sending messages)
+    // TODO/WARNING we're skipping the case of option.next(ctx) => EMPTY_RENDER for now...
+    // Generally I don't think we should ever have a case like that, as it introduces some weird unreliable behavior.
+    if(typeof option.next == 'object' && isDialogueNodeEmpty(option.next)) {
+      await advanceDialogue(option.next)
+      return;
+    }
+
+    // CaR handler. (Show option message, sleep, show response node, advance from there.)
+    // Render Call Right Away.
+    const call = evalDialogueNodeNext(option.next, ctx)!
+    const text = (typeof call.render === 'string') ? call.render : call.render()
+    addMessage({ name: call.name, text});
+
+    // Reply "beat" (delay)
+    await sleep(CAR_DELAY_MS);
+    if(stopped) return; // closure during sleep.
+
+    const response = evalDialogueNodeNext(call.next, ctx)
+    if (!response) { // Only call but no response!
+      console.error('[Dialogue Early Termination] Option had a next, but this next goes nowhere!')
+      //if(!stopped) DialogueService.endDialogue();
+      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
+      return;
+    }
+
+    // Retvrn to normal evaluation with response onwards...
+    await advanceDialogue(response!)
+  }
+
+  async function handleClickNext() {
+    if (!canClickNext() || stopped) return;
+    setCanClickNext(false);
+    const n = pendingNextNode;
+    pendingNextNode = null;
+    if (n) await advanceDialogue(n);
   }
 
   onMount(() => {
@@ -134,6 +246,14 @@ export default function Hermes({ root, ctx }: { root: DialogueNode, ctx?: Dialog
           {generatePages()}
         </div>
       }
+
+      <button
+        class="debug-next-button"
+        disabled={!canClickNext()}
+        onClick={handleClickNext}
+      >
+        Next.
+      </button>
     </div>
   );
 }

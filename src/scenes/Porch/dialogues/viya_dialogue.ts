@@ -3,6 +3,7 @@ import { startBattle } from "@/core/battle/battleManager";
 import { createDialogueNode, createInlineDialogueTree, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/utils/pickRandom";
 import { BattleOutcome } from "@/core/battle/engine/battle.types";
+import sleep from "@/utils/sleep";
 
 const characters = Object.freeze({
     ARDA: "Arda",
@@ -20,6 +21,8 @@ const questionLoopback = createDialogueNode(() => pickRandom(["Go for it.", "I'l
 const questionLoopIntermediary = createDialogueNode("Any more questions?", characters.VIYA)
 questionLoopIntermediary.addCAROptionChild("Yes", "Yes", questionLoopback)
 questionLoopIntermediary.addTerminationOption("Nah [END DIALOGUE]", "Nah")
+
+root.makeNodeWaitFor(async () => await sleep(1000)) // We can enforce autoadvance with a delay by doing this!
 
 const questions = root.addChild("I imagine you have a lot of questions right now");
 questions.addCAROptionChild("Yes", "Yeah I do.", questionLoopback);
