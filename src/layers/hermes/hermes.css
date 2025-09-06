@@ -210,3 +210,10 @@
     border: solid #aaa 1px;
     padding: 2px 5px;
 }
+
+.hermes-next-prompt {
+    text-align: right;
+    float: right;
+    margin-top: 2px;
+	cursor: var(--cursor_pointer);
+}

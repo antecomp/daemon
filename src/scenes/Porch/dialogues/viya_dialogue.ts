@@ -48,7 +48,10 @@ const whatFork = questionLoopback.addChildAsOption("What...", "What...", EMPTY_R
                 responseAsRenderOrNode: "Okay buddy."
             }
         ])
-        .forEach(optionResult => optionResult.next = questionLoopIntermediary) // BEware that forEach-es return void. They have no reasonable way to attach to results (obviously)
+        .forEach(optionResult => {
+            optionResult.next = questionLoopIntermediary
+            optionResult.makeNodeWaitFor(() => sleep(1000))
+        }) // BEware that forEach-es return void. They have no reasonable way to attach to results (obviously)
 whatFork.addCAROptionChild("This?", "What is this?", "This as in...?", characters.ARDA, characters.VIYA)
     .addCAROptions([
         {

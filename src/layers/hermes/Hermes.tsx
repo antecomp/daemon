@@ -1,4 +1,4 @@
-import { createSignal, For, onCleanup } from "solid-js";
+import { createSignal, For, Match, onCleanup, Switch } from "solid-js";
 import { DialogueContext, DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import { onMount } from "solid-js";
 import MessageBox from "./MessageBox";
@@ -6,7 +6,7 @@ import { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/hooks/createTypewriter";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import sleep from "@/utils/sleep";
-import { EMPTY_RENDER, evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode";
+import { evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode";
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -14,6 +14,7 @@ import midb from "./assets/midb.png";
 import botb from "./assets/botb.png";
 import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
+import continuePanel from "./assets/continue_prompt.png"
 
 
 //const HERMES_MESSAGE_DELAY = 1200;
@@ -194,6 +195,7 @@ export default function Hermes(
 
   async function handleClickNext() {
     if (!canClickNext() || stopped) return;
+    console.log('test');
     setCanClickNext(false);
     const n = pendingNextNode;
     pendingNextNode = null;
@@ -210,26 +212,40 @@ export default function Hermes(
         <div class="message-spacer-nightmare"></div>
         <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
       </div>
-      <div class={`sender-container ${currentOptions().length > 0 ? "" : "inactive"}`}>
+      <div class='sender-container'>
         <div class="text-preview">
           <img src={nameplateBorder} alt="" />
           <span class="name">Arda</span>
           {optionPreviewText()}
         </div>
-        {[0, 1, 2].map((index) => {
-          const option = currentOptions()[optionsOffset() + index];
-          return (
-            <div
-              class={"hermes-resp-container " + (option ? "" : "inactive")}
-              onClick={() => option && selectOption(option)}
-              onMouseOver={() => option && setHoveredOption(option.fullText)}
-            >
-              <p>{option?.summaryText ?? ""}</p>
-              <span></span>
-              <img src={[topb, midb, botb][index]} alt="" />
-            </div>
-          );
-        })}
+
+        <Switch fallback={
+          // render options
+          [0, 1, 2].map((index) => {
+                    const option = currentOptions()[optionsOffset() + index];
+                    return (
+                      <div
+                        class={"hermes-resp-container " + (option ? "" : "inactive")}
+                        onClick={() => option && selectOption(option)}
+                        onMouseOver={() => option && setHoveredOption(option.fullText)}
+                      >
+                        <p>{option?.summaryText ?? ""}</p>
+                        <span></span>
+                        <img src={[topb, midb, botb][index]} alt="" />
+                      </div>
+                    );
+                  })
+        }>
+            {/* Continue button */}
+            <Match when={canClickNext()}>
+              <img 
+                src={continuePanel}
+                class='hermes-next-prompt'
+                onClick={handleClickNext}
+              />
+            </Match>
+        </Switch>
+
       </div>
       <div class="hermes-footer">
         <span>S-VLID:91ae0:ffc13</span>
@@ -246,14 +262,6 @@ export default function Hermes(
           {generatePages()}
         </div>
       }
-
-      <button
-        class="debug-next-button"
-        disabled={!canClickNext()}
-        onClick={handleClickNext}
-      >
-        Next.
-      </button>
     </div>
   );
 }
