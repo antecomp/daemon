@@ -205,5 +205,15 @@ export function evalDialogueNodeNext(next: DialogueNode['next'], ctx?: DialogueC
  *  */
 export const EMPTY_RENDER = "";
 
+export function createEmptyDialogueNode() {
+    return createDialogueNode(EMPTY_RENDER, EMPTY_RENDER);
+}
+
+export function isDialogueNodeEmpty(node: DialogueNode) {
+    // functional version shouldn't be used to encode to render, that's super risky with logic.
+    return node.render == EMPTY_RENDER;
+}
+
+
 /** Special Sender Name that indicates to the message renderer to format the message in a gray box instead of as a message. */
 export const VISUALIZER = "VISUALIZER";
