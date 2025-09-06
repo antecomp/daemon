@@ -14,14 +14,12 @@ import {createSignal} from "solid-js";
  */
 export type StartDialogueOptions = {
     overlay?: string, 
-    canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
     ctx?: DialogueContext 
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
-const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 
 let activeDialogue = null as string | null;
 let dialogueCompletionResolver: (() => void) | null = null;
@@ -41,7 +39,6 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     });
 
     if(options?.overlay) setCurrentDialogueOverlay(options.overlay);
-    setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
 
     return new Promise<void>((resolve) => {
         dialogueCompletionResolver = resolve;
@@ -53,7 +50,6 @@ function endDialogue() {
     if (!activeDialogue) {console.warn("Close Dialogue Called, but no active dialogue was detected!"); return;}
 
     setCurrentDialogueOverlay(null);
-    setCanCloseDialogueEarly(false);
     popUILayer(activeDialogue);
 
     activeDialogue = null;
@@ -77,7 +73,6 @@ export const DialogueService = {
      */
     endDialogue, 
     
-    canCloseDialogueEarly,
     currentDialogueOverlay, 
     setCurrentDialogueOverlay 
 };

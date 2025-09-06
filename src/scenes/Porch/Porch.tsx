@@ -108,7 +108,6 @@ export default function Porch() {
                             {yaw: -84, pitch: 0},
                             viya_root,
                             true,
-                            {canCloseDialogueEarly: true}
                         ).then(() => console.log("Viya dialogue done!"))
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)

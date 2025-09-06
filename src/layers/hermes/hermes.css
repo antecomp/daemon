@@ -81,10 +81,12 @@
 
 .hermes-footer {
 	background: url('./assets/footerbase.png');
-	width: 240px;
+	/* width: 240px; */
 	height: 21px;
 	display: flex;
   	align-items: center;
+	padding-left: 21px;
+	gap: 8px;
 }
 
 /* .sender-container.inactive + .hermes-footer {
@@ -93,33 +95,9 @@
 
 .hermes-footer span {
 	font-family: 'teeny';
-	line-height: 50%;
+	/* line-height: 50%; */
 	font-size: 5px;
 }
-
-.hermes-footer img {
-	float: left;
-  	margin-right: 3px;
-}
-
-.sender-container.inactive + .hermes-footer .hermes-disconnect {
-	cursor: inherit;
-}
-
-.hermes-disconnect {
-	margin-left: auto;
-	padding: 8px;
- 	padding-right: 2px;
-	color: var(--altfgc);
-	cursor: inherit;
-}
-
-.hermes-disconnect.can-disconnect {
-	cursor: var(--cursor_pointer);
-	color: var(--fgc);
-}
-
-
 
 /* =========================================================== */
 
