@@ -1,4 +1,4 @@
-import { DialogueContext, DialogueNode, DialogueOptionConfig } from "./dialogueNode.types";
+import { DialogueContext, DialogueNode, DialogueRender } from "./dialogueNode.types";
 import { DEFAULT_DIALOGUE_SENDER } from "../../config";
 
 let nodeCounter = 0;
@@ -10,7 +10,7 @@ let nodeCounter = 0;
  * @param name Name of the individual sending the message
  * @returns Reference to the created dialogue node.
  */
-export function createDialogueNode(render: DialogueNode['render'], name: string): DialogueNode {
+export function createDialogueNode(render: DialogueRender, name: string): DialogueNode {
     const id = `node-${nodeCounter++}`
 
     const node: DialogueNode = {
@@ -35,7 +35,7 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         // Helper function to automatically attach a child as an option.
-        addChildAsOption(summaryText, fullText, renderOrNode, name?: string, config?: DialogueOptionConfig) {
+        addChildAsOption(summaryText, fullText, renderOrNode, name, config) {
             // Attach Existing
             if(typeof renderOrNode === 'object' && 'id' in renderOrNode) {
                 this.options.push({

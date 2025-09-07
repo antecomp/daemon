@@ -16,9 +16,6 @@ import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
 
-
-//const HERMES_MESSAGE_DELAY = 1200;
-
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
 const CAR_DELAY_MS = 1200;
@@ -28,6 +25,8 @@ const CAR_DELAY_MS = 1200;
  * Hermes is added as a UI layer by utilizing DialogueService.startDialogue
  * @see dialogueManager.tsx
  * @param root - The root node of the dialogue tree
+ * @param ctx - "Context" object that can be passed, which is globally accessible by all dialogue nodes in this current traversal. 
+ * Allows passing local context, signals, and methods to the nodes; which can be used for conditional rendering, side effects, etc.
  */
 export default function Hermes(
   // Destructure out of laziness. All of this should be static anyways.
@@ -65,7 +64,6 @@ export default function Hermes(
     setCanClickNext(false);
     pendingNextNode = null;
   }
-
 
   // Next-button state. (This is for linear, non-empty nodes. I.e a chain of .nexts with no option)
   const [canClickNext, setCanClickNext] = createSignal(false);
@@ -195,7 +193,6 @@ export default function Hermes(
 
   async function handleClickNext() {
     if (!canClickNext() || stopped) return;
-    console.log('test');
     setCanClickNext(false);
     const n = pendingNextNode;
     pendingNextNode = null;
