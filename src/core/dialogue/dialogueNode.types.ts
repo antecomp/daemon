@@ -1,5 +1,3 @@
-// TODO: RENAME `RESPONSEASRENDERORNODE` TO JUST "response" and add JSDoc to clarify types instead!!
-
 import { Accessor } from "solid-js"
 
 export interface DialogueOption extends DialogueOptionConfig {
@@ -65,35 +63,38 @@ export type DialogueNode = {
 
     /**
     * Attach a new or existing child DialogueNode to the node
-    * @param renderOrNode - Either an existing node made somewhere else (reference) or a 'render' representing a new message
+    * @param child - Either an existing node made somewhere else (reference) or a 'render' representing a new message
+    *   - when just a render is passed, the child will inherit the sender name from the current node.
     * @param name - name to attach to the new message. If none provided, it will inherit from the parent.
     * @returns node - a reference to the newly created dialogue node   
     */
-    addChild(renderOrNode: DialogueRender | DialogueNode, name?: string): DialogueNode;
+    addChild(child: RenderOrNode, name?: string): DialogueNode;
 
     /**
      * Attach a new or existing child Dialogue node as the result of a dialogue option.
      * @param summaryText Text for the options quick representation
      * @param fullText Full previewed text in the dialogue box 
-     * @param renderOrNode existing node or 'render' that is navigated to by this option.
+     * @param child This is what's actually spawned by selecting an option. Existing node or 'render' that is navigated to by this option.
      * @param name When creating a new node, name to attach to it. If none provided it will inherit from the parent.
      * @returns ref to the child node
      */
     addChildAsOption(
-        summaryText: string, fullText: string, 
-        renderOrNode: DialogueRender | DialogueNode, 
+        summaryText: string, 
+        fullText: string, 
+        child: RenderOrNode, 
         name?: string, 
         optionConfig?: DialogueOptionConfig
     ): DialogueNode;
 
     /**
      * Allows adding multiple options at once.
-     * @param options - Array of { summaryText, fullText, renderOrNode, name? }
+     * @param options - Array of { summaryText, fullText, child, name? }
      * @returns - Array of created DialogueNodes
      */
     addOptions(options: { 
-            summaryText: string, fullText: string, 
-            renderOrNode: DialogueRender | DialogueNode, 
+            summaryText: string, 
+            fullText: string, 
+            child: RenderOrNode, 
             name?: string, 
             optionConfig?: DialogueOptionConfig
         }[]
@@ -102,8 +103,8 @@ export type DialogueNode = {
     /**
      * "Call and Response" - render a node for summaryText and add it as a node, then attach an immediate response node as another child.
      * @param summaryText  Text for the options quick representation
-     * @param fullText  Full previewed text in the dialogue box 
-     * @param responseAsRenderOrNode  existing node or 'render' that is navigated to by this option.
+     * @param fullText  Full previewed text in the dialogue box - For CaR this will also be the message sent. The "call"
+     * @param response  existing node or 'render' that is navigated to by this option.
      * @param senderName - name attached to the "caller" (first person 99% of the time), defaults to config.DEFAULT_DIALOGUE_SENDER if none provided.
      * @param responderName - name attached to the "response" text, if we're creating a new node for it.
      * @returns Ref to the "response" child.
@@ -111,7 +112,7 @@ export type DialogueNode = {
     addCAROptionChild(
         summaryText: string, 
         fullText: string, 
-        responseAsRenderOrNode: DialogueRender | DialogueNode, 
+        response: RenderOrNode, 
         senderName?: string, 
         responderName?: string,
         optionConfig?: DialogueOptionConfig
@@ -119,12 +120,12 @@ export type DialogueNode = {
 
     /**
      * Allows adding multiple Call-and-Response (CAR) options at once.
-     * @param carOptions - Array of { summaryText, fullText, responseAsRenderOrNode, senderName?, responderName? }
+     * @param carOptions - Array of { summaryText, fullText, response, senderName?, responderName? }
      * @returns - Array of created response DialogueNodes
      */
     addCAROptions(carOptions: { 
             summaryText: string, fullText: string, 
-            responseAsRenderOrNode: DialogueRender | DialogueNode, 
+            response: RenderOrNode, 
             senderName?: string, responderName?: string,
             optionConfig?: DialogueOptionConfig
         }[]

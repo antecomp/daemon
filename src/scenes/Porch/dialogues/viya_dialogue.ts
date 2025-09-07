@@ -35,17 +35,17 @@ const whatFork = questionLoopback.addChildAsOption("What...", "What...", EMPTY_R
             {
                 summaryText: "VI-LINK?",
                 fullText: "What is a VI-LINK?",
-                responseAsRenderOrNode: "The VI-LINK is a neural-interface that allows users to connect to NULLSPACE"
+                response: "The VI-LINK is a neural-interface that allows users to connect to NULLSPACE"
             },
             {
                 summaryText: "Cool",
                 fullText: "Cool.",
-                responseAsRenderOrNode: "Yeah :)"
+                response: "Yeah :)"
             },
             {
                 summaryText: "Lame",
                 fullText: "Sounds boring and LARP-ey",
-                responseAsRenderOrNode: "Okay buddy."
+                response: "Okay buddy."
             }
         ])
         .forEach(optionResult => {
@@ -57,12 +57,12 @@ whatFork.addCAROptionChild("This?", "What is this?", "This as in...?", character
         {
             summaryText: "Game",
             fullText: "This game.",
-            responseAsRenderOrNode: whatGame // Point back to an existing node!
+            response: whatGame // Point back to an existing node!
         },
         {
             summaryText: "Dialogue",
             fullText: "This dialogue system",
-            responseAsRenderOrNode: 
+            response: 
                 // Build a short inline tree to add some dialogue nodes without having to save some root variable out-of-scope.
                 createInlineDialogueTree("The dialogue system we're using right now is called Hermes", characters.VIYA, (root) => {
                     root.addMessageChain(["It was made in-house by omni", "and uses a lot of evil reference magic to chain messages together"])
@@ -76,7 +76,7 @@ whyFork.addCAROptions([
     {
         summaryText: "Game Style",
         fullText: "Why does the game look like this?",
-        responseAsRenderOrNode: "Because it's cool. What kind of question is that?"
+        response: "Because it's cool. What kind of question is that?"
     }
 ])
 

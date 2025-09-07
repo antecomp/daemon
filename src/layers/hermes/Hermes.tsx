@@ -181,7 +181,7 @@ export default function Hermes(
 
     const response = evalDialogueNodeNext(call.next, ctx)
     if (!response) { // Only call but no response!
-      console.error('[Dialogue Early Termination] Option had a next, but this next goes nowhere!')
+      console.warn('[Dialogue Early Termination] Option had a next, but this next goes nowhere! Call but no response')
       //if(!stopped) DialogueService.endDialogue();
       setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
       return;

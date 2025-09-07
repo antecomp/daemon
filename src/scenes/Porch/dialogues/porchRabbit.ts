@@ -29,12 +29,12 @@ root.addCAROptions([
     {
         summaryText: "What are you?",
         fullText: "What are you?",
-        responseAsRenderOrNode: rabbitMonologue
+        response: rabbitMonologue
     },
     {
         summaryText: "Hello",
         fullText: "Hello Rabbit",
-        responseAsRenderOrNode: "Goodbye Asuramancer."
+        response: "Goodbye Asuramancer."
     }
 ])
 

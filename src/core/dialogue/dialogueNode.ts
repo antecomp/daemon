@@ -58,20 +58,20 @@ export function createDialogueNode(render: DialogueRender, name: string): Dialog
         },
 
 
-        addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, config) {
+        addCAROptionChild(summaryText, fullText, response, senderName, responderName, config) {
             const callNode = createDialogueNode(fullText, senderName ?? DEFAULT_DIALOGUE_SENDER);
             this.options.push({
                 summaryText, fullText, next: callNode, ...config
             })
 
             // Attach existing node as response
-            if(typeof responseAsRenderOrNode === 'object' && 'id' in responseAsRenderOrNode) {
-                callNode.next = responseAsRenderOrNode
-                return responseAsRenderOrNode
+            if(typeof response === 'object' && 'id' in response) {
+                callNode.next = response
+                return response
             }
 
             // Either infer response is from the name associated with just before the options, or explicitely take one.
-            const responseAsChild = createDialogueNode(responseAsRenderOrNode, responderName ?? this.name)
+            const responseAsChild = createDialogueNode(response, responderName ?? this.name)
             callNode.next = responseAsChild;
 
             return responseAsChild;
@@ -109,14 +109,14 @@ export function createDialogueNode(render: DialogueRender, name: string): Dialog
         },
 
         addOptions(options) {
-            return options.map(({ summaryText, fullText, renderOrNode, name, optionConfig }) => 
-                this.addChildAsOption(summaryText, fullText, renderOrNode, name, optionConfig)
+            return options.map(({ summaryText, fullText, child, name, optionConfig }) => 
+                this.addChildAsOption(summaryText, fullText, child, name, optionConfig)
             );
         },
 
         addCAROptions(carOptions) {
-            return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig }) => 
-                this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig)
+            return carOptions.map(({ summaryText, fullText, response, senderName, responderName, optionConfig }) => 
+                this.addCAROptionChild(summaryText, fullText, response, senderName, responderName, optionConfig)
             );
         },
 

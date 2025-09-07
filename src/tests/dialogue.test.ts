@@ -37,8 +37,8 @@ describe("DialogueNode composition helpers", () => {
     it('addOptions add multiple options at once', () => {
         const root = createDialogueNode("Choose", CHARACTER);
         root.addOptions([
-            {summaryText: "One", fullText: "Option One", renderOrNode: "Response 1"},
-            {summaryText: "Two", fullText: "Option Two", renderOrNode: "Response 2"}
+            {summaryText: "One", fullText: "Option One", child: "Response 1"},
+            {summaryText: "Two", fullText: "Option Two", child: "Response 2"}
         ])
         expect(root.options.length).toBe(2);
         expect(root.options[1].summaryText).toBe("Two");    
@@ -122,8 +122,8 @@ describe("DialogueNode composition helpers", () => {
       it('addCAROptions adds multiple CARs', () => {
         const root = createDialogueNode("Options", CHARACTER);
         const [res1, res2] = root.addCAROptions([
-          { summaryText: "1", fullText: "One", responseAsRenderOrNode: "Resp1" },
-          { summaryText: "2", fullText: "Two", responseAsRenderOrNode: "Resp2" },
+          { summaryText: "1", fullText: "One", response: "Resp1" },
+          { summaryText: "2", fullText: "Two", response: "Resp2" },
         ]);
         expect(res1.render).toBe("Resp1");
         expect(res2.render).toBe("Resp2");
