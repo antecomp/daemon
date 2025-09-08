@@ -6,17 +6,37 @@ import { InteractionMap } from "../../core/interaction/interactable.types";
 import { InteractableObject3D, interactionCB } from "../../core/interaction/interactable.types";
 
 interface InteractiveElementProps {
+    /** interactionCB that runs regardless of interaction mode, for any user click. */
     onClick?: interactionCB
+    /** interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit) */
     onHover?: interactionCB
+    /**
+     * Map of interaction modes to a CB to run for handling that interaction type.
+     * Used by YBillboard and Interactable
+     * 
+     * A map can either be an object that maps to the enum directly, or you can just shorthand as an array of [interact(), chat(), observe()]
+     */
     interactions?: InteractionMap
+    /** CB that runs regardless of interaction mode, when mouse leaves. */
     onHoverLeave?: () => void,
     children: any, // change this?
+    /** boolean that indicates to the OutlinePass whether to highlight (draw white border) around the object when it is hovered. This prop is reactive so you can toggle this setting at runtime. */
     showHoverBorder?: boolean    
 }
 
+// Global signal so the OutlinePass in dgRender can easily observe who is actively being hovered.
 export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
-/** TODO ADD DOCUMENTATION */
+/**
+ * Interactable wraps around any lume element to attach interaction listeners (from player camera raycast). 
+ * @prop onClick - interactionCB that runs regardless of interaction mode, for any user click.
+ * @prop onHover - interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit)
+ * @prop interactions - InteractionMap, map of interaction modes to callbacks to run when this item is clicked with whatever interaction mode active.
+ * @prop onHoverLeave - CB that runs regardless of interaction mode, when mouse leaves.
+ * @prop showHoverBorder - boolean that indicates to the OutlinePass whether to highlight (draw white border) around the object when it is hovered. This prop is reactive so you can toggle this setting at runtime.
+ * @ref interactable.types.ts for function signature of interactionCB, InteractionMap.
+ * @returns 
+ */
 export default function Interactable(props: InteractiveElementProps) {
     let containerRef: Element3D | undefined; // Keeping undefined as potential state to remind myself of potential races with mounting.
 

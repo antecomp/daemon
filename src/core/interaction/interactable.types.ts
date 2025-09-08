@@ -12,7 +12,10 @@ export interface InteractableObject3D extends THREE.Object3D {
     };
 }
 
-/** TODO DOCUMENT */
+/** An interactionCB is a callback that fires for various interactions (see: Interactable, PlayerCam).
+ * @argument uv: Vector2 - (u,v) indicating where the object was clicked (as a u,v point, however that is mapped).
+ * @argument mouse: Vector2 - location of the mouse; relative to the entire scene container, in 2D space. The center of the screen is [0,0], ranging from [-1,-1] (bottom left) to [1,1] (top right).
+ */
 export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
 
 export enum InteractionMode {
