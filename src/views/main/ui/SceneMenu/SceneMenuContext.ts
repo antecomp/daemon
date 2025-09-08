@@ -15,4 +15,6 @@ type SceneMenuContextType = {
 }
 
 export const SceneMenuContext = createContext<SceneMenuContextType>();
+
+/** TODO: ADD DOCUMENTATION - GENERALLY HOW TO USE SCENE MENU!!! */
 export const useSceneMenu = () => useContext(SceneMenuContext)!;

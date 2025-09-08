@@ -12,6 +12,7 @@ export interface InteractableObject3D extends THREE.Object3D {
     };
 }
 
+/** TODO DOCUMENT */
 export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
 
 export enum InteractionMode {

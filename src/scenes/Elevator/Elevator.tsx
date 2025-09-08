@@ -1,12 +1,18 @@
+import Interactable from "@/components/lume/Interactable";
 import Freecam from "@/components/lume/playerCam/Freecam";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import applyDGShader from "@/core/lume/dgRender";
 import lerp from "@/utils/lerp";
+import { addLogMessage } from "@/views/main/ui/EventLog";
+import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
 import { Scene } from "lume"
 import { createSignal, onMount } from "solid-js"
+import { Vector2 } from "three";
 
 export default function Elevator() {
     let sceneRef!: Scene
+
+    const {spawnMenu} = useSceneMenu();
 
     onMount(() => {
         requestAnimationFrame(() => applyDGShader(sceneRef))
@@ -16,6 +22,22 @@ export default function Elevator() {
 
     // setTimeout(() => {setIsDoorOpen(true)}, 2000);
     (window as any).setElevator = setIsDoorOpen;
+
+    function callElevator(_uv: any, mouse: Vector2) {
+        if(!isDoorOpen()) {
+            spawnMenu(
+                "Call the elevator?",
+                [
+                    {
+                        label: "Yes", 
+                        onSelect(){setIsDoorOpen(true)}
+                    },
+                    {label: "No"}
+                ],
+                mouse
+            )
+        }
+    }
 
     return (
         <lume-scene
@@ -38,9 +60,9 @@ export default function Elevator() {
             />
 
 
-            <lume-point-light intensity="4000" align-point="0.5 0.5" position="25 -10 0" color="#ffffffff">
+            <lume-point-light intensity="4000" align-point="0.5 0.5" position="25 -10 0" color="#ffffff">
                 {/* @ts-ignore */}
-                <lume-sphere size="5" align-point="0.5 0.5" mount-point="0.5 0.5" cast-shadow="false" receive-shadow="false" color="#ffffffff" has="basic-material"></lume-sphere>
+                <lume-sphere size="5" align-point="0.5 0.5" mount-point="0.5 0.5" cast-shadow="false" receive-shadow="false" color="#ffffff" has="basic-material"></lume-sphere>
             </lume-point-light>
             
 
@@ -126,12 +148,24 @@ export default function Elevator() {
 
                 position="0 -50 -3"
                 rotation="0 -90 0"
-                color="black"
+                color="gray"
                 align-point="0.5 0.5"
                 mount-point="0.5 0"
             />
 
-            
+            <lume-plane
+                cast-shadow="true"
+                size="50 50 0"
+
+                //@ts-expect-error
+                has="basic-material"
+
+                position="-2.51 -75 0"
+                rotation="0 -90 0"
+                color="black"
+                align-point="0.5 0.5"
+                mount-point="0.5 0"
+            />
 
             {/* Ground */}
             <lume-plane
@@ -147,6 +181,29 @@ export default function Elevator() {
                 rotation="90 0 0"
                 roughness="1"
             />
+
+            <Interactable
+                interactions={[
+                    callElevator,
+                    () => addLogMessage("I shouldn't be talking to elevators."),
+                    () => addLogMessage("It's an elevator, this goes to up to the skybar.")
+                ]}
+            >
+                <lume-plane
+                    receive-shadow="false"
+                    cast-shadow="false"
+                    // @ts-expect-error
+                    has="basic-material"
+                    size="18 25 0"
+                    rotation="0 -90 0"
+                    color="green"
+                    opacity="0.0"
+                    align-point="0.5 0.5"
+                    mount-point="0.5 0"
+                    position="-5 -25.5 0"
+                    sidedness="double"
+                />
+            </Interactable>
         </lume-scene>
     )
 }

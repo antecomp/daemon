@@ -15,6 +15,7 @@ interface InteractiveElementProps {
 
 export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
+/** TODO ADD DOCUMENTATION */
 export default function Interactable(props: InteractiveElementProps) {
     let containerRef: Element3D | undefined; // Keeping undefined as potential state to remind myself of potential races with mounting.
     
