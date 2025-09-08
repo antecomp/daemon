@@ -56,7 +56,8 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 	composer.setSize(WIDTH, HEIGHT);
 
     // Also lock renderer size and pixel ratio
-	scene.glRenderer.setPixelRatio(1);
+	scene.glRenderer.setPixelRatio(window.devicePixelRatio);
+    //was originally set to 1, but (window.devicePixelRatio) fixes the weird artifacts on Mac DPI
 	scene.glRenderer.setSize(WIDTH, HEIGHT, false); // false = don't update canvas.style
 
     // Some constants and data needed for shader logic...
