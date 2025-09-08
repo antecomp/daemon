@@ -74,6 +74,7 @@ export default function Freecam(props: FreecamProps) {
         }
     }
 
+    // Export preconfigured PlayerCam component to clipboard to paste right in :)
     function exportTransform() {
         const pos = basePos();
         const ori = baseOri();
@@ -86,15 +87,14 @@ export default function Freecam(props: FreecamProps) {
             `<PlayerCam
                 basePos={[${config.basePos.join(", ")}]}
                 baseOri={{ yaw: ${config.baseOri.yaw}, pitch: ${config.baseOri.pitch} }}
-                maxYaw={0}
-                maxPitch={0}
+                maxYaw={30}
+                maxPitch={20}
                 animate={false}
-                speed={10}
-                sceneRef={sceneRef}
+                sceneRef={sceneRef!}
             />`;
 
         // clipboard + console
-        const payload = JSON.stringify(config, null, 2) + "\n\n" + snippet;
+        const payload = snippet;
         navigator.clipboard?.writeText(payload).catch(() => {/* ignore */ });
         // eslint-disable-next-line no-console
         console.log("[Freecam export]", config, "\n\nSnippet:\n", snippet);
