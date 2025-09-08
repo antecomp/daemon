@@ -8,13 +8,11 @@ import applyShadows from '@/core/lume/applyShadows';
 import Interactable from '@/components/lume/Interactable';
 import applyDGShader from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
-import NavigationPlane from '@/components/lume/NavigationPlane';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
 import { useSceneMenu } from '@/views/main/ui/SceneMenu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import NavigationGraph from '@/components/lume/NavigationGraph';
-// import WadsCam from '@/components/lume/wadscam';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -59,10 +57,6 @@ export default function Liminality() {
                 {...cameraControlSignals()}
                 sceneRef={sceneRef!}
             />
-
-            {/* <WadsCam
-                defaultPosition='20 -600 20'
-            /> */}
 
             <lume-obj-model
                 id="base"

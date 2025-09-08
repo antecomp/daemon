@@ -1,9 +1,6 @@
-import WadsCam from "@/components/lume/wadscam";
 import applyDGShader from "@/core/lume/dgRender";
-import { GltfModel, ObjModel, Scene } from "lume";
+import { ObjModel, Scene } from "lume";
 import {onMount} from "solid-js";
-import barscene_model from "./models/barscene.dae?url"
-import barscene_glb from "./models/barscene.glb?url"
 import barobj from "./models/bar2.obj"
 import barmtl from "./models/bar2.mtl"
 import applyShadows from "@/core/lume/applyShadows";
@@ -31,9 +28,6 @@ export default function BarScene() {
             // fog-color="#000000"
             // fog-near="0" fog-far="1050"
         >
-            {/* <WadsCam
-                defaultPosition="-719 -327 151"
-            /> */}
 
             <PlayerCam
                 sceneRef={sceneRef}

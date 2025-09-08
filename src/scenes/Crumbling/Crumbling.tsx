@@ -1,4 +1,3 @@
-import WadsCam from "@/components/lume/wadscam";
 import applyDGShader from "@/core/lume/dgRender";
 import { Scene } from "lume";
 import { onMount } from "solid-js";
@@ -7,6 +6,7 @@ import island2 from "./models/island_2.fbx?url"
 import island3 from "./models/island_3.fbx?url"
 import island4 from "./models/island_4.fbx?url"
 import player_ref from '../shared_models/player_ref.fbx?url'
+import Freecam from "@/components/lume/playerCam/Freecam";
 
 export default function Crumbling() {
     let sceneRef: Scene | undefined;
@@ -38,11 +38,10 @@ export default function Crumbling() {
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
             />
-            <WadsCam/>
-            {/* <lume-camera-rig 
-                align-point="0.5 0.5"
-                min-distance="-100"
-            /> */}
+
+            <Freecam
+                sceneRef={sceneRef!}
+            />
 
             <lume-fbx-model src={island1}
                 align-point="0.5 0.5"
