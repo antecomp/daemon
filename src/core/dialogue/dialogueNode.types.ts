@@ -104,7 +104,7 @@ export type DialogueNode = {
      * "Call and Response" - render a node for summaryText and add it as a node, then attach an immediate response node as another child.
      * @param summaryText  Text for the options quick representation
      * @param fullText  Full previewed text in the dialogue box - For CaR this will also be the message sent. The "call"
-     * @param response  existing node or 'render' that is navigated to by this option.
+     * @param response  existing node or 'render' that is navigated to by this option. Defaults to the sender that this option is attached to.
      * @param senderName - name attached to the "caller" (first person 99% of the time), defaults to config.DEFAULT_DIALOGUE_SENDER if none provided.
      * @param responderName - name attached to the "response" text, if we're creating a new node for it.
      * @returns Ref to the "response" child.

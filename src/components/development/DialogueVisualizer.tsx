@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
-import root from "@/scenes/Porch/dialogues/viya_dialogue"; // Swap this out to test different dialogue components.
+import root from "@/tests/dialogues/intro_dia"; // Swap this out to test different dialogue components.
 
 function evalNodeNext(node: DialogueNode | (() => DialogueNode)) {
     if (typeof node == "function") {
@@ -37,7 +37,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
 
             {/* Handle loopbacks */}
             {isLoop ? (
-                <div style={{ color: "red", "font-style": "italic" }}>↪ Link to: {node.id}</div>
+                <span style={{ color: "red", "font-style": "italic" }}>(Link: [{node.id}])</span>
             ) : (
                 <>
                     {/* Render the next node directly below */}
@@ -51,7 +51,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
                                 <div>
                                     <strong>→ {opt.summaryText}</strong> ({opt.fullText}) {opt.onlyShowWhen && (<span style="color: purple">[Conditionally Rendered]</span>)}
                                     <div style={{"padding-left": `${20 * (depth + 1)}px`}}>
-                                        {opt.next ? renderDialogueTree(opt.next, visited, depth + 1) : "🍂"}
+                                        {opt.next ? renderDialogueTree(evalNodeNext(opt.next), visited, depth + 1) : "🍂"}
                                     </div>
                                 </div>
                             ))}

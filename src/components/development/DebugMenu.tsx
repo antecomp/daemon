@@ -1,11 +1,13 @@
 import { MusicManager } from "@/core/audio/musicManager";
 import { startBattle } from "@/core/battle/battleManager";
+import { DialogueService } from "@/core/dialogue/dialogueService";
 import { OPPONENT_ANTHOUSAI } from "@/data/battles/anthousai";
 import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
 import { playTextOverlay, TextOverlaySequence } from "@/layers/textoverlay/TextOverlay";
+import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
@@ -51,6 +53,8 @@ export default function DebugMenu() {
             <h2>TEXT SCENE</h2>
             <button onclick={() => playTextOverlay(eggggg)}>egg</button>
             <button onclick={() => playTextOverlay(dmnintro)}>intro</button>
+            <h3>DIALOGUES</h3>
+            <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
         </div>
     )
 }
