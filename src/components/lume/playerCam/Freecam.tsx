@@ -42,10 +42,10 @@ export default function Freecam(props: FreecamProps) {
 
         let newYaw = yaw;
         let newPitch = pitch;
-        if (keysdown.has("arrowleft")) newYaw += rotSpeed * dtSec;
-        if (keysdown.has("arrowright")) newYaw -= rotSpeed * dtSec;
-        if (keysdown.has("arrowup")) newPitch -= rotSpeed * dtSec;
-        if (keysdown.has("arrowdown")) newPitch += rotSpeed * dtSec;
+        if (keysdown.has("j")) newYaw += rotSpeed * dtSec;
+        if (keysdown.has("l")) newYaw -= rotSpeed * dtSec;
+        if (keysdown.has("i")) newPitch -= rotSpeed * dtSec;
+        if (keysdown.has("k")) newPitch += rotSpeed * dtSec;
 
         // clamp pitch.
         newPitch = clamp(newPitch, -MAX_ROT, MAX_ROT);
