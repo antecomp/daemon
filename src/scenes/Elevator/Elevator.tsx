@@ -78,7 +78,7 @@ export default function Elevator() {
                 //@ts-expect-error
                 position={(x,y,z, _t, dt) => [
                     // 0, -25, isDoorOpen() ? lerp(z, 9, 2 * dt/1000) : lerp(z, 0, 2 * dt / 1000)
-                    0, -25, isDoorOpen() ? lerp(z, 9, 2 * dt/1000) : 0
+                    0, -25, isDoorOpen() ? lerp(z, 9, 1 * dt/1000) : 0
                 ]}
 
                 size="5 25 25"
@@ -99,7 +99,7 @@ export default function Elevator() {
                 //@ts-expect-error
                 position={(x,y,z, _t, dt) => [
                     // 0, -25, isDoorOpen() ? lerp(z, -34, 2 * dt/1000) : lerp(z, -25, 2 * dt / 1000)
-                    0, -25, isDoorOpen() ? lerp(z, -34, 2 * dt/1000) : -25
+                    0, -25, isDoorOpen() ? lerp(z, -34, 1 * dt/1000) : -25
                 ]}
 
                 size="5 25 25"
@@ -188,6 +188,7 @@ export default function Elevator() {
                     () => addLogMessage("I shouldn't be talking to elevators."),
                     () => addLogMessage("It's an elevator, this goes to up to the skybar.")
                 ]}
+                showHoverBorder={!isDoorOpen()}
             >
                 <lume-plane
                     receive-shadow="false"
