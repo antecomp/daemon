@@ -5,11 +5,13 @@ import {createSignal, onCleanup, onMount} from 'solid-js'
 
 interface FreecamProps {
     sceneRef: Scene
+    rotationSpeed?: number,
+    movementSpeed?: number
 }
 
-const ROT_SPEED = 50;
+const DEFAULT_ROT_SPEED = 50;
 const MAX_ROT = 90;
-const MOVEMENT_SPEED = 3;
+const DEFAULT_MOVEMENT_SPEED = 3;
 
 export default function Freecam(props: FreecamProps) {
     const [basePos, setBasePos] = createSignal<XYZ>([0, 0, 0]);
@@ -32,9 +34,9 @@ export default function Freecam(props: FreecamProps) {
         const [x, y, z] = basePos();
         const { yaw, pitch } = baseOri();
 
-        let moveSpeed = MOVEMENT_SPEED;
-        let rotSpeed = ROT_SPEED;
-        if (keysdown.has("shift")) {
+        let moveSpeed = props.movementSpeed ?? DEFAULT_MOVEMENT_SPEED;
+        let rotSpeed = props.rotationSpeed ?? DEFAULT_ROT_SPEED;
+        if (keysdown.has("shift")) { // "sprint"
             moveSpeed *= 5;
             rotSpeed *= 2;
         }

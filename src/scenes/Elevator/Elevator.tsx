@@ -1,8 +1,9 @@
 import Interactable from "@/components/lume/Interactable";
-import Freecam from "@/components/lume/playerCam/Freecam";
+// import Freecam from "@/components/lume/playerCam/Freecam";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import applyDGShader from "@/core/lume/dgRender";
 import lerp from "@/utils/lerp";
+import sleep from "@/utils/sleep";
 import { addLogMessage } from "@/views/main/ui/EventLog";
 import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
 import { Scene } from "lume"
@@ -19,18 +20,19 @@ export default function Elevator() {
     })
 
     const [isDoorOpen, setIsDoorOpen] = createSignal(false);
-
-    // setTimeout(() => {setIsDoorOpen(true)}, 2000);
-    (window as any).setElevator = setIsDoorOpen;
+    const [isElevatorCalled, setIsElevatorCalled] = createSignal(false);
 
     function callElevator(_uv: any, mouse: Vector2) {
-        if(!isDoorOpen()) {
+        if(!isElevatorCalled()) {
             spawnMenu(
                 "Call the elevator?",
                 [
                     {
                         label: "Yes", 
-                        onSelect(){setIsDoorOpen(true)}
+                        onSelect(){
+                            setIsElevatorCalled(true);
+                            sleep(3000).then(() => setIsDoorOpen(true))
+                        }
                     },
                     {label: "No"}
                 ],
@@ -188,7 +190,7 @@ export default function Elevator() {
                     () => addLogMessage("I shouldn't be talking to elevators."),
                     () => addLogMessage("It's an elevator, this goes to up to the skybar.")
                 ]}
-                showHoverBorder={!isDoorOpen()}
+                showHoverBorder={!isElevatorCalled()}
             >
                 <lume-plane
                     receive-shadow="false"
