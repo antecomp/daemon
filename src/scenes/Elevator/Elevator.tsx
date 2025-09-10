@@ -1,7 +1,7 @@
 import Interactable from "@/components/lume/Interactable";
 import Freecam from "@/components/lume/playerCam/Freecam";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader, { useDGShader } from "@/core/lume/dgRender";
 import lerp from "@/utils/lerp";
 import sleep from "@/utils/sleep";
 import { addLogMessage } from "@/views/main/ui/EventLog";
@@ -17,12 +17,13 @@ import elevator_buttons_lit from './models/elevator_buttons_white.png'
 
 export default function Elevator() {
     let sceneRef!: Scene
+    useDGShader(() => sceneRef)
 
     const {spawnMenu} = useSceneMenu();
 
-    onMount(() => {
-        requestAnimationFrame(() => applyDGShader(sceneRef))
-    })
+    // onMount(() => {
+    //     requestAnimationFrame(() => applyDGShader(sceneRef))
+    // })
 
     const [isDoorOpen, setIsDoorOpen] = createSignal(false);
     const [isElevatorCalled, setIsElevatorCalled] = createSignal(false);

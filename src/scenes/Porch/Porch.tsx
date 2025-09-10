@@ -11,14 +11,15 @@ import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Billboard from "@/components/lume/Billboard";
-import applyDGShader from '@/core/lume/dgRender';
+import applyDGShader, { useDGShader } from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 
 export default function Porch() {
-    let sceneRef: Scene | undefined;
+    let sceneRef!: Scene;
+    useDGShader(() => sceneRef);
 
     const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -33,11 +34,6 @@ export default function Porch() {
     let mapRef: ObjModel | undefined;
 
     onMount(() => {
-        if(sceneRef) {
-            requestAnimationFrame(() => {
-                applyDGShader(sceneRef);
-            });
-        }
         if(mapRef) {
             applyShadows(mapRef);
         }

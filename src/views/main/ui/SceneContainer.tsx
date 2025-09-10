@@ -17,10 +17,8 @@ import pr_chat from "@/assets/ui/cursors/pr_chat.png"
 import pr_obs from "@/assets/ui/cursors/pr_obs.png"
 import pr_stock from "@/assets/ui/cursors/pra.png"
 
-// THis will move to some sort of game store (persistent) later.
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 (window as any).DG_setScene = setCurrentScene;
-
 
 // Changes triggered by PlayerCam
 const [hoverCursor, setHoverCursor] = createSignal<AssetURL>();
