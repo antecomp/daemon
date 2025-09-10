@@ -1,0 +1,22 @@
+#scene-fade-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    /* transition: background-color 1ms; */
+    background-color: transparent;
+    pointer-events: none; /* Don't block input when OFF */
+    z-index: 50; /* Ensure overlay sits above the scene */
+}
+
+#scene-fade-overlay.ov-fading-out,
+#scene-fade-overlay.ov-faded {
+    background-color: black;
+    pointer-events: auto; /* Block input while fading or black */
+}
+
+#scene-fade-overlay.ov-fading-in {
+    background-color: transparent;
+    pointer-events: auto; /* Keep blocking until fade-in completes */
+}

@@ -14,6 +14,8 @@ import elevator_cab_obj from './models/elevator_shaft.obj'
 import elevator_cab_mtl from './models/elevator_shaft.mtl'
 import elevator_buttons from './models/elevator_buttons.png'
 import elevator_buttons_lit from './models/elevator_buttons_white.png'
+import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
+import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 
 export default function Elevator() {
     let sceneRef!: Scene
@@ -37,7 +39,10 @@ export default function Elevator() {
                         label: "Yes", 
                         onSelect(){
                             setIsElevatorCalled(true);
-                            sleep(3000).then(() => setIsDoorOpen(true))
+                            sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
+                                await sleep(10000);
+                                SceneFadeManager.fadeTransition(() => setCurrentScene("BarScene"))
+                            })
                         }
                     },
                     {label: "No"}

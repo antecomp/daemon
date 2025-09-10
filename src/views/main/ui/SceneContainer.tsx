@@ -16,14 +16,21 @@ import { AssetURL } from "@/extra.types";
 import pr_chat from "@/assets/ui/cursors/pr_chat.png"
 import pr_obs from "@/assets/ui/cursors/pr_obs.png"
 import pr_stock from "@/assets/ui/cursors/pra.png"
+import SceneFadeOverlay from "./SceneFadeOverlay/SceneFadeOverlay";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 (window as any).DG_setScene = setCurrentScene;
 
-// Changes triggered by PlayerCam
+/**
+ * Ephemeral hover cursor override set by scene elements (e.g., PlayerCam).
+ *
+ * When defined, this cursor takes precedence over the interaction-mode cursor.
+ * It is cleared automatically when the scene changes.
+ */
 const [hoverCursor, setHoverCursor] = createSignal<AssetURL>();
 export {setHoverCursor};
 
+// Helper for scene to resolve the current cursor to display.
 function currentCursor(): AssetURL {
     if(hoverCursor()) return hoverCursor()!;
     switch(currentInteractionMode()) {
@@ -36,11 +43,24 @@ function currentCursor(): AssetURL {
     }
 }
 
-// Add any other side effects / resets that we should do when the scene changes here!
+/*
+ * Scene-change side effects.
+ * Currently just resets any transient hover cursor so the next scene starts clean.
+ * Add further scene-change resets here as needed.
+ */
 createEffect(on(currentScene, () => {
     setHoverCursor(undefined);
 }))
 
+/**
+ * SceneContainer
+ *
+ * Provides the main scene viewport wrapper and related state:
+ * - Renders the current scene component within a framed container
+ * - Chooses cursor based on interaction mode or ephemeral hover state
+ * - Exposes a scene setter to update active lume scene.
+ * - Wraps scene rendering with Error/Suspense boundaries for lazy loading of scene components.
+ */
 export default function SceneContainer() {
     return (
         <CornerRect
@@ -75,6 +95,9 @@ export default function SceneContainer() {
                 <Show when={DialogueService.currentDialogueOverlay()}>
                     <div id="dialogue-overlay" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
                 </Show>
+
+                <SceneFadeOverlay/>
+
                 </SceneMenuWrapper>
             </CornerRect>
     )
