@@ -18,6 +18,8 @@ const [sceneFadeState, setSceneFadeState] = createSignal<SceneFadeState>(SceneFa
 const currentSceneFadeState = () => sceneFadeState();
 
 async function fadeSceneOut() {
+    // TODO/Note - this simple guard makes me nervous when it comes to resolving promises, 
+    // come up with a generally better lock/queue system plz.
     if(sceneFadeState() != SceneFadeState.OFF) return;
     setSceneFadeState(SceneFadeState.FADING_OUT)
     await sleep(SCENE_FADE_DELAY);
@@ -25,16 +27,19 @@ async function fadeSceneOut() {
 }
 
 async function fadeSceneIn() {
-    if(sceneFadeState() != SceneFadeState.FADED) return;
+     // Commented as we may want to cancel an ongoing fade. 
+     // Rely on promises/status checks instead of harshly preventing a early fade in.
+    // if(sceneFadeState() != SceneFadeState.FADED) return;
     setSceneFadeState(SceneFadeState.FADING_IN);
     await sleep(SCENE_FADE_DELAY);
     setSceneFadeState(SceneFadeState.OFF)
 }
 
 // Simple helper to wrap some action around a scene fade.
+// TODO: May have bugs if multiple calls to fadeTransitions are done rapidly. Consider adding a lock + warning
 async function fadeTransition(action: () => any | (() => Promise<any>)) {
     await fadeSceneOut();
-    await action();
+    await action(); // TODO: add try/finally here to always fade scene in, even on rejection from action.
     await fadeSceneIn();
 }
 
@@ -43,10 +48,10 @@ export const SceneFadeManager = {
     // Helper to fade, sleep, fade?
 }
 
+// TODO/NOTE: It would be more robust to somehow listen for transitionend on the actual element, but
+// im unsure how to get the ref up to the methods above nicely to do that.
+
 export default function SceneFadeOverlay() {
-
-    (window as any).testfade = SceneFadeManager;
-
     return (
             <div 
                 id="scene-fade-overlay"
