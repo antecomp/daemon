@@ -16,6 +16,7 @@ import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
+import { MusicManager } from '@/core/audio/musicManager';
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -98,13 +99,17 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
+                        const dialogueMusic = MusicManager.pushTrack({src: 'PWL/pw_celesta_meloD.mp3'}).id
                         startDialogueWithCamOvr(
                             cameraController,
                             [-183, -322, 34],
                             {yaw: -84, pitch: 0},
                             viya_root,
                             true,
-                        ).then(() => console.log("Viya dialogue done!"))
+                        ).finally(() => {
+                            console.log("Viya dialogue done!");
+                            MusicManager.removeTrack(dialogueMusic)
+                        })
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)
             ]}
