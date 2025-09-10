@@ -1,5 +1,5 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
-import { Gimbal } from "@/extra.types";
+import { Orientation } from "@/extra.types";
 import { isSceneLocked } from "@/layers/UILayerStore";
 import lerp from "@/utils/lerp";
 import { setHoverCursor } from "@/views/main/ui/SceneContainer";
@@ -59,8 +59,8 @@ function getCameraTransform(
  * @returns A JSX element representing the camera system.
  */
 export default function PlayerCam(props: {
-    basePos: XYZ, baseOri: Omit<Gimbal, "roll">, 
-    overridePos?: XYZ, overrideOri?: Omit<Gimbal, "roll">
+    basePos: XYZ, baseOri: Orientation, 
+    overridePos?: XYZ, overrideOri?: Orientation
     animate?: boolean;
     speed?: number
     maxYaw: number,
@@ -126,7 +126,7 @@ export default function PlayerCam(props: {
     }
 
     function handleMouseMove(e: MouseEvent) {
-        // Omitting override from guard on purpose, we want to lerp back to the most recent mouse position on end.
+        // Keep guard - feels for natural that the camera moves after we move the mouse, not right when the lock is released.
         if(isSceneLocked()) return;
         const rect = props.sceneRef.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -165,6 +165,8 @@ export default function PlayerCam(props: {
             )
         }
 
+        // stores the intermediate (lerped) state of the mouse offset for smooth camera movement.
+        // it's used when animation is off and we need to lerp *just* the offset but not the base position.
         let mouseInter = {yaw: 0, pitch: 0};
 
         bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {

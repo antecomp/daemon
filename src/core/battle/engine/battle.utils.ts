@@ -2,6 +2,7 @@ import { stopMoveHighlight } from "../animation/uiAnimations";
 import { Move, MoveContext, MoveMeta, MoveType, PostMoveContext } from "../moves/moves.types";
 import { computeStatusMultipliers } from "../statuses/status.utils";
 import { Actor } from "./actor";
+import { HINT_AMOUNT } from "./battle.config";
 import { MultiplierSet } from "./battle.types";
 
 /**
@@ -12,7 +13,7 @@ import { MultiplierSet } from "./battle.types";
 export const generateHint = (seq: MoveMeta[]): (MoveMeta | undefined)[] => {
     const indices = new Set<number>
 
-    while (indices.size < 3) {
+    while (indices.size < HINT_AMOUNT) {
         indices.add(Math.floor(Math.random() * seq.length));
     }
 

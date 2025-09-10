@@ -84,7 +84,7 @@ export default function Runebuilder(props: RunebuilderProps) {
                                         stroke={props.sequenceBuffer.includes(rune) ? RB_ACTIVE_COLOUR : RB_INACTIVE_COLOUR}
                                         fill="black"
                                         onClick={() => {
-                                            if (!rune.canPerform || rune.canPerform(props.sequenceBuffer)) props.addRune(rune);
+                                            props.addRune(rune);
                                         }}
                                         onMouseEnter={() => showTooltip(() => <MoveTooltipContent {...rune}/>)}
                                         onMouseOut={() => hideTooltip()}

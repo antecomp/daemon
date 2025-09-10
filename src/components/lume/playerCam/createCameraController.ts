@@ -1,4 +1,4 @@
-import { Gimbal } from "@/extra.types";
+import { Orientation } from "@/extra.types";
 import { XYZ } from "./PlayerCam";
 import { createMemo, createSignal } from "solid-js";
 
@@ -11,18 +11,18 @@ import { createMemo, createSignal } from "solid-js";
  */
 export default function createCameraController(
     initialPos: XYZ,
-    initialOri: Omit<Gimbal, "roll">,
+    initialOri: Orientation,
     maxTilts: {maxYaw: number, maxPitch: number}
 ) {
     const [basePos, setBasePos] = createSignal(initialPos);
     const [baseOri, setBaseOri] = createSignal(initialOri);
     const [shouldAnim, setShouldAnim] = createSignal(false);
     const [overridePos, setOverridePos] = createSignal<XYZ | undefined>();
-    const [overrideOri, setOverrideOri] = createSignal<Omit<Gimbal, "roll"> | undefined>();
+    const [overrideOri, setOverrideOri] = createSignal<Orientation | undefined>();
     const [maxYaw, setMaxYaw] = createSignal(maxTilts.maxYaw);
     const [maxPitch, setMaxPitch] = createSignal(maxTilts.maxPitch);
 
-    function setOverrides(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean) {
+    function setOverrides(pos?: XYZ, ori?: Orientation, anim?: boolean) {
         pos && setOverridePos(pos);
         ori && setOverrideOri(ori);
         (anim != undefined) && setShouldAnim(anim);
@@ -34,7 +34,7 @@ export default function createCameraController(
         setOverridePos(undefined);
     }
 
-    function setBase(pos?: XYZ, ori?: Omit<Gimbal, "roll">, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
+    function setBase(pos?: XYZ, ori?: Orientation, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
         (anim != undefined) && setShouldAnim(anim);
         pos && setBasePos(pos);
         ori && setBaseOri(ori);

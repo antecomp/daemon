@@ -7,7 +7,7 @@ import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
 import { playTextOverlay, TextOverlaySequence } from "@/layers/textoverlay/TextOverlay";
-import root from "@/scenes/BarScene/dialogues/man_dialogue";
+import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
@@ -35,7 +35,7 @@ export default function DebugMenu() {
         <div id="debug-menu">
             <h2>Scenes</h2>
             <For each={[
-                "Liminality", "Porch", "AnotherScene", "DefaultScene", "Sponza", "Doors", "BarScene"
+                "Liminality", "Porch", "AnotherScene", "DefaultScene", "Sponza", "Doors", "BarScene", "Crumbling", "Elevator"
             ]}>
                 {sceneName => <button onClick={() => setCurrentScene(sceneName)}>{sceneName}</button>}
             </For>
@@ -53,8 +53,8 @@ export default function DebugMenu() {
             <h2>TEXT SCENE</h2>
             <button onclick={() => playTextOverlay(eggggg)}>egg</button>
             <button onclick={() => playTextOverlay(dmnintro)}>intro</button>
-            <h2>DIALOGUE</h2>
-            <button onClick={() => DialogueService.startDialogue(root)}>Man Dialogue</button>
+            <h3>DIALOGUES</h3>
+            <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
         </div>
     )
 }

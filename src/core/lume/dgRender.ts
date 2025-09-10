@@ -1,10 +1,12 @@
 import { FOV, SCENE_DIMENSIONS } from "@/config";
 import { Scene, toRadians } from "lume";
+import {onMount} from "solid-js"
 import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import pp_fragshader from "@/shaders/post-processing/dg.frag.glsl"
 import pp_vertshader from "@/shaders/post-processing/pass.vert.glsl"
 import { Vector2 } from "three";
 import { hoveredItem } from "@/components/lume/Interactable";
+import sleep from "@/utils/sleep";
 
 function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
     
@@ -43,6 +45,7 @@ function updateOutlineUniforms(pass: OutlinePass) {
 export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable") {
     if(!scene.glRenderer) {
         console.warn('[applyDGShader] Scene GL instance not ready yet.');
+        throw new Error("[applyDGShader] Scene GL instance not ready yet. scene.glRenderer could not be found.");
         return;
     };
 
@@ -56,7 +59,8 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 	composer.setSize(WIDTH, HEIGHT);
 
     // Also lock renderer size and pixel ratio
-	scene.glRenderer.setPixelRatio(1);
+	scene.glRenderer.setPixelRatio(window.devicePixelRatio);
+    //was originally set to 1, but (window.devicePixelRatio) fixes the weird artifacts on Mac DPI
 	scene.glRenderer.setSize(WIDTH, HEIGHT, false); // false = don't update canvas.style
 
     // Some constants and data needed for shader logic...
@@ -102,4 +106,18 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 
 		composer.render();
 	};
+}
+
+export const useDGShader = (getScene: () => Scene) => {
+
+    const x = () => {
+        // console.log('attempting'); // seems to only play onceundefined
+        requestAnimationFrame(() => {
+            const s = getScene();
+            if (!s) sleep(10).then(x) // retry
+            else applyDGShader(s);
+        })
+    }
+
+    onMount(() => x())
 }

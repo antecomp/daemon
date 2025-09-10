@@ -1,4 +1,4 @@
-import { DialogueNode, DialogueOptionConfig } from "./dialogueNode.types";
+import { DialogueContext, DialogueNode, DialogueRender } from "./dialogueNode.types";
 import { DEFAULT_DIALOGUE_SENDER } from "../../config";
 
 let nodeCounter = 0;
@@ -10,7 +10,7 @@ let nodeCounter = 0;
  * @param name Name of the individual sending the message
  * @returns Reference to the created dialogue node.
  */
-export function createDialogueNode(render: DialogueNode['render'], name: string): DialogueNode {
+export function createDialogueNode(render: DialogueRender, name: string): DialogueNode {
     const id = `node-${nodeCounter++}`
 
     const node: DialogueNode = {
@@ -35,7 +35,7 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         // Helper function to automatically attach a child as an option.
-        addChildAsOption(summaryText, fullText, renderOrNode, name?: string, config?: DialogueOptionConfig) {
+        addChildAsOption(summaryText, fullText, renderOrNode, name, config) {
             // Attach Existing
             if(typeof renderOrNode === 'object' && 'id' in renderOrNode) {
                 this.options.push({
@@ -58,20 +58,20 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
 
-        addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, config) {
+        addCAROptionChild(summaryText, fullText, response, senderName, responderName, config) {
             const callNode = createDialogueNode(fullText, senderName ?? DEFAULT_DIALOGUE_SENDER);
             this.options.push({
                 summaryText, fullText, next: callNode, ...config
             })
 
             // Attach existing node as response
-            if(typeof responseAsRenderOrNode === 'object' && 'id' in responseAsRenderOrNode) {
-                callNode.next = responseAsRenderOrNode
-                return responseAsRenderOrNode
+            if(typeof response === 'object' && 'id' in response) {
+                callNode.next = response
+                return response
             }
 
             // Either infer response is from the name associated with just before the options, or explicitely take one.
-            const responseAsChild = createDialogueNode(responseAsRenderOrNode, responderName ?? this.name)
+            const responseAsChild = createDialogueNode(response, responderName ?? this.name)
             callNode.next = responseAsChild;
 
             return responseAsChild;
@@ -109,14 +109,14 @@ export function createDialogueNode(render: DialogueNode['render'], name: string)
         },
 
         addOptions(options) {
-            return options.map(({ summaryText, fullText, renderOrNode, name, optionConfig }) => 
-                this.addChildAsOption(summaryText, fullText, renderOrNode, name, optionConfig)
+            return options.map(({ summaryText, fullText, child, name, optionConfig }) => 
+                this.addChildAsOption(summaryText, fullText, child, name, optionConfig)
             );
         },
 
         addCAROptions(carOptions) {
-            return carOptions.map(({ summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig }) => 
-                this.addCAROptionChild(summaryText, fullText, responseAsRenderOrNode, senderName, responderName, optionConfig)
+            return carOptions.map(({ summaryText, fullText, response, senderName, responderName, optionConfig }) => 
+                this.addCAROptionChild(summaryText, fullText, response, senderName, responderName, optionConfig)
             );
         },
 
@@ -188,10 +188,32 @@ export function createInlineDialogueTree(rootRender: DialogueNode['render'], roo
 }
 
 /** Simple helper to collapse a dialogue nodes next (either a ref to another node, or a function that returns the ref) to just the ref */
-export function evalDialogueNodeNext(next?: DialogueNode | (() => DialogueNode)) {
+export function evalDialogueNodeNext(next: DialogueNode['next'], ctx?: DialogueContext) {
     if (typeof next == "function") {
-        return next()
+        return next(ctx)
     } else {
         return next;
     }
 }
+
+/** Empty string "" indicates to Hermes that no message should be shown. 
+ * This can be used to traverse the dialogue tree without adding new messages,
+ * for example this is useful when questions need to be chained together, without a "message" being sent for each piece;
+ * @example
+ * const whatFork = questionLoopback.addChildAsOption("What...", "What...", EMPTY_RENDER);
+ * whatFork.addChildAsOption( questions can go here...)
+ *  */
+export const EMPTY_RENDER = "";
+
+export function createEmptyDialogueNode() {
+    return createDialogueNode(EMPTY_RENDER, EMPTY_RENDER);
+}
+
+export function isDialogueNodeEmpty(node: DialogueNode) {
+    // functional version shouldn't be used to encode to render, that's super risky with logic.
+    return node.render == EMPTY_RENDER;
+}
+
+
+/** Special Sender Name that indicates to the message renderer to format the message in a gray box instead of as a message. */
+export const VISUALIZER = "VISUALIZER";

@@ -66,7 +66,7 @@ export default function Doors() {
                 sceneRef={sceneRef}
             />
 
-            <Interactable onClick={doorClickHandler}>
+            <Interactable onClick={doorClickHandler} showHoverBorder>
                 <lume-plane
                     align-point="0.5 0.5"
                     mount-point="0.5 0.5"
@@ -83,7 +83,7 @@ export default function Doors() {
                     ]}
                 />
             </Interactable>
-            <Interactable onClick={doorClickHandler}>
+            <Interactable onClick={doorClickHandler} showHoverBorder>
                 <lume-plane
                     align-point="0.5 0.5"
                     mount-point="0.5 0.5"

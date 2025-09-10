@@ -1,4 +1,4 @@
-import { DialogueNode } from "./dialogueNode.types";
+import { DialogueContext, DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
 import { MainUILock } from "@/layers/ui-layers.types";
 import Hermes from "@/layers/hermes/Hermes";
@@ -11,18 +11,15 @@ import {createSignal} from "solid-js";
  * @property canCloseDialogueEarly - Indicates if the dialogue can be closed early.
  * @property lock - The lock state associated with the dialogue.
  * @property blockBehind - Indicates if interactions with layers behind this one are blocked.
- * @property cameraHijack - Subject to change. Contains information about camera hijacking.
  */
 export type StartDialogueOptions = {
     overlay?: string, 
-    canCloseDialogueEarly?: boolean, 
     lock?: MainUILock,
     blockBehind?: boolean,
-    ctx?: Record<string, any>
+    ctx?: DialogueContext 
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
-const [canCloseDialogueEarly, setCanCloseDialogueEarly] = createSignal(false);
 
 let activeDialogue = null as string | null;
 let dialogueCompletionResolver: (() => void) | null = null;
@@ -42,7 +39,6 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     });
 
     if(options?.overlay) setCurrentDialogueOverlay(options.overlay);
-    setCanCloseDialogueEarly(options?.canCloseDialogueEarly ?? false);
 
     return new Promise<void>((resolve) => {
         dialogueCompletionResolver = resolve;
@@ -50,10 +46,10 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 }
 
 function endDialogue() {
-    if (!activeDialogue) throw new Error("No active dialogue to end.");
+    // soft warn instead of a full error - a conflict shouldn't crash the game, but is worth warning us about.
+    if (!activeDialogue) {console.warn("Close Dialogue Called, but no active dialogue was detected!"); return;}
 
     setCurrentDialogueOverlay(null);
-    setCanCloseDialogueEarly(false);
     popUILayer(activeDialogue);
 
     activeDialogue = null;
@@ -77,7 +73,6 @@ export const DialogueService = {
      */
     endDialogue, 
     
-    canCloseDialogueEarly,
     currentDialogueOverlay, 
     setCurrentDialogueOverlay 
 };

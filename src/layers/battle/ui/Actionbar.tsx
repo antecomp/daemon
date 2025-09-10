@@ -69,11 +69,17 @@ export default function Actionbar(props: ActionbarProps) {
     const [sequenceBuffer, setSequenceBuffer] = createSignal<PlayerMoveMeta[]>([]);
 
     const addRune = (toAdd: PlayerMoveMeta) => {
-        if(sequenceBuffer().length == SEQUENCE_LENGTH) return;
         if(battleUIState() != WAITING) return;
 
         setSequenceBuffer(prev => {
-            const rtn = (prev.some(item => item == toAdd)) ? prev: [...prev, toAdd] // Add (enforce unique).
+            // Validate Rune Before Adding...
+            if (prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full.
+            if (prev.some(item => item == toAdd)) return prev; // Enforce Unique.
+            if (toAdd.canPerform && !toAdd.canPerform(prev)) return prev; // Check if rune has perform condition, and it's eval.
+
+            // TODO: Add visual indication of rune selection rejection (when any of the above returns occur).
+
+            const rtn = [...prev, toAdd];
             if(rtn.length == 5) {
                 setBattleUIState(READY)
                 console.log(battleUIState());

@@ -1,6 +1,7 @@
 import { onMount } from "solid-js";
 import dogtag_first from "./assets/dogtag_first.png";
 import dogtag_last from "./assets/dogtag_last.png";
+import { EMPTY_RENDER, VISUALIZER } from "@/core/dialogue/dialogueNode";
 
 export interface MessageBoxProps {
     name: string;
@@ -20,9 +21,9 @@ export default function MessageBox (props: MessageBoxProps) {
     ref && ref.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
-  if(props.text === "") return; // Add nothing if no message text provided (can be used for traversal-only dialogue nodes/chaining)
+  if(props.text === EMPTY_RENDER) return; // Add nothing if no message text provided (can be used for traversal-only dialogue nodes/chaining)
 
-  if(props.name === "VISUALIZER") return (
+  if(props.name === VISUALIZER) return (
     <div class="visualizer-body message-body" ref={ref}>
         <p>{typeof props.text === "string" ? props.text : props.text()}</p>
     </div>

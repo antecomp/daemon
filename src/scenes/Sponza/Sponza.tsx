@@ -3,6 +3,7 @@ import { Scene } from "lume";
 import {onMount} from "solid-js";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import applyDGShader from "@/core/lume/dgRender";
+import Freecam from "@/components/lume/playerCam/Freecam";
 
 export default function Sponza() {
     let sceneRef: Scene | undefined;
@@ -25,7 +26,8 @@ export default function Sponza() {
             perspective="800"
         >
 
-        <PlayerCam basePos={[-5, -52, 4]} baseOri={{pitch: 0, yaw: 73}} sceneRef={sceneRef!} maxPitch={25} maxYaw={25}/>
+        {/* <PlayerCam basePos={[-5, -52, 4]} baseOri={{pitch: 0, yaw: 73}} sceneRef={sceneRef!} maxPitch={25} maxYaw={25}/> */}
+        <Freecam sceneRef={sceneRef!}/>
 
             <lume-ambient-light intensity={8} />
 

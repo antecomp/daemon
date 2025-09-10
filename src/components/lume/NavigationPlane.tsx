@@ -1,4 +1,4 @@
-import { Gimbal, Orientation } from "@/extra.types";
+import { Orientation } from "@/extra.types";
 import { CameraController } from "./playerCam/createCameraController";
 import { XYZ } from "./playerCam/PlayerCam";
 import { Plane, toDegrees } from "lume";
@@ -11,7 +11,7 @@ import nav_cursor from "@/assets/ui/cursors/nav.png"
 export interface NavigationPlaneData {
     cameraController: CameraController,
     newPos?: XYZ
-    newOri?: Omit<Gimbal, "roll">
+    newOri?: Orientation
     anim?: boolean
     planePosition: XYZ 
     tilts?: {maxYaw: number, maxPitch: number}
@@ -52,7 +52,7 @@ export default function NavigationPlane(props: NavigationPlaneData) {
 
     const getPlaneSize = () => {
         // Hide plane when we are at it's desired location. 
-        // Hacky but avoids weird ref detach issues while stopping the raycaster from hitting.
+        // Hacky but avoids weird ref detach issues while stopping the raycaster from hitting. (Visibility doesn't stop raycast!)
         if(props.cameraController.currentBase().pos.toString() == props.newPos?.toString()) return `0 0`;
 
         if(Array.isArray(props.planeSize)) { // [x,y]

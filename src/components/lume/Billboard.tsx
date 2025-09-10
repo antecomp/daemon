@@ -28,7 +28,7 @@ const generateAlphaMask = (image: HTMLImageElement) => {
 }
 
 /**
- * A SolidJS component that renders a (yaw only) billboard as a LUME plane.
+ * Yaw Only billboard as a LUME plane.
  * The billboard displays a texture (from input `texture` asseturl) at some `scale` (scale = width, height scaled automatically to retain aspect ratio), 
  * billboard handle interactions such as clicks and hovers or specific InteractionMode interactions.
  * 
@@ -100,7 +100,6 @@ export default function Billboard(props: {
             maskData = generateAlphaMask(img);
         }
 
-        // Replace / Extend me with interactions config.
         if(props.onHover) {
             (me.three as InteractableObject3D).userData.onHover = (uv, mouse) => isOpaque(uv!) && props.onHover?.(uv, mouse)
         }
@@ -120,6 +119,8 @@ export default function Billboard(props: {
             texture={props.texture}
             position={props.position}
             ref={me}
+            // Makes transparent parts of the image transparent while maintaining opacity of other pieces. 
+            // Without this our billboard has black background.
             opacity="0.9999999999999999" // Weird artifacts when lower than this.
 
             cast-shadow="false"

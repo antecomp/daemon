@@ -92,7 +92,7 @@ export class Actor {
             }) || [];
 
             this.statuses.set(effectName, updatedEffects);
-            console.log(`${this.name}'s ${effectName} effects have been extended by ${amount} turns.`);
+            //console.log(`${this.name}'s ${effectName} effects have been extended by ${amount} turns.`);
         }
     }
     

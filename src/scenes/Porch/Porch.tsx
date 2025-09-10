@@ -11,14 +11,16 @@ import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Billboard from "@/components/lume/Billboard";
-import applyDGShader from '@/core/lume/dgRender';
+import applyDGShader, { useDGShader } from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
+import { MusicManager } from '@/core/audio/musicManager';
 
 export default function Porch() {
-    let sceneRef: Scene | undefined;
+    let sceneRef!: Scene;
+    useDGShader(() => sceneRef);
 
     const [showRabbit, setShowRabbit] = createSignal(true);
 
@@ -33,11 +35,6 @@ export default function Porch() {
     let mapRef: ObjModel | undefined;
 
     onMount(() => {
-        if(sceneRef) {
-            requestAnimationFrame(() => {
-                applyDGShader(sceneRef);
-            });
-        }
         if(mapRef) {
             applyShadows(mapRef);
         }
@@ -102,14 +99,17 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
+                        const dialogueMusic = MusicManager.pushTrack({src: 'PWL/pw_celesta_meloD.mp3'}).id
                         startDialogueWithCamOvr(
                             cameraController,
                             [-183, -322, 34],
                             {yaw: -84, pitch: 0},
                             viya_root,
                             true,
-                            {canCloseDialogueEarly: true}
-                        ).then(() => console.log("Viya dialogue done!"))
+                        ).finally(() => {
+                            console.log("Viya dialogue done!");
+                            MusicManager.removeTrack(dialogueMusic)
+                        })
                     },
                     () => addLogMessage(`She is smoking a cigarette.`)
             ]}
@@ -123,7 +123,7 @@ export default function Porch() {
                         interactions={[
                             () => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             () => {
-                                DialogueService.startDialogue(rabbit_root, {ctx: {setShowRabbit}}).then(
+                                DialogueService.startDialogue(rabbit_root, {ctx: {actions: {hideRabbit: () => setShowRabbit(false)}}}).then(
                                     () => console.log("Rabbit dialogue complete")
                                 )
                             },

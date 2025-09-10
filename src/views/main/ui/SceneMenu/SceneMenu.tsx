@@ -10,6 +10,16 @@ import x_option_icon from "./assets/option_icon_x.png"
 
 const MENU_OFFSET = 26;
 
+/**
+ * SceneMenu component displays a context menu at a specified position within a scene.
+ * This component is never added manually; to actually use SceneMenu, reference useSceneMenu in SceneMenuContext.tsx (useSceneMenu + spawnMenu)
+ *
+ * @prop `currentMenu` - The current context menu state, including its position, width, prompt, and options.
+ *
+ * The menu is rendered only when `currentMenu` is defined. It positions itself based on the provided coordinates,
+ * displays a prompt, and lists selectable options. Each option can trigger a callback when selected, and the menu
+ * automatically closes when the mouse leaves its area.
+ */
 export default function SceneMenu(props: {
     currentMenu: SceneContextMenu,
 }) {

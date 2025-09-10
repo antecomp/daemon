@@ -1,11 +1,10 @@
-//import HeadCam from "@/components/lume/HeadCam";
-import WadsCam from "@/components/lume/wadscam";
 import mapobj from './models/map.obj?url';
 import mapmtl from './models/map.mtl?url';
 import thingy from './models/thingy.gltf?url'
 import { onMount, Scene } from "lume";
 import player_ref from '../shared_models/player_ref.fbx?url'
 import applyDGShader from "@/core/lume/dgRender";
+import Freecam from "@/components/lume/playerCam/Freecam";
 
 export default function ThirdScene() {
     let sceneRef: Scene | undefined;
@@ -21,7 +20,7 @@ export default function ThirdScene() {
     return (
         <lume-scene webgl ref={sceneRef} perspective={800}>
             <lume-ambient-light intensity={10} />
-            <WadsCam/>
+            <Freecam sceneRef={sceneRef!}/>
             {/* <HeadCam
                 position="231 -232 -169"
                 baseOrientation={{yaw: -230, pitch: 20}}
