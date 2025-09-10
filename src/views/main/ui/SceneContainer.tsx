@@ -4,15 +4,12 @@ import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
-import { createSignal, ErrorBoundary, Show, Suspense } from "solid-js";
+import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { currentInteractionMode, cycleInteractionMode } from "@/core/interaction/interaction";
 import { loadScene } from "@/scenes/loadScene";
-import { MenuOption, SceneContextMenu } from "./SceneMenu/scenemenu.types";
-import { SceneMenuContext } from "./SceneMenu/SceneMenuContext";
-import SceneMenu from "./SceneMenu/SceneMenu";
-import { Vector2 } from "three";
+import SceneMenuWrapper from "./SceneMenu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
 import { AssetURL } from "@/extra.types";
 
@@ -41,23 +38,14 @@ function currentCursor(): AssetURL {
     }
 }
 
+// Add any other side effects / resets that we should do when the scene changes here!
+createEffect(on(currentScene, () => {
+    setHoverCursor(undefined);
+}))
+
 export default function SceneContainer() {
-
-    const [currentMenu, setCurrentMenu] = createSignal<SceneContextMenu>(null);
-    const spawnMenu = (prompt: string, options: MenuOption[], mouse: Vector2, width?: number) => setCurrentMenu(
-        {
-            prompt, options, width,
-            position: {
-                x: ((mouse.x + 1) / 2) * SCENE_DIMENSIONS.width,
-                y: ((mouse.y + 1) / 2) * SCENE_DIMENSIONS.height
-            }
-        } 
-    );
-    const closeMenu = () => setCurrentMenu(null);
-
     return (
-        <SceneMenuContext.Provider value={{ spawnMenu, closeMenu }}>
-            <CornerRect
+        <CornerRect
                 borderSize={2}
                 borderType="solid white"
                 corners={[tl, tr, bl_scene, br]}
@@ -71,6 +59,7 @@ export default function SceneContainer() {
                     cursor: `url(${currentCursor()}), auto`
                 }}
             >
+                <SceneMenuWrapper>
                 <ErrorBoundary
                     fallback={(err, reset) => (
                         <>
@@ -88,8 +77,7 @@ export default function SceneContainer() {
                 <Show when={DialogueService.currentDialogueOverlay()}>
                     <div id="dialogue-overlay" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
                 </Show>
-                <SceneMenu currentMenu={currentMenu()}/>
+                </SceneMenuWrapper>
             </CornerRect>
-        </SceneMenuContext.Provider>
     )
 }

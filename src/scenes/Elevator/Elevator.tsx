@@ -55,8 +55,7 @@ export default function Elevator() {
             perspective="800"
             shadowmap-type="pcf"
         >
-            {/* <lume-camera-rig align-point="0.5 0.5" distance="100"></lume-camera-rig> */}
-            {/* <Freecam sceneRef={sceneRef}/> */}
+            {/* <Freecam sceneRef={sceneRef} initialPos={[-38, -17, -38]} initialOri={{ yaw: -135, pitch: 0 }}/> */}
             <PlayerCam
                 basePos={[-60, -15, 0]}
                 baseOri={{ yaw: -90, pitch: 3 }}

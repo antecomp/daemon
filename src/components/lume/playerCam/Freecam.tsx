@@ -6,7 +6,9 @@ import {createSignal, onCleanup, onMount} from 'solid-js'
 interface FreecamProps {
     sceneRef: Scene
     rotationSpeed?: number,
-    movementSpeed?: number
+    movementSpeed?: number,
+    initialPos?: XYZ,
+    initialOri?: Orientation
 }
 
 const DEFAULT_ROT_SPEED = 50;
@@ -31,8 +33,8 @@ const DEFAULT_MOVEMENT_SPEED = 3;
  * @param props.sceneRef - Reference to the 3D scene (passed to PlayerCam)
  */
 export default function Freecam(props: FreecamProps) {
-    const [basePos, setBasePos] = createSignal<XYZ>([0, 0, 0]);
-    const [baseOri, setBaseOri] = createSignal<Orientation>({ yaw: 0, pitch: 0 });
+    const [basePos, setBasePos] = createSignal<XYZ>(props.initialPos ?? [0, 0, 0]);
+    const [baseOri, setBaseOri] = createSignal<Orientation>(props.initialOri ?? { yaw: 0, pitch: 0 });
 
     // Hold keypress state with a simple set
     const keysdown = new Set<string>();
