@@ -8,6 +8,8 @@
     background-color: transparent;
     pointer-events: none; /* Don't block input when OFF */
     z-index: 50; /* Ensure overlay sits above the scene */
+
+    
 }
 
 #scene-fade-overlay.ov-fading-out {
@@ -25,22 +27,25 @@
     animation: tiles-out reverse forwards;
 }
 
+/* YES I ENCODED THE PATTERN IN BASE 64 - IT PREVENTS ANY IMAGE LOAD OVERHEAD (WHICH WILL CAUSE REALLY BAD FLICKERING). IT WORKS
+WONDERFULLY I DO NOT CARE IF THIS IS A STRNAGE PRACTICE. THE ORIGINAL IMAGES ARE STILL IN ASSETS IF YOU CARE. ITS JUST A BAYER MATRIX.
+I AM EVIL IN AMAZING AND BENEVOLENT WAYS!!!! */
 @keyframes tiles-out {
 0% { background-image: none; background-color: transparent; }
-6.25% { background-image: url('./assets/f.png'); }
-12.5% { background-image: url('./assets/e.png'); }
-18.75% { background-image: url('./assets/d.png'); }
-25% { background-image: url('./assets/c.png'); }
-31.25% { background-image: url('./assets/b.png'); }
-37.5% { background-image: url('./assets/a.png'); }
-43.75% { background-image: url('./assets/9.png'); }
-50% { background-image: url('./assets/8.png'); }
-56.25% { background-image: url('./assets/7.png'); }
-62.5% { background-image: url('./assets/6.png'); }
-68.75% { background-image: url('./assets/5.png'); }
-75% { background-image: url('./assets/4.png'); }
-81.25% { background-image: url('./assets/3.png'); }
-87.5% { background-image: url('./assets/2.png'); }
-93.75% { background-image: url('./assets/1.png'); }
+6.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAANSURBVAjXY9jA8AEEAQ1IA4HPe+2wAAAAAElFTkSuQmCC'); }
+12.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY9jA8IHhAcMHAA0YA3EcpQDgAAAAAElFTkSuQmCC'); }
+18.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY9jA8IFhAcMHAAxYAzHECquaAAAAAElFTkSuQmCC'); }
+25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jA8IEBiAEL6AMh+ssyGgAAAABJRU5ErkJggg=='); }
+31.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgOEDAAloAqFBmlVhAAAAAElFTkSuQmCC'); }
+37.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgOECAAlIAoGJ5eDsAAAAAElFTkSuQmCC'); }
+43.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgCEAAAjIAgG8ASGpAAAAAElFTkSuQmCC'); }
+50% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jAEMAAxAAIKAHh7A8ADQAAAABJRU5ErkJggg=='); }
+56.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgCEAAAfYAdEKMW0bAAAAAElFTkSuQmCC'); }
+62.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgEEAAAeYAZGHwe2uAAAAAElFTkSuQmCC'); }
+68.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgIEBAAeIAYGBERKUAAAAAElFTkSuQmCC'); }
+75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jAwMAAxAAGSAFBhtZezwAAAABJRU5ErkJggg=='); }
+81.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY2hgYGBYwMAAAAVoASF0SYNYAAAAAElFTkSuQmCC'); }
+87.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY2hgYGBQYGAAAAPoAKESiuOfAAAAAElFTkSuQmCC'); }
+93.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAMSURBVAjXY2hgAAMAA4gAgYbsdXMAAAAASUVORK5CYII='); }
 100% { background-image: none; background-color: black; }
 }
