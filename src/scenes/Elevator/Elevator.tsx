@@ -40,7 +40,7 @@ export default function Elevator() {
                         onSelect(){
                             setIsElevatorCalled(true);
                             sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
-                                await sleep(10000);
+                                await sleep(5000);
                                 SceneFadeManager.fadeTransition(() => setCurrentScene("BarScene"))
                             })
                         }
