@@ -11,7 +11,7 @@ import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/core/lume/applyShadows";
 import Billboard from "@/components/lume/Billboard";
-import applyDGShader, { useDGShader } from '@/core/lume/dgRender';
+import { useDGShader } from '@/core/lume/dgRender';
 import PlayerCam from '@/components/lume/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';

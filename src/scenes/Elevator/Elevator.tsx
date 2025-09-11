@@ -1,19 +1,20 @@
 import Interactable from "@/components/lume/Interactable";
-import Freecam from "@/components/lume/playerCam/Freecam";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import applyDGShader, { useDGShader } from "@/core/lume/dgRender";
+import { useDGShader } from "@/core/lume/dgRender";
 import lerp from "@/utils/lerp";
 import sleep from "@/utils/sleep";
 import { addLogMessage } from "@/views/main/ui/EventLog";
 import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
 import { Scene } from "lume"
-import { createSignal, onMount } from "solid-js"
+import { createSignal } from "solid-js"
 import { Vector2 } from "three";
 
 import elevator_cab_obj from './models/elevator_shaft.obj'
 import elevator_cab_mtl from './models/elevator_shaft.mtl'
 import elevator_buttons from './models/elevator_buttons.png'
 import elevator_buttons_lit from './models/elevator_buttons_white.png'
+import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
+import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 
 export default function Elevator() {
     let sceneRef!: Scene
@@ -37,7 +38,10 @@ export default function Elevator() {
                         label: "Yes", 
                         onSelect(){
                             setIsElevatorCalled(true);
-                            sleep(3000).then(() => setIsDoorOpen(true))
+                            sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
+                                await sleep(5000);
+                                SceneFadeManager.fadeTransition(() => setCurrentScene("BarScene"))
+                            })
                         }
                     },
                     {label: "No"}

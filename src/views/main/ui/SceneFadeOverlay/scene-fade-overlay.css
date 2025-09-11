@@ -1,0 +1,47 @@
+#scene-fade-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    pointer-events: none; /* Don't block input when OFF */
+    z-index: 50; /* Ensure overlay sits above the scene */
+}
+
+#scene-fade-overlay.ov-fading-out {
+    animation: tiles-out forwards;
+}
+
+#scene-fade-overlay.ov-faded {
+    background-color: black;
+    pointer-events: auto; /* Block input while fading or black */
+}
+
+#scene-fade-overlay.ov-fading-in {
+    background-color: transparent;
+    /* pointer-events: auto; /* Keep blocking until fade-in completes */
+    animation: tiles-out reverse forwards;
+}
+
+/* YES I ENCODED THE PATTERN IN BASE 64 - IT PREVENTS ANY IMAGE LOAD OVERHEAD (WHICH WILL CAUSE REALLY BAD FLICKERING). IT WORKS
+WONDERFULLY I DO NOT CARE IF THIS IS A STRNAGE PRACTICE. THE ORIGINAL IMAGES ARE STILL IN ASSETS IF YOU CARE. ITS JUST A BAYER MATRIX.
+I AM EVIL IN AMAZING AND BENEVOLENT WAYS!!!! */
+@keyframes tiles-out {
+0% { background-image: none; background-color: transparent; }
+6.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAANSURBVAjXY9jA8AEEAQ1IA4HPe+2wAAAAAElFTkSuQmCC'); }
+12.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY9jA8IHhAcMHAA0YA3EcpQDgAAAAAElFTkSuQmCC'); }
+18.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY9jA8IFhAcMHAAxYAzHECquaAAAAAElFTkSuQmCC'); }
+25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jA8IEBiAEL6AMh+ssyGgAAAABJRU5ErkJggg=='); }
+31.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgOEDAAloAqFBmlVhAAAAAElFTkSuQmCC'); }
+37.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgOECAAlIAoGJ5eDsAAAAAElFTkSuQmCC'); }
+43.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jAUMCwgCEAAAjIAgG8ASGpAAAAAElFTkSuQmCC'); }
+50% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jAEMAAxAAIKAHh7A8ADQAAAABJRU5ErkJggg=='); }
+56.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgCEAAAfYAdEKMW0bAAAAAElFTkSuQmCC'); }
+62.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgEEAAAeYAZGHwe2uAAAAAElFTkSuQmCC'); }
+68.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY1jA4MCwgIEBAAeIAYGBERKUAAAAAElFTkSuQmCC'); }
+75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAOSURBVAjXY1jAwMAAxAAGSAFBhtZezwAAAABJRU5ErkJggg=='); }
+81.25% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY2hgYGBYwMAAAAVoASF0SYNYAAAAAElFTkSuQmCC'); }
+87.5% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAQSURBVAjXY2hgYGBQYGAAAAPoAKESiuOfAAAAAElFTkSuQmCC'); }
+93.75% { background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAEAQAAAACBiqPTAAAAAnRSTlMAAQGU/a4AAAAMSURBVAjXY2hgAAMAA4gAgYbsdXMAAAAASUVORK5CYII='); }
+100% { background-image: none; background-color: black; }
+}

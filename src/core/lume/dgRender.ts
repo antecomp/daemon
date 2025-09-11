@@ -54,13 +54,13 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
     // Constant render dimensions regardless of scale.
     const {width: WIDTH, height: HEIGHT} = SCENE_DIMENSIONS;
 
-    // Lock pixel ratio to 1 (Ignore Retina/Pixel-Dense Screens)
+    // WARNING/NOTE/TODO: 1 looks correct zoomed in, but has strange artifacts on MacOS (at any scale). You may want to conditionally change this number!!!!
+    // BOTH FOR GLRENDERER AND COMPOSER.
 	composer.setPixelRatio(1);
 	composer.setSize(WIDTH, HEIGHT);
 
     // Also lock renderer size and pixel ratio
-	scene.glRenderer.setPixelRatio(window.devicePixelRatio);
-    //was originally set to 1, but (window.devicePixelRatio) fixes the weird artifacts on Mac DPI
+	scene.glRenderer.setPixelRatio(1);
 	scene.glRenderer.setSize(WIDTH, HEIGHT, false); // false = don't update canvas.style
 
     // Some constants and data needed for shader logic...
