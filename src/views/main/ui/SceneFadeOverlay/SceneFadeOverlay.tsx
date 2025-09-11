@@ -11,15 +11,21 @@ enum SceneFadeState {
     FADING_IN = "ov-fading-in", // Anim from blacked out to off
 }
 
+/** Duration in milliseconds for the CSS-driven fade animation.*/
 const SCENE_FADE_DELAY = 1500;
 
 const [sceneFadeState, setSceneFadeState] = createSignal<SceneFadeState>(SceneFadeState.OFF);
 
+/** (alias) Returns the current scene fade state used by the overlay. */
 const currentSceneFadeState = () => sceneFadeState();
 
 // Keep a ref to the overlay element so we can await its CSS animation/transition end.
 let overlayEl: HTMLDivElement | null = null;
 
+/**
+ * Resolves after the overlay's current CSS transition/animation completes.
+ * If the overlay element is not yet mounted, resolves on the next microtask.
+ */
 function waitForOverlayEnd(): Promise<void> {
     return new Promise((resolve) => {
         const el = overlayEl;
@@ -52,6 +58,8 @@ async function fadeSceneOut() {
 }
 
 async function fadeSceneIn() {
+    // TODO/Note - this simple guard makes me nervous when it comes to resolving promises, 
+    // come up with a generally better lock/queue system plz.
     if(sceneFadeState() != SceneFadeState.FADED) return;
     await sleep(16); // Give CSS transition some time to end. Otherwise it snaps weird. 16 is a paint tick / frame.
     setSceneFadeState(SceneFadeState.FADING_IN);
@@ -61,6 +69,12 @@ async function fadeSceneIn() {
 
 // Simple helper to wrap some action around a scene fade.
 // TODO: May have bugs if multiple calls to fadeTransitions are done rapidly. Consider adding a lock + warning
+/**
+ * Runs an action wrapped between a fade-out and a fade-in.
+ * Ensures the screen is fully black while the action executes.
+ * The `action` can be synchronous or async; any thrown error will propagate
+ * after initiating the fade-in in a finally block.
+ */
 async function fadeTransition(action: () => any | (() => Promise<any>)) {
     await fadeSceneOut();
     try {
@@ -70,10 +84,39 @@ async function fadeTransition(action: () => any | (() => Promise<any>)) {
     }
 }
 
-export const SceneFadeManager = {
-    currentSceneFadeState, fadeSceneIn, fadeSceneOut, fadeTransition
+/**
+ * Public API for controlling the scene fade overlay.
+ */
+export interface SceneFadeManagerAPI {
+    /**
+     * Gets the current fade state (OFF/FADING_OUT/FADED/FADING_IN).
+     */
+    currentSceneFadeState: () => SceneFadeState;
+    /**
+     * Fades the scene from FADED back to OFF (black screen back to scene). Resolves when complete.
+     */
+    fadeSceneIn: () => Promise<void>;
+    /**
+     * Fades the scene from OFF to FADED (scene visible to black screen). Resolves when complete.
+     */
+    fadeSceneOut: () => Promise<void>;
+    /**
+     * Runs (sync or async) `action` between a fade-out and a fade-in.
+     */
+    fadeTransition: (action: () => any | (() => Promise<any>)) => Promise<void>;
 }
 
+/**
+ * Singleton instance used to trigger scene fade animations.
+ */
+export const SceneFadeManager: SceneFadeManagerAPI = {
+    currentSceneFadeState,
+    fadeSceneIn,
+    fadeSceneOut,
+    fadeTransition
+}
+
+/* (To be used by SceneContainer) */
 export default function SceneFadeOverlay() {
 
    // (window as any).fade = SceneFadeManager;
