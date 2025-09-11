@@ -28,12 +28,12 @@ export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
  * It is cleared automatically when the scene changes.
  */
 const [hoverCursor, setHoverCursor] = createSignal<AssetURL>();
-export {setHoverCursor};
+export { setHoverCursor };
 
 // Helper for scene to resolve the current cursor to display.
 function currentCursor(): AssetURL {
-    if(hoverCursor()) return hoverCursor()!;
-    switch(currentInteractionMode()) {
+    if (hoverCursor()) return hoverCursor()!;
+    switch (currentInteractionMode()) {
         case InteractionMode.Chat:
             return pr_chat
         case InteractionMode.Interact:
@@ -64,20 +64,20 @@ createEffect(on(currentScene, () => {
 export default function SceneContainer() {
     return (
         <CornerRect
-                borderSize={2}
-                borderType="solid white"
-                corners={[tl, tr, bl_scene, br]}
-                id="scene-container"
-                width={`${SCENE_DIMENSIONS.width + 4}px`}
-                height={`${SCENE_DIMENSIONS.height + 4}px`}
-                
-                onContextMenu={cycleInteractionMode}
+            borderSize={2}
+            borderType="solid white"
+            corners={[tl, tr, bl_scene, br]}
+            id="scene-container"
+            width={`${SCENE_DIMENSIONS.width + 4}px`}
+            height={`${SCENE_DIMENSIONS.height + 4}px`}
 
-                style={{
-                    cursor: `url(${currentCursor()}), auto`
-                }}
-            >
-                <SceneMenuWrapper>
+            onContextMenu={cycleInteractionMode}
+
+            style={{
+                cursor: `url(${currentCursor()}), auto`
+            }}
+        >
+            <SceneMenuWrapper>
                 <ErrorBoundary
                     fallback={(err, reset) => (
                         <>
@@ -87,18 +87,16 @@ export default function SceneContainer() {
                         </>
                     )}
                 >
-                        <Suspense fallback={<p>Loading scene...</p>}>
-                            <Dynamic component={loadScene(currentScene())} />
-                        </Suspense>
+                    <Suspense fallback={<p>Loading scene...</p>}>
+                        <Dynamic component={loadScene(currentScene())} />
+                    </Suspense>
                 </ErrorBoundary>
 
                 <Show when={DialogueService.currentDialogueOverlay()}>
                     <div id="dialogue-overlay" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
                 </Show>
-
-                <SceneFadeOverlay/>
-
-                </SceneMenuWrapper>
-            </CornerRect>
+                <SceneFadeOverlay />
+            </SceneMenuWrapper>
+        </CornerRect>
     )
 }

@@ -18,7 +18,8 @@ export default function MessageBox (props: MessageBoxProps) {
   let ref: HTMLDivElement | undefined;
 
   onMount(() => {
-    ref && ref.scrollIntoView({ behavior: "smooth", block: "center" });
+    // optional changing to allow vitest to work with Hermes, as this is a DOM method (that we can't use in SSR)
+    ref && ref.scrollIntoView?.({ behavior: "smooth", block: "center" });
   });
 
   if(props.text === EMPTY_RENDER) return; // Add nothing if no message text provided (can be used for traversal-only dialogue nodes/chaining)
