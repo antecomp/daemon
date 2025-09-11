@@ -38,8 +38,11 @@ async function fadeSceneIn() {
 // TODO: May have bugs if multiple calls to fadeTransitions are done rapidly. Consider adding a lock + warning
 async function fadeTransition(action: () => any | (() => Promise<any>)) {
     await fadeSceneOut();
-    await action(); // TODO: add try/finally here to always fade scene in, even on rejection from action.
-    await fadeSceneIn();
+    try {
+        await action();
+    } finally {
+        await fadeSceneIn();
+    }
 }
 
 export const SceneFadeManager = {
