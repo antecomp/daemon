@@ -3,13 +3,9 @@
     inset: 0;
     width: 100%;
     height: 100%;
-
-    /* transition: background-color 1ms; */
     background-color: transparent;
     pointer-events: none; /* Don't block input when OFF */
     z-index: 50; /* Ensure overlay sits above the scene */
-
-    
 }
 
 #scene-fade-overlay.ov-fading-out {

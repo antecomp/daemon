@@ -3,8 +3,8 @@ import { createSignal } from 'solid-js'
 import './scene-fade-overlay.css'
 import sleep from '@/utils/sleep';
 
-// String enum keeps OFF falsey and maps cleanly to class names.
-export enum SceneFadeState {
+// Enum strings used for CSS classnames.
+enum SceneFadeState {
     OFF = "", // Completely Off
     FADING_OUT = "ov-fading-out", // In animation between off and faded.
     FADED = "ov-faded", // Screen blacked out (end of anim, static state)
@@ -17,12 +17,37 @@ const [sceneFadeState, setSceneFadeState] = createSignal<SceneFadeState>(SceneFa
 
 const currentSceneFadeState = () => sceneFadeState();
 
+// Keep a ref to the overlay element so we can await its CSS animation/transition end.
+let overlayEl: HTMLDivElement | null = null;
+
+function waitForOverlayEnd(): Promise<void> {
+    return new Promise((resolve) => {
+        const el = overlayEl;
+        if (!el) {
+            // Fallback if ref not ready; resolve on next tick to avoid stalls.
+            queueMicrotask(() => resolve());
+            return;
+        }
+        let done = false;
+        const finish = () => {
+            if (done) return;
+            done = true;
+            el.removeEventListener('transitionend', finish);
+            el.removeEventListener('animationend', finish);
+            resolve();
+        };
+        // Listen to both to support either CSS mechanism.
+        el.addEventListener('transitionend', finish);
+        el.addEventListener('animationend', finish);
+    });
+}
+
 async function fadeSceneOut() {
     // TODO/Note - this simple guard makes me nervous when it comes to resolving promises, 
     // come up with a generally better lock/queue system plz.
     if(sceneFadeState() != SceneFadeState.OFF) return;
     setSceneFadeState(SceneFadeState.FADING_OUT)
-    await sleep(SCENE_FADE_DELAY);
+    await waitForOverlayEnd();
     setSceneFadeState(SceneFadeState.FADED)
 }
 
@@ -30,7 +55,7 @@ async function fadeSceneIn() {
     if(sceneFadeState() != SceneFadeState.FADED) return;
     await sleep(16); // Give CSS transition some time to end. Otherwise it snaps weird. 16 is a paint tick / frame.
     setSceneFadeState(SceneFadeState.FADING_IN);
-    await sleep(SCENE_FADE_DELAY);
+    await waitForOverlayEnd();
     setSceneFadeState(SceneFadeState.OFF)
 }
 
@@ -49,18 +74,15 @@ export const SceneFadeManager = {
     currentSceneFadeState, fadeSceneIn, fadeSceneOut, fadeTransition
 }
 
-// TODO/NOTE: It would be more robust to somehow listen for transitionend on the actual element, but
-// im unsure how to get the ref up to the methods above nicely to do that.
-
 export default function SceneFadeOverlay() {
 
-    (window as any).fade = SceneFadeManager;
+   // (window as any).fade = SceneFadeManager;
 
     return (
             <div 
                 id="scene-fade-overlay"
+                ref={(el) => { overlayEl = el; }}
                 class={sceneFadeState()}
-                // style={{transition: `background-color ${SCENE_FADE_DELAY}ms`}}
                 style={{"animation-duration": `${SCENE_FADE_DELAY}ms`}}
             />
     )
