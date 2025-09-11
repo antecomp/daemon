@@ -1,13 +1,12 @@
 import Interactable from "@/components/lume/Interactable";
-import Freecam from "@/components/lume/playerCam/Freecam";
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import applyDGShader, { useDGShader } from "@/core/lume/dgRender";
+import { useDGShader } from "@/core/lume/dgRender";
 import lerp from "@/utils/lerp";
 import sleep from "@/utils/sleep";
 import { addLogMessage } from "@/views/main/ui/EventLog";
 import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
 import { Scene } from "lume"
-import { createSignal, onMount } from "solid-js"
+import { createSignal } from "solid-js"
 import { Vector2 } from "three";
 
 import elevator_cab_obj from './models/elevator_shaft.obj'
