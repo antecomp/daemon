@@ -237,7 +237,9 @@ export default function PlayerCam(props: {
 
     return (
         <lume-element3d id="cam_body" align-point="0.5 0.5" ref={bodyRef}>
-            <lume-perspective-camera id="cam_head" active ref={camRef} />
+            <lume-perspective-camera id="cam_head" active ref={camRef} 
+                far="9999" // for dev purposes, see everything. Remove for prod.
+            />
         </lume-element3d>
     )
 }

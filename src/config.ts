@@ -4,7 +4,7 @@ export const SCENE_DIMENSIONS = {
     height: 600
 }
 
-export const INITIAL_SCENE = "Elevator";
+export const INITIAL_SCENE = "GemmaBar";
 
 export const FOV = 45;
 
