@@ -16,6 +16,9 @@ import elevator_buttons_lit from './models/elevator_buttons_white.png'
 import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import applyShadows from "@/core/lume/applyShadows";
+import { playTextOverlay } from "@/layers/textoverlay/TextOverlay";
+
+import soy from "./data/opening_textscene"
 
 export default function Elevator() {
     let sceneRef!: Scene
@@ -42,7 +45,10 @@ export default function Elevator() {
                             setIsElevatorCalled(true);
                             sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
                                 await sleep(5000);
-                                SceneFadeManager.fadeTransition(() => setCurrentScene("GemmaBar"))
+                                await SceneFadeManager.fadeSceneOut();
+                                setCurrentScene("GemmaBar");
+                                await playTextOverlay(soy);
+                                SceneFadeManager.fadeSceneIn();
                             })
                         }
                     },

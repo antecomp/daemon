@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js"
+import { createSignal, onCleanup } from "solid-js"
 import { popUILayer, pushUILayer } from "../UILayerStore"
 import { nanoid } from "nanoid"
 import createColorTypewriter, { ColoredText } from "@/hooks/createColorTypewriter";
@@ -15,6 +15,7 @@ const TEXT_FADE_DURATION = 300;
 export default function TextScene(props: {
     sequence: TextOverlayLine[],
     id?: string
+    onComplete?: () => void
 }) {
 
     const [currentLine, setCurrentLine] = createSignal(0);
@@ -22,6 +23,10 @@ export default function TextScene(props: {
     const {displayText, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineText);
 
     let textElement!: HTMLParagraphElement // ref used to apply fade anim.
+
+    onCleanup(() => { // do it here instead of call to end so this will trigger no matter what.
+        props.onComplete?.();
+    })
 
     let fadeLock = false; // Prevent triggering fade if it's already ongoing.
     function handleClick() {
@@ -83,9 +88,17 @@ export default function TextScene(props: {
 /** TODO DOCUMENT. */
 export function playTextOverlay(sequence: TextOverlayLine[]) {
     const id = "text-scene" + nanoid();
+
+    let resolveEnd: (() => void);
+    const endTextPromise = new Promise<void>(resolve => {
+        resolveEnd = resolve;
+    })
+
     pushUILayer({
         id, 
-        component: () => TextScene({sequence, id}),
+        component: () => TextScene({sequence, id, onComplete: resolveEnd}),
         blockBehind: true,
-    })
+    });
+
+    return endTextPromise;
 }
