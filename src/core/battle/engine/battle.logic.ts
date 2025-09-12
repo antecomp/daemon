@@ -92,10 +92,12 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     }
 
     // expose resolve method so we can call it when someone dies.
-    let resolveBattle: ((winner: BattleOutcome) => void) | null = null;
-    const battleResultPromise = new Promise<BattleOutcome>((resolve) => {
-        resolveBattle = resolve;
-    });
+    // promise essentially acts as a signal for battle end (with result), anyone can attach an await/then on it.
+    // let resolveBattle: ((winner: BattleOutcome) => void) | null = null;
+    // const battleResultPromise = new Promise<BattleOutcome>((resolve) => {
+    //     resolveBattle = resolve;
+    // });
+    const {promise: battleResultPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>(); // ES2024 only.
     
     // TODO: Add checks to only allow during waiting/ready state.
     const forceBattleResolve = (winner: BattleOutcome) => resolveBattle!(winner);
