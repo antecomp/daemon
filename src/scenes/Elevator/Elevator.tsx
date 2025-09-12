@@ -5,8 +5,8 @@ import lerp from "@/utils/lerp";
 import sleep from "@/utils/sleep";
 import { addLogMessage } from "@/views/main/ui/EventLog";
 import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
-import { Scene } from "lume"
-import { createSignal } from "solid-js"
+import { ObjModel, Scene } from "lume"
+import { createSignal, onMount } from "solid-js"
 import { Vector2 } from "three";
 
 import elevator_cab_obj from './models/elevator_shaft.obj'
@@ -15,16 +15,18 @@ import elevator_buttons from './models/elevator_buttons.png'
 import elevator_buttons_lit from './models/elevator_buttons_white.png'
 import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
 import { setCurrentScene } from "@/views/main/ui/SceneContainer";
+import applyShadows from "@/core/lume/applyShadows";
 
 export default function Elevator() {
     let sceneRef!: Scene
+    let cabRef!: ObjModel
     useDGShader(() => sceneRef)
 
-    const {spawnMenu} = useSceneMenu();
+    onMount(() => {
+        cabRef && applyShadows(cabRef);
+    });
 
-    // onMount(() => {
-    //     requestAnimationFrame(() => applyDGShader(sceneRef))
-    // })
+    const {spawnMenu} = useSceneMenu();
 
     const [isDoorOpen, setIsDoorOpen] = createSignal(false);
     const [isElevatorCalled, setIsElevatorCalled] = createSignal(false);
@@ -61,6 +63,7 @@ export default function Elevator() {
             shadowmap-type="pcf"
         >
             {/* <Freecam sceneRef={sceneRef} initialPos={[-38, -17, -38]} initialOri={{ yaw: -135, pitch: 0 }}/> */}
+            
             <PlayerCam
                 basePos={[-60, -15, 0]}
                 baseOri={{ yaw: -90, pitch: 3 }}
@@ -69,6 +72,7 @@ export default function Elevator() {
                 animate={false}
                 sceneRef={sceneRef!}
             />
+           
 
 
             <lume-point-light intensity="4000" align-point="0.5 0.5" position="25 -26 0" color="#ffffff">
@@ -220,6 +224,7 @@ export default function Elevator() {
 
             <lume-obj-model
                 id="cab"
+                ref={cabRef}
                 obj={elevator_cab_obj}
                 mtl={elevator_cab_mtl}
                 recieve-shadow="true"
