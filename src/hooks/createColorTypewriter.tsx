@@ -6,8 +6,8 @@ type ColoredChar = {
     color?: string;
 }
 
-export interface ColoredWord {
-    word: string;
+export interface ColoredText {
+    text: string;
     color?: string;
 }
 
@@ -17,7 +17,7 @@ type TypewriterOptions = {
 }
 
 export default function createColorTypewriter(
-    input: () => ColoredWord[],
+    input: () => ColoredText[],
     { delay = 50, onComplete = () => {}}: TypewriterOptions = {}
 ) {
     const [displayText, setDisplayText] = createSignal<JSX.Element[]>([]);
@@ -26,8 +26,8 @@ export default function createColorTypewriter(
     let interval: NodeJS.Timeout | null = null;
 
     // Flatten words into chars to add in easier.
-    const flattenWords = (words: ColoredWord[]): ColoredChar[] =>
-        words.flatMap(({word, color}) =>
+    const flattenWords = (words: ColoredText[]): ColoredChar[] =>
+        words.flatMap(({text: word, color}) =>
             [...word].map((char) => ({char, color}))
         );
 

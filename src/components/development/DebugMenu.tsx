@@ -12,21 +12,21 @@ import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
 const eggggg: TextOverlaySequence = [
-    {text: [{word: "This is the first line, one color", color: "red"}]}, 
-    {text: [{word: "This uses the default colour"}]},
-    {text: [{word: "Now we split into "}, {word: "Two colours", color: "red"}]}
+    {line: [{text: "This is the first line, one color", color: "red"}]}, 
+    {line: [{text: "This uses the default colour"}]},
+    {line: [{text: "Now we split into "}, {text: "Two colours", color: "red"}]}
 ]
 eggggg[0].sideEffect = () => console.log("Side Effect Triggered");
 
 const dmnintro: TextOverlaySequence = [
-    {text: [{word: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {word: "THE DAEMONS", color: "red"}]},
-    {text: [{word: "and continue to live unaffected by them."}]},
-    {text: [{word: "They are more numerous than we are, and they stand over us like mounds of earth surrounding a pit."}]},
-    {text: [{word: "Each and every one of us has a thousand daemons to his left and ten thousand to his right."}]},
-    {text: [{word: "THE DAEMONVEIL ", color: "red"}, {word: "protects man from these daemons,"}]},
-    {text: [{word: "As it says in the verse:"}]},
-    {text: [{word: 'A thousand may fall at your side and ten thousand at your right hand;'}]},
-    {text: [{word: 'they will not approach you.'}]},
+    {line: [{text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {text: "THE DAEMONS", color: "red"}]},
+    {line: [{text: "and continue to live unaffected by them."}]},
+    {line: [{text: "They are more numerous than we are, and they stand over us like mounds of earth surrounding a pit."}]},
+    {line: [{text: "Each and every one of us has a thousand daemons to his left and ten thousand to his right."}]},
+    {line: [{text: "THE DAEMONVEIL ", color: "red"}, {text: "protects man from these daemons,"}]},
+    {line: [{text: "As it says in the verse:"}]},
+    {line: [{text: 'A thousand may fall at your side and ten thousand at your right hand;'}]},
+    {line: [{text: 'they will not approach you.'}]},
 ]
 
 export default function DebugMenu() {

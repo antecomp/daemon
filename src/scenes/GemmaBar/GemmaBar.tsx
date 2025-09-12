@@ -1,7 +1,7 @@
 import { ObjModel, onMount, Scene } from "lume";
 import barX from "./models/egg.fbx?url"
-import barObj from "./models/bbb.obj"
-import barMtl from "./models/bbb.mtl"
+//import barObj from "./models/bbb.obj"
+//import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import Freecam from "@/components/lume/playerCam/Freecam";
 import applyShadows from "@/core/lume/applyShadows";
@@ -23,7 +23,6 @@ export default function GemmaBar() {
             shadow-mode="pcf"
             perspective="800"
             shadowmap-type="pcfsoft"
-            camera-far="999999999999999999"
         >
             <lume-ambient-light intensity={2.2}/>
             <lume-directional-light 
@@ -36,8 +35,8 @@ export default function GemmaBar() {
                 cast-shadow="true" 
                 shadow-map-height={2048} 
                 shadow-map-width={2048}
-                shadow-bias="-0.00001"
-                // shadow-normal-bias="0.75"// no noticable change.
+                shadow-bias="-0.0001"
+                // shadow-normal-bias="0.5"// no noticable change.
             />
             {/* <lume-point-light 
                 id="what"
