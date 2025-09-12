@@ -1,5 +1,5 @@
 import { ObjModel, onMount, Scene } from "lume";
-import barX from "./models/egg.fbx?url"
+import barX from "./models/hype.fbx?url"
 //import barObj from "./models/bbb.obj"
 //import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
@@ -8,12 +8,17 @@ import applyShadows from "@/core/lume/applyShadows";
 import { useDGShader } from "@/core/lume/dgRender";
 
 import starfield from "../shared_textures/starfield.png"
+import createCameraController from "@/components/lume/playerCam/createCameraController";
+import NavigationPlane from "@/components/lume/NavigationPlane";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
     let barRef!: any
     onMount(() => barRef && applyShadows(barRef));
     useDGShader(() => sceneRef);
+
+    //const {cameraControlSignals, cameraController} = createCameraController([87, -43, 690], {yaw: -45, pitch: 0}, {maxPitch: 20, maxYaw: 70});
+    const {cameraControlSignals, cameraController} = createCameraController([6, -52, 84], {yaw: -179, pitch: -2}, {maxPitch: 20, maxYaw: 70});
     
     return (
         <lume-scene
@@ -24,7 +29,7 @@ export default function GemmaBar() {
             perspective="800"
             shadowmap-type="pcfsoft"
         >
-            <lume-ambient-light intensity={2.2}/>
+            <lume-ambient-light intensity={1.5}/>
             <lume-directional-light 
                 id="whar"
                 position="-794, -80, 448" 
@@ -83,7 +88,7 @@ export default function GemmaBar() {
                 //@ts-ignore
                 has="basic-material"
                 sidedness="back"
-                size="2000 2000 2000"
+                size="4000 4000 4000"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5 0.5"
                 color="white"
@@ -93,17 +98,30 @@ export default function GemmaBar() {
 
 
 
-            {/* <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/> */}
+            <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
+            {/* <NavigationPlane
+                cameraController={cameraController}
+                newPos={[87, -43, 690]}
+                newOri={{yaw: -45, pitch: 0}}
+                planePosition={[87, -43, 690]}
+                planeSize={150}
+                anim
+            />
+
+            <NavigationPlane
+                cameraController={cameraController}
+                newPos={[6, -52, 84]}
+                newOri={{yaw: -179, pitch: -2}}
+                planePosition={[6, -52, 84]}
+                planeSize={150}
+                anim
+            />
 
 
              <PlayerCam
-                basePos={[87, -43, 690]}
-                baseOri={{ yaw: -45, pitch: 0 }}
-                maxYaw={70}
-                maxPitch={20}
-                animate={false}
+                {...cameraControlSignals()}
                 sceneRef={sceneRef!}
-            />
+            /> */}
         </lume-scene>
     )
 }

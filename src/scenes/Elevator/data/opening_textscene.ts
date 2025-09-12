@@ -2,7 +2,7 @@ import { TextOverlaySequence } from "@/layers/textoverlay/TextOverlay"
 
 const openingTextScene: TextOverlaySequence = [
     {line: [{text: "It's a typical edge node. Or, it boasts itself as one."}]},
-    {line: [{text: "To the average tourist, this bar as close to the"}, {text: " Fringe ", color: "red"}, {text: "as anyone can, or is willing, to go"}]},
+    {line: [{text: "To the average tourist, this bar is as close to the"}, {text: " Fringe ", color: "red"}, {text: "as anyone can, or is willing, to go"}]},
     {line: [{text: "I understand the appeal, it's thrilling."}]},
     {line: [{text: "It's an act of rebellion against the corporate-washed fragments of"}, {text: " Nullspace.", color: "red"}]},
     {line: [{text: "But this place is just as manufactured as any other."}]},
