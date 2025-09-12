@@ -1,5 +1,5 @@
 import { ObjModel, onMount, Scene } from "lume";
-import barX from "./models/blendver.glb?url"
+import barX from "./models/egg.fbx?url"
 import barObj from "./models/bbb.obj"
 import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
@@ -9,7 +9,7 @@ import { useDGShader } from "@/core/lume/dgRender";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
-    let barRef!: ObjModel
+    let barRef!: any
     onMount(() => barRef && applyShadows(barRef));
     useDGShader(() => sceneRef);
     
@@ -32,10 +32,10 @@ export default function GemmaBar() {
                 intensity={2}
                 // color="red"
                 cast-shadow="true" 
-                shadow-map-height={4096} 
-                shadow-map-width={4096}
+                shadow-map-height={2048} 
+                shadow-map-width={2048}
                 shadow-bias="-0.00001"
-                // shadow-normal-bias="0.5"// no noticable change.
+                // shadow-normal-bias="0.75"// no noticable change.
             />
             {/* <lume-point-light 
                 id="what"
@@ -55,14 +55,15 @@ export default function GemmaBar() {
                     color="red"
                 />
             </lume-point-light> */}
-            {/* <lume-gltf-model
+            <lume-fbx-model
                 id="bar"
+                ref={barRef}
                 src={barX}
-                scale="50 50 50"
+                scale="0.1 0.1 0.1"
                 mount-point="0.5 0.5"
                 align-point="0.5 0.5"
-            /> */}
-            <lume-obj-model
+            />
+            {/* <lume-obj-model
                 id="bar"
                 ref={barRef}
                 obj={barObj}
@@ -70,7 +71,7 @@ export default function GemmaBar() {
                 scale="8 8 8"
                 mount-point="0.5 0.5"
                 align-point="0.5 0.5"
-            />
+            /> */}
 
             {/* <lume-camera-rig></lume-camera-rig> */}
             <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
