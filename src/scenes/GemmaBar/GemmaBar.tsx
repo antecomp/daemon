@@ -5,11 +5,13 @@ import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import Freecam from "@/components/lume/playerCam/Freecam";
 import applyShadows from "@/core/lume/applyShadows";
+import { useDGShader } from "@/core/lume/dgRender";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
     let barRef!: ObjModel
     onMount(() => barRef && applyShadows(barRef));
+    useDGShader(() => sceneRef);
     
     return (
         <lume-scene
@@ -18,10 +20,10 @@ export default function GemmaBar() {
             id='SCENE'
             shadow-mode="pcf"
             perspective="800"
-            shadowmap-type="pcf"
+            shadowmap-type="pcfsoft"
             camera-far="999999999999999999"
         >
-            <lume-ambient-light intensity={1}/>
+            <lume-ambient-light intensity={2.2}/>
             <lume-directional-light 
                 id="whar"
                 position="-794, -80, 448" 
