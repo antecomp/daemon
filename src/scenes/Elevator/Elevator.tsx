@@ -42,7 +42,7 @@ export default function Elevator() {
                             setIsElevatorCalled(true);
                             sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
                                 await sleep(5000);
-                                SceneFadeManager.fadeTransition(() => setCurrentScene("BarScene"))
+                                SceneFadeManager.fadeTransition(() => setCurrentScene("GemmaBar"))
                             })
                         }
                     },

@@ -7,6 +7,8 @@ import Freecam from "@/components/lume/playerCam/Freecam";
 import applyShadows from "@/core/lume/applyShadows";
 import { useDGShader } from "@/core/lume/dgRender";
 
+import starfield from "../shared_textures/starfield.png"
+
 export default function GemmaBar() {
     let sceneRef!: Scene;
     let barRef!: any
@@ -73,8 +75,36 @@ export default function GemmaBar() {
                 align-point="0.5 0.5"
             /> */}
 
+
+            <lume-sphere
+                id="stars"
+                texture={starfield}
+                cast-shadow="false"
+                receive-shadow="false"
+                //@ts-ignore
+                has="basic-material"
+                sidedness="back"
+                size="2000 2000 2000"
+                align-point="0.5 0.5"
+                mount-point="0.5 0.5 0.5"
+                color="white"
+            />
+
             {/* <lume-camera-rig></lume-camera-rig> */}
-            <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
+
+
+
+            {/* <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/> */}
+
+
+             <PlayerCam
+                basePos={[87, -43, 690]}
+                baseOri={{ yaw: -45, pitch: 0 }}
+                maxYaw={70}
+                maxPitch={20}
+                animate={false}
+                sceneRef={sceneRef!}
+            />
         </lume-scene>
     )
 }
