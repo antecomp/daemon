@@ -1,19 +1,16 @@
 import { TextOverlaySequence } from "@/layers/textoverlay/TextOverlay"
-import { color } from "@/hooks/createColorTypewriter";
 
 const openingTextScene: TextOverlaySequence = [
-    ["It's a typical edge node. Or, it boasts itself as one."],
-    ["To the average tourist, this bar is as close to the", color(" Fringe ", "red"), "as anyone can, or is willing, to go"],
-    ["I understand the appeal, it's thrilling."],
-    ["It's an act of rebellion against the corporate-washed fragments of", color(" Nullspace.", "red")],
-    ["But this place is just as manufactured as any other."],
-    ["These unnatural walls provide a reminder of that."],
-    ["Could be why they meet here. It feels too obvious as a location."],
-    ["I suppose that gives it strength."],
-    ["It helps that most don't understand the irony of this bar in our eyes."],
-    ["They know it's nothing like the real Fringe."],
-    ["But they enjoy being taunted. It motivates them."],
-    ["I know the same temptation."],
+    ["This is it..."],
+    ["The Hidden Gem"],
+    ["It almost looks touristy and the name feels ironic."],
+    ["But I have heard this place is more than meets the eye."],
+    ["That..."],
+    ["There is something here that is important to \"our\" ", ["Nullspace", "red"], "."],
+    ["There is a secret that the patrons share with eachother."],
+    ["There is a truth that they understand but ", ["ASURACOM", "red"], " reviles."],
+    ["Well, the ", ["Fringe", "red"], " is just over the horizon."],
+    ["It's now or never ", ["Arda", "yellow"], "."]
 ]
 
 export default openingTextScene;
