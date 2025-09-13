@@ -1,5 +1,5 @@
 import { ObjModel, onMount, Scene } from "lume";
-import barX from "./models/what.fbx?url"
+import barX from "./models/kms.fbx?url"
 //import barObj from "./models/bbb.obj"
 //import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
@@ -29,7 +29,7 @@ export default function GemmaBar() {
             perspective="800"
             shadowmap-type="pcfsoft"
         >
-            <lume-ambient-light intensity={1.5}/>
+            <lume-ambient-light id="ambientLight" intensity={1.8}/>
             <lume-directional-light 
                 id="whar"
                 position="-794, -80, 448" 

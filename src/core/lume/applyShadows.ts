@@ -33,5 +33,5 @@ export default function applyShadows(ref: Element3D | ObjModel) {
 }
 
 export function tightenShadows(dirLight: DirectionalLight, boundingObject: Element3D) {
-    
+    // TODO - Restrict shadow camera to just be inside a bounding box set by the side of bounding object
 }
