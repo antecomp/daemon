@@ -1,5 +1,5 @@
 import { ObjModel, onMount, Scene } from "lume";
-import barX from "./models/hype.fbx?url"
+import barX from "./models/what.fbx?url"
 //import barObj from "./models/bbb.obj"
 //import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
@@ -18,7 +18,7 @@ export default function GemmaBar() {
     useDGShader(() => sceneRef);
 
     //const {cameraControlSignals, cameraController} = createCameraController([87, -43, 690], {yaw: -45, pitch: 0}, {maxPitch: 20, maxYaw: 70});
-    const {cameraControlSignals, cameraController} = createCameraController([6, -52, 84], {yaw: -179, pitch: -2}, {maxPitch: 20, maxYaw: 70});
+    //const {cameraControlSignals, cameraController} = createCameraController([6, -52, 84], {yaw: -179, pitch: -2}, {maxPitch: 20, maxYaw: 70});
     
     return (
         <lume-scene
@@ -43,24 +43,7 @@ export default function GemmaBar() {
                 shadow-bias="-0.0001"
                 // shadow-normal-bias="0.5"// no noticable change.
             />
-            {/* <lume-point-light 
-                id="what"
-                intensity={2000} 
-                position="-385, -121, 169" 
-                align-point="0.5 0.5"
-                mount-point="0.5 0.5"
-                cast-shadow="true"
-            >
-                <lume-sphere
-                    align-point="0.5 0.5"
-                    mount-point="0.5 0.5"
-                    size="10 10 10"
-                    //@ts-expect-error
-                    has="basic-material"
-                    cast-shadow="false"
-                    color="red"
-                />
-            </lume-point-light> */}
+
             <lume-fbx-model
                 id="bar"
                 ref={barRef}
@@ -69,16 +52,6 @@ export default function GemmaBar() {
                 mount-point="0.5 0.5"
                 align-point="0.5 0.5"
             />
-            {/* <lume-obj-model
-                id="bar"
-                ref={barRef}
-                obj={barObj}
-                mtl={barMtl}
-                scale="8 8 8"
-                mount-point="0.5 0.5"
-                align-point="0.5 0.5"
-            /> */}
-
 
             <lume-sphere
                 id="stars"
@@ -98,39 +71,16 @@ export default function GemmaBar() {
 
 
 
-            {/* <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/> */}
-            {/* <NavigationPlane
-                cameraController={cameraController}
-                newPos={[87, -43, 690]}
-                newOri={{yaw: -45, pitch: 0}}
-                planePosition={[87, -43, 690]}
-                planeSize={150}
-                anim
-            />
+            <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
 
-            <NavigationPlane
-                cameraController={cameraController}
-                newPos={[6, -52, 84]}
-                newOri={{yaw: -179, pitch: -2}}
-                planePosition={[6, -52, 84]}
-                planeSize={150}
-                anim
-            />
-
-
-             <PlayerCam
-                {...cameraControlSignals()}
-                sceneRef={sceneRef!}
-            /> */}
-
-            <PlayerCam
+            {/* <PlayerCam
                 basePos={[76, -73, 603]}
                 baseOri={{ yaw: -677, pitch: -1 }}
                 maxYaw={25}
                 maxPitch={20}
                 animate={false}
                 sceneRef={sceneRef!}
-            />
+            /> */}
         </lume-scene>
     )
 }
