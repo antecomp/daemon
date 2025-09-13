@@ -1,10 +1,10 @@
 import { createSignal, onCleanup } from "solid-js"
 import { popUILayer, pushUILayer } from "../UILayerStore"
 import { nanoid } from "nanoid"
-import createColorTypewriter, { ColoredText } from "@/hooks/createColorTypewriter";
+import createColorTypewriter, { SegmentInput } from "@/hooks/createColorTypewriter";
 
 interface TextOverlayLine {
-    line: ColoredText[],
+    line: SegmentInput[],
     sideEffect?: () => void
 }
 export type TextOverlaySequence = TextOverlayLine[]
@@ -20,7 +20,7 @@ export default function TextScene(props: {
 
     const [currentLine, setCurrentLine] = createSignal(0);
     const currentLineText = () => props.sequence[currentLine()].line;
-    const {displayText, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineText);
+    const {display, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineText);
 
     let textElement!: HTMLParagraphElement // ref used to apply fade anim.
 
@@ -42,7 +42,7 @@ export default function TextScene(props: {
                         {opacity: "1"},
                         {opacity: "0"}
                     ],
-                    {duration: TEXT_FADE_DURATION}
+                    {duration: TEXT_FADE_DURATION + 100}
                 )
                 setTimeout(() => {
                     setCurrentLine(prev => prev + 1);
@@ -79,7 +79,7 @@ export default function TextScene(props: {
                     "text-align": "center"
                 }}
             >
-                {displayText()}
+                {display()}
             </p>
         </div>
     )

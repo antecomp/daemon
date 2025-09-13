@@ -1,88 +1,145 @@
-import { createSignal, createEffect, onCleanup } from "solid-js";
-import { JSX } from "solid-js";
+import { createEffect, createSignal, JSX, onCleanup } from "solid-js";
 
-type ColoredChar = {
-    char: string;
-    color?: string;
-}
-
-export interface ColoredText {
-    text: string;
-    color?: string;
-}
+/**
+ * Flexible segment input:
+ * - string: uncolored text
+ * - [text, color]: tuple helper form, e.g. ["word", "tomato"]
+ * - { text, color? }: legacy object form <- slated for removal.
+ */
+export type SegmentInput = string | [string, string] | {text: string, color?: string};
 
 type TypewriterOptions = {
-    delay?: number;
-    onComplete?: () => void;
+  delay?: number; // ms per character
+  onComplete?: () => void;
+};
+
+type Segment = {
+  text: string;
+  color?: string;
+};
+
+/**
+ * alias to ["text", "color"] format.
+ */
+export function color(text: string, color: string): [string, string] {
+  return [text, color];
 }
 
+function normalize(input: SegmentInput[]): Segment[] {
+  return input.map((seg) => {
+    if (typeof seg === "string") {
+      return { text: seg, color: undefined };
+    }
+    if (Array.isArray(seg)) {
+      const [text, color] = seg;
+      return { text, color };
+    }
+    return { text: seg.text, color: seg.color };
+  });
+}
+
+/**
+ * Create a typewriter animation for colored text segments.
+ *
+ * Performance
+ * - Uses direct string slicing (ASCII-only assumption for slicing).
+ * - Uses a single `shown` counter signal to drive updates.
+ * - Avoids creating per-character elements; only updates span textContent.
+ *
+ * @param input Accessor returning an array of segments (string | [text,color] | {text,color?}).
+ *              When this accessor changes, the animation restarts for the new content.
+ * @param options.delay Milliseconds per character (default 50ms).
+ * @param options.onComplete Callback invoked exactly once when typing finishes or is skipped.
+ * @returns
+ *  - display: JSX fragment to render the animated text.
+ *  - skipTypingAnimation: reveals all remaining text and triggers onComplete if needed.
+ *  - isFinished: accessor indicating whether the full text is visible.
+ */
 export default function createColorTypewriter(
-    input: () => ColoredText[],
-    { delay = 50, onComplete = () => {}}: TypewriterOptions = {}
+  input: () => SegmentInput[],
+  { delay = 50, onComplete = () => {} }: TypewriterOptions = {}
 ) {
-    const [displayText, setDisplayText] = createSignal<JSX.Element[]>([]);
-    const [isFinished, setFinished] = createSignal(false);
-    let callbackCalled = false;
-    let interval: NodeJS.Timeout | null = null;
+  const [segments, setSegments] = createSignal<Segment[]>([]);
+  const [totCharsShown, setTotCharsShown] = createSignal(0);
+  const [isFinished, setFinished] = createSignal(false);
 
-    // Flatten words into chars to add in easier.
-    const flattenWords = (words: ColoredText[]): ColoredChar[] =>
-        words.flatMap(({text: word, color}) =>
-            [...word].map((char) => ({char, color}))
-        );
+  let callbackCalled = false;
+  let interval: number | null = null;
+  let total = 0;
 
-    createEffect(() => {
-        const words = input();
-        const chars = flattenWords(words);
+  const stop = () => {
+    if (interval != null) {
+      clearInterval(interval);
+      interval = null;
+    }
+  };
 
-        // To reset on input change.
-        setDisplayText([]);
-        setFinished(false);
-        callbackCalled = false;
-        if (interval) clearInterval(interval);
+  createEffect(() => { // triggers when input chages
+    const segs = normalize(input());
+    setSegments(segs);
+    total = segs.reduce((acc, s) => acc + s.text.length, 0);
 
-        let index = 0;
-        interval = setInterval(() => {
-            if(index < chars.length) {
-                setDisplayText((prev) => [
-                    ...prev,
-                    <span style={{color: chars[index].color ?? "white"}}>
-                        {chars[index].char}
-                    </span>
-                ]);
-                index++;
-            } else {
-                clearInterval(interval!);
-                interval = null;
-                if (!callbackCalled) {
-                    callbackCalled = true;
-                    setFinished(true);
-                    onComplete();
-                }
-            }
-        }, delay);
-    })
+    stop();
+    setTotCharsShown(0);
+    setFinished(false);
+    callbackCalled = false;
 
-    onCleanup(() => {
-        if (interval) clearInterval(interval);
-    });
+    if (total === 0) {
+      setFinished(true);
+      if (!callbackCalled) {
+        callbackCalled = true;
+        onComplete();
+      }
+      return;
+    }
 
-    const skipTypingAnimation = () => {
-        if (!isFinished()) {
-            const chars = flattenWords(input());
-            setDisplayText(
-                chars.map(({ char, color }) => (
-                    <span style={{ color: color ?? "inherit" }}>{char}</span>
-                ))
-            );
-            setFinished(true);
-            if (interval) clearInterval(interval);
-            if (!callbackCalled) {
-                callbackCalled = true;
-                onComplete();
-            }
+    interval = window.setInterval(() => {
+      setTotCharsShown((prev) => {
+        const next = prev + 1;
+        if (next >= total) {
+          stop();
+          setFinished(true);
+          if (!callbackCalled) {
+            callbackCalled = true;
+            onComplete();
+          }
         }
-    };
+        return Math.min(next, total);
+      });
+    }, delay);
+  });
 
-    return { displayText, skipTypingAnimation, isFinished }
+  onCleanup(stop);
+
+  const skipTypingAnimation = () => {
+    if (!isFinished()) {
+      stop();
+      setTotCharsShown(total);
+      setFinished(true);
+      if (!callbackCalled) {
+        callbackCalled = true;
+        onComplete();
+      }
+    }
+  };
+
+  const display = (): JSX.Element => {
+    let remaining = totCharsShown();
+    return (
+      <>
+        {segments().map((s) => {
+          const take = Math.max(0, Math.min(remaining, s.text.length));
+          remaining -= take;
+          const text = take > 0 ? s.text.slice(0, take) : "";
+          return (
+            <span style={{ color: s.color ?? undefined }}>
+              {text}
+            </span>
+          );
+        })}
+      </>
+    );
+  };
+
+  return { display, skipTypingAnimation, isFinished };
 }
