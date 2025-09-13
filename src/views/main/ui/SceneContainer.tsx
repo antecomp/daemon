@@ -93,7 +93,7 @@ export default function SceneContainer() {
                 </ErrorBoundary>
 
                 <Show when={DialogueService.currentDialogueOverlay()}>
-                    <div id="dialogue-overlay" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
+                    <div id="dialogue-overlay" class="fademein" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
                 </Show>
                 <SceneFadeOverlay />
             </SceneMenuWrapper>

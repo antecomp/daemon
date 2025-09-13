@@ -13,11 +13,10 @@ import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import { For } from "solid-js";
 
 const eggggg: TextOverlaySequence = [
-    {segments: [{text: "This is the first line, one color", color: "red"}]}, 
+    {segments: [{text: "This is the first line, one color", color: "red"}], sideEffect: () => console.log("side effect triggered")}, 
     {segments: [{text: "This uses the default colour"}]},
     {segments: [{text: "Now we split into "}, {text: "Two colours", color: "red"}]}
 ]
-eggggg[0].sideEffect = () => console.log("Side Effect Triggered");
 
 const dmnintro: TextOverlaySequence = [
     {segments: [{text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {text: "THE DAEMONS", color: "red"}]},

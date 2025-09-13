@@ -18,7 +18,7 @@ const richDaddy = root.addBackAndFourthChain(
     chrs.MAN, chrs.ARDA
 )
 
-const thedeal_collapse = createDialogueNode("Here’s the deal. This isn’t some tour, it’s not even a safari. I hand off the mod, then you’re on your own.", chrs.MAN)
+const thedeal_collapse = createDialogueNode("Here’s the deal. This isn’t some tour, it’s not even a safari.", chrs.MAN)
 
 richDaddy.addCAROptionChild(
     "(Say Nothing)", "...",
@@ -37,7 +37,7 @@ richDaddy.addCAROptionChild(
 
 const whenuslot_collapse = createDialogueNode("So... when you slot it, you're exposed. All of you. That clear?", chrs.MAN)
 
-thedeal_collapse.addChild('Understand?')
+thedeal_collapse.addChild("I hand off the mod, then you’re on your own.").addChild('Understand?')
     .addCAROptions([
         {
             summaryText: "Yes",
@@ -46,18 +46,20 @@ thedeal_collapse.addChild('Understand?')
                 "Plus, I have your VLID, and you’re the only client I’ve had in the past 3 weeks.",
                 chrs.MAN,
                 (r) => {
-                    r.addBackAndFourthChain([
-                        'I’ll know it’s you if ASCM comes knocking on my door. My team works on homebrewed DVs daily, we can just as easily bypass an existing one.',
+                    r.addChild("I'll know it's you if ASCM comes knocking on my door.")
+                    .addChild("Want to remind you: My team works on homebrewed DVs daily, we can just as easily bypass an existing one.")
+                    .addBackAndFourthChain([
                         "Are you done threatening me so we can get on with it?",
-                        "I’m not threatening you, just some… terms and conditions.",
+                        "I'm not threatening you, just some… terms and conditions.",
                         "Right, moving on."
                     ],
-                        chrs.MAN,
-                        chrs.ARDA
+                        chrs.ARDA,
+                        chrs.MAN
                     )
                         .addMessageChain([
                             { name: VISUALIZER, render: 'he smirks, though it is hard to tell if out of amusement or annoyance' },
-                            { name: chrs.MAN, render: "Moving on… what you’re getting isn’t a patch or a plug-in, it’s a permanent bypass. Burn once. Firmware update, you know how it goes." }
+                            { name: chrs.MAN, render: "Moving on… what you're getting isn’t a patch or a plug-in, it's a permanent bypass. Burn once. Firmware update type of thing." },
+                            "You know how it goes."
                         ])
                         .addChild(whenuslot_collapse)
                 }
@@ -82,7 +84,7 @@ thedeal_collapse.addChild('Understand?')
 
 
 const cache_sealed_collapse = createDialogueNode(
-    "The cache is sealed. Encrypted, obfuscated - whatever term makes you feel smart. The point is, we don’t open it. Keeps the chain clean.",
+    "The cache is sealed. Encrypted, obfuscated - whatever term makes you feel smart.",
     chrs.MAN
 )
 
@@ -114,7 +116,8 @@ whenuslot_collapse.addCAROptionChild(
 ).addMessageChain([
     {render: 'No. Not entirely. We’re not trying to kill you, even if you’re paying us like you want to be killed.', name: chrs.MAN},
     {render: 'he shifts in his seat', name: VISUALIZER},
-    {render: "It forces your DV into manual, old-school testing shit. The safety net’s still there, but it’s last-ditch stuff. Basic automation for fragments, and no coddling.", name: chrs.MAN},
+    {render: "It forces your DV into manual, old-school testing shit. The safety net’s still there, but it’s last effort stuff.", name: chrs.MAN},
+    "Basic automation for fragments, and no coddling.",
     "You’ll feel and see things almost as they are. Might not like how much of that is you.",
     {render: 'behind his sunglasses, the glint in his eye suggests he is speaking from experience', name: VISUALIZER},
     {render: "But hey - your F-CH hits critical, it'll still yank you. Just… no promises it'll be clean, or leave you whole.", name: chrs.MAN}
@@ -123,7 +126,7 @@ whenuslot_collapse.addCAROptionChild(
 
 nodocumentation_collapse.addChild('he snorts', VISUALIZER)
     .addChild("A guide? Yeah. It's called 'dont die.'", chrs.MAN)
-    .addChild("Being unable to craft their own sigisl is why most people tap out before they even hit Fringe proper.")
+    .addChild("Being unable to craft their own sigils is why most people tap out before they even hit Fringe proper.")
     .addChild("Your DV won't autoresolve binds. You see something and you *deal* with it.")
     .addChild('His tone shifts', VISUALIZER)
     .addChild("Daemons don't exactly make sigils, but whatever they send at you will look pretty similar.", chrs.MAN)
@@ -137,6 +140,7 @@ nodocumentation_collapse.addChild('he snorts', VISUALIZER)
 const diskette_collapse = createDialogueNode("he slides a small diskette across the table", VISUALIZER)
 
 cache_sealed_collapse.addMessageChain([
+    "The point is, we don’t open it. Keeps the chain clean.",
     "You need to crack it yourself. That's part of the entry.",
     "You solve it: mod works. You don't: deadlock. Your fault.",
 ])
@@ -159,8 +163,7 @@ cache_sealed_collapse.addMessageChain([
 
 diskette_collapse.addMessageChain([
     {render: "Enjoy your contraband.", name: chrs.MAN},
-    {render: "He doesn’t let go immediately. He holds it there while looking you over once more, a final judge of your character, or perhaps evaluating if some unseen condition has been met.", name: VISUALIZER},
-    "[pan camera down to object on table, then back up]",
+    {render: "[pan camera down to object on table, then back up]", name: VISUALIZER},
     {render: "When you’re ready to go, meet us at the bridge mentioned on that cache, and give us a call.", name: chrs.MAN},
     "Don’t message until then. They visit exactly once.",
     {render: "Before you can say anything more, the man abruptly rises out of his chair and departs", name: VISUALIZER}

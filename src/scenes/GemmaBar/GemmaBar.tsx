@@ -11,14 +11,22 @@ import starfield from "../shared_textures/starfield.png"
 import createCameraController from "@/components/lume/playerCam/createCameraController";
 import NavigationPlane from "@/components/lume/NavigationPlane";
 
+
+import suited_man from "./assets/suited_figure.png";
+import d_overlay from "./assets/d_overlay.png";
+
+import Billboard from "@/components/lume/Billboard";
+import { DialogueService } from "@/core/dialogue/dialogueService";
+import dialogue_root from "@/tests/dialogues/intro_dia";
+import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCamera";
+
 export default function GemmaBar() {
     let sceneRef!: Scene;
     let barRef!: any
     onMount(() => barRef && applyShadows(barRef));
     useDGShader(() => sceneRef);
 
-    //const {cameraControlSignals, cameraController} = createCameraController([87, -43, 690], {yaw: -45, pitch: 0}, {maxPitch: 20, maxYaw: 70});
-    //const {cameraControlSignals, cameraController} = createCameraController([6, -52, 84], {yaw: -179, pitch: -2}, {maxPitch: 20, maxYaw: 70});
+    const {cameraControlSignals, cameraController} = createCameraController([-439, -55, 523], { yaw: 32, pitch: 3 }, {maxPitch: 20, maxYaw: 45})
     
     return (
         <lume-scene
@@ -69,9 +77,31 @@ export default function GemmaBar() {
 
             {/* <lume-camera-rig></lume-camera-rig> */}
 
+            <Billboard
+                texture={suited_man}
+                position="-505 -40 390"
+                scale={80}
+
+                interactions={[
+                    undefined,
+                    () => startDialogueWithCamOvr(
+                        cameraController, 
+                        [-470, -64, 483], 
+                        { yaw: 8, pitch: 8 }, 
+                        dialogue_root, 
+                        true,
+                        {overlay: d_overlay}
+                    )
+                ]}
+            />
+
+            <PlayerCam
+                {...cameraControlSignals()}
+                sceneRef={sceneRef}
+            />
 
 
-            <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
+            {/* <Freecam sceneRef={sceneRef} initialPos={[20, -100, 0]}/> */}
 
             {/* <PlayerCam
                 basePos={[76, -73, 603]}
