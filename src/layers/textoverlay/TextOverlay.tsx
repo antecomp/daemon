@@ -40,6 +40,8 @@ export default function TextScene(props: {
     function handleClick() {
         if(isFinished()) {
             if (currentLineIndex() >= props.sequence.length - 1) { // end
+                if (fadeLock) return;
+                fadeLock = true;
                 animateAsync(containerRef, [
                     {opacity: 1}, {opacity: 0}
                 ], 1000).finally(() => {
