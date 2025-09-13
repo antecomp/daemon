@@ -9,3 +9,5 @@ export const INITIAL_SCENE = "Elevator";
 export const FOV = 45;
 
 export const DEFAULT_DIALOGUE_SENDER = "Arda";
+
+export const LOGIN_MESSAGE = "INSTANCE INIT | [ DAEMON-GARDEN v.0.400 ]"

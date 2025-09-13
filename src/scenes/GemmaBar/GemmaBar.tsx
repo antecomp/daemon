@@ -98,7 +98,7 @@ export default function GemmaBar() {
 
 
 
-            <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/>
+            {/* <Freecam sceneRef={sceneRef} initialPos={[0, -100, 0]}/> */}
             {/* <NavigationPlane
                 cameraController={cameraController}
                 newPos={[87, -43, 690]}
@@ -122,6 +122,15 @@ export default function GemmaBar() {
                 {...cameraControlSignals()}
                 sceneRef={sceneRef!}
             /> */}
+
+            <PlayerCam
+                basePos={[76, -73, 603]}
+                baseOri={{ yaw: -677, pitch: -1 }}
+                maxYaw={25}
+                maxPitch={20}
+                animate={false}
+                sceneRef={sceneRef!}
+            />
         </lume-scene>
     )
 }

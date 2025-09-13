@@ -3,8 +3,11 @@ import br from "@/assets/ui/corners/da/br.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import tl_el from "../assets/tl_el.png"
 import { createEffect, on, createSignal, For } from "solid-js";
+import { LOGIN_MESSAGE } from "@/config";
 
-const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([]);
+const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([
+    {id: 0, text: LOGIN_MESSAGE, color: '#cfb886ff'}
+]);
 /**
  * Append a message to the "EventLog" which is the small text box at the bottom of the screen.
  * @param msg Message to append
@@ -13,10 +16,6 @@ export const addLogMessage = (text: string, color = "#aaa") => {
     // Use date to force uniqueness.
     setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text, color }]);
 };
-
-setTimeout(() => {
-    addLogMessage('Welcome to daemon.garden', '#56b59c')
-}, 50)
 
 export default function EventLog() {
     let containerRef: HTMLParagraphElement | undefined;
