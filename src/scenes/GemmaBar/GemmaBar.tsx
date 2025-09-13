@@ -38,8 +38,8 @@ export default function GemmaBar() {
                 intensity={2}
                 // color="red"
                 cast-shadow="true" 
-                shadow-map-height={2048} 
-                shadow-map-width={2048}
+                shadow-map-height={4096} 
+                shadow-map-width={4096}
                 shadow-bias="-0.0001"
                 // shadow-normal-bias="0.5"// no noticable change.
             />

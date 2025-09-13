@@ -83,5 +83,7 @@ button {
 
 .fademein {
   opacity: 0;
-  animation: fade-in forwards attr(data-fade-duration ms, 500ms);
+  animation: fade-in forwards; /* attr(data-fade-duration ms, 500ms); /* unreliable on firefox ig */
+  animation-duration: attr(data-fade-duration ms, 500ms);
+  animation-duration: 500ms; /* fallback */
 }

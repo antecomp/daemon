@@ -58,7 +58,7 @@ export const OPPONENT_MIMICRY: DVOpponentData = {
 
     // Report phase shift in UI, add buff.
     postRoundBehavior: (me, _player, appendActionMessage) => {
-        if(me.health < 5) {
+        if(me.health < 5) { // NEVER CHECKS IF WE ALREADY ADDED THIS LOL.
             me.addStatus(new ManiaStatus(999)); // Permenant Buff.
             appendActionMessage(`The ${me.name} has a wild look in their eye!`)
         }
