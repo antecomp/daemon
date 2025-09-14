@@ -47,3 +47,31 @@ main {
         opacity: 1;
     }
 }
+
+/* main {
+    zoom: 2;
+} */
+
+
+/* Integer scale game when there's enough room */
+@media screen and (min-width: 1978px) and (min-height: 1378px) {
+    @supports not (-moz-orient: block) { /* chrome/webkit */
+        main {
+            zoom: 2; /* zoom doesn't seem to interpolate */
+        }
+    }
+
+    @supports (-moz-orient: block) { /* firefox does things differently because of course */
+        body {
+            scale: 2;
+        }
+
+        #root {
+            /* On firefox: perspective: 0px; makes the text not-blurry at normal scale
+                but when zoomed in, it makes the text blurry (lmfao?) */
+            perspective: none; 
+            transform: none;
+        }
+    }
+
+}
