@@ -4,7 +4,7 @@ import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
-import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
+import { createEffect, createMemo, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { currentInteractionMode, cycleInteractionMode } from "@/core/interaction/interaction";
@@ -13,9 +13,6 @@ import SceneMenuWrapper from "./SceneMenu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
 import { AssetURL } from "@/extra.types";
 
-import pr_chat from "@/assets/ui/cursors/pr_chat.png"
-import pr_obs from "@/assets/ui/cursors/pr_obs.png"
-import pr_stock from "@/assets/ui/cursors/pra.png"
 import SceneFadeOverlay from "./SceneFadeOverlay/SceneFadeOverlay";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
@@ -31,17 +28,6 @@ const [hoverCursor, setHoverCursor] = createSignal<AssetURL>();
 export { setHoverCursor };
 
 // Helper for scene to resolve the current cursor to display.
-function currentCursor(): AssetURL {
-    if (hoverCursor()) return hoverCursor()!;
-    switch (currentInteractionMode()) {
-        case InteractionMode.Chat:
-            return pr_chat
-        case InteractionMode.Interact:
-            return pr_stock
-        case InteractionMode.Observe:
-            return pr_obs
-    }
-}
 
 /*
  * Scene-change side effects.
@@ -62,6 +48,16 @@ createEffect(on(currentScene, () => {
  * - Wraps scene rendering with Error/Suspense boundaries for lazy loading of scene components.
  */
 export default function SceneContainer() {
+
+    const currentCursor = () => {
+    if (hoverCursor()) return hoverCursor()!; // TODO HOVERCURSOR NEEDS TO BE CHANGED TO A CSS CLASS ALSO.
+    switch(currentInteractionMode()) {
+        case InteractionMode.Chat: return "cursor-chat";
+        case InteractionMode.Interact: return "cursor-interact";
+        case InteractionMode.Observe: return "cursor-observe";
+    }
+    };
+
     return (
         <CornerRect
             borderSize={2}
@@ -72,10 +68,8 @@ export default function SceneContainer() {
             height={`${SCENE_DIMENSIONS.height + 4}px`}
 
             onContextMenu={cycleInteractionMode}
-
-            style={{
-                cursor: `url(${currentCursor()}), auto`
-            }}
+            
+            class={currentCursor()}
         >
             <SceneMenuWrapper>
                 <ErrorBoundary

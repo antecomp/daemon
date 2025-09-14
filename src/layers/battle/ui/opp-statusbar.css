@@ -57,6 +57,10 @@
             border-image-slice: 4 0; /* Top and bottom stretch, left and right ignored */
             border-image-repeat: stretch; /* Stretches to fit */
         }
+
+        & img { /* weird positioning thing on firefox (when zoomed in)... idk*/
+            translate: 0px;
+        }
     }
 }
 

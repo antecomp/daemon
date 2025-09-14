@@ -19,6 +19,18 @@
   --cursor_pointer: url('../assets/ui/cursors/point.png'), auto;
 }
 
+.cursor-chat {
+  cursor: url('../assets/ui/cursors/pr_chat.png'), auto;
+}
+
+.cursor-interact {
+  cursor: url('../assets/ui/cursors/pra.png'), auto;
+}
+
+.cursor-observe {
+  cursor: url('../assets/ui/cursors/pr_obs.png'), auto;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -86,4 +98,45 @@ button {
   animation: fade-in forwards; /* attr(data-fade-duration ms, 500ms); /* unreliable on firefox ig */
   animation-duration: attr(data-fade-duration ms, 500ms);
   animation-duration: 500ms; /* fallback */
+}
+
+/* Integer scale game when there's enough room using godawful hacks to support every browser (even the bad ones) */
+@media screen and (min-width: 1978px) and (min-height: 1378px) {
+    @supports not (-moz-orient: block) { /* chrome/webkit */
+        main {
+            zoom: 2; /* zoom seems to do nearest neighbor scaling of everything :D */
+        }
+    }
+
+    @supports (-moz-orient: block) { /* firefox does things differently because of course */
+        body {
+            scale: 2;
+            overflow: hidden;
+        }
+
+        #root {
+            /* On firefox: perspective: 0px; makes the text not-blurry at normal scale
+                but when zoomed in, it makes the text blurry (lmfao?) */
+            perspective: none; 
+            transform: none;
+        }
+    }
+
+    :root {
+        --cursor_default: url('../assets/ui/cursors/pra_2x.png'), auto;
+        --cursor_pointer: url('../assets/ui/cursors/point_2x.png'), auto;
+    }
+
+    .cursor-chat {
+        cursor: url('../assets/ui/cursors/pr_chat_2x.png'), auto;
+    }
+
+    .cursor-interact {
+        cursor: url('../assets/ui/cursors/pra_2x.png'), auto;
+    }
+
+    .cursor-observe {
+        cursor: url('../assets/ui/cursors/pr_obs_2x.png'), auto;
+    }
+
 }

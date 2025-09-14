@@ -11,8 +11,8 @@ interface CornerRecProps {
     corners: [string?, string?, string?, string?], /* image imports Going top LR, bottom LR */
     borderSize: number
     borderType: `${BorderType} ${string}` // Final string for colour.
-    className?: string
-    style?: React.CSSProperties
+    class?: string
+    style?: JSX.CSSProperties
     id?: string
     // Soley used for SceneContainer, feel free to add support for other event listeners l8r tho.
     onContextMenu?: () => void;
@@ -29,7 +29,11 @@ interface CornerRecProps {
  */
 export default function CornerRect(props: CornerRecProps) {
     return (
-        <div class={`cornerRec ${props.className ?? ""}`} id={props.id ?? undefined}
+        <div 
+            //class={`cornerRec ${props.class ?? ""}`} 
+            class="cornerRec"
+            classList={{ [props.class ?? ""]: !!props.class }}
+            id={props.id ?? undefined}
             style={{
                 "--borderSize": `${-1 * props.borderSize}px`,
                 width: props.width ?? 'inherit',
