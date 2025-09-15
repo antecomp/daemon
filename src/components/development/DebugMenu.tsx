@@ -1,5 +1,5 @@
 import { MusicManager } from "@/core/audio/musicManager";
-import { startBattle } from "@/core/battle/battleManager";
+import { startBattle } from "@/core/battle/startBattle";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { OPPONENT_ANTHOUSAI } from "@/data/battles/anthousai";
 import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
