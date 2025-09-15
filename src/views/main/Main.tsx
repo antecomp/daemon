@@ -9,7 +9,7 @@ import UILayerHost from "@/layers/UILayerHost"
 
 export default function Main() {
     return (
-        <main>
+        <main id="game-root">
             <Sidebar/>
             <SceneContainer/>
             <img src={vl_badge} />

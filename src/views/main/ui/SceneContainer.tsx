@@ -4,7 +4,7 @@ import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
-import { createEffect, createMemo, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
+import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { currentInteractionMode, cycleInteractionMode } from "@/core/interaction/interaction";

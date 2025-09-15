@@ -31,6 +31,10 @@
   cursor: url('../assets/ui/cursors/pr_obs.png'), auto;
 }
 
+.cursor-navigate {
+  cursor: url('../assets/ui/cursors/nav.png'), auto;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -122,6 +126,7 @@ button {
         }
     }
 
+    /* upscale all the cursors too */
     :root {
         --cursor_default: url('../assets/ui/cursors/pra_2x.png'), auto;
         --cursor_pointer: url('../assets/ui/cursors/point_2x.png'), auto;
@@ -137,6 +142,10 @@ button {
 
     .cursor-observe {
         cursor: url('../assets/ui/cursors/pr_obs_2x.png'), auto;
+    }
+
+    .cursor-navigate {
+      cursor: url('../assets/ui/cursors/nav_2x.png'), auto;
     }
 
 }

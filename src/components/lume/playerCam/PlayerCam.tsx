@@ -219,6 +219,7 @@ export default function PlayerCam(props: {
     onCleanup(() => {
         props.sceneRef.removeEventListener("mousemove", handleMouseMove);
         props.sceneRef.removeEventListener("click", handleClick);
+        setHoverCursor(undefined);
     });
 
     createEffect(() => {

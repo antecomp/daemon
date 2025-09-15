@@ -6,8 +6,6 @@ import { Vector3 } from "three";
 import { onMount } from "solid-js"
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 
-import nav_cursor from "@/assets/ui/cursors/nav.png"
-
 export interface NavigationPlaneData {
     cameraController: CameraController,
     newPos?: XYZ
@@ -47,7 +45,7 @@ export default function NavigationPlane(props: NavigationPlaneData) {
             props.onClick?.();
         }
 
-        (planeRef.three as InteractableObject3D).userData.cursor = nav_cursor;
+        (planeRef.three as InteractableObject3D).userData.cursor = "cursor-navigate";
     });
 
     const getPlaneSize = () => {
