@@ -48,6 +48,12 @@ function waitForOverlayEnd(): Promise<void> {
     });
 }
 
+/* TODO - Stop early resolve in fadeSceneOut/In on incorrect stage, instead keep a universal promise that we can track and return
+regardless of state. Alternatively consider rejecting to indicate the request is too early (error)
+    Make fades single-flight: src/views/main/ui/SceneFadeOverlay/SceneFadeOverlay.tsx:51
+    Keep let inFlight: Promise<void> | null per direction; return it if present; no early returns.
+*/
+
 async function fadeSceneOut() {
     // TODO/Note - this simple guard makes me nervous when it comes to resolving promises, 
     // come up with a generally better lock/queue system plz.

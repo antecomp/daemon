@@ -7,6 +7,8 @@ import { currentInteractionMode } from "@/core/interaction/interaction"
 import { InteractionMap } from "../../core/interaction/interactable.types";
 import { InteractableObject3D } from "../../core/interaction/interactable.types";
 
+// TODO - Consider downscaling this mask (then sampling it at a rougher rate inside isOpaque).
+// Having the mask be pixel-perfect is a waste of resources. Even halving it would be a huge improvement with little loss in accuracy!
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");
     const offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});

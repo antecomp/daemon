@@ -42,6 +42,7 @@ export default function Interactable(props: InteractiveElementProps) {
 
     // Live disable hover border if prop changes.
     // TODO - Might want to check if we're still hovering over this during that change, so we don't turn off another persons hover border.
+    // (Only clear if the current hovered equals this container’s child.)
     createEffect(() => {
         if(!props.showHoverBorder) {
             setHoveredItem(null);

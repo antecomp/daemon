@@ -33,7 +33,7 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     pushUILayer({
         id,
         lock: options?.lock ?? MainUILock.All,
-        blockBehind: options?.blockBehind,
+        blockBehind: options?.blockBehind, // TODO: Make always true instead?
         component: () => <Hermes root={rootNode} ctx={options?.ctx} />,
         style: {right: 0}
     });
