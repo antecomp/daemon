@@ -18,7 +18,7 @@ const richDaddy = root.addBackAndFourthChain(
     chrs.MAN, chrs.ARDA
 )
 
-const thedeal_collapse = createDialogueNode("Here’s the deal. This isn’t some tour, it’s not even a safari.", chrs.MAN)
+const thedeal_collapse = createDialogueNode("Here's the deal. This isn't some tour, it's not even a safari.", chrs.MAN)
 
 richDaddy.addCAROptionChild(
     "(Say Nothing)", "...",
@@ -37,13 +37,13 @@ richDaddy.addCAROptionChild(
 
 const whenuslot_collapse = createDialogueNode("So... when you slot it, you're exposed. All of you. That clear?", chrs.MAN)
 
-thedeal_collapse.addChild("I hand off the mod, then you’re on your own.").addChild('Understand?')
+thedeal_collapse.addChild("I hand off the mod, then you're on your own.").addChild('Understand?')
     .addCAROptions([
         {
             summaryText: "Yes",
             fullText: "Yeah, of course.",
             response: createInlineDialogueTree(
-                "Plus, I have your VLID, and you’re the only client I’ve had in the past 3 weeks.",
+                "Plus, I have your VLID, and you're the only client I've had in the past 3 weeks.",
                 chrs.MAN,
                 (r) => {
                     r.addChild("I'll know it's you if ASCM comes knocking on my door.")
@@ -58,7 +58,7 @@ thedeal_collapse.addChild("I hand off the mod, then you’re on your own.").addC
                     )
                         .addMessageChain([
                             { name: VISUALIZER, render: 'he smirks, though it is hard to tell if out of amusement or annoyance' },
-                            { name: chrs.MAN, render: "Moving on… what you're getting isn’t a patch or a plug-in, it's a permanent bypass. Burn once. Firmware update type of thing." },
+                            { name: chrs.MAN, render: "Moving on… what you're getting isn't a patch or a plug-in, it's a permanent bypass. Burn once. Firmware update type of thing." },
                             "You know how it goes."
                         ])
                         .addChild(whenuslot_collapse)
@@ -92,7 +92,7 @@ const nodocumentation_collapse = createDialogueNode('No documentation for a manu
 
 whenuslot_collapse.addCAROptionChild(
     'Yes', 'Yes',
-    "I would envy your confidence if I didn’t know it will get you killed"
+    "I would envy your confidence if I didn't know it will get you killed"
 ).addChild("Remember your DV will have to be manually controlled, don't get too comfortable")
 .addChild(nodocumentation_collapse)
 
@@ -114,11 +114,11 @@ whenuslot_collapse.addCAROptionChild(
     chrs.ARDA,
     VISUALIZER
 ).addMessageChain([
-    {render: 'No. Not entirely. We’re not trying to kill you, even if you’re paying us like you want to be killed.', name: chrs.MAN},
+    {render: "No. Not entirely. We're not trying to kill you, even if you're paying us like you want to be killed.", name: chrs.MAN},
     {render: 'he shifts in his seat', name: VISUALIZER},
-    {render: "It forces your DV into manual, old-school testing shit. The safety net’s still there, but it’s last effort stuff.", name: chrs.MAN},
+    {render: "It forces your DV into manual, old-school testing shit. The safety net's still there, but it's last effort stuff.", name: chrs.MAN},
     "Basic automation for fragments, and no coddling.",
-    "You’ll feel and see things almost as they are. Might not like how much of that is you.",
+    "You'll feel and see things almost as they are. Might not like how much of that is you.",
     {render: 'behind his sunglasses, the glint in his eye suggests he is speaking from experience', name: VISUALIZER},
     {render: "But hey - your F-CH hits critical, it'll still yank you. Just… no promises it'll be clean, or leave you whole.", name: chrs.MAN}
 ]).addChild(nodocumentation_collapse);
@@ -137,10 +137,11 @@ nodocumentation_collapse.addChild('he snorts', VISUALIZER)
     .addChild("Yeah, one more thing...", chrs.MAN)
     .addChild(cache_sealed_collapse);
 
-const diskette_collapse = createDialogueNode("he slides a small diskette across the table", VISUALIZER)
+const diskette_collapse = createDialogueNode("he slides a small diskette across the table", VISUALIZER);
+diskette_collapse.attachSideEffect((ctx) => ctx?.actions?.cacheHandoverAnimation());
 
 cache_sealed_collapse.addMessageChain([
-    "The point is, we don’t open it. Keeps the chain clean.",
+    "The point is, we don't open it. Keeps the chain clean.",
     "You need to crack it yourself. That's part of the entry.",
     "You solve it: mod works. You don't: deadlock. Your fault.",
 ])
@@ -161,12 +162,13 @@ cache_sealed_collapse.addMessageChain([
     }
 ])[1].addChild(diskette_collapse)
 
-diskette_collapse.addMessageChain([
-    {render: "Enjoy your contraband.", name: chrs.MAN},
-    {render: "[pan camera down to object on table, then back up]", name: VISUALIZER},
-    {render: "When you’re ready to go, meet us at the bridge mentioned on that cache, and give us a call.", name: chrs.MAN},
-    "Don’t message until then. They visit exactly once.",
-    {render: "Before you can say anything more, the man abruptly rises out of his chair and departs", name: VISUALIZER}
-])
+diskette_collapse.addChild("Enjoy your contraband.", chrs.MAN)
+    .attachSideEffect((ctx) => ctx?.actions?.returnCamera())
+    .addMessageChain([
+        "When you're ready to go, meet us at the bridge mentioned on that cache, and give us a call.",
+        "Don't message until then. They visit exactly once.",
+        {render: "Before you can say anything more, the man abruptly rises out of his chair and departs", name: VISUALIZER}
+    ])
+    .attachSideEffect((ctx) => ctx?.actions?.departTheMan())
 
 export default root;

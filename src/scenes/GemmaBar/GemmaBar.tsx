@@ -1,4 +1,5 @@
-import { ObjModel, onMount, Scene } from "lume";
+import { Scene } from "lume";
+import { onMount, Show, createSignal } from "solid-js";
 import barX from "./models/kms.fbx?url"
 //import barObj from "./models/bbb.obj"
 //import barMtl from "./models/bbb.mtl"
@@ -9,16 +10,19 @@ import { useDGShader } from "@/core/lume/dgRender";
 
 import starfield from "../shared_textures/starfield.png"
 import createCameraController from "@/components/lume/playerCam/createCameraController";
-import NavigationPlane from "@/components/lume/NavigationPlane";
 
 
 import suited_man from "./assets/suited_figure.png";
 import d_overlay from "./assets/d_overlay.png";
 
+import cache_model from "./models/cache.fbx?url"
+
 import Billboard from "@/components/lume/Billboard";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import dialogue_root from "@/tests/dialogues/intro_dia";
 import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCamera";
+import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
+import Interactable from "@/components/lume/Interactable";
+import sleep from "@/utils/sleep";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
@@ -27,6 +31,26 @@ export default function GemmaBar() {
     useDGShader(() => sceneRef);
 
     const {cameraControlSignals, cameraController} = createCameraController([-439, -55, 523], { yaw: 32, pitch: 3 }, {maxPitch: 20, maxYaw: 45})
+
+    const [cacheOnTable, setShowCache] = createSignal(false);
+    const [hasManDeparted, setManDeparted] = createSignal(false);
+
+    function cacheHandoverAnimation() {
+        setShowCache(true);
+        cameraController.setOverrides([-463, -67, 487], {yaw: 15, pitch: 40});
+    }
+
+    function returnCamera() {
+        // these are the overrides set in startDialogueWithCamOvr. May be worth pulling out to unify!
+        cameraController.setOverrides([-470, -64, 483], {yaw: 8, pitch: 8});
+    }
+
+    async function departTheMan() {
+         SceneFadeManager.fadeTransition(() => {
+            setManDeparted(true);
+            cameraController.clearOverrides();
+        });
+    }
     
     return (
         <lume-scene
@@ -77,28 +101,52 @@ export default function GemmaBar() {
 
             {/* <lume-camera-rig></lume-camera-rig> */}
 
-            <Billboard
-                texture={suited_man}
-                position="-505 -40 390"
-                scale={80}
-
-                interactions={[
-                    undefined,
-                    () => startDialogueWithCamOvr(
-                        cameraController, 
-                        [-470, -64, 483], 
-                        { yaw: 8, pitch: 8 }, 
-                        dialogue_root, 
-                        true,
-                        {overlay: d_overlay}
-                    )
-                ]}
-            />
+            <Show when={!hasManDeparted()}>
+                <Billboard
+                    texture={suited_man}
+                    position="-505 -45 390"
+                    scale={62}
+                    interactions={[
+                        undefined,
+                        () => startDialogueWithCamOvr(
+                            cameraController, 
+                            [-470, -64, 483], 
+                            { yaw: 8, pitch: 8 }, 
+                            dialogue_root, 
+                            true,
+                            {
+                                overlay: d_overlay,
+                                ctx: {actions: {cacheHandoverAnimation, returnCamera, departTheMan}}
+                            }
+                        )
+                    ]}
+                />
+            </Show>
 
             <PlayerCam
                 {...cameraControlSignals()}
                 sceneRef={sceneRef}
             />
+
+            <Show when={cacheOnTable()}>
+                <Interactable
+                    interactions={[
+                        () => {
+                            setShowCache(false);
+                            sleep(1000).then(() => SceneFadeManager.fadeSceneOut())
+                        }
+                    ]}
+                >
+                    <lume-fbx-model
+                        id="cache"
+                        position="-475 -26 455"
+                        src={cache_model}
+                        scale="0.07 0.07 0.07"
+                        mount-point="0.5 0.5"
+                        align-point="0.5 0.5"
+                    />
+                </Interactable>
+            </Show>
 
 
             {/* <Freecam sceneRef={sceneRef} initialPos={[20, -100, 0]}/> */}
