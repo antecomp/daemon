@@ -14,6 +14,8 @@ import { InteractionMode } from "@/core/interaction/interactable.types";
 import { AssetURL } from "@/extra.types";
 
 import SceneFadeOverlay from "./SceneFadeOverlay/SceneFadeOverlay";
+import SceneLoadError from "./Fallbacks/SceneLoadError";
+import SceneLoading from "./Fallbacks/SceneLoading";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 (window as any).DG_setScene = setCurrentScene;
@@ -50,12 +52,12 @@ createEffect(on(currentScene, () => {
 export default function SceneContainer() {
 
     const currentCursor = () => {
-    if (hoverCursor()) return hoverCursor()!; // TODO HOVERCURSOR NEEDS TO BE CHANGED TO A CSS CLASS ALSO.
-    switch(currentInteractionMode()) {
-        case InteractionMode.Chat: return "cursor-chat";
-        case InteractionMode.Interact: return "cursor-interact";
-        case InteractionMode.Observe: return "cursor-observe";
-    }
+        if (hoverCursor()) return hoverCursor()!; // TODO HOVERCURSOR NEEDS TO BE CHANGED TO A CSS CLASS ALSO.
+        switch (currentInteractionMode()) {
+            case InteractionMode.Chat: return "cursor-chat";
+            case InteractionMode.Interact: return "cursor-interact";
+            case InteractionMode.Observe: return "cursor-observe";
+        }
     };
 
     return (
@@ -68,20 +70,14 @@ export default function SceneContainer() {
             height={`${SCENE_DIMENSIONS.height + 4}px`}
 
             onContextMenu={cycleInteractionMode}
-            
+
             class={currentCursor()}
         >
             <SceneMenuWrapper>
                 <ErrorBoundary
-                    fallback={(err, reset) => (
-                        <>
-                            <p>Error loading scene: {err.message}</p>
-                            <button onClick={reset}>Try again</button>
-                            <button onClick={() => { setCurrentScene(INITIAL_SCENE); reset() }}>Return To Initial Scene</button>
-                        </>
-                    )}
+                    fallback={(err, retry) => <SceneLoadError err={err} retry={retry} reset={() => {setCurrentScene(INITIAL_SCENE); retry()}}/>}
                 >
-                    <Suspense fallback={<p>Loading scene...</p>}>
+                    <Suspense fallback={<SceneLoading/>}>
                         <Dynamic component={loadScene(currentScene())} />
                     </Suspense>
                 </ErrorBoundary>
