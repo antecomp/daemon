@@ -47,3 +47,15 @@ main {
         opacity: 1;
     }
 }
+
+#modal-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    .tooltip {
+        pointer-events: auto;
+        position: absolute;
+        z-index: 9999;
+    }
+}

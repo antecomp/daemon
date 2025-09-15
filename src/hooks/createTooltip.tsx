@@ -3,72 +3,86 @@ import { Portal } from "solid-js/web";
 
 const TOOLTIP_OFFSET = 15;
 
+// helper: robust scale even across zoom / transforms
+function getElementScale(el: HTMLElement) {
+  // offsetWidth is layout size in CSS px (unscaled)
+  // getBoundingClientRect().width is the *rendered* size (after zoom/transform)
+  const rect = el.getBoundingClientRect();
+  const ow = el.offsetWidth || 1; // avoid div-by-zero
+  return rect.width / ow;
+}
+
+
 export function createTooltip() {
-    const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
+  const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
+  const [position, setPosition] = createSignal({ x: 0, y: 0 });
 
-    const [position, setPosition] = createSignal({ x: 0, y: 0 });
+  let tooltipRef: HTMLDivElement | undefined;
+  const TOOLTIP_OFFSET = 12;
 
-    let tooltipRef: HTMLDivElement | undefined;
+  const overlay = () => document.getElementById("modal-root") as HTMLDivElement | null;
+  const gameRoot = () => document.getElementById("game-root") as HTMLElement | null;
 
-    const updatePosition = (e: MouseEvent) => {
-        if(!tooltipRef) return;
+  const updatePosition = (e: MouseEvent) => {
+    const root = gameRoot();
+    const layer = overlay();
+    if (!tooltipRef || !root || !layer) return;
 
-        let x = e.clientX + TOOLTIP_OFFSET;
-        let y = e.clientY + TOOLTIP_OFFSET;
+    const rect = root.getBoundingClientRect();
+    const scale = getElementScale(root);          // works for both `zoom` and `transform: scale`
+    const localX = (e.clientX - rect.left) / scale;
+    const localY = (e.clientY - rect.top)  / scale;
 
-        const { width, height } = tooltipRef.getBoundingClientRect();
+    let x = localX + TOOLTIP_OFFSET;
+    let y = localY + TOOLTIP_OFFSET;
 
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+    // tooltip’s intrinsic (unscaled) size:
+    const w = tooltipRef.offsetWidth;
+    const h = tooltipRef.offsetHeight;
 
-        // Check if going beyond right boundary, if so, flip to left side
-        if (x + width > windowWidth) {
-            x = e.clientX - width - TOOLTIP_OFFSET;
-        }
+    // visible area in local (unscaled) coords:
+    const visibleW = rect.width  / scale;
+    const visibleH = rect.height / scale;
 
-        // Check if going beyond bottom boundary, if so, flip to top side
-        if (y + height > windowHeight) {
-            y = e.clientY - height - TOOLTIP_OFFSET;
-        }
+    // flip if overflowing right/bottom
+    if (x + w > visibleW) x = localX - w - TOOLTIP_OFFSET;
+    if (y + h > visibleH) y = localY - h - TOOLTIP_OFFSET;
 
-        setPosition({ x, y });
-    }
+    // clamp left/top too
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
 
-    const showTooltip = (content: () => JSX.Element) => {
-        setTooltipContent(() => content);
-        document.addEventListener("mousemove", updatePosition);
-    }
+    setPosition({ x, y });
+  };
 
-    const hideTooltip = () => {
-        setTooltipContent(null);
-        document.removeEventListener("mousemove", updatePosition);
-    }
+  const showTooltip = (content: () => JSX.Element) => {
+    setTooltipContent(() => content);
+    document.addEventListener("mousemove", updatePosition);
+  };
 
-    onCleanup(() => {
-        document.removeEventListener("mousemove", updatePosition);
-    })
+  const hideTooltip = () => {
+    setTooltipContent(null);
+    document.removeEventListener("mousemove", updatePosition);
+  };
 
-    const TooltipComponent = () => (
-        <Show when={tooltipContent()}>
-            <Portal
-                mount={document.body}
-            >
-                <div
-                    ref={tooltipRef}
-                    class="tooltip"
-                    style={{
-                        position: "fixed",
-                        top: `${position().y}px`,
-                        left: `${position().x}px`,
-                        "z-index": 1000,
-                        // Actual specific styling should be done in base.css
-                    }}
-                >
-                    {tooltipContent?.()?.()}
-                </div>
-            </Portal>
-        </Show>
-    );
+  onCleanup(() => document.removeEventListener("mousemove", updatePosition));
 
-    return { showTooltip, hideTooltip, TooltipComponent };
+  const TooltipComponent = () => (
+    <Show when={tooltipContent()}>
+      <Portal mount={overlay() ?? undefined}>
+        <div
+          ref={tooltipRef}
+          class="tooltip"
+          style={{
+            top: `${position().y}px`,
+            left: `${position().x}px`,
+          }}
+        >
+          {tooltipContent?.()?.()}
+        </div>
+      </Portal>
+    </Show>
+  );
+
+  return { showTooltip, hideTooltip, TooltipComponent };
 }
