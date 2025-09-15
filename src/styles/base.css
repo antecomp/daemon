@@ -89,6 +89,9 @@ button {
   opacity: 0;
   animation: fade-in 0.5s forwards;
   animation-delay: 0.5s;
+
+  perspective: 0px;
+  transform: perspective(0px);
 }
 
 @keyframes fade-in {
@@ -104,7 +107,7 @@ button {
   animation-duration: 500ms; /* fallback */
 }
 
-/* Integer scale game when there's enough room using godawful hacks to support every browser (even the bad ones) */
+/* Integer scale game when there's enough room using evil hacks to support every browser (even the bad ones) */
 @media screen and (min-width: 1978px) and (min-height: 1378px) {
     @supports not (-moz-orient: block) { /* chrome/webkit */
         main {
@@ -118,9 +121,9 @@ button {
             overflow: hidden;
         }
 
-        #root {
-            /* On firefox: perspective: 0px; makes the text not-blurry at normal scale
-                but when zoomed in, it makes the text blurry (lmfao?) */
+        #root, .tooltip {
+            /* On firefox/chrome: perspective: 0px; makes the text not-blurry at normal scale
+                 But for firefox, but when zoomed in, it makes the text blurry again (lmao?) */
             perspective: none; 
             transform: none;
         }
