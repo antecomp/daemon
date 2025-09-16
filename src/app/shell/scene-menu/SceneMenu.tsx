@@ -7,8 +7,7 @@ import { useSceneMenu } from "./SceneMenuContext";
 
 import default_option_icon from "./assets/option_icon_circle.png"
 import x_option_icon from "./assets/option_icon_x.png"
-
-const MENU_OFFSET = 26;
+import { SCENE_MENU_OFFSET } from "@/config/ui.config";
 
 /**
  * SceneMenu component displays a context menu at a specified position within a scene.
@@ -31,7 +30,7 @@ export default function SceneMenu(props: {
             <div class="scenemenu-container"
                 onMouseLeave={closeMenu}
                 style={{
-                    translate: `${Math.floor(props.currentMenu!.position.x) - MENU_OFFSET}px -${Math.floor(props.currentMenu!.position.y) + MENU_OFFSET}px`,
+                    translate: `${Math.floor(props.currentMenu!.position.x) - SCENE_MENU_OFFSET}px -${Math.floor(props.currentMenu!.position.y) + SCENE_MENU_OFFSET}px`,
                 }}
             >
                 <div class="scenemenu-prompt-body">
