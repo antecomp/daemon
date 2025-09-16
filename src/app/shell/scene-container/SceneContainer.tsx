@@ -1,5 +1,5 @@
 import CornerRect from "@/components/util/corner-rect/CornerRect";
-import bl_scene from "../assets/bl_scene.png"
+import bl_scene from "./assets/bl_scene.png"
 import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
@@ -9,13 +9,13 @@ import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "s
 import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { loadScene } from "@/scenes/loadScene";
-import SceneMenuWrapper from "./SceneMenu/SceneMenuWrapper";
+import SceneMenuWrapper from "../scene-menu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
 import { AssetURL } from "@/extra.types";
 
-import SceneFadeOverlay from "./SceneFadeOverlay/SceneFadeOverlay";
-import SceneLoadError from "./Fallbacks/SceneLoadError";
-import SceneLoading from "./Fallbacks/SceneLoading";
+import SceneFadeOverlay from "../scene-fade-overlay/SceneFadeOverlay";
+import SceneLoadError from "../fallbacks/SceneLoadError";
+import SceneLoading from "../fallbacks/SceneLoading";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);

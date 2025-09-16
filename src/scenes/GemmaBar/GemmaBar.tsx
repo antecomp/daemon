@@ -2,8 +2,8 @@ import { Scene } from "lume";
 import { onMount, Show, createSignal } from "solid-js";
 import barX from "./models/kms.fbx?url"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import applyShadows from "@/core/lume/applyShadows";
-import { useDGShader } from "@/core/lume/dgRender";
+import applyShadows from "@/3d/pipeline/applyShadows";
+import { useDGShader } from "@/3d/pipeline/dgRender";
 
 import starfield from "../shared_textures/starfield.png"
 import createCameraController from "@/components/lume/playerCam/createCameraController";
@@ -14,14 +14,14 @@ import d_overlay from "./assets/d_overlay.png";
 
 import cache_model from "./models/cache.fbx?url"
 
-import Billboard from "@/components/lume/Billboard";
+import Billboard from "@/3d/components/Billboard";
 import dialogue_root from "@/tests/dialogues/intro_dia";
 import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCamera";
-import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
-import Interactable from "@/components/lume/Interactable";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import Interactable from "@/3d/components/Interactable";
 import sleep from "@/utils/sleep";
-import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
-import { addLogMessage } from "@/views/main/ui/EventLog";
+import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
+import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;

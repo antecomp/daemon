@@ -1,11 +1,11 @@
-import Sidebar from "./ui/SideBar/Sidebar.tsx"
-import SceneContainer from "./ui/SceneContainer"
-import IModePicker from "./ui/IMode"
-import EventLog from "./ui/EventLog"
+import Sidebar from "./shell/sidebar/Sidebar.tsx"
+import SceneContainer from "./shell/scene-container/SceneContainer.tsx"
+import IModePicker from "./shell/hud/IMode.tsx"
+import EventLog from "./shell/hud/EventLog.tsx"
 
 import './main.css'
 import vl_badge from './assets/vl_badge.png'
-import UILayerHost from "@/layers/UILayerHost"
+import UILayerHost from "./shell/layers/UILayerHost"
 import InteractionProvider from "@/core/interaction/InteractionProvider"
 
 /* Warning that these IDs are used for createTooltips portal / rendered scale calculations!*/

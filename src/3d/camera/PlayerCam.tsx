@@ -1,8 +1,8 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Orientation } from "@/extra.types";
-import { isSceneLocked } from "@/layers/UILayerStore";
+import { isSceneLocked } from "@/app/shell/layers/UILayerStore";
 import lerp from "@/utils/lerp";
-import { setHoverCursor } from "@/views/main/ui/SceneContainer";
+import { setHoverCursor } from "@/app/shell/scene-container/SceneContainer";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";

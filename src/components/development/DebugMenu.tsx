@@ -6,10 +6,10 @@ import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
 import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
-import { playTextOverlay, TextOverlaySequence } from "@/layers/textoverlay/TextOverlay";
+import { playTextOverlay, TextOverlaySequence } from "@/features/text-overlay/TextOverlay";
 import openingTextScene from "@/scenes/Elevator/data/opening_textscene";
 import root from "@/tests/dialogues/intro_dia";
-import { setCurrentScene } from "@/views/main/ui/SceneContainer";
+import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { For } from "solid-js";
 
 const eggggg: TextOverlaySequence = [

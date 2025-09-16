@@ -3,7 +3,7 @@ import mapmtl from './models/map.mtl?url';
 import thingy from './models/thingy.gltf?url'
 import { onMount, Scene } from "lume";
 import player_ref from '../shared_models/player_ref.fbx?url'
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import Freecam from "@/components/lume/playerCam/Freecam";
 
 export default function ThirdScene() {

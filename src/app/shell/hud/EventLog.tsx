@@ -1,7 +1,7 @@
 import CornerRect from "@/components/util/corner-rect/CornerRect";
 import br from "@/assets/ui/corners/da/br.png"
 import tr from "@/assets/ui/corners/da/tr.png"
-import tl_el from "../assets/tl_el.png"
+import tl_el from "./assets/tl_el.png"
 import { createEffect, on, createSignal, For } from "solid-js";
 import { LOGIN_MESSAGE } from "@/config/init";
 

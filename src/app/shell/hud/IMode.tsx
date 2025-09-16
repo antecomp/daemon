@@ -1,6 +1,6 @@
-import ipi from "../assets/ip_i.png"
-import ipo from "../assets/ip_o.png"
-import ipc from "../assets/ip_c.png"
+import ipi from "./assets/ip_i.png"
+import ipo from "./assets/ip_o.png"
+import ipc from "./assets/ip_c.png"
 import { InteractionMode } from "@/core/interaction/interactable.types"
 import { useInteractionContext } from "@/core/interaction/InteractionProvider"
 

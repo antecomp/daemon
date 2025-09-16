@@ -3,10 +3,10 @@ import { SCENE_DIMENSIONS } from "@/config/ui";
 import { Scene, toRadians } from "lume";
 import {onMount} from "solid-js"
 import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
-import pp_fragshader from "@/shaders/post-processing/dg.frag.glsl"
-import pp_vertshader from "@/shaders/post-processing/pass.vert.glsl"
+import pp_fragshader from "@/3d/shaders/post-processing/dg.frag.glsl"
+import pp_vertshader from "@/3d/shaders/post-processing/pass.vert.glsl"
 import { Vector2 } from "three";
-import { hoveredItem } from "@/components/lume/Interactable";
+import { hoveredItem } from "@/3d/components/Interactable";
 import sleep from "@/utils/sleep";
 
 function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {

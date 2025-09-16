@@ -1,7 +1,7 @@
 import { DialogueContext, DialogueNode } from "./dialogueNode.types";
-import { popUILayer, pushUILayer } from "@/layers/UILayerStore";
-import { MainUILock } from "@/layers/ui-layers.types";
-import Hermes from "@/layers/hermes/Hermes";
+import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerStore";
+import { MainUILock } from "@/app/shell/layers/ui-layers.types";
+import Hermes from "@/features/hermes/Hermes";
 import {createSignal} from "solid-js";
 
 /**

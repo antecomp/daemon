@@ -1,4 +1,4 @@
-import { TextOverlaySequence } from "@/layers/textoverlay/TextOverlay"
+import { TextOverlaySequence } from "@/app/shell/layers/textoverlay/TextOverlay"
 
 const openingTextScene: TextOverlaySequence = [
     ["This is it..."],

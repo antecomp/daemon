@@ -1,4 +1,4 @@
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import { Scene } from "lume";
 import { onMount } from "solid-js";
 import island1 from "./models/island_1.fbx?url"

@@ -5,7 +5,7 @@ import mage_icon from '../icons/mage.png'
 import prae_icon from '../icons/PRAETORIAN.png'
 import priestess_icon from '../icons/priestess.png'
 import trickster_icon from '../icons/trickster.png'
-import stock_icon from "@/layers/battle/assets/placeholder_move_icon.png"
+import stock_icon from "@/features/battle/assets/placeholder_move_icon.png"
 
 import { Attack, Defend, Evade, Heal, NothingMove, OverwhelmMove, Prepare } from '../moves.list'
 import { MoveMeta, MovePerspective, MoveType } from "../moves.types";

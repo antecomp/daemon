@@ -1,9 +1,9 @@
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import { ObjModel, Scene } from "lume";
 import {onMount} from "solid-js";
 import barobj from "./models/bar2.obj"
 import barmtl from "./models/bar2.mtl"
-import applyShadows from "@/core/lume/applyShadows";
+import applyShadows from "@/3d/pipeline/applyShadows";
 import starfield from "../shared_textures/starfield.png"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 

@@ -2,11 +2,11 @@ import mapobj from './models/map.obj?url'
 import mapmtl from './models/map.mtl?url'
 import player_ref from '../shared_models/player_ref.fbx?url'
 import { createSignal, onMount } from 'solid-js'
-import Interactable from '@/components/lume/Interactable'
+import Interactable from '@/3d/components/Interactable'
 import { Scene } from 'lume'
-import applyDGShader from '@/core/lume/dgRender'
+import applyDGShader from '@/3d/pipeline/dgRender'
 import { InteractionMode } from '@/core/interaction/interactable.types'
-import PlayerCam from '@/components/lume/playerCam/PlayerCam'
+import PlayerCam from '@/3d/camera/PlayerCam'
 
 export default function AnotherScene() {
     let sceneRef: Scene | undefined;

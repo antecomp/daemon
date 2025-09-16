@@ -2,7 +2,7 @@ import spz from "./glTF/Sponza.gltf?url";
 import { Scene } from "lume";
 import {onMount} from "solid-js";
 // import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import Freecam from "@/components/lume/playerCam/Freecam";
 
 export default function Sponza() {

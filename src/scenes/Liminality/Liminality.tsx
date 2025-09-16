@@ -4,15 +4,15 @@ import dmnobj from './models/diamond.obj'
 import dmnmtl from './models/diamond.mtl'
 import { ObjModel, Scene } from "lume";
 import { onMount } from "solid-js";
-import applyShadows from '@/core/lume/applyShadows';
-import Interactable from '@/components/lume/Interactable';
-import applyDGShader from '@/core/lume/dgRender';
-import PlayerCam from '@/components/lume/playerCam/PlayerCam';
+import applyShadows from '@/3d/pipeline/applyShadows';
+import Interactable from '@/3d/components/Interactable';
+import applyDGShader from '@/3d/pipeline/dgRender';
+import PlayerCam from '@/3d/camera/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
 import sleep from '@/utils/sleep';
-import { useSceneMenu } from '@/views/main/ui/SceneMenu/SceneMenuContext';
+import { useSceneMenu } from '@/app/shell/scene-menu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
-import NavigationGraph from '@/components/lume/NavigationGraph';
+import NavigationGraph from '@/3d/components/NavigationGraph';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
