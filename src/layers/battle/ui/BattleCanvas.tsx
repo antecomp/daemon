@@ -4,7 +4,7 @@ import OverlayAnimator from "./OverlayAnimator"
 import { registerBattleUIRef } from "./refRegistry"
 import { AssetURL, Point } from "@/extra.types"
 import { loadImage } from "@/utils/loadImage"
-import { SCENE_DIMENSIONS } from "@/config"
+import { SCENE_DIMENSIONS } from "@/config/ui"
 
 interface BattleCanvasProps {
   sprite: AssetURL
