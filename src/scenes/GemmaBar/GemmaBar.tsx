@@ -20,12 +20,16 @@ import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCam
 import { SceneFadeManager } from "@/views/main/ui/SceneFadeOverlay/SceneFadeOverlay";
 import Interactable from "@/components/lume/Interactable";
 import sleep from "@/utils/sleep";
+import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
+import { addLogMessage } from "@/views/main/ui/EventLog";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
     let barRef!: any
     onMount(() => barRef && applyShadows(barRef));
     useDGShader(() => sceneRef);
+
+    const {spawnMenu} = useSceneMenu();
 
     const {cameraControlSignals, cameraController} = createCameraController([-439, -55, 523], { yaw: 32, pitch: 3 }, {maxPitch: 20, maxYaw: 45})
 
@@ -112,7 +116,8 @@ export default function GemmaBar() {
                                 overlay: d_overlay,
                                 ctx: {actions: {cacheHandoverAnimation, returnCamera, departTheMan}}
                             }
-                        )
+                        ),
+                        () => addLogMessage("A man in a suit. He has something I need.")
                     ]}
                 />
             </Show>
@@ -125,10 +130,25 @@ export default function GemmaBar() {
             <Show when={cacheOnTable()}>
                 <Interactable
                     interactions={[
-                        () => {
-                            setShowCache(false);
-                            sleep(1000).then(() => SceneFadeManager.fadeSceneOut())
-                        }
+                        (_uv, mouse) => {
+                            spawnMenu(
+                                "Take the cache?",
+                                [
+                                    {
+                                        label: "Yes",
+                                        onSelect() {
+                                            setShowCache(false);
+                                            sleep(1000).then(() => SceneFadeManager.fadeSceneOut())
+                                        },
+                                    },
+                                    {label: "No"}
+                                ],
+                                mouse
+                            )
+
+                        },
+                        undefined,
+                        () => addLogMessage("A data cache. I will need this.")
                     ]}
                 >
                     <lume-fbx-model
