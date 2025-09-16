@@ -5,7 +5,7 @@ import { registerBattleUIRef } from "./refRegistry"
 import { Point } from "@/shared/types/3d.types"
 import { AssetURL } from "@/shared/types/misc.types"
 import { loadImage } from "@/shared/utils/loadImage"
-import { SCENE_DIMENSIONS } from "@/config/ui"
+import { SCENE_DIMENSIONS } from "@/config/ui.config"
 
 interface BattleCanvasProps {
   sprite: AssetURL

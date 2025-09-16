@@ -1,5 +1,5 @@
 import { FOV } from "@/config/lume.config";
-import { SCENE_DIMENSIONS } from "@/config/ui";
+import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { Scene, toRadians } from "lume";
 import {onMount} from "solid-js"
 import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";

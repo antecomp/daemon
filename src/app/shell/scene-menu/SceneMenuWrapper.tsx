@@ -1,5 +1,5 @@
 import { ParentProps, createSignal } from "solid-js";
-import { SCENE_DIMENSIONS } from "@/config/ui";
+import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { MenuOption, SceneContextMenu } from "./scenemenu.types";
 import { SceneMenuContext } from "./SceneMenuContext";
 import SceneMenu from "./SceneMenu";
