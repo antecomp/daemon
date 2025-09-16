@@ -76,3 +76,5 @@ export const DialogueService = {
     currentDialogueOverlay, 
     setCurrentDialogueOverlay 
 };
+
+(window as any).DialogueService = DialogueService;

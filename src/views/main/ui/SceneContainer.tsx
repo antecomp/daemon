@@ -54,7 +54,7 @@ export default function SceneContainer() {
     const {currentInteractionMode, cycleInteractionMode} = useInteractionContext();
 
     const currentCursor = () => {
-        if (hoverCursor()) return hoverCursor()!; // TODO HOVERCURSOR NEEDS TO BE CHANGED TO A CSS CLASS ALSO.
+        if (hoverCursor()) return hoverCursor()!;
         switch (currentInteractionMode()) {
             case InteractionMode.Chat: return "cursor-chat";
             case InteractionMode.Interact: return "cursor-interact";

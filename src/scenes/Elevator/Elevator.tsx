@@ -18,7 +18,7 @@ import { setCurrentScene } from "@/views/main/ui/SceneContainer";
 import applyShadows from "@/core/lume/applyShadows";
 import { playTextOverlay } from "@/layers/textoverlay/TextOverlay";
 
-import soy from "./data/opening_textscene"
+import opening_textscene from "./data/opening_textscene"
 
 export default function Elevator() {
     let sceneRef!: Scene
@@ -47,7 +47,7 @@ export default function Elevator() {
                                 await sleep(5000);
                                 await SceneFadeManager.fadeSceneOut();
                                 setCurrentScene("GemmaBar");
-                                await playTextOverlay(soy);
+                                await playTextOverlay(opening_textscene);
                                 SceneFadeManager.fadeSceneIn();
                             })
                         }
