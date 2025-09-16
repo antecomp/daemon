@@ -1,4 +1,5 @@
 import { AssetURL } from "@/extra.types";
+import { Setter } from "solid-js";
 import * as THREE from "three";
 import { Vector2 } from "three";
 
@@ -33,3 +34,10 @@ export enum InteractionMode {
 export type InteractionMap = {
     [mode in InteractionMode]?: interactionCB
 } | [interactionCB?, interactionCB?, interactionCB?]
+
+/** Context provided by InteractionProvider for reading and changing interaction mode state. */
+export interface InteractionContextInt {
+    currentInteractionMode(): InteractionMode;
+    setCurrentInteractionMode: Setter<InteractionMode>;
+    cycleInteractionMode(): void;
+}

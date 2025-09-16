@@ -7,7 +7,6 @@ import { INITIAL_SCENE, SCENE_DIMENSIONS } from "@/config";
 import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import { currentInteractionMode, cycleInteractionMode } from "@/core/interaction/interaction";
 import { loadScene } from "@/scenes/loadScene";
 import SceneMenuWrapper from "./SceneMenu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
@@ -16,6 +15,7 @@ import { AssetURL } from "@/extra.types";
 import SceneFadeOverlay from "./SceneFadeOverlay/SceneFadeOverlay";
 import SceneLoadError from "./Fallbacks/SceneLoadError";
 import SceneLoading from "./Fallbacks/SceneLoading";
+import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 (window as any).DG_setScene = setCurrentScene;
@@ -50,6 +50,8 @@ createEffect(on(currentScene, () => {
  * - Wraps scene rendering with Error/Suspense boundaries for lazy loading of scene components.
  */
 export default function SceneContainer() {
+
+    const {currentInteractionMode, cycleInteractionMode} = useInteractionContext();
 
     const currentCursor = () => {
         if (hoverCursor()) return hoverCursor()!; // TODO HOVERCURSOR NEEDS TO BE CHANGED TO A CSS CLASS ALSO.

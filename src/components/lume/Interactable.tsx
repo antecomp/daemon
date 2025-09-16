@@ -1,9 +1,9 @@
 import { Element3D } from "lume";
 import {onMount, createSignal, createEffect} from "solid-js"
 import { Object3D, Object3DEventMap } from "three";
-import { currentInteractionMode } from "@/core/interaction/interaction";
 import { InteractionMap } from "../../core/interaction/interactable.types";
 import { InteractableObject3D, interactionCB } from "../../core/interaction/interactable.types";
+import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
 interface InteractiveElementProps {
     /** interactionCB that runs regardless of interaction mode, for any user click. */
@@ -39,6 +39,8 @@ export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEvent
  */
 export default function Interactable(props: InteractiveElementProps) {
     let containerRef: Element3D | undefined; // Keeping undefined as potential state to remind myself of potential races with mounting.
+
+    const {currentInteractionMode} = useInteractionContext();
 
     // Live disable hover border if prop changes.
     // TODO - Might want to check if we're still hovering over this during that change, so we don't turn off another persons hover border.

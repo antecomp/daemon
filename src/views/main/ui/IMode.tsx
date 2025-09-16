@@ -2,9 +2,11 @@ import ipi from "../assets/ip_i.png"
 import ipo from "../assets/ip_o.png"
 import ipc from "../assets/ip_c.png"
 import { InteractionMode } from "@/core/interaction/interactable.types"
-import { currentInteractionMode, setCurrentInteractionMode } from "@/core/interaction/interaction";
+import { useInteractionContext } from "@/core/interaction/InteractionProvider"
 
 export default function IModePicker() {
+
+    const {currentInteractionMode, setCurrentInteractionMode} = useInteractionContext();
 
     const interactionModeImage = () => [ipi, ipc, ipo][currentInteractionMode()]
 
