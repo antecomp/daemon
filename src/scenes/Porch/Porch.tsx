@@ -12,9 +12,9 @@ import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/3d/pipeline/applyShadows";
 import Billboard from "@/3d/components/Billboard";
 import { useDGShader } from '@/3d/pipeline/dgRender';
-import PlayerCam from '@/3d/camera/playerCam/PlayerCam';
-import createCameraController from '@/components/lume/playerCam/createCameraController';
-import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
+import PlayerCam from '@/3d/camera/PlayerCam';
+import createCameraController from '@/3d/camera/createCameraController';
+import { startDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
 

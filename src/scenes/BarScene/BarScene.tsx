@@ -5,7 +5,7 @@ import barobj from "./models/bar2.obj"
 import barmtl from "./models/bar2.mtl"
 import applyShadows from "@/3d/pipeline/applyShadows";
 import starfield from "../shared_textures/starfield.png"
-import PlayerCam from "@/components/lume/playerCam/PlayerCam";
+import PlayerCam from "@/3d/camera/PlayerCam";
 
 export default function BarScene() {
     let sceneRef!: Scene;

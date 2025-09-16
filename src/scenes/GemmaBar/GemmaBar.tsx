@@ -1,12 +1,12 @@
 import { Scene } from "lume";
 import { onMount, Show, createSignal } from "solid-js";
 import barX from "./models/kms.fbx?url"
-import PlayerCam from "@/components/lume/playerCam/PlayerCam";
+import PlayerCam from "@/3d/camera/PlayerCam";
 import applyShadows from "@/3d/pipeline/applyShadows";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 
 import starfield from "../shared_textures/starfield.png"
-import createCameraController from "@/components/lume/playerCam/createCameraController";
+import createCameraController from "@/3d/camera/createCameraController";
 
 
 import suited_man from "./assets/suited_figure.png";
@@ -16,7 +16,7 @@ import cache_model from "./models/cache.fbx?url"
 
 import Billboard from "@/3d/components/Billboard";
 import dialogue_root from "@/tests/dialogues/intro_dia";
-import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCamera";
+import { startDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import Interactable from "@/3d/components/Interactable";
 import sleep from "@/shared/utils/sleep";
