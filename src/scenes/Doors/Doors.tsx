@@ -9,7 +9,7 @@ import createCameraController from "@/components/lume/playerCam/createCameraCont
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { Vector2 } from "three";
-import lerp from "@/utils/lerp"
+import lerp from "@/shared/utils/lerp"
 import Billboard from "@/3d/components/Billboard";
 
 import friendTexture from "@/assets/artwork/characters/friend.png"

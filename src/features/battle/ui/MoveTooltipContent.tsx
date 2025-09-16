@@ -1,4 +1,4 @@
-import { AssetURL } from '@/extra.types'
+import { AssetURL } from "@/shared/types/misc.types"
 import './move-tooltip-content.css'
 
 interface MoveTooltipContentProps {

@@ -5,7 +5,7 @@ import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { MoveMeta } from '@/core/battle/moves/moves.types'
 import { registerBattleUIRef } from './refRegistry'
-import { AssetURL } from '@/extra.types'
+import { AssetURL } from "@/shared/types/misc.types"
 
 
 interface OppStatusBarProps {

@@ -1,4 +1,4 @@
-import { FOV } from "@/config/lume";
+import { FOV } from "@/config/lume.config";
 import { SCENE_DIMENSIONS } from "@/config/ui";
 import { Scene, toRadians } from "lume";
 import {onMount} from "solid-js"
@@ -7,7 +7,7 @@ import pp_fragshader from "@/3d/shaders/post-processing/dg.frag.glsl"
 import pp_vertshader from "@/3d/shaders/post-processing/pass.vert.glsl"
 import { Vector2 } from "three";
 import { hoveredItem } from "@/3d/components/Interactable";
-import sleep from "@/utils/sleep";
+import sleep from "@/shared/utils/sleep";
 
 function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
     

@@ -1,4 +1,4 @@
-import { CSSUnit } from '@/extra.types';
+import { CSSUnit } from "@/shared/types/misc.types";
 import './CornerRect.css'
 import { JSX } from 'solid-js';
 

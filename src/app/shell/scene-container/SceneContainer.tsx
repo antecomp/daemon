@@ -1,9 +1,9 @@
-import CornerRect from "@/components/util/corner-rect/CornerRect";
+import CornerRect from "@/shared/ui/primitives/corner-rect/CornerRect";
 import bl_scene from "./assets/bl_scene.png"
 import br from "@/assets/ui/corners/da/br.png"
 import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
-import { INITIAL_SCENE } from "@/config/init";
+import { INITIAL_SCENE } from "@/config/init.config";
 import { SCENE_DIMENSIONS } from "@/config/ui";
 import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
@@ -11,7 +11,7 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 import { loadScene } from "@/scenes/loadScene";
 import SceneMenuWrapper from "../scene-menu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
-import { AssetURL } from "@/extra.types";
+import { AssetURL } from "@/shared/types/misc.types";
 
 import SceneFadeOverlay from "../scene-fade-overlay/SceneFadeOverlay";
 import SceneLoadError from "../fallbacks/SceneLoadError";

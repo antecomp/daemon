@@ -9,7 +9,7 @@ import {
   VISUALIZER,
 } from "@/core/dialogue/dialogueNode";
 import { DialogueContext, DialogueNode } from "@/core/dialogue/dialogueNode.types";
-import { DEFAULT_DIALOGUE_SENDER } from "@/config/init";
+import { DEFAULT_DIALOGUE_SENDER } from "@/config/init.config";
 
 describe("DialogueNode helpers", () => {
   it("createDialogueNode basics and id uniqueness", () => {

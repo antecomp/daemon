@@ -1,5 +1,5 @@
 import { render } from "solid-js/web";
-import DialogueVisualizer from "./components/development/DialogueVisualizer";
+import DialogueVisualizer from "./DialogueVisualizer";
 
 const root = document.getElementById("dialogue-app");
 if (root) render(() => <DialogueVisualizer />, root);

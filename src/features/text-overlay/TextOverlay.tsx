@@ -1,8 +1,8 @@
 import { createSignal, onCleanup } from "solid-js"
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerStore";
 import { nanoid } from "nanoid"
-import createColorTypewriter, { SegmentInput } from "@/hooks/createColorTypewriter";
-import animateAsync from "@/utils/animateAsync";
+import createColorTypewriter, { SegmentInput } from "@/shared/hooks/createColorTypewriter";
+import animateAsync from "@/shared/utils/animateAsync";
 import { MainUILock } from "@/app/shell/layers/ui-layers.types";
 
 type TextOverlayLine = {

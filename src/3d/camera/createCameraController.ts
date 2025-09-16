@@ -1,4 +1,4 @@
-import { Orientation } from "@/extra.types";
+import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "./PlayerCam";
 import { createMemo, createSignal } from "solid-js";
 

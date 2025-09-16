@@ -3,7 +3,7 @@ import { render } from "@solidjs/testing-library"
 import userEvent from "@testing-library/user-event"
 import Hermes from "@/app/shell/layers/hermes/Hermes"
 import { createDialogueNode } from "@/core/dialogue/dialogueNode"
-import sleep from "@/utils/sleep"
+import sleep from "@/shared/utils/sleep"
 
 const user = userEvent.setup()
 

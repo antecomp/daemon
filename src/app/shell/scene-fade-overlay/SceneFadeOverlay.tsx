@@ -1,7 +1,7 @@
 
 import { createSignal } from 'solid-js'
 import './scene-fade-overlay.css'
-import sleep from '@/utils/sleep';
+import sleep from '@/shared/utils/sleep';
 
 // Enum strings used for CSS classnames.
 enum SceneFadeState {

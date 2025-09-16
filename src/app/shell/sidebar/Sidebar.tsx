@@ -3,7 +3,7 @@ import sidebar_button_active from "./assets/sidebar_button_active.png"
 import { createSignal, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
-import DebugMenu from "@/components/development/DebugMenu";
+import DebugMenu from "@/devtools/DebugMenu";
 import './sidebar.css'
 import { isSidebarLocked } from "@/app/shell/layers/UILayerStore";
 

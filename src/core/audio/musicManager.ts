@@ -1,4 +1,4 @@
-import { AssetURL } from "@/extra.types"
+import { AssetURL } from "@/shared/types/misc.types";
 import { nanoid } from "nanoid";
 import { createEffect, createSignal } from "solid-js"
 import { createMutable } from "solid-js/store";

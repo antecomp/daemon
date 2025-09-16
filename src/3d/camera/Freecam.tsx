@@ -1,4 +1,4 @@
-import { Orientation } from "@/extra.types";
+import { Orientation } from "@/shared/types/3d.types";
 import PlayerCam, { XYZ } from "./PlayerCam"
 import { clamp, Scene } from "lume";
 import {createSignal, onCleanup, onMount} from 'solid-js'

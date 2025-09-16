@@ -1,9 +1,9 @@
-import CornerRect from "@/components/util/corner-rect/CornerRect";
+import CornerRect from "@/shared/ui/primitives/corner-rect/CornerRect";
 import br from "@/assets/ui/corners/da/br.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import tl_el from "./assets/tl_el.png"
 import { createEffect, on, createSignal, For } from "solid-js";
-import { LOGIN_MESSAGE } from "@/config/init";
+import { LOGIN_MESSAGE } from "@/config/init.config";
 
 const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([
     {id: 0, text: LOGIN_MESSAGE, color: '#cfb886ff'}

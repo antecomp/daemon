@@ -1,5 +1,5 @@
 import { onMount } from 'solid-js';
-import CornerRect from '@/components/util/corner-rect/CornerRect';
+import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OppStatusBar from './ui/OppStatusbar';
 import Actionbar from './ui/Actionbar';
 import { BattleOutcome, DVOpponentData } from '@/core/battle/engine/battle.types';
@@ -8,7 +8,7 @@ import { useBattleLogic } from '@/core/battle/engine/battle.logic';
 import BattleCanvas from './ui/BattleCanvas';
 import ActionMessages from './ui/ActionMessages';
 import { registerBattleUIRef } from './ui/refRegistry';
-import { createMeltingEffect } from '@/hooks/createMeltEffect';
+import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 
 import './ui/battle.css'
 import vtl from './assets/vtl.png'

@@ -1,4 +1,4 @@
-import {  Orientation } from "@/extra.types";
+import {  Orientation } from "@/shared/types/3d.types";
 import { CameraController } from "./createCameraController";
 import { XYZ } from "./PlayerCam";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";

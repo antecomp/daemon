@@ -1,4 +1,4 @@
-import { Orientation } from "@/extra.types";
+import { Orientation } from "@/shared/types/3d.types";
 import { CameraController } from "../camera/createCameraController";
 import { XYZ } from "../camera/PlayerCam";
 import { Plane, toDegrees } from "lume";

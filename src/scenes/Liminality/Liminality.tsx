@@ -9,7 +9,7 @@ import Interactable from '@/3d/components/Interactable';
 import applyDGShader from '@/3d/pipeline/dgRender';
 import PlayerCam from '@/3d/camera/playerCam/PlayerCam';
 import createCameraController from '@/components/lume/playerCam/createCameraController';
-import sleep from '@/utils/sleep';
+import sleep from '@/shared/utils/sleep';
 import { useSceneMenu } from '@/app/shell/scene-menu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import NavigationGraph from '@/3d/components/NavigationGraph';

@@ -1,4 +1,4 @@
-import { AssetURL } from "@/extra.types";
+import { AssetURL } from "../types/misc.types";
 
 export function loadImage(src: AssetURL): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {

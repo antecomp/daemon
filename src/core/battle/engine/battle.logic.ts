@@ -5,17 +5,17 @@ import { MoveContext, MoveMeta, MovePerspective, PlayerMoveMeta, PostMoveContext
 import { BattleUIState } from "./battle.context";
     const {WAITING, EXECUTING, END} = BattleUIState
 import { batch, createSignal } from "solid-js";
-import sleep from "@/utils/sleep";
+import sleep from "@/shared/utils/sleep";
 import { generateHint, unwrapMoveMetaSequence, prepareMove, handlePostMoveEffects, handleImmediatePostEffects, calculateAndApplyDamage, handleDeathIfNeeded } from "./battle.utils";
 import { resolveStatuses } from "../statuses/status.utils";
 import { handlePhaseAnimations } from "../animation/animations.utils";
 import { PREANIM_MIN_DURATION, PLAYER_HEALTH_PLACEHOLDER, MOVE_DELAY, NOTIFICATION_LIFESPAN, SEQUENCE_LENGTH } from "./battle.config";
 import { animateOpponentDamageFlash, animateOpponentSequenceFadeIn, animateOpponentSequenceFadeOut, animateMoveHighlight, animateOpponentDeathFade, stopMoveHighlight, animateMainUIFadeOut } from "../animation/uiAnimations";
 
-import { playSound } from "@/utils/playSound";
+import { playSound } from "@/shared/utils/playSound";
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { MeltAnimationFn } from "@/hooks/createMeltEffect";
+import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import { detect } from "detect-browser";
 import { requestOverlayAnimation } from "../animation/requestOverlayAnim";

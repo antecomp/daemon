@@ -3,7 +3,8 @@ import { MoveMeta, PlayerMoveMeta } from "../moves/moves.types";
 import { Actor } from "./actor";
 import { ActionIconTable } from "./battle.config";
 import { BattleUIState } from "./battle.context";
-import { AssetURL, Point } from "@/extra.types";
+import { Point } from "@/shared/types/3d.types";
+import { AssetURL } from "@/shared/types/misc.types";
 
 /** Damage multiplier struct */
 export type MultiplierSet = {incoming: number, outgoing: number};

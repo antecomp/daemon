@@ -1,7 +1,7 @@
 import { BattleUIState, useBattleUIState } from "@/core/battle/engine/battle.context";
 import { PlayerMoveMeta } from "@/core/battle/moves/moves.types";
-import { Point } from "@/extra.types";
-import { createTooltip } from "@/hooks/createTooltip";
+import { Point } from "@/shared/types/3d.types";
+import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
 import { MoveTooltipContent } from "./MoveTooltipContent";
 

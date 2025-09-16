@@ -1,4 +1,4 @@
-import { AssetURL } from "@/extra.types";
+import { AssetURL } from "@/shared/types/misc.types";
 import { Setter } from "solid-js";
 import * as THREE from "three";
 import { Vector2 } from "three";

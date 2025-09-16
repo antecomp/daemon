@@ -1,4 +1,5 @@
-import { AssetURL, LumePosition } from "@/extra.types";
+import { LumePosition } from "@/shared/types/3d.types";
+import { AssetURL } from "@/shared/types/misc.types";
 import { Plane, toDegrees } from "lume";
 import { Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";

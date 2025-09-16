@@ -19,7 +19,7 @@ import dialogue_root from "@/tests/dialogues/intro_dia";
 import { startDialogueWithCamOvr } from "@/components/lume/playerCam/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import Interactable from "@/3d/components/Interactable";
-import sleep from "@/utils/sleep";
+import sleep from "@/shared/utils/sleep";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 

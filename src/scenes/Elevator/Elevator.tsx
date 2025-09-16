@@ -1,8 +1,8 @@
 import Interactable from "@/3d/components/Interactable";
 import PlayerCam from "@/3d/camera/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
-import lerp from "@/utils/lerp";
-import sleep from "@/utils/sleep";
+import lerp from "@/shared/utils/lerp";
+import sleep from "@/shared/utils/sleep";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { ObjModel, Scene } from "lume"

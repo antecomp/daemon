@@ -1,4 +1,4 @@
-import { AssetURL } from "@/extra.types";
+import { AssetURL } from "../types/misc.types";
 
 const alreadyPrefetched = new Set<AssetURL>();
 
