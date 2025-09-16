@@ -1,10 +1,7 @@
 import { Scene } from "lume";
 import { onMount, Show, createSignal } from "solid-js";
 import barX from "./models/kms.fbx?url"
-//import barObj from "./models/bbb.obj"
-//import barMtl from "./models/bbb.mtl"
 import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import Freecam from "@/components/lume/playerCam/Freecam";
 import applyShadows from "@/core/lume/applyShadows";
 import { useDGShader } from "@/core/lume/dgRender";
 
@@ -68,7 +65,6 @@ export default function GemmaBar() {
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
                 intensity={2}
-                // color="red"
                 cast-shadow="true" 
                 shadow-map-height={4096} 
                 shadow-map-width={4096}
@@ -98,8 +94,6 @@ export default function GemmaBar() {
                 mount-point="0.5 0.5 0.5"
                 color="white"
             />
-
-            {/* <lume-camera-rig></lume-camera-rig> */}
 
             <Show when={!hasManDeparted()}>
                 <Billboard
@@ -148,17 +142,6 @@ export default function GemmaBar() {
                 </Interactable>
             </Show>
 
-
-            {/* <Freecam sceneRef={sceneRef} initialPos={[20, -100, 0]}/> */}
-
-            {/* <PlayerCam
-                basePos={[76, -73, 603]}
-                baseOri={{ yaw: -677, pitch: -1 }}
-                maxYaw={25}
-                maxPitch={20}
-                animate={false}
-                sceneRef={sceneRef!}
-            /> */}
         </lume-scene>
     )
 }
