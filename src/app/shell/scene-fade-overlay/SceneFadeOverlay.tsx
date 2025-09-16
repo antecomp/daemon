@@ -125,8 +125,6 @@ export const SceneFadeManager: SceneFadeManagerAPI = {
 /* (To be used by SceneContainer) */
 export default function SceneFadeOverlay() {
 
-   // (window as any).fade = SceneFadeManager;
-
     return (
             <div 
                 id="scene-fade-overlay"

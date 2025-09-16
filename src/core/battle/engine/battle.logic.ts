@@ -19,6 +19,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import { detect } from "detect-browser";
 import { requestOverlayAnimation } from "../animation/requestOverlayAnim";
+import attachToConsole from "@/devtools/attachToConsole";
 const browser = detect();
 
 /**
@@ -156,10 +157,10 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     // Attach hook data to window for live testing
     if(cheatMode) {
         console.warn("Battle's Cheat Mode Enabled!");
-        (window as any).player = player;
-        (window as any).opponent = opponent;
-        (window as any).forceBattleResolve = forceBattleResolve;
-        (window as any).requestOverlayAnim = requestOverlayAnimation;
+        attachToConsole(player, "player");
+        attachToConsole(opponent, "opponent");
+        attachToConsole(forceBattleResolve, "forceBattleResolve");
+        attachToConsole(requestOverlayAnimation, "requestOverlayAnim");
     }
 
     /** 

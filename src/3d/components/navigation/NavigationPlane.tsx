@@ -1,6 +1,6 @@
 import { Orientation } from "@/shared/types/3d.types";
-import { CameraController } from "../camera/createCameraController";
-import { XYZ } from "../camera/PlayerCam";
+import { CameraController } from "../../camera/createCameraController";
+import { XYZ } from "@/shared/types/3d.types";
 import { Plane, toDegrees } from "lume";
 import { Vector3 } from "three";
 import { onMount } from "solid-js"

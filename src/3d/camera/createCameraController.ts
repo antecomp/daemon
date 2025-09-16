@@ -1,5 +1,5 @@
 import { Orientation } from "@/shared/types/3d.types";
-import { XYZ } from "./PlayerCam";
+import { XYZ } from "@/shared/types/3d.types";
 import { createMemo, createSignal } from "solid-js";
 
 /**

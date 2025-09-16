@@ -1,7 +1,8 @@
 import { Orientation } from "@/shared/types/3d.types";
-import PlayerCam, { XYZ } from "./PlayerCam"
+import { XYZ } from "@/shared/types/3d.types";
 import { clamp, Scene } from "lume";
 import {createSignal, onCleanup, onMount} from 'solid-js'
+import PlayerCam from "./PlayerCam";
 
 interface FreecamProps {
     sceneRef: Scene

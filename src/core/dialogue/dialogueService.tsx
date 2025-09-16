@@ -1,6 +1,7 @@
 import { DialogueContext, DialogueNode } from "./dialogueNode.types";
-import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerStore";
+import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { MainUILock } from "@/app/shell/layers/ui-layers.types";
+import attachToConsole from "@/devtools/attachToConsole";
 import Hermes from "@/features/hermes/Hermes";
 import {createSignal} from "solid-js";
 
@@ -77,4 +78,4 @@ export const DialogueService = {
     setCurrentDialogueOverlay 
 };
 
-(window as any).DialogueService = DialogueService;
+attachToConsole(DialogueService, "DG_DialogueService")

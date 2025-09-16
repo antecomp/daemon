@@ -5,7 +5,7 @@ import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DebugMenu from "@/devtools/DebugMenu";
 import './sidebar.css'
-import { isSidebarLocked } from "@/app/shell/layers/UILayerStore";
+import { isSidebarLocked } from "@/app/shell/layers/UILayerManager";
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;

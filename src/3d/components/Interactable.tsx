@@ -1,8 +1,8 @@
 import { Element3D } from "lume";
 import {onMount, createSignal, createEffect} from "solid-js"
 import { Object3D, Object3DEventMap } from "three";
-import { InteractionMap } from "../../core/interaction/interactable.types";
-import { InteractableObject3D, interactionCB } from "../../core/interaction/interactable.types";
+import { InteractionMap } from "@/core/interaction/interactable.types";
+import { InteractableObject3D, interactionCB } from "@/core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
 interface InteractiveElementProps {

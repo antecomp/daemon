@@ -17,9 +17,10 @@ import SceneFadeOverlay from "../scene-fade-overlay/SceneFadeOverlay";
 import SceneLoadError from "../fallbacks/SceneLoadError";
 import SceneLoading from "../fallbacks/SceneLoading";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
+import attachToConsole from "@/devtools/attachToConsole";
 
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
-(window as any).DG_setScene = setCurrentScene;
+attachToConsole(setCurrentScene, "DG_setScene");
 
 /**
  * Ephemeral hover cursor override set by scene elements (e.g., PlayerCam).

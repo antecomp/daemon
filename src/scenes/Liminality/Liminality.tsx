@@ -12,7 +12,7 @@ import createCameraController from '@/components/lume/playerCam/createCameraCont
 import sleep from '@/shared/utils/sleep';
 import { useSceneMenu } from '@/app/shell/scene-menu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
-import NavigationGraph from '@/3d/components/NavigationGraph';
+import NavigationGraph from '@/3d/components/navigation/NavigationGraph';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;

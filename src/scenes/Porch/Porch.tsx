@@ -30,8 +30,6 @@ export default function Porch() {
         {maxYaw: 45, maxPitch: 30}
     );
 
-    (window as any).PRCH_CM = cameraController;
-
     let mapRef: ObjModel | undefined;
 
     onMount(() => {

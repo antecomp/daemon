@@ -1,7 +1,7 @@
 import { test, expect } from "vitest"
 import { render } from "@solidjs/testing-library"
 import userEvent from "@testing-library/user-event"
-import Hermes from "@/app/shell/layers/hermes/Hermes"
+import Hermes from "@/features/hermes/Hermes"
 import { createDialogueNode } from "@/core/dialogue/dialogueNode"
 import sleep from "@/shared/utils/sleep"
 

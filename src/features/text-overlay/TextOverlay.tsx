@@ -1,5 +1,5 @@
 import { createSignal, onCleanup } from "solid-js"
-import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerStore";
+import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { nanoid } from "nanoid"
 import createColorTypewriter, { SegmentInput } from "@/shared/hooks/createColorTypewriter";
 import animateAsync from "@/shared/utils/animateAsync";

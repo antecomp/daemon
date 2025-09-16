@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { getUILayers } from "./UILayerStore";
+import { getUILayers } from "./UILayerManager";
 import './ui-layers.css'
 
 export default function UILayerHost() {

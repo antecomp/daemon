@@ -1,6 +1,6 @@
 import { BattleProps } from "@/features/battle/Battle";
 import { BattleOutcome, DVOpponentData } from "./engine/battle.types";
-import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerStore";
+import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { MainUILock } from "@/app/shell/layers/ui-layers.types";
 import Battle from "@/features/battle/Battle";
 

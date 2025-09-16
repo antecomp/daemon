@@ -1,13 +1,12 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Orientation } from "@/shared/types/3d.types";
-import { isSceneLocked } from "@/app/shell/layers/UILayerStore";
+import { isSceneLocked } from "@/app/shell/layers/UILayerManager";
 import lerp from "@/shared/utils/lerp";
 import { setHoverCursor } from "@/app/shell/scene-container/SceneContainer";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
-
-export type XYZ = [number, number, number]; // just a lazy local type for the tuple.
+import { XYZ } from "@/shared/types/3d.types";
 
 const DEFAULT_CAMERA_SPEED = 4;
 
