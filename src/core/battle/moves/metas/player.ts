@@ -12,7 +12,7 @@ import { MovePerspective, PlayerMoveMeta } from '../moves.types'
 import { Attack } from '../moves.list'
 import { requestOverlayAnimation } from '../../animation/requestOverlayAnim'
 
-import { playSound } from '@/utils/playSound'
+import { playSound } from '@/shared/utils/playSound'
 
 import candle_sfx from '@/assets/sfx/battle/candle.wav'
 import stockMoves from './stockMoves'

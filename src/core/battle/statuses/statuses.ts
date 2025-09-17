@@ -1,7 +1,7 @@
 import { MultiplierSet } from "../engine/battle.types";
-import vuln_icon from "@/assets/icons/statuses/vuln.png"
-import prep_icon from "@/assets/icons/statuses/prep.png"
-import mania_icon from "@/assets/icons/statuses/mania.png"
+import vuln_icon from "@/features/battle/assets/icons/statuses/vuln.png"
+import prep_icon from "@/features/battle/assets/icons/statuses/prep.png"
+import mania_icon from "@/features/battle/assets/icons/statuses/mania.png"
 import { Status } from "./status.types";
 
 export class VulnerableStatus extends Status {

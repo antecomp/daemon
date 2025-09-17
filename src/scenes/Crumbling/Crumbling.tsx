@@ -1,12 +1,12 @@
-import applyDGShader from "@/core/lume/dgRender";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import { Scene } from "lume";
 import { onMount } from "solid-js";
 import island1 from "./models/island_1.fbx?url"
 import island2 from "./models/island_2.fbx?url"
 import island3 from "./models/island_3.fbx?url"
 import island4 from "./models/island_4.fbx?url"
-import player_ref from '../shared_models/player_ref.fbx?url'
-import Freecam from "@/components/lume/playerCam/Freecam";
+import player_ref from '@/assets/3d/models/player_ref.fbx'
+import Freecam from "@/3d/camera/Freecam";
 
 export default function Crumbling() {
     let sceneRef: Scene | undefined;

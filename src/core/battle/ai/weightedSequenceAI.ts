@@ -1,4 +1,4 @@
-import pickRandom, { pickRandomWeighted } from "@/utils/pickRandom";
+import pickRandom, { pickRandomWeighted } from "@/shared/utils/pickRandom";
 import { MoveMeta } from "../moves/moves.types";
 import { SEQUENCE_LENGTH } from "../engine/battle.config";
 

@@ -1,10 +1,10 @@
-import slashnorm from '@/assets/animations/overlays/slash/slash_norm.webm'
-import slash_purpose from '@/assets/animations/overlays/slash/slash_purp.webm'
-import slash_mages from '@/assets/animations/overlays/slash/slash_majes.webm'
-import slash_elag from '@/assets/animations/overlays/slash/slash_elag.webm'
-import shield from '@/assets/animations/overlays/shield/shield_opp.webm'
+import slashnorm from '@/features/battle/assets/overlay-animations/slash/slash_norm.webm'
+import slash_purpose from '@/features/battle/assets/overlay-animations/slash/slash_purp.webm'
+import slash_mages from '@/features/battle/assets/overlay-animations/slash/slash_majes.webm'
+import slash_elag from '@/features/battle/assets/overlay-animations/slash/slash_elag.webm'
+import shield from '@/features/battle/assets/overlay-animations/shield/shield_opp.webm'
 import { overlayAnimationTable } from "./overlayAnim.types";
-import requestAssetPrefetch from '@/utils/reqPrefetch'
+import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 
 /** Registry of the available overlay animations. */
 export const overlayAnimations: overlayAnimationTable = {

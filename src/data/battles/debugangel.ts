@@ -1,6 +1,6 @@
 import { DVOpponentData } from "@/core/battle/engine/battle.types";
 import stockMoves from "@/core/battle/moves/metas/stockMoves";
-import pick from "@/utils/pick";
+import pick from "@/shared/utils/pick";
 
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from "@/core/battle/statuses/statuses";
@@ -8,7 +8,7 @@ import { ManiaStatus } from "@/core/battle/statuses/statuses";
 import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
 import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
 import basic_grid_bg from '@/assets/artwork/battle_bgs/debug_angel_bg.png';
-import testShader from "@/shaders/backgrounds/test.glsl";
+import testShader from "@/features/battle/backgrounds/test.glsl";
 
 
 const mimicry_movebank = {

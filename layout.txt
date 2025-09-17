@@ -1,0 +1,564 @@
+src
+├── 3d
+│   ├── camera
+│   │   ├── createCameraController.ts
+│   │   ├── dialogueCamera.ts
+│   │   ├── Freecam.tsx
+│   │   └── PlayerCam.tsx
+│   ├── components
+│   │   ├── Billboard.tsx
+│   │   ├── Interactable.tsx
+│   │   └── navigation
+│   │       ├── NavigationGraph.tsx
+│   │       └── NavigationPlane.tsx
+│   ├── pipeline
+│   │   ├── applyShadows.ts
+│   │   └── dgRender.ts
+│   └── shaders
+│       └── post-processing
+│           ├── dg.frag.glsl
+│           └── pass.vert.glsl
+├── app
+│   ├── assets
+│   │   └── vl_badge.png
+│   ├── main.css
+│   ├── Main.tsx
+│   └── shell
+│       ├── fallbacks
+│       │   ├── SceneLoadError.tsx
+│       │   └── SceneLoading.tsx
+│       ├── hud
+│       │   ├── assets
+│       │   │   ├── ip_c.png
+│       │   │   ├── ip_i.png
+│       │   │   ├── ip_o.png
+│       │   │   └── tl_el.png
+│       │   ├── EventLog.tsx
+│       │   └── IMode.tsx
+│       ├── layers
+│       │   ├── UILayerHost.tsx
+│       │   ├── UILayerManager.ts
+│       │   ├── ui-layers.css
+│       │   └── ui-layers.types.ts
+│       ├── scene-container
+│       │   ├── assets
+│       │   │   └── bl_scene.png
+│       │   └── SceneContainer.tsx
+│       ├── scene-fade-overlay
+│       │   ├── assets
+│       │   │   ├── 1.png
+│       │   │   ├── 2.png
+│       │   │   ├── 3.png
+│       │   │   ├── 4.png
+│       │   │   ├── 5.png
+│       │   │   ├── 6.png
+│       │   │   ├── 7.png
+│       │   │   ├── 8.png
+│       │   │   ├── 9.png
+│       │   │   ├── a.png
+│       │   │   ├── b.png
+│       │   │   ├── c.png
+│       │   │   ├── d.png
+│       │   │   ├── e.png
+│       │   │   └── f.png
+│       │   ├── scene-fade-overlay.css
+│       │   └── SceneFadeOverlay.tsx
+│       ├── scene-menu
+│       │   ├── assets
+│       │   │   ├── option_icon_circle.png
+│       │   │   ├── option_icon_x.png
+│       │   │   ├── option_tail.png
+│       │   │   ├── scenemenubody_left.png
+│       │   │   ├── scenemenu-body.png
+│       │   │   └── scenemenubody_right.png
+│       │   ├── SceneMenuContext.ts
+│       │   ├── scene-menu.css
+│       │   ├── SceneMenu.tsx
+│       │   ├── scenemenu.types.ts
+│       │   └── SceneMenuWrapper.tsx
+│       └── sidebar
+│           ├── assets
+│           │   ├── sidebar_button_active.png
+│           │   ├── sidebar_button.png
+│           │   ├── sidebar_top.png
+│           │   ├── swindow_bot_corner.png
+│           │   ├── swindow_button_frame.png
+│           │   ├── swindow_button.png
+│           │   ├── swindow-slopborder.png
+│           │   ├── swindow-top.png
+│           │   └── window_inset.png
+│           ├── sidebar.css
+│           ├── Sidebar.tsx
+│           ├── s-window.css
+│           └── SWindow.tsx
+├── assets
+│   ├── animations
+│   │   └── overlays
+│   │       ├── shield
+│   │       │   ├── shield_opp1.png
+│   │       │   └── shield_opp.webm
+│   │       ├── shit.png
+│   │       └── slash
+│   │           ├── slash_elag.png
+│   │           ├── slash_elag.webm
+│   │           ├── slash_majes.bmp
+│   │           ├── slash_majes-min.png
+│   │           ├── slash_majes.png
+│   │           ├── slash_majes.webm
+│   │           ├── slashnorm.png
+│   │           ├── slash_norm.webm
+│   │           ├── slash_purpose.png
+│   │           └── slash_purp.webm
+│   ├── artwork
+│   │   ├── battle_bgs
+│   │   │   ├── basicgrid.png
+│   │   │   ├── clouds_wikimedia_commons.jpg
+│   │   │   └── debug_angel_bg.png
+│   │   ├── characters
+│   │   │   ├── friend.png
+│   │   │   ├── pallas.png
+│   │   │   └── viya.png
+│   │   ├── dæmons
+│   │   │   ├── anthousai.png
+│   │   │   ├── debug_angel_icon.png
+│   │   │   ├── debug_angel.png
+│   │   │   ├── mimicry_icon.png
+│   │   │   ├── mimicry.png
+│   │   │   ├── newport_icon.png
+│   │   │   ├── newports1.gif
+│   │   │   ├── snaek_icon.png
+│   │   │   └── snaek.png
+│   │   └── dialogue_bgs
+│   │       ├── rabbit_overlay.png
+│   │       └── terrible_test.png
+│   ├── fonts
+│   │   ├── NVEnochian.otf
+│   │   ├── Piksel-JAGa.ttf
+│   │   └── TeenyTinyPixls-o2zo.ttf
+│   ├── icons
+│   │   ├── battle-alerts
+│   │   │   ├── blank.png
+│   │   │   ├── focus.png
+│   │   │   ├── heal.png
+│   │   │   ├── mania.png
+│   │   │   └── plain.png
+│   │   └── statuses
+│   │       ├── mania.png
+│   │       ├── prep.png
+│   │       └── vuln.png
+│   ├── placeholders
+│   │   ├── ab2.png
+│   │   ├── ab.png
+│   │   ├── eyes.png
+│   │   └── test_sprite.png
+│   ├── sfx
+│   │   └── battle
+│   │       ├── candle.wav
+│   │       ├── overwhelm.wav
+│   │       ├── pain.wav
+│   │       └── player_pain.wav
+│   └── ui
+│       ├── corners
+│       │   ├── d1
+│       │   │   ├── bl.png
+│       │   │   ├── br.png
+│       │   │   ├── tl.png
+│       │   │   └── tr.png
+│       │   ├── da
+│       │   │   ├── bl.png
+│       │   │   ├── br.png
+│       │   │   ├── tl.png
+│       │   │   └── tr.png
+│       │   ├── s3
+│       │   │   ├── tl.png
+│       │   │   └── tr.png
+│       │   ├── s4
+│       │   │   ├── tl.png
+│       │   │   └── tr.png
+│       │   ├── s5
+│       │   │   ├── bl.png
+│       │   │   ├── br.png
+│       │   │   ├── tl.png
+│       │   │   └── tr.png
+│       │   └── special
+│       │       ├── ovl_bot.png
+│       │       └── ovl_top.png
+│       └── cursors
+│           ├── default_2x.png
+│           ├── default.png
+│           ├── nav_2x.png
+│           ├── nav.png
+│           ├── point_2x.png
+│           ├── pointer_active_2x.png
+│           ├── pointer_active.png
+│           ├── point.png
+│           ├── pra_2x.png
+│           ├── pra.png
+│           ├── pr_chat_2x.png
+│           ├── pr_chat.png
+│           ├── pr_obs_2x.png
+│           ├── pr_obs.png
+│           ├── pr_stock_2x.png
+│           └── pr_stock.png
+├── config
+│   ├── init.config.ts
+│   ├── lume.config.ts
+│   ├── timings.config.ts
+│   └── ui.config.ts
+├── core
+│   ├── audio
+│   │   ├── createMusicTrack.ts
+│   │   └── musicManager.ts
+│   ├── battle
+│   │   ├── ai
+│   │   │   └── weightedSequenceAI.ts
+│   │   ├── animation
+│   │   │   ├── animations.utils.ts
+│   │   │   ├── overlayAnimsRegistry.ts
+│   │   │   ├── overlayAnim.types.ts
+│   │   │   ├── requestOverlayAnim.ts
+│   │   │   └── uiAnimations.ts
+│   │   ├── engine
+│   │   │   ├── actor.ts
+│   │   │   ├── battle.config.ts
+│   │   │   ├── battle.context.ts
+│   │   │   ├── battle.logic.ts
+│   │   │   ├── battle.types.ts
+│   │   │   └── battle.utils.ts
+│   │   ├── moves
+│   │   │   ├── icons
+│   │   │   │   ├── apprentice_ex.png
+│   │   │   │   ├── apprentice.png
+│   │   │   │   ├── candle_ex.png
+│   │   │   │   ├── candle.png
+│   │   │   │   ├── chain_ex.png
+│   │   │   │   ├── chains.png
+│   │   │   │   ├── hourglass_ex.png
+│   │   │   │   ├── hourglass.png
+│   │   │   │   ├── lantern.png
+│   │   │   │   ├── mage_ex.png
+│   │   │   │   ├── mage.png
+│   │   │   │   ├── prae_ex.png
+│   │   │   │   ├── PRAETORIAN.png
+│   │   │   │   ├── priestess_ex.png
+│   │   │   │   ├── priestess.png
+│   │   │   │   ├── trickster_ex.png
+│   │   │   │   └── trickster.png
+│   │   │   ├── metas
+│   │   │   │   ├── player.ts
+│   │   │   │   └── stockMoves.ts
+│   │   │   ├── moves.effects.ts
+│   │   │   ├── moves.list.ts
+│   │   │   ├── moves.plsteps.ts
+│   │   │   ├── moves.types.ts
+│   │   │   └── moves.validators.ts
+│   │   ├── startBattle.tsx
+│   │   └── statuses
+│   │       ├── statuses.ts
+│   │       ├── status.types.ts
+│   │       └── status.utils.ts
+│   ├── dialogue
+│   │   ├── dialogueNode.ts
+│   │   ├── dialogueNode.types.ts
+│   │   └── dialogueService.tsx
+│   └── interaction
+│       ├── interactable.types.ts
+│       └── InteractionProvider.tsx
+├── data
+│   └── battles
+│       ├── anthousai.ts
+│       ├── debugangel.ts
+│       ├── mimicry.ts
+│       ├── newports.ts
+│       └── panoptes.ts
+├── devtools
+│   ├── attachToConsole.ts
+│   ├── DevMenu.tsx
+│   ├── dialogue.tsx
+│   ├── dialogue-visualizer.css
+│   └── DialogueVisualizer.tsx
+├── features
+│   ├── battle
+│   │   ├── assets
+│   │   │   ├── actionbar-left-base.png
+│   │   │   ├── actionbar-right-base.png
+│   │   │   ├── eject-button.png
+│   │   │   ├── exec-button.png
+│   │   │   ├── f-ch-bar.png
+│   │   │   ├── insight-label.png
+│   │   │   ├── mult_dr.png
+│   │   │   ├── mult_ds.png
+│   │   │   ├── mult_ur.png
+│   │   │   ├── mult_us.png
+│   │   │   ├── name-postcut.png
+│   │   │   ├── notif_end.png
+│   │   │   ├── opp-hint-l.png
+│   │   │   ├── opp-hint-r.png
+│   │   │   ├── placeholder_icon.png
+│   │   │   ├── placeholder_move_icon.png
+│   │   │   ├── reset-button.png
+│   │   │   ├── sbb-bim-t.png
+│   │   │   ├── sbb-left.png
+│   │   │   ├── sbb-right.png
+│   │   │   ├── user_mbars.png
+│   │   │   ├── vtl.png
+│   │   │   └── vtr.png
+│   │   ├── backgrounds
+│   │   │   ├── checkers.glsl
+│   │   │   ├── disgrid.glsl
+│   │   │   ├── fractal.glsl
+│   │   │   ├── radial.glsl
+│   │   │   ├── test.glsl
+│   │   │   ├── twoblend.glsl
+│   │   │   ├── vortex.glsl
+│   │   │   └── wave.glsl
+│   │   ├── Battle.tsx
+│   │   └── ui
+│   │       ├── actionbar.css
+│   │       ├── Actionbar.tsx
+│   │       ├── action-messages.css
+│   │       ├── ActionMessages.tsx
+│   │       ├── BattleCanvas.tsx
+│   │       ├── battle.css
+│   │       ├── move-tooltip-content.css
+│   │       ├── MoveTooltipContent.tsx
+│   │       ├── opp-statusbar.css
+│   │       ├── OppStatusbar.tsx
+│   │       ├── OverlayAnimator.tsx
+│   │       ├── refRegistry.ts
+│   │       └── Runebuilder.tsx
+│   ├── hermes
+│   │   ├── assets
+│   │   │   ├── base.png
+│   │   │   ├── botb.png
+│   │   │   ├── continue_prompt.png
+│   │   │   ├── disconnect.png
+│   │   │   ├── dogtag_first.png
+│   │   │   ├── dogtag_last.png
+│   │   │   ├── fadething.png
+│   │   │   ├── footerbase.png
+│   │   │   ├── line_tb.png
+│   │   │   ├── message_body_bg.png
+│   │   │   ├── midb.png
+│   │   │   ├── nameplate_border.png
+│   │   │   ├── ntwrk.gif
+│   │   │   ├── pagecon_bsel.png
+│   │   │   ├── pagecon_fill_bottom.png
+│   │   │   ├── pagecon_fill_top.png
+│   │   │   ├── pagecon.png
+│   │   │   ├── pagecon_tsel.png
+│   │   │   └── topb.png
+│   │   ├── hermes.css
+│   │   ├── Hermes.tsx
+│   │   └── MessageBox.tsx
+│   └── text-overlay
+│       └── TextOverlay.tsx
+├── platform
+│   ├── index.tsx
+│   └── vite-env.d.ts
+├── scenes
+│   ├── AnotherScene
+│   │   ├── AnotherScene.tsx
+│   │   └── models
+│   │       ├── map.mtl
+│   │       └── map.obj
+│   ├── BarScene
+│   │   ├── BarScene.tsx
+│   │   └── models
+│   │       ├── bar2.mtl
+│   │       ├── bar2.obj
+│   │       ├── barscene.dae
+│   │       └── barscene.glb
+│   ├── Crumbling
+│   │   ├── Crumbling.tsx
+│   │   └── models
+│   │       ├── island_1.fbx
+│   │       ├── island_2.fbx
+│   │       ├── island_3.fbx
+│   │       ├── island_4.fbx
+│   │       └── islands1.fbx
+│   ├── DefaultScene
+│   │   └── DefaultScene.tsx
+│   ├── Doors
+│   │   ├── assets
+│   │   │   ├── door_l.png
+│   │   │   └── door_r.png
+│   │   └── Doors.tsx
+│   ├── Elevator
+│   │   ├── data
+│   │   │   └── opening_textscene.ts
+│   │   ├── Elevator.tsx
+│   │   └── models
+│   │       ├── elevator_buttons.png
+│   │       ├── elevator_buttons_white.png
+│   │       ├── elevator_shaft.mtl
+│   │       └── elevator_shaft.obj
+│   ├── GemmaBar
+│   │   ├── assets
+│   │   │   ├── d_overlay.png
+│   │   │   └── suited_figure.png
+│   │   ├── GemmaBar.tsx
+│   │   └── models
+│   │       ├── aaa.mtl
+│   │       ├── aaa.obj
+│   │       ├── barscene_no_furniture.dae
+│   │       ├── barscene_no_furniture.gltf
+│   │       ├── barscene_no_furniture.obj
+│   │       ├── barscene_no_glass.obj
+│   │       ├── bbb.mtl
+│   │       ├── bbb.obj
+│   │       ├── blendver.glb
+│   │       ├── cache.fbx
+│   │       ├── Dorchester3D.com_gemmabar.zip
+│   │       ├── eee.glb
+│   │       ├── egg.fbx
+│   │       ├── gemmabar.blend
+│   │       ├── gemmabar.blend1
+│   │       ├── gemmabar.dae
+│   │       ├── gemmabar.fbx
+│   │       ├── gemmabar_hva.blend
+│   │       ├── gemmabar_hva.blend1
+│   │       ├── hype.fbx
+│   │       ├── ImageToStl.com_barscene_no_furniture
+│   │       │   ├── barscene_no_furniture.gltf
+│   │       │   └── readme.txt
+│   │       ├── itr1.obj
+│   │       ├── kms.fbx
+│   │       └── what.fbx
+│   ├── Liminality
+│   │   ├── dialogues
+│   │   ├── Liminality.tsx
+│   │   └── models
+│   │       ├── base.mtl
+│   │       ├── base.obj
+│   │       ├── diamond.mtl
+│   │       └── diamond.obj
+│   ├── loadScene.ts
+│   ├── Porch
+│   │   ├── dialogues
+│   │   │   ├── porchRabbit.ts
+│   │   │   └── viya_dialogue.ts
+│   │   ├── models
+│   │   │   ├── map.mtl
+│   │   │   └── map.obj
+│   │   └── Porch.tsx
+│   ├── shared_models
+│   │   └── player_ref.fbx
+│   ├── shared_textures
+│   │   └── starfield.png
+│   ├── Sponza
+│   │   ├── glTF
+│   │   │   ├── 10381718147657362067.jpg
+│   │   │   ├── 10388182081421875623.jpg
+│   │   │   ├── 11474523244911310074.jpg
+│   │   │   ├── 11490520546946913238.jpg
+│   │   │   ├── 11872827283454512094.jpg
+│   │   │   ├── 11968150294050148237.jpg
+│   │   │   ├── 1219024358953944284.jpg
+│   │   │   ├── 12501374198249454378.jpg
+│   │   │   ├── 13196865903111448057.jpg
+│   │   │   ├── 13824894030729245199.jpg
+│   │   │   ├── 13982482287905699490.jpg
+│   │   │   ├── 14118779221266351425.jpg
+│   │   │   ├── 14170708867020035030.jpg
+│   │   │   ├── 14267839433702832875.jpg
+│   │   │   ├── 14650633544276105767.jpg
+│   │   │   ├── 15295713303328085182.jpg
+│   │   │   ├── 15722799267630235092.jpg
+│   │   │   ├── 16275776544635328252.png
+│   │   │   ├── 16299174074766089871.jpg
+│   │   │   ├── 16885566240357350108.jpg
+│   │   │   ├── 17556969131407844942.jpg
+│   │   │   ├── 17876391417123941155.jpg
+│   │   │   ├── 2051777328469649772.jpg
+│   │   │   ├── 2185409758123873465.jpg
+│   │   │   ├── 2299742237651021498.jpg
+│   │   │   ├── 2374361008830720677.jpg
+│   │   │   ├── 2411100444841994089.jpg
+│   │   │   ├── 2775690330959970771.jpg
+│   │   │   ├── 2969916736137545357.jpg
+│   │   │   ├── 332936164838540657.jpg
+│   │   │   ├── 3371964815757888145.jpg
+│   │   │   ├── 3455394979645218238.jpg
+│   │   │   ├── 3628158980083700836.jpg
+│   │   │   ├── 3827035219084910048.jpg
+│   │   │   ├── 4477655471536070370.jpg
+│   │   │   ├── 4601176305987539675.jpg
+│   │   │   ├── 466164707995436622.jpg
+│   │   │   ├── 4675343432951571524.jpg
+│   │   │   ├── 4871783166746854860.jpg
+│   │   │   ├── 4910669866631290573.jpg
+│   │   │   ├── 4975155472559461469.jpg
+│   │   │   ├── 5061699253647017043.png
+│   │   │   ├── 5792855332885324923.jpg
+│   │   │   ├── 5823059166183034438.jpg
+│   │   │   ├── 6047387724914829168.jpg
+│   │   │   ├── 6151467286084645207.jpg
+│   │   │   ├── 6593109234861095314.jpg
+│   │   │   ├── 6667038893015345571.jpg
+│   │   │   ├── 6772804448157695701.jpg
+│   │   │   ├── 7056944414013900257.jpg
+│   │   │   ├── 715093869573992647.jpg
+│   │   │   ├── 7268504077753552595.jpg
+│   │   │   ├── 7441062115984513793.jpg
+│   │   │   ├── 755318871556304029.jpg
+│   │   │   ├── 759203620573749278.jpg
+│   │   │   ├── 7645212358685992005.jpg
+│   │   │   ├── 7815564343179553343.jpg
+│   │   │   ├── 8006627369776289000.png
+│   │   │   ├── 8051790464816141987.jpg
+│   │   │   ├── 8114461559286000061.jpg
+│   │   │   ├── 8481240838833932244.jpg
+│   │   │   ├── 8503262930880235456.jpg
+│   │   │   ├── 8747919177698443163.jpg
+│   │   │   ├── 8750083169368950601.jpg
+│   │   │   ├── 8773302468495022225.jpg
+│   │   │   ├── 8783994986360286082.jpg
+│   │   │   ├── 9288698199695299068.jpg
+│   │   │   ├── 9916269861720640319.jpg
+│   │   │   ├── Sponza.bin
+│   │   │   ├── Sponza.gltf
+│   │   │   └── white.png
+│   │   └── Sponza.tsx
+│   └── ThirdScene
+│       ├── models
+│       │   ├── map.mtl
+│       │   ├── map.obj
+│       │   └── thingy.gltf
+│       └── ThirdScene.tsx
+├── shared
+│   ├── hooks
+│   │   ├── createColorTypewriter.tsx
+│   │   ├── createMeltEffect.tsx
+│   │   ├── createTooltip.tsx
+│   │   └── createTypewriter.ts
+│   ├── styles
+│   │   └── base.css
+│   ├── types
+│   │   ├── 3d.types.ts
+│   │   └── misc.types.ts
+│   ├── ui
+│   │   └── primitives
+│   │       └── corner-rect
+│   │           ├── CornerRect.css
+│   │           └── CornerRect.tsx
+│   └── utils
+│       ├── animateAsync.ts
+│       ├── isCloseTo.ts
+│       ├── lerp.ts
+│       ├── loadImage.ts
+│       ├── pickRandom.ts
+│       ├── pick.ts
+│       ├── playSound.ts
+│       ├── reqPrefetch.ts
+│       ├── shuffle.ts
+│       ├── sleep.ts
+│       └── webgl.utils.ts
+└── tests
+    ├── battle.test.ts
+    ├── dialogue.hermes.test.tsx
+    ├── dialogues
+    │   └── intro_dia.ts
+    └── dialogue.test.ts
+
+113 directories, 449 files

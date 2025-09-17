@@ -2,19 +2,19 @@ import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show,} from "solid-js"
-import starfield from "../shared_textures/starfield.png"
+import starfield from "@/assets/3d/textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
-import { addLogMessage } from "@/views/main/ui/EventLog";
+import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 import {default as viya_root} from "./dialogues/viya_dialogue"
-import applyShadows from "@/core/lume/applyShadows";
-import Billboard from "@/components/lume/Billboard";
-import { useDGShader } from '@/core/lume/dgRender';
-import PlayerCam from '@/components/lume/playerCam/PlayerCam';
-import createCameraController from '@/components/lume/playerCam/createCameraController';
-import { startDialogueWithCamOvr } from '@/components/lume/playerCam/dialogueCamera';
+import applyShadows from "@/3d/pipeline/applyShadows";
+import Billboard from "@/3d/components/Billboard";
+import { useDGShader } from '@/3d/pipeline/dgRender';
+import PlayerCam from '@/3d/camera/PlayerCam';
+import createCameraController from '@/3d/camera/createCameraController';
+import { startDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
 
@@ -29,8 +29,6 @@ export default function Porch() {
         {yaw: -72, pitch: 0},
         {maxYaw: 45, maxPitch: 30}
     );
-
-    (window as any).PRCH_CM = cameraController;
 
     let mapRef: ObjModel | undefined;
 

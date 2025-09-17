@@ -1,9 +1,9 @@
 import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
 import { startBattle } from "@/core/battle/startBattle";
 import { createDialogueNode, createInlineDialogueTree, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
-import pickRandom from "@/utils/pickRandom";
+import pickRandom from "@/shared/utils/pickRandom";
 import { BattleOutcome } from "@/core/battle/engine/battle.types";
-import sleep from "@/utils/sleep";
+import sleep from "@/shared/utils/sleep";
 
 const characters = Object.freeze({
     ARDA: "Arda",

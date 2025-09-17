@@ -1,5 +1,5 @@
 import { DialogueContext, DialogueNode, DialogueRender } from "./dialogueNode.types";
-import { DEFAULT_DIALOGUE_SENDER } from "../../config";
+import { DEFAULT_DIALOGUE_SENDER } from "../../config/init.config";
 
 let nodeCounter = 0;
 

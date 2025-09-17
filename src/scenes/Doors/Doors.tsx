@@ -1,20 +1,20 @@
-import Interactable from "@/components/lume/Interactable";
-import applyDGShader from "@/core/lume/dgRender";
+import Interactable from "@/3d/components/Interactable";
+import applyDGShader from "@/3d/pipeline/dgRender";
 import { Scene } from "lume";
 import { createSignal, onMount } from "solid-js"
 
 import door_l from "./assets/door_l.png"
 import door_r from "./assets/door_r.png"
-import createCameraController from "@/components/lume/playerCam/createCameraController";
-import PlayerCam from "@/components/lume/playerCam/PlayerCam";
-import { useSceneMenu } from "@/views/main/ui/SceneMenu/SceneMenuContext";
+import createCameraController from "@/3d/camera/createCameraController";
+import PlayerCam from "@/3d/camera/PlayerCam";
+import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { Vector2 } from "three";
-import lerp from "@/utils/lerp"
-import Billboard from "@/components/lume/Billboard";
+import lerp from "@/shared/utils/lerp"
+import Billboard from "@/3d/components/Billboard";
 
 import friendTexture from "@/assets/artwork/characters/friend.png"
-import { addLogMessage } from "@/views/main/ui/EventLog";
-import { setCurrentScene } from "@/views/main/ui/SceneContainer";
+import { addLogMessage } from "@/app/shell/hud/EventLog";
+import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 
 export default function Doors() {
     let sceneRef!: Scene;
