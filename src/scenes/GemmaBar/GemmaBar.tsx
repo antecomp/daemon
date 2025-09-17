@@ -5,7 +5,7 @@ import PlayerCam from "@/3d/camera/PlayerCam";
 import applyShadows from "@/3d/pipeline/applyShadows";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 
-import starfield from "../shared_textures/starfield.png"
+import starfield from "@/assets/3d/textures/starfield.png"
 import createCameraController from "@/3d/camera/createCameraController";
 
 

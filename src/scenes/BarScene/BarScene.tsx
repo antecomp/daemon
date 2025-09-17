@@ -4,7 +4,7 @@ import {onMount} from "solid-js";
 import barobj from "./models/bar2.obj"
 import barmtl from "./models/bar2.mtl"
 import applyShadows from "@/3d/pipeline/applyShadows";
-import starfield from "../shared_textures/starfield.png"
+import starfield from "@/assets/3d/textures/starfield.png"
 import PlayerCam from "@/3d/camera/PlayerCam";
 
 export default function BarScene() {

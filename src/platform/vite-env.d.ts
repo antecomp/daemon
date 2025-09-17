@@ -11,6 +11,13 @@ declare module '*.obj' {
     export default src
 }
 
+declare module '*.fbx' {
+    const src: string
+    export default src
+}
+
+// if you add more asset modules, make sure you also add them to assetsInclude in vite.config.ts 
+
 // Autoresolve .glsl to string
 declare module '*.glsl' {
     const content: string;

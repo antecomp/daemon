@@ -2,7 +2,7 @@ import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show,} from "solid-js"
-import starfield from "../shared_textures/starfield.png"
+import starfield from "@/assets/3d/textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
 import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/app/shell/hud/EventLog";

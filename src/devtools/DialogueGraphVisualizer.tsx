@@ -1,3 +1,5 @@
+import { render } from "solid-js/web";
+
 import { createSignal } from "solid-js";
 import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
 import './dialogue-visualizer.css'
@@ -76,5 +78,5 @@ const DialogueVisualizer = () => {
         </div>
     );
 };
-
-export default DialogueVisualizer;
+const domroot = document.getElementById("dialogue-app");
+if (domroot) render(() => <DialogueVisualizer />, domroot);

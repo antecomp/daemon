@@ -15,24 +15,24 @@
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeSpeed;
 
-  --cursor_default: url('../assets/ui/cursors/pra.png'), auto;
-  --cursor_pointer: url('../assets/ui/cursors/point.png'), auto;
+  --cursor_default: url('@/assets/ui/cursors/pra.png'), auto;
+  --cursor_pointer: url('@/assets/ui/cursors/point.png'), auto;
 }
 
 .cursor-chat {
-  cursor: url('../assets/ui/cursors/pr_chat.png'), auto;
+  cursor: url('@/assets/ui/cursors/pr_chat.png'), auto;
 }
 
 .cursor-interact {
-  cursor: url('../assets/ui/cursors/pra.png'), auto;
+  cursor: url('@/assets/ui/cursors/pra.png'), auto;
 }
 
 .cursor-observe {
-  cursor: url('../assets/ui/cursors/pr_obs.png'), auto;
+  cursor: url('@/assets/ui/cursors/pr_obs.png'), auto;
 }
 
 .cursor-navigate {
-  cursor: url('../assets/ui/cursors/nav.png'), auto;
+  cursor: url('@/assets/ui/cursors/nav.png'), auto;
 }
 
 * {
@@ -131,24 +131,24 @@ button {
 
     /* upscale all the cursors too */
     :root {
-        --cursor_default: url('../assets/ui/cursors/pra_2x.png'), auto;
-        --cursor_pointer: url('../assets/ui/cursors/point_2x.png'), auto;
+        --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
+        --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
     }
 
     .cursor-chat {
-        cursor: url('../assets/ui/cursors/pr_chat_2x.png'), auto;
+        cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
     }
 
     .cursor-interact {
-        cursor: url('../assets/ui/cursors/pra_2x.png'), auto;
+        cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
     }
 
     .cursor-observe {
-        cursor: url('../assets/ui/cursors/pr_obs_2x.png'), auto;
+        cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
     }
 
     .cursor-navigate {
-      cursor: url('../assets/ui/cursors/nav_2x.png'), auto;
+      cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
     }
 
 }
