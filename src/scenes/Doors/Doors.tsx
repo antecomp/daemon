@@ -5,8 +5,8 @@ import { createSignal, onMount } from "solid-js"
 
 import door_l from "./assets/door_l.png"
 import door_r from "./assets/door_r.png"
-import createCameraController from "@/components/lume/playerCam/createCameraController";
-import PlayerCam from "@/components/lume/playerCam/PlayerCam";
+import createCameraController from "@/3d/camera/createCameraController";
+import PlayerCam from "@/3d/camera/PlayerCam";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { Vector2 } from "three";
 import lerp from "@/shared/utils/lerp"

@@ -6,3 +6,5 @@ export const SCENE_DIMENSIONS = {
 
 /** Inset of the scene context menu (from cursor position) */
 export const SCENE_MENU_OFFSET = 26;
+
+export const TOOLTIP_OFFSET = 12;

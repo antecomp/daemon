@@ -1,7 +1,6 @@
 import { createSignal, JSX, onCleanup, Show } from "solid-js";
 import { Portal } from "solid-js/web";
-
-const TOOLTIP_OFFSET = 15;
+import { TOOLTIP_OFFSET } from "@/config/ui.config";
 
 // helper: robust scale even across zoom / transforms
 function getElementScale(el: HTMLElement) {
@@ -12,13 +11,11 @@ function getElementScale(el: HTMLElement) {
   return rect.width / ow;
 }
 
-
 export function createTooltip() {
   const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
   const [position, setPosition] = createSignal({ x: 0, y: 0 });
 
   let tooltipRef: HTMLDivElement | undefined;
-  const TOOLTIP_OFFSET = 12;
 
   const overlay = () => document.getElementById("modal-root") as HTMLDivElement | null;
   const gameRoot = () => document.getElementById("game-root") as HTMLElement | null;
