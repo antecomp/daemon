@@ -1,5 +1,5 @@
 import {  Orientation } from "@/shared/types/3d.types";
-import { CameraController } from "./createCameraController";
+import { CameraController } from "./camera.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";

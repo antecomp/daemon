@@ -1,5 +1,5 @@
 import { Orientation } from "@/shared/types/3d.types";
-import { CameraController } from "../../camera/createCameraController";
+import { CameraController } from "@/3d/camera/camera.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { Plane, toDegrees } from "lume";
 import { Vector3 } from "three";
