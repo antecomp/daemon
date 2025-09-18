@@ -1,6 +1,6 @@
 import { LumePosition } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
-import { Plane, toDegrees } from "lume";
+import { Plane, toDegrees, clamp } from "lume";
 import { Vector2, Vector3 } from "three";
 import { onMount } from "solid-js";
 import { interactionCB } from "../../core/interaction/interactable.types";
@@ -89,8 +89,8 @@ export default function Billboard(props: {
     function isOpaque(uv: Vector2): boolean {
         if(!maskData.alphaMask) return true;
         const {alphaMask, maskWidth, maskHeight} = maskData;
-        const x = Math.min(maskWidth - 1, Math.max(0, Math.floor(uv.x * maskWidth)));
-        const y = Math.min(maskHeight - 1, Math.max(0, Math.floor((1 - uv.y) * maskHeight))); // Flip Y axis
+        const x = clamp(Math.floor(uv.x * maskWidth), 0, maskWidth - 1);
+        const y = clamp(Math.floor((1 - uv.y) * maskHeight), 0, maskHeight - 1);
         const index = y * maskWidth + x;
         return alphaMask[index] === 1;
     }
