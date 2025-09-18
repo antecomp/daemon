@@ -1,6 +1,15 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
+import Stack from "@/shared/utils/stack";
 import { createMemo, createSignal } from "solid-js";
+
+interface CameraOverrideSettings {
+    pos?: XYZ,
+    ori?: Orientation,
+    anim?: boolean
+}
+
+type CameraOverride = CameraOverrideSettings & {id: number}
 
 /**
  * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
@@ -16,26 +25,45 @@ export default function createCameraController(
 ) {
     const [basePos, setBasePos] = createSignal(initialPos);
     const [baseOri, setBaseOri] = createSignal(initialOri);
-    const [shouldAnim, setShouldAnim] = createSignal(false);
-    const [overridePos, setOverridePos] = createSignal<XYZ | undefined>();
-    const [overrideOri, setOverrideOri] = createSignal<Orientation | undefined>();
+    const [baseAnim, setBaseAnim] = createSignal(false);
     const [maxYaw, setMaxYaw] = createSignal(maxTilts.maxYaw);
     const [maxPitch, setMaxPitch] = createSignal(maxTilts.maxPitch);
 
-    function setOverrides(pos?: XYZ, ori?: Orientation, anim?: boolean) {
-        pos && setOverridePos(pos);
-        ori && setOverrideOri(ori);
-        (anim != undefined) && setShouldAnim(anim);
+    let nextOverrideID = 0;
+    const [overrideStack, setOverrideStack] = createSignal<CameraOverride[]>([]);
+
+    const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
+
+    function requestOverride(ovr: CameraOverrideSettings) {
+                console.log('trigger');
+        const id = nextOverrideID++;
+        setOverrideStack(prev => [...prev, {id, ...ovr}]);
+        return {
+            release(anim?: boolean) { // anim only relevent when releasing back to base (do we animate back to base?) otherwise it's just the anim of the next override.
+                (anim != undefined) && setBaseAnim(anim);
+                removeOverride(id)
+            },
+            id
+        }
+    }
+
+    const currentOverridePos = () => overrideStack().at(-1)?.pos;
+    const currentOverrideOri = () => overrideStack().at(-1)?.ori;
+
+    const shouldAnim = () => {
+        const ovrAnim = overrideStack().at(-1)?.anim;
+        if(ovrAnim == undefined) return baseAnim();
+        return ovrAnim;
     }
 
     function clearOverrides(anim?: boolean) {
-        (anim != undefined) && setShouldAnim(anim);
-        setOverrideOri(undefined);
-        setOverridePos(undefined);
+        (anim != undefined) && setBaseAnim(anim);
+        setOverrideStack([]);
     }
 
+    // TODO: Change to take an options object instead of having to write undefined as an argument.
     function setBase(pos?: XYZ, ori?: Orientation, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
-        (anim != undefined) && setShouldAnim(anim);
+        (anim != undefined) && setBaseAnim(anim);
         pos && setBasePos(pos);
         ori && setBaseOri(ori);
         tilts && setMaxPitch(tilts.maxPitch);
@@ -46,8 +74,8 @@ export default function createCameraController(
     const cameraControlSignals = createMemo(() => ({
         basePos: basePos(),
         baseOri: baseOri(),
-        overrideOri: overrideOri(),
-        overridePos: overridePos(),
+        overrideOri: currentOverrideOri(),
+        overridePos: currentOverridePos(),
         animate: shouldAnim(),
         maxYaw: maxYaw(),
         maxPitch: maxPitch(),
@@ -59,10 +87,10 @@ export default function createCameraController(
     });
 
     const currentOverride = () => {
-        if (!overrideOri() || !overridePos()) return null;
+        if (!currentOverrideOri() || !currentOverridePos()) return null;
         return {
-            pos: overridePos()!,
-            ori: overrideOri()!
+            pos: currentOverridePos()!,
+            ori: currentOverrideOri()!
         }
     }
     
@@ -71,13 +99,12 @@ export default function createCameraController(
         cameraControlSignals,
         // Camera controller
         cameraController: {
-            setOverrides,
+            requestOverride,
+            removeOverride, // TODO: consider removing this (and making req only return the release, to keep responsibility isolated to caller)
             clearOverrides,
             setBase,
             setBasePos,
             setBaseOri,
-            setOverridePos,
-            setOverrideOri,
             currentBase, currentOverride
         },
     }
