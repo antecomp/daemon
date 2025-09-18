@@ -1,14 +1,9 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { createMemo, createSignal } from "solid-js";
+import { CameraOverrideSettings, CameraOverride, CameraController, CameraControlSignals } from "./camera.types";
 
-interface CameraOverrideSettings {
-    pos?: XYZ,
-    ori?: Orientation,
-    anim?: boolean
-}
 
-type CameraOverride = CameraOverrideSettings & {id: number}
 
 /**
  * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
@@ -16,12 +11,18 @@ type CameraOverride = CameraOverrideSettings & {id: number}
  * @param initialPos [number, number, number], XYZ original coordinates.
  * @param initialOri {yaw: number, pitch: number}, original orientation
  * @param maxTilts {maxYaw: number, maxPitch: number} - limit on head tilts/
+ * 
+ * @returns - cameraControlSignals - call and spread this inside PlayerCam. Provides properly reactive props to PlayerCam to trigger movement.
+ * @returns - cameraController - The actual API to trigger camera movement events. Reference CameraController interface in camera.types.ts
  */
 export default function createCameraController(
     initialPos: XYZ,
     initialOri: Orientation,
     maxTilts: {maxYaw: number, maxPitch: number}
-) {
+) : {
+    cameraControlSignals: CameraControlSignals,
+    cameraController: CameraController
+} {
     const [basePos, setBasePos] = createSignal(initialPos);
     const [baseOri, setBaseOri] = createSignal(initialOri);
     const [baseAnim, setBaseAnim] = createSignal(false);
@@ -34,7 +35,6 @@ export default function createCameraController(
     const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
 
     function requestOverride(ovr: CameraOverrideSettings) {
-                console.log('trigger');
         const id = nextOverrideID++;
         setOverrideStack(prev => [...prev, {id, ...ovr}]);
         return {
@@ -82,15 +82,14 @@ export default function createCameraController(
 
     const currentBase = () => ({
         pos: basePos(),
-        ori: baseOri
+        ori: baseOri()
     });
 
     const currentOverride = () => {
-        if (!currentOverrideOri() || !currentOverridePos()) return null;
-        return {
-            pos: currentOverridePos()!,
-            ori: currentOverrideOri()!
-        }
+        const ori = currentOverrideOri();
+        const pos = currentOverridePos();
+        if(ori == undefined && pos == undefined) return null;
+        return { pos, ori };
     }
     
     return {
@@ -104,10 +103,8 @@ export default function createCameraController(
             setBase,
             setBasePos,
             setBaseOri,
-            currentBase, currentOverride
+            currentBase, 
+            currentOverride
         },
     }
 }
-
-// TODO: Declare and document your own types. This is lazy and gross!
-export type CameraController = ReturnType<typeof createCameraController>['cameraController']

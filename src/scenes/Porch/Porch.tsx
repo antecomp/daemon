@@ -17,6 +17,7 @@ import createCameraController from '@/3d/camera/createCameraController';
 import { startDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
+import attachToConsole from '@/devtools/attachToConsole';
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -29,6 +30,8 @@ export default function Porch() {
         {yaw: -72, pitch: 0},
         {maxYaw: 45, maxPitch: 30}
     );
+
+    attachToConsole(cameraController, "camCon");
 
     let mapRef: ObjModel | undefined;
 
