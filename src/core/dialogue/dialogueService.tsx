@@ -1,6 +1,5 @@
 import { DialogueContext, DialogueNode } from "./dialogueNode.types";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
-import { MainUILock } from "@/app/shell/layers/ui-layers.types";
 import attachToConsole from "@/devtools/attachToConsole";
 import Hermes from "@/features/hermes/Hermes";
 import {createSignal} from "solid-js";
@@ -15,7 +14,6 @@ import {createSignal} from "solid-js";
  */
 export type StartDialogueOptions = {
     overlay?: string, 
-    lock?: MainUILock,
     blockBehind?: boolean,
     ctx?: DialogueContext 
 };
@@ -33,7 +31,7 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
     pushUILayer({
         id,
-        lock: options?.lock ?? MainUILock.All,
+        lock: 'all', // I see no case where this won't be correct.
         blockBehind: options?.blockBehind, // TODO: Make always true instead?
         component: () => <Hermes root={rootNode} ctx={options?.ctx} />,
         style: {right: 0}

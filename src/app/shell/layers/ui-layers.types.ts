@@ -11,20 +11,6 @@ import { JSX } from "solid-js";
 export type MetaLayer = 'bottom' | 'middle' | 'top';
 
 /**
- * Enum representing the main UI lock states.
- * Used to lock specific parts of the UI.
- * 
- * - `Sidebar`: Locks the sidebar.
- * - `Scene`: Locks the scene.
- * - `All`: Locks the entire UI.
- */
-export enum MainUILock {
-    Sidebar,
-    Scene,
-    All
-}
-
-/**
  * Represents a UI layer with its associated properties.
  * 
  * @property id - A unique identifier for the UI layer.
@@ -38,7 +24,7 @@ export type UILayer = {
     id: string;
     component: () => JSX.Element;
     metaLayer?: MetaLayer;
-    lock?: MainUILock;
+    lock?: 'sidebar' | 'scene' | 'all';
     blockBehind?: boolean;
     style?: JSX.CSSProperties;
 }

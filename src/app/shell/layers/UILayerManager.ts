@@ -1,15 +1,47 @@
-import { createMemo, createSignal } from "solid-js";
-import { MainUILock, UILayer } from "./ui-layers.types";
+import { createSignal } from "solid-js";
+import { UILayer } from "./ui-layers.types";
+import { ReleaseFn, sceneLock, shellLock, sidebarLock } from "../locks/UILockManager";
+import { Optional } from "@/shared/types/misc.types";
+import { nanoid } from "nanoid";
 
 const [uilayers, setUILayers] = createSignal<UILayer[]>([]);
+
+const releaseLockByLayer = new Map<string, ReleaseFn>();
 
 /**
  * Adds a new UI layer to the existing stack of UI layers.
  *
  * @param layer - The UI layer to be added to the stack.
  */
-export function pushUILayer(layer: UILayer) {
-    setUILayers(prev => [...prev, layer]);
+export function pushUILayer(layer: Optional<UILayer, 'id'>) {
+
+    const id = layer.id ?? nanoid();
+
+    if(uilayers().some(l => l.id === id)) throw new Error("Layer with that ID already exists!");
+
+    setUILayers(prev => [...prev, {...layer, id}]);
+    
+    let release: ReleaseFn | undefined;
+
+    switch(layer.lock) {
+        case 'scene':
+            release = sceneLock.acquire();
+            break;
+        case 'sidebar':
+            release = sidebarLock.acquire();
+            break;
+        case 'all':
+            release = shellLock.acquire();
+            break;
+    }
+
+    if (release) releaseLockByLayer.set(id, release);
+
+    return {
+        id,
+        popLayer: () => popUILayer(id)
+    }
+    
 }
 
 /**
@@ -18,7 +50,11 @@ export function pushUILayer(layer: UILayer) {
  * @param id - The ID of the UI layer to be removed. If not provided, removes the top layer.
  */
 export function popUILayer(id?: string) {
-    setUILayers(prev => id ? prev.filter(l => l.id !== id) : prev.slice(0, -1));
+    const idToRelease = id ?? uilayers().at(-1)?.id;
+    if (idToRelease == undefined) return;
+    releaseLockByLayer.get(idToRelease)?.();
+    releaseLockByLayer.delete(idToRelease);
+    setUILayers(prev => prev.filter(l => l.id !== idToRelease));
 }
 
 /**
@@ -26,6 +62,8 @@ export function popUILayer(id?: string) {
  */
 export function clearUILayers() {
     setUILayers([]);
+    releaseLockByLayer.forEach(rel => rel());
+    releaseLockByLayer.clear();
 }
 
 /**
@@ -37,17 +75,3 @@ export function getUILayers() {
     return uilayers;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
-
-export const isSceneLocked = createMemo(() =>
-    uilayers().some(l => l.lock == MainUILock.All || l.lock == MainUILock.Scene)
-)
-
-export const isSidebarLocked = createMemo(() =>
-    uilayers().some(l => l.lock == MainUILock.All || l.lock == MainUILock.Sidebar)
-)
-
-export const isUILocked = createMemo(() => 
-    uilayers().some(l => l.lock == MainUILock.All)
-);
-  
