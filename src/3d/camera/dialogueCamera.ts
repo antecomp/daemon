@@ -26,12 +26,12 @@ export async function startDialogueWithCamOvr(
     anim = false,
     dialogueOptions?: StartDialogueOptions,
 ) {
-    cameraController.setOverrides(pos, ori, anim);
+    const {release} = cameraController.requestOverride({pos, ori, anim});
 
     // Using .finally to trigger camera return on error also.
     try {
         return await DialogueService.startDialogue(dialogueRoot, dialogueOptions);
     } finally {
-        cameraController.clearOverrides(anim);
+        release(anim)
     }
 }

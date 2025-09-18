@@ -36,21 +36,20 @@ export default function GemmaBar() {
     const [cacheOnTable, setShowCache] = createSignal(false);
     const [hasManDeparted, setManDeparted] = createSignal(false);
 
-    function cacheHandoverAnimation() {
-        setShowCache(true);
-        cameraController.setOverrides([-463, -67, 487], {yaw: 15, pitch: 40});
-    }
-
-    function returnCamera() {
-        // these are the overrides set in startDialogueWithCamOvr. May be worth pulling out to unify!
-        cameraController.setOverrides([-470, -64, 483], {yaw: 8, pitch: 8});
-    }
-
-    async function departTheMan() {
-         SceneFadeManager.fadeTransition(() => {
-            setManDeparted(true);
-            cameraController.clearOverrides();
-        });
+    const dialogueActions = {
+        cacheHandoverAnimation() {
+            setShowCache(true);
+            const {release} = cameraController.requestOverride({pos: [-463, -67, 487], ori: {yaw: 15, pitch: 40}, anim: true});
+            // I like the elegance of this little reassignment here (dont need to track anything more), but could be fragile.
+            this.returnCamera = () => release(true);
+        },
+        returnCamera: () => {/*noop unless cacheHandoverAnimation runs first and reassigns me*/},
+        departTheMan() {
+                SceneFadeManager.fadeTransition(() => {
+                    setManDeparted(true);
+                    cameraController.clearOverrides();
+                });
+        }
     }
     
     return (
@@ -114,7 +113,7 @@ export default function GemmaBar() {
                             true,
                             {
                                 overlay: d_overlay,
-                                ctx: {actions: {cacheHandoverAnimation, returnCamera, departTheMan}}
+                                ctx: {actions: dialogueActions}
                             }
                         ),
                         () => addLogMessage("A man in a suit. He has something I need.")
