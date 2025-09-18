@@ -1,6 +1,5 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
-import Stack from "@/shared/utils/stack";
 import { createMemo, createSignal } from "solid-js";
 
 interface CameraOverrideSettings {
@@ -110,4 +109,5 @@ export default function createCameraController(
     }
 }
 
+// TODO: Declare and document your own types. This is lazy and gross!
 export type CameraController = ReturnType<typeof createCameraController>['cameraController']
