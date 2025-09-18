@@ -8,18 +8,17 @@ import { InteractionMap } from "../../core/interaction/interactable.types";
 import { InteractableObject3D } from "../../core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
-// TODO - Consider downscaling this mask (then sampling it at a rougher rate inside isOpaque).
-// Having the mask be pixel-perfect is a waste of resources. Even halving it would be a huge improvement with little loss in accuracy!
+// Mask is generated at half resolution to reduce memory overhead.
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");
     const offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});
-    offscreenCanvas.width = image.width;
-    offscreenCanvas.height = image.height
-    offscreenCtx!.drawImage(image, 0, 0);
-    const imgData = offscreenCtx!.getImageData(0, 0, offscreenCanvas.width, offscreenCanvas.height).data;
+    const maskWidth = Math.max(1, Math.round(image.width / 2));
+    const maskHeight = Math.max(1, Math.round(image.height / 2));
+    offscreenCanvas.width = maskWidth;
+    offscreenCanvas.height = maskHeight;
+    offscreenCtx!.drawImage(image, 0, 0, maskWidth, maskHeight);
+    const imgData = offscreenCtx!.getImageData(0, 0, maskWidth, maskHeight).data;
 
-    const maskWidth = offscreenCanvas.width;
-    const maskHeight = offscreenCanvas.height;
     const alphaMask = new Uint8Array(maskWidth * maskHeight);
 
     for (let i = 0; i < maskWidth * maskHeight; i++) {
@@ -90,8 +89,8 @@ export default function Billboard(props: {
     function isOpaque(uv: Vector2): boolean {
         if(!maskData.alphaMask) return true;
         const {alphaMask, maskWidth, maskHeight} = maskData;
-        const x = Math.floor(uv.x * maskWidth);
-        const y = Math.floor((1 - uv.y) * maskHeight); // Flip Y axis
+        const x = Math.min(maskWidth - 1, Math.max(0, Math.floor(uv.x * maskWidth)));
+        const y = Math.min(maskHeight - 1, Math.max(0, Math.floor((1 - uv.y) * maskHeight))); // Flip Y axis
         const index = y * maskWidth + x;
         return alphaMask[index] === 1;
     }
