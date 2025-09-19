@@ -1,12 +1,12 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Orientation } from "@/shared/types/3d.types";
-import { isSceneLocked } from "@/app/shell/layers/UILayerManager";
 import lerp from "@/shared/utils/lerp";
 import { setHoverCursor } from "@/app/shell/scene-container/SceneContainer";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
 import { XYZ } from "@/shared/types/3d.types";
+import { sceneLock } from "@/app/shell/locks/UILockManager";
 
 const DEFAULT_CAMERA_SPEED = 4;
 
@@ -78,7 +78,7 @@ export default function PlayerCam(props: {
     let bodyRef!: Element3D
 
     function runHoverRaycast() {
-        if( props.overrideOri || props.overridePos || isSceneLocked()) return;
+        if( props.overrideOri || props.overridePos || sceneLock.isLocked()) return;
         raycaster.setFromCamera(mouse, camRef.three);
 
         const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
@@ -109,7 +109,7 @@ export default function PlayerCam(props: {
     }
 
     function handleClick() {
-        if(isSceneLocked() || props.overrideOri || props.overridePos) return;
+        if(sceneLock.isLocked() || props.overrideOri || props.overridePos) return;
         const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
         if (intersects.length > 0) {
             const clickedIntersection = intersects[0];
@@ -126,7 +126,7 @@ export default function PlayerCam(props: {
 
     function handleMouseMove(e: MouseEvent) {
         // Keep guard - feels for natural that the camera moves after we move the mouse, not right when the lock is released.
-        if(isSceneLocked()) return;
+        if(sceneLock.isLocked()) return;
         const rect = props.sceneRef.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;

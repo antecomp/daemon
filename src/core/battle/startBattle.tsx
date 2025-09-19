@@ -1,10 +1,7 @@
 import { BattleProps } from "@/features/battle/Battle";
 import { BattleOutcome, DVOpponentData } from "./engine/battle.types";
-import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
-import { MainUILock } from "@/app/shell/layers/ui-layers.types";
+import { pushUILayer } from "@/app/shell/layers/UILayerManager";
 import Battle from "@/features/battle/Battle";
-
-let activeBattleID: string | null = null;
 
 /**
  * Starts a battle with the given opponent data. If a battle is already active, it will log an error and reject the promise.
@@ -20,19 +17,14 @@ let activeBattleID: string | null = null;
  * @see BattleOutcome for the possible outcomes of the battle.
  */
 export async function startBattle(opponentData: DVOpponentData): Promise<BattleOutcome> {
-    if(activeBattleID) {
-        console.error("[startBattle] Battle already active!");
-        return Promise.reject();
-    }
 
-    const id = `battle-${Date.now()}`;
-    activeBattleID = id;
 
+    // this is a ref hack so the component (<Battle>) can bind a promise when it loads,
+    // then code on this level can properly await it.
     const resultRef: BattleProps['battleResultPromiseRef'] = {current: undefined}
 
-    pushUILayer({
-        id,
-        lock: MainUILock.All,
+    const {popLayer: popBattleLayer} = pushUILayer({
+        lock: 'all',
         blockBehind: true,
         style: {
             background: "black",
@@ -43,9 +35,7 @@ export async function startBattle(opponentData: DVOpponentData): Promise<BattleO
     })
 
     const result = await resultRef.current!;
-
-    popUILayer(id);
-    activeBattleID = null;
+    popBattleLayer();
 
     // In the future we will likely attach some (optional?) default behavior for battle results (namely loss/eject) so callers only have to check for win and handle accordingly.
 

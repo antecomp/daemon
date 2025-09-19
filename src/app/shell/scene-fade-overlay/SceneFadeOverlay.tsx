@@ -1,7 +1,9 @@
 
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal, onCleanup } from 'solid-js'
 import './scene-fade-overlay.css'
 import sleep from '@/shared/utils/sleep';
+import { ReleaseFn, sceneLock } from '../locks/UILockManager';
+import attachToConsole from '@/devtools/attachToConsole';
 
 // Enum strings used for CSS classnames.
 enum SceneFadeState {
@@ -124,6 +126,27 @@ export const SceneFadeManager: SceneFadeManagerAPI = {
 
 /* (To be used by SceneContainer) */
 export default function SceneFadeOverlay() {
+
+    let releaseLock: ReleaseFn | undefined;
+
+    createEffect(() => {
+        const state = sceneFadeState();
+        const shouldLock = state != SceneFadeState.OFF;
+
+        if(shouldLock) {
+            if (!releaseLock) releaseLock = sceneLock.acquire();
+        } else if (releaseLock) {
+            releaseLock();
+            releaseLock = undefined;
+        }
+    });
+
+    onCleanup(() => {
+        releaseLock?.();
+        releaseLock = undefined;
+    });
+
+    attachToConsole(SceneFadeManager, "DG_SCENE_FADE");
 
     return (
             <div 

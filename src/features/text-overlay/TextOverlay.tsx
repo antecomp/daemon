@@ -3,7 +3,6 @@ import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { nanoid } from "nanoid"
 import createColorTypewriter, { SegmentInput } from "@/shared/hooks/createColorTypewriter";
 import animateAsync from "@/shared/utils/animateAsync";
-import { MainUILock } from "@/app/shell/layers/ui-layers.types";
 
 type TextOverlayLine = {
     segments: SegmentInput[],
@@ -115,7 +114,7 @@ export function playTextOverlay(sequence: TextOverlayLine[]) {
         id, 
         component: () => TextScene({sequence, id, onComplete: resolveEnd}),
         blockBehind: true,
-        lock: MainUILock.All
+        lock: 'all'
     });
 
     return endTextPromise;
