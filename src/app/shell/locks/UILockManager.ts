@@ -35,7 +35,7 @@ function makeCompositeLock(...locks: Array<UILock>) {
             }
         },
         isLocked() {
-            locks.some(lock => lock.isLocked())
+            return locks.every(lock => lock.isLocked())
         }
     }
 }

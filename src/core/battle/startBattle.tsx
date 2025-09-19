@@ -19,6 +19,8 @@ import Battle from "@/features/battle/Battle";
 export async function startBattle(opponentData: DVOpponentData): Promise<BattleOutcome> {
 
 
+    // this is a ref hack so the component (<Battle>) can bind a promise when it loads,
+    // then code on this level can properly await it.
     const resultRef: BattleProps['battleResultPromiseRef'] = {current: undefined}
 
     const {popLayer: popBattleLayer} = pushUILayer({
