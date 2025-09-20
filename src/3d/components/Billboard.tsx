@@ -2,16 +2,21 @@ import { LumePosition } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { Plane, toDegrees, clamp } from "lume";
 import { Vector2, Vector3 } from "three";
-import { onMount } from "solid-js";
-import { interactionCB } from "../../core/interaction/interactable.types";
-import { InteractionMap } from "../../core/interaction/interactable.types";
+import { createEffect, on } from "solid-js";
+import { InteractableComponent } from "../../core/interaction/interactable.types";
 import { InteractableObject3D } from "../../core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
+
+interface BillboardProps extends InteractableComponent {
+    texture: AssetURL,
+    scale?: number,
+    position: LumePosition
+}
 
 // Mask is generated at half resolution to reduce memory overhead.
 const generateAlphaMask = (image: HTMLImageElement) => {
     const offscreenCanvas = document.createElement("canvas");
-    const offscreenCtx = offscreenCanvas.getContext("2d", {willReadFrequently: true});
+    const offscreenCtx = offscreenCanvas.getContext("2d", { willReadFrequently: true });
     const maskWidth = Math.max(1, Math.round(image.width / 2));
     const maskHeight = Math.max(1, Math.round(image.height / 2));
     offscreenCanvas.width = maskWidth;
@@ -26,7 +31,7 @@ const generateAlphaMask = (image: HTMLImageElement) => {
         alphaMask[i] = alpha > 25 ? 1 : 0;
     }
 
-    return {maskHeight, maskWidth, alphaMask}
+    return { maskHeight, maskWidth, alphaMask }
 }
 
 /**
@@ -37,7 +42,6 @@ const generateAlphaMask = (image: HTMLImageElement) => {
  * Billboard is automatically alpha masked such that mouse events only fire on opaque parts of the texture.
  * @remark the sprite still consumes the raycast, meaning that interactions behind the texture plane will be blocked!
  *
- * @param props - The properties for the Billboard component.
  * @param props.texture - The URL of the texture to display on the billboard.
  * @param props.scale - An optional scaling factor for the billboard's size. Defaults to 1.
  * @param props.position - The position of the billboard in the 3D scene.
@@ -68,14 +72,7 @@ const generateAlphaMask = (image: HTMLImageElement) => {
  * />
  * ```
  */
-export default function Billboard(props: {
-    texture: AssetURL,
-    scale?: number,
-    position: LumePosition
-    onClick?: interactionCB,
-    onHover?: interactionCB,
-    interactions?: InteractionMap;
-}) {
+export default function Billboard(props: BillboardProps) {
 
     let me!: Plane
     let maskData = {
@@ -84,36 +81,49 @@ export default function Billboard(props: {
         maskHeight: 0
     }
 
-    const {currentInteractionMode} = useInteractionContext();
+    const { currentInteractionMode } = useInteractionContext();
 
     function isOpaque(uv: Vector2): boolean {
-        if(!maskData.alphaMask) return true;
-        const {alphaMask, maskWidth, maskHeight} = maskData;
+        if (!maskData.alphaMask) return true;
+        const { alphaMask, maskWidth, maskHeight } = maskData;
         const x = clamp(Math.floor(uv.x * maskWidth), 0, maskWidth - 1);
         const y = clamp(Math.floor((1 - uv.y) * maskHeight), 0, maskHeight - 1);
         const index = y * maskWidth + x;
         return alphaMask[index] === 1;
     }
 
-    onMount(() => {
-        const img = new Image();
-        img.src = me.texture!
-        img.onload = () => {
-            const aspect = img.width / img.height;
-            me.size = `${(props.scale ?? 1) * aspect} ${(props.scale ?? 1)}`;
-            maskData = generateAlphaMask(img);
-        }
+    createEffect(
+        on(
+            () => props.texture, // wrap props for Accessor signature.
+            () => {
+                console.log("texture change detetected");
+                const img = new Image();
+                img.src = me.texture!
+                img.onload = () => {
+                    const aspect = img.width / img.height;
+                    me.size = `${(props.scale ?? 1) * aspect} ${(props.scale ?? 1)}`;
+                    maskData = generateAlphaMask(img);
+                }
+            }
+        )
+    )
 
-        if(props.onHover) {
+    createEffect(() => {
+        if (props.onHover) {
             (me.three as InteractableObject3D).userData.onHover = (uv, mouse) => isOpaque(uv!) && props.onHover?.(uv, mouse)
         }
 
         (me.three as InteractableObject3D).userData.onClick = (uv, mouse) => {
-            if(isOpaque(uv)) {
+            if (isOpaque(uv)) {
                 props.onClick?.(uv, mouse);
                 props.interactions?.[currentInteractionMode()]?.(uv, mouse);
             }
         }
+
+        if (props.onHoverLeave) {
+            (me.three as InteractableObject3D).userData.onHoverLeave = props.onHoverLeave;
+        }
+
     })
 
     return (
@@ -135,9 +145,9 @@ export default function Billboard(props: {
 
             receive-shadow="false"
             has="basic-material"
-            
+
             //@ts-expect-error - This is a valid property, just not in the typesfile.
-            rotation={(x: number,y:number,z:number) => {
+            rotation={(x: number, y: number, z: number) => {
                 const camera = me.scene?.camera
                 const cameraWorldPos = new Vector3().setFromMatrixPosition(camera!.three.matrixWorld);
                 const spriteWorldPos = new Vector3().setFromMatrixPosition(me.three.matrixWorld);

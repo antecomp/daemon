@@ -1,30 +1,19 @@
 import { Element3D } from "lume";
-import {onMount, createSignal, createEffect} from "solid-js"
+import {createSignal, createEffect, ParentProps} from "solid-js"
 import { Object3D, Object3DEventMap } from "three";
-import { InteractionMap } from "@/core/interaction/interactable.types";
-import { InteractableObject3D, interactionCB } from "@/core/interaction/interactable.types";
+import { InteractableComponent } from "@/core/interaction/interactable.types";
+import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 
-interface InteractiveElementProps {
-    /** interactionCB that runs regardless of interaction mode, for any user click. */
-    onClick?: interactionCB
-    /** interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit) */
-    onHover?: interactionCB
-    /**
-     * Map of interaction modes to a CB to run for handling that interaction type.
-     * Used by YBillboard and Interactable
-     * 
-     * A map can either be an object that maps to the enum directly, or you can just shorthand as an array of [interact(), chat(), observe()]
-     */
-    interactions?: InteractionMap
-    /** CB that runs regardless of interaction mode, when mouse leaves. */
-    onHoverLeave?: () => void,
-    children: any, // change this?
-    /** boolean that indicates to the OutlinePass whether to highlight (draw white border) around the object when it is hovered. This prop is reactive so you can toggle this setting at runtime. */
+interface InteractableProps extends InteractableComponent, ParentProps {
+    /** boolean that indicates to the OutlinePass whether to highlight (draw white border) 
+     * around the object when it is hovered. 
+     * Remember: This prop is reactive so you can toggle this setting at runtime. */
     showHoverBorder?: boolean    
 }
 
 // Global signal so the OutlinePass in dgRender can easily observe who is actively being hovered.
+// TODO/NOTE : Move this to DGRender or elsewhere? Interactable should only worry about itself not global state!
 export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
 /**
@@ -37,7 +26,7 @@ export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEvent
  * @ref interactable.types.ts for function signature of interactionCB, InteractionMap.
  * @returns 
  */
-export default function Interactable(props: InteractiveElementProps) {
+export default function Interactable(props: InteractableProps) {
     let containerRef: Element3D | undefined; // Keeping undefined as potential state to remind myself of potential races with mounting.
 
     const {currentInteractionMode} = useInteractionContext();
@@ -53,7 +42,7 @@ export default function Interactable(props: InteractiveElementProps) {
         }
     });
     
-    onMount(() => {
+    createEffect(() => {
         if(containerRef && containerRef.three) {
             (containerRef.three as InteractableObject3D).userData.onClick = (uv, mouse) => {
                 props.onClick?.(uv, mouse);

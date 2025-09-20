@@ -1,14 +1,7 @@
-import mapobj from './models/map.obj';
-import mapmtl from './models/map.mtl';
 import { ObjModel, Scene } from "lume";
 import {onMount, createSignal, Show,} from "solid-js"
-import starfield from "@/assets/3d/textures/starfield.png"
-import viyaTexture from "@/assets/artwork/characters/viya.png"
-import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
-import {default as viya_root} from "./dialogues/viya_dialogue"
 import applyShadows from "@/3d/pipeline/applyShadows";
 import Billboard from "@/3d/components/Billboard";
 import { useDGShader } from '@/3d/pipeline/dgRender';
@@ -17,13 +10,26 @@ import createCameraController from '@/3d/camera/createCameraController';
 import { startDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
+
 import attachToConsole from '@/devtools/attachToConsole';
+
+import starfield from "@/assets/3d/textures/starfield.png"
+import viyaTexture from "@/assets/artwork/characters/viya.png"
+import friendTexture from "@/assets/artwork/characters/friend.png"
+import pallasTexture from "@/assets/artwork/characters/pallas.png"
+import mapobj from './models/map.obj';
+import mapmtl from './models/map.mtl';
+
+import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
+import viya_root from "./dialogues/viya_dialogue"
 
 export default function Porch() {
     let sceneRef!: Scene;
     useDGShader(() => sceneRef);
 
     const [showRabbit, setShowRabbit] = createSignal(true);
+
+    const [viyaTex, setViyaTex] = createSignal(viyaTexture);
 
     const {cameraControlSignals, cameraController} = createCameraController(
         [-230, -317, 128],
@@ -94,7 +100,7 @@ export default function Porch() {
             />
 
             <Billboard
-                texture={viyaTexture}
+                texture={viyaTex()}
                 position="-90 -240 0"
                 scale={225}
                 interactions={[
@@ -112,7 +118,8 @@ export default function Porch() {
                             MusicManager.removeTrack(dialogueMusic)
                         })
                     },
-                    () => addLogMessage(`She is smoking a cigarette.`)
+                    //() => addLogMessage(`She is smoking a cigarette.`)
+                    () => setViyaTex(pallasTexture)
             ]}
             />
 

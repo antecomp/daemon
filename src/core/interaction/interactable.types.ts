@@ -35,6 +35,22 @@ export type InteractionMap = {
     [mode in InteractionMode]?: interactionCB
 } | [interactionCB?, interactionCB?, interactionCB?]
 
+export interface InteractableComponent {
+    /** interactionCB that runs regardless of interaction mode, for any user click. */
+    onClick?: interactionCB
+    /** interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit) */
+    onHover?: interactionCB
+    /**
+     * Map of interaction modes to a CB to run for handling that interaction type.
+     * Used by YBillboard and Interactable.
+     * 
+     * An InteractionMap can either be an object that maps to the enum directly, or you can just shorthand as an array of `[interact(), chat(), observe()]`
+     */
+    interactions?: InteractionMap
+    /** CB that runs regardless of interaction mode, when mouse leaves. */
+    onHoverLeave?: () => void,
+}
+
 /** Context provided by InteractionProvider for reading and changing interaction mode state. */
 export interface InteractionContextInt {
     currentInteractionMode(): InteractionMode;

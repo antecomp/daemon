@@ -17,16 +17,16 @@ function getCameraTransform(
     dt: number,
     animate: boolean,
     speed: number
-  ): [number, number, number] {
+): [number, number, number] {
     if (animate) {
         const dtInSec = dt / 1000;
-      return [
-        lerp(prev[0], target[0], speed * dtInSec),
-        lerp(prev[1], target[1], speed * dtInSec),
-        lerp(prev[2], target[2], speed * dtInSec),
-      ];
+        return [
+            lerp(prev[0], target[0], speed * dtInSec),
+            lerp(prev[1], target[1], speed * dtInSec),
+            lerp(prev[2], target[2], speed * dtInSec),
+        ];
     } else {
-      return target;
+        return target;
     }
 }
 
@@ -57,7 +57,7 @@ function getCameraTransform(
  * @returns A JSX element representing the camera system.
  */
 export default function PlayerCam(props: {
-    basePos: XYZ, baseOri: Orientation, 
+    basePos: XYZ, baseOri: Orientation,
     overridePos?: XYZ, overrideOri?: Orientation
     animate?: boolean;
     speed?: number
@@ -68,7 +68,7 @@ export default function PlayerCam(props: {
 
     const raycaster = new Raycaster();
     const mouse = new Vector2();
-    const mouseOffset = {yaw: 0, pitch: 0};
+    const mouseOffset = { yaw: 0, pitch: 0 };
 
     let previouslyHoveredObject: Object3D | null = null;
     let previousUV: Vector2 | null = null;
@@ -77,7 +77,7 @@ export default function PlayerCam(props: {
     let bodyRef!: Element3D
 
     function runHoverRaycast() {
-        if( props.overrideOri || props.overridePos || sceneLock.isLocked()) return;
+        if (props.overrideOri || props.overridePos || sceneLock.isLocked()) return;
         // TODO: Note/Warning - this guard clause skips the logic for onHoverLeave also,
         // so anything hovered upon at lock time will not have a chance to reset state.
 
@@ -112,7 +112,7 @@ export default function PlayerCam(props: {
     }
 
     function handleClick() {
-        if(sceneLock.isLocked() || props.overrideOri || props.overridePos) return;
+        if (sceneLock.isLocked() || props.overrideOri || props.overridePos) return;
         const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
         if (intersects.length > 0) {
             const clickedIntersection = intersects[0];
@@ -129,7 +129,7 @@ export default function PlayerCam(props: {
 
     function handleMouseMove(e: MouseEvent) {
         // Keep guard - feels for natural that the camera moves after we move the mouse, not right when the lock is released.
-        if(sceneLock.isLocked()) return;
+        if (sceneLock.isLocked()) return;
         const rect = props.sceneRef.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
@@ -149,7 +149,7 @@ export default function PlayerCam(props: {
         bodyRef.rotation = props.overrideOri
             ? `0 ${props.overrideOri.yaw} 0`
             : `0 ${props.baseOri.yaw} 0`
-        
+
         camRef.rotation = props.overrideOri
             ? `${props.overrideOri.pitch} 0 0`
             : `${props.baseOri.pitch} 0 0`
@@ -169,7 +169,7 @@ export default function PlayerCam(props: {
 
         // stores the intermediate (lerped) state of the mouse offset for smooth camera movement.
         // it's used when animation is off and we need to lerp *just* the offset but not the base position.
-        let mouseInter = {yaw: 0, pitch: 0};
+        let mouseInter = { yaw: 0, pitch: 0 };
 
         bodyRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
 
@@ -181,8 +181,8 @@ export default function PlayerCam(props: {
 
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
-              ? props.overrideOri.yaw
-              : baseYaw + mouseInter.yaw;
+                ? props.overrideOri.yaw
+                : baseYaw + mouseInter.yaw;
 
             return getCameraTransform(
                 [prevX, prevY, prevZ],
@@ -205,8 +205,8 @@ export default function PlayerCam(props: {
 
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri
-              ? props.overrideOri.pitch
-              : basePitch + mouseInter.pitch;
+                ? props.overrideOri.pitch
+                : basePitch + mouseInter.pitch;
 
             return getCameraTransform(
                 [prevX, prevY, prevZ],
@@ -225,7 +225,7 @@ export default function PlayerCam(props: {
     });
 
     createEffect(() => {
-        if((props.overrideOri || props.overridePos) && previouslyHoveredObject) {
+        if ((props.overrideOri || props.overridePos) && previouslyHoveredObject) {
             if (previouslyHoveredObject) {
                 previouslyHoveredObject.traverseAncestors(a => {
                     if (a.userData.onHoverLeave) a.userData.onHoverLeave();
@@ -240,7 +240,7 @@ export default function PlayerCam(props: {
 
     return (
         <lume-element3d id="cam_body" align-point="0.5 0.5" ref={bodyRef}>
-            <lume-perspective-camera id="cam_head" active ref={camRef} 
+            <lume-perspective-camera id="cam_head" active ref={camRef}
                 far="9999" // for dev purposes, see everything. Remove for prod.
             />
         </lume-element3d>
