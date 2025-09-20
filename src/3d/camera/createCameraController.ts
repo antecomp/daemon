@@ -1,7 +1,7 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { createMemo, createSignal } from "solid-js";
-import { CameraOverrideSettings, CameraOverride, CameraController, CameraControlSignals } from "./camera.types";
+import { CameraSettings, CameraOverride, CameraController, CameraControlSignals, BaseCameraSettings } from "./camera.types";
 
 
 
@@ -34,7 +34,7 @@ export default function createCameraController(
 
     const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
 
-    function requestOverride(ovr: CameraOverrideSettings) {
+    function requestOverride(ovr: CameraSettings) {
         const id = nextOverrideID++;
         setOverrideStack(prev => [...prev, {id, ...ovr}]);
         return {
@@ -60,8 +60,7 @@ export default function createCameraController(
         setOverrideStack([]);
     }
 
-    // TODO: Change to take an options object instead of having to write undefined as an argument.
-    function setBase(pos?: XYZ, ori?: Orientation, anim?: boolean, tilts?: {maxYaw: number, maxPitch: number}) {
+    function setBase({pos, ori, anim, tilts} : BaseCameraSettings) {
         (anim != undefined) && setBaseAnim(anim);
         pos && setBasePos(pos);
         ori && setBaseOri(ori);
@@ -98,7 +97,7 @@ export default function createCameraController(
         // Camera controller
         cameraController: {
             requestOverride,
-            removeOverride, // TODO: consider removing this (and making req only return the release, to keep responsibility isolated to caller)
+            removeOverride,
             clearOverrides,
             setBase,
             setBasePos,

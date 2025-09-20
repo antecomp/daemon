@@ -41,7 +41,11 @@ export default function NavigationPlane(props: NavigationPlaneData) {
 
     onMount(() => {
         (planeRef.three as InteractableObject3D).userData.onClick = () => {
-            props.cameraController.setBase(props.newPos, props.newOri, props.anim, props.tilts);
+            props.cameraController.setBase({
+                pos: props.newPos,
+                ori: props.newOri,
+                ...props
+            });
             props.onClick?.();
         }
 

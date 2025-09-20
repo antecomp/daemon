@@ -5,9 +5,9 @@ const InteractionContext = createContext<InteractionContextInt>();
 export const useInteractionContext = () => useContext(InteractionContext)!;
 
 /**
- * Interactions in DG are composed of 3 unique modes: "Interact", "Chat", "Observe."
- * This wrapper provides the context to access state regarding the current interaction mode of the game
- *  TODO: Expand this documentation. Add documentation to the context itself.
+ * Provides interaction-mode state to the scene, exposing helpers for reading and mutating the active mode.
+ * Modes: `InteractionMode.Interact` (default click actions), `InteractionMode.Chat` (start dialogue), `InteractionMode.Observe` (inspect/look).
+ * Users can cycle modes in UI or press number keys 1-3 to jump directly.
  */
 export default function InteractionProvider(props: ParentProps) {
 

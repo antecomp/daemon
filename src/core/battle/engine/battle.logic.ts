@@ -100,7 +100,6 @@ export function useBattleLogic(opponentData: DVOpponentData, debugMode?: boolean
     // });
     const {promise: battleResultPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>(); // ES2024 only.
     
-    // TODO: Add checks to only allow during waiting/ready state.
     const forceBattleResolve = (winner: BattleOutcome) => resolveBattle!(winner);
 
     /** UI Cleanup, Animation and Promise Resolution Handler For Battle End (Someone died)  */

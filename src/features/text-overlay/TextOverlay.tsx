@@ -12,7 +12,10 @@ export type TextOverlaySequence = TextOverlayLine[]
 
 const TEXT_FADE_DURATION = 300;
 
-/** TODO Document me. */
+/**
+ * Renders a full-screen text overlay that typewrites the provided sequence and
+ * dismisses itself once the final line finishes.
+ */
 export default function TextScene(props: {
     sequence: TextOverlayLine[],
     id?: string
@@ -101,7 +104,10 @@ export default function TextScene(props: {
     )
 }
 
-/** TODO DOCUMENT. */
+/**
+ * Pushes a `TextScene` layer that renders the provided sequence and resolves
+ * once the overlay is dismissed by the player.
+ */
 export function playTextOverlay(sequence: TextOverlayLine[]) {
     const id = "text-scene" + nanoid();
 

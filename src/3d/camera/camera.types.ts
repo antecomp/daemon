@@ -1,13 +1,20 @@
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import { Accessor, Setter } from "solid-js";
 
-export interface CameraOverrideSettings {
+export interface CameraSettings {
     pos?: XYZ,
     ori?: Orientation,
     anim?: boolean
 }
 
-export type CameraOverride = CameraOverrideSettings & {id: number}
+export interface BaseCameraSettings extends CameraSettings {
+    tilts?: {
+        maxYaw: number;
+        maxPitch: number;
+    }
+}
+
+export type CameraOverride = CameraSettings & {id: number}
 
 /**
  * CameraController provides an API for imperatively managing a PlayerCams state (for easy programmatic movement).
@@ -19,7 +26,7 @@ export interface CameraController {
      *  * The `release` function takes an optional argument: `anim` - whether or not to animate back to the base state.
      *      This only applies when releasing the final override back to the base state, otherwise the animation state depends on the underlying override in the stack.
      */
-    requestOverride: (ovr: CameraOverrideSettings) => {
+    requestOverride: (ovr: CameraSettings) => {
         release(anim?: boolean): void;
         id: number;
     };
@@ -34,10 +41,7 @@ export interface CameraController {
     /**
      * Sets the base camera pose and optional tilt constraints, with an optional animation flag.
      */
-    setBase: (pos?: XYZ, ori?: Orientation, anim?: boolean, tilts?: {
-        maxYaw: number;
-        maxPitch: number;
-    }) => void;
+    setBase: (settings: BaseCameraSettings) => void;
     /**
      * Setter for the base position signal.
      */
