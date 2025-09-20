@@ -7,8 +7,7 @@ import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
 import { XYZ } from "@/shared/types/3d.types";
 import { sceneLock } from "@/app/shell/locks/UILockManager";
-
-const DEFAULT_CAMERA_SPEED = 4;
+import { DEFAULT_CAMERA_SPEED } from "@/config/3d.config";
 
 // Helper function to return updated x,y,z values given current and target.
 // will either lerp or snap (based on animate bool).
@@ -79,6 +78,9 @@ export default function PlayerCam(props: {
 
     function runHoverRaycast() {
         if( props.overrideOri || props.overridePos || sceneLock.isLocked()) return;
+        // TODO: Note/Warning - this guard clause skips the logic for onHoverLeave also,
+        // so anything hovered upon at lock time will not have a chance to reset state.
+
         raycaster.setFromCamera(mouse, camRef.three);
 
         const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
@@ -90,6 +92,7 @@ export default function PlayerCam(props: {
         if (hoveredObject === previouslyHoveredObject && previousUV?.equals(uv)) return;
 
         if (previouslyHoveredObject && hoveredObject !== previouslyHoveredObject) {
+            previouslyHoveredObject.userData.onHoverLeave?.();
             previouslyHoveredObject.traverseAncestors(a => {
                 a.userData.onHoverLeave?.();
             });
@@ -174,7 +177,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.yaw = (props.animate)
                 ? mouseOffset.yaw
-                : lerp(mouseInter.yaw, mouseOffset.yaw, props.speed ?? DEFAULT_CAMERA_SPEED * (dt / 1000));
+                : lerp(mouseInter.yaw, mouseOffset.yaw, (props.speed ?? DEFAULT_CAMERA_SPEED) * (dt / 1000));
 
             const baseYaw = props.baseOri.yaw;
             const effectiveYaw = props.overrideOri
@@ -198,7 +201,7 @@ export default function PlayerCam(props: {
             // otherwise we lerp just the mouse and add it static.
             mouseInter.pitch = (props.animate)
                 ? mouseOffset.pitch
-                : lerp(mouseInter.pitch, mouseOffset.pitch, props.speed ?? DEFAULT_CAMERA_SPEED * (dt / 1000));
+                : lerp(mouseInter.pitch, mouseOffset.pitch, (props.speed ?? DEFAULT_CAMERA_SPEED) * (dt / 1000));
 
             const basePitch = props.baseOri.pitch;
             const effectivePitch = props.overrideOri

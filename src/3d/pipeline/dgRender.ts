@@ -1,4 +1,4 @@
-import { FOV } from "@/config/lume.config";
+import { FOV } from "@/config/3d.config";
 import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { Scene, toRadians } from "lume";
 import {onMount} from "solid-js"

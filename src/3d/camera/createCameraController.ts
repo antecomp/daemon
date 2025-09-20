@@ -4,6 +4,9 @@ import { createMemo, createSignal } from "solid-js";
 import { CameraSettings, CameraOverride, CameraController, CameraControlSignals, BaseCameraSettings } from "./camera.types";
 
 
+// TODO: Change how the 'anim' state works for this. Right now it's a confusing mess of who determines the anim state handed to the camera!
+// consider changing to just a single value you toggle imperatively (instead of being a part of CameraSettings.)
+
 
 /**
  * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
