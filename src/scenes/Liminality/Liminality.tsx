@@ -78,11 +78,12 @@ export default function Liminality() {
                             {
                                 label: "Yes",
                                 onSelect: () => {
-                                    const {release} = cameraController.requestOverride({
+                                    const {commit, release} = cameraController.createOverride({
                                         pos: [200, -712, 350],
                                         ori: { pitch: 20, yaw: 30 },
                                         anim: true
                                     });
+                                    commit();
                                     sleep(2000).then(() => release(true));
                                 }
                             },

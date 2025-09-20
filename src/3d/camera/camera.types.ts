@@ -20,18 +20,27 @@ export type CameraOverride = CameraSettings & {id: number}
  * CameraController provides an API for imperatively managing a PlayerCams state (for easy programmatic movement).
  */
 export interface CameraController {
+
     /**
-     * Requests a new camera override and returns a `release` handle that can be used to release it. also returns the `id` that can be used with `removeOverride(id)` for popping other overrides. (not reccomended, feature may be removed)
-     * * Overrides are handled as a stack, the most recent unreleased Override will take precedence.
-     *  * The `release` function takes an optional argument: `anim` - whether or not to animate back to the base state.
-     *      This only applies when releasing the final override back to the base state, otherwise the animation state depends on the underlying override in the stack.
+     * Creates a deferred camera override handle.
+     *
+     * Generates a unique override that can be committed later, rather than being
+     * pushed onto the stack immediately. Calling `commit` adds the override to
+     * the controller’s stack (optionally toggling the base animation flag), and
+     * `release` removes that same override, even if other overrides were added
+     * afterward. Both helpers are idempotent, so repeated calls are safe.
+     *
+     * @param ovr - Camera settings (position, orientation, animation hint) to apply when committed.
+     * @returns Handle exposing the override `id` plus `commit`/`release` helpers for lifecycle control.
      */
-    requestOverride: (ovr: CameraSettings) => {
+    createOverride: (ovr: CameraSettings) => {
         release(anim?: boolean): void;
-        id: number;
-    };
+        commit(anim?: boolean): void;
+        id: number
+    }
+
     /**
-     * Removes a specific override by identifier and returns the remaining overrides in the stack.
+     * Removes a specific override by identifier (`id`) and returns the remaining overrides in the stack.
      */
     removeOverride: (id: number) => CameraOverride[];
     /**

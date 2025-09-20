@@ -16,7 +16,7 @@ import cache_model from "./models/cache.fbx?url"
 
 import Billboard from "@/3d/components/Billboard";
 import dialogue_root from "@/tests/dialogues/intro_dia";
-import { startDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
+import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import Interactable from "@/3d/components/Interactable";
 import sleep from "@/shared/utils/sleep";
@@ -36,21 +36,32 @@ export default function GemmaBar() {
     const [cacheOnTable, setShowCache] = createSignal(false);
     const [hasManDeparted, setManDeparted] = createSignal(false);
 
-    const dialogueActions = {
+    // overrides no longer immediately activate, instead they're just prepped to be "committed". Makes it much easier to have 
+    // little controllers like this to perform and release camera overrides as needed (without trying to pull the release out somewhere else)
+    const showCacheCamera = cameraController.createOverride({pos: [-463, -67, 487], ori: {yaw: 15, pitch: 40}, anim: true});
+    const manDialogueActions = {
         cacheHandoverAnimation() {
             setShowCache(true);
-            const {release} = cameraController.requestOverride({pos: [-463, -67, 487], ori: {yaw: 15, pitch: 40}, anim: true});
-            // I like the elegance of this little reassignment here (dont need to track anything more), but could be fragile.
-            this.returnCamera = () => release(true);
+            showCacheCamera.commit();
         },
-        returnCamera: () => {/*noop unless cacheHandoverAnimation runs first and reassigns me*/},
+        returnCamera() {
+            showCacheCamera.release();
+        },
         departTheMan() {
-                SceneFadeManager.fadeTransition(() => {
-                    setManDeparted(true);
-                    cameraController.clearOverrides();
-                });
+            SceneFadeManager.fadeTransition(() => {
+                setManDeparted(true);
+                // release the camera early - yes this is legal to reference before manDialogue declared because JS moment. Something something variable vs value closure.
+                manDialogue.ovrMgr.release();
+            });
         }
-    }
+    };
+
+    const manDialogue = createDialogueWithCamOvr(
+        cameraController,  // pass camera controller so it can move the camera for dialogue
+        {pos: [-470, -64, 483], ori: { yaw: 8, pitch: 8 }, anim: true}, // camera settings to move the camera to on dialogue, also saying we should animate to that position.
+        dialogue_root, // root node of the dialogue tree
+        {overlay: d_overlay, ctx: {actions: manDialogueActions}} // additional config for the dialogue, ctx is an object that dialogue nodes can reference to call in-scene scripted methods.
+    );
     
     return (
         <lume-scene
@@ -104,19 +115,9 @@ export default function GemmaBar() {
                     position="-505 -45 390"
                     scale={62}
                     interactions={[
-                        undefined,
-                        () => startDialogueWithCamOvr(
-                            cameraController, 
-                            [-470, -64, 483], 
-                            { yaw: 8, pitch: 8 }, 
-                            dialogue_root, 
-                            true,
-                            {
-                                overlay: d_overlay,
-                                ctx: {actions: dialogueActions}
-                            }
-                        ),
-                        () => addLogMessage("A man in a suit. He has something I need.")
+                        undefined, // no interaction for "touch"/interact
+                        () => manDialogue.start(), // start dialogue for "chat" interaction
+                        () => addLogMessage("A man in a suit. He has something I need.") // simple message for "observe" interaction
                     ]}
                 />
             </Show>

@@ -18,7 +18,7 @@ import { CameraSettings, CameraOverride, CameraController, CameraControlSignals,
  * @returns - cameraControlSignals - call and spread this inside PlayerCam. Provides properly reactive props to PlayerCam to trigger movement.
  * @returns - cameraController - The actual API to trigger camera movement events. Reference CameraController interface in camera.types.ts
  */
-export default function createCameraController(
+export default function createCameraController( // Initial does not use CameraSettings to enforce existence of properties. 
     initialPos: XYZ,
     initialOri: Orientation,
     maxTilts: {maxYaw: number, maxPitch: number}
@@ -37,11 +37,15 @@ export default function createCameraController(
 
     const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
 
-    function requestOverride(ovr: CameraSettings) {
+    function createOverride(ovr: CameraSettings) {
         const id = nextOverrideID++;
-        setOverrideStack(prev => [...prev, {id, ...ovr}]);
         return {
-            release(anim?: boolean) { // anim only relevent when releasing back to base (do we animate back to base?) otherwise it's just the anim of the next override.
+            commit(anim?: boolean) { // still want to change how this anim stuff works, but keeping it to maintain similar signature for testing.
+                if(overrideStack().some(o => o.id == id)) return; // override already in stack.
+                (anim != undefined) && setBaseAnim(anim);
+                setOverrideStack(prev => [...prev, {id, ...ovr}]);
+            },
+            release(anim?: boolean) {
                 (anim != undefined) && setBaseAnim(anim);
                 removeOverride(id)
             },
@@ -99,7 +103,7 @@ export default function createCameraController(
         cameraControlSignals,
         // Camera controller
         cameraController: {
-            requestOverride,
+            createOverride,
             removeOverride,
             clearOverrides,
             setBase,

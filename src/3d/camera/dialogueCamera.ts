@@ -1,37 +1,40 @@
-import {  Orientation } from "@/shared/types/3d.types";
-import { CameraController } from "./camera.types";
-import { XYZ } from "@/shared/types/3d.types";
+import { CameraController, CameraSettings } from "./camera.types";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";
 
 /**
- * Starts a dialogue sequence with camera position and orientation overrides.
+ * Prepares a dialogue sequence that uses a deferred camera override.
  *
- * Temporarily overrides the camera's position and orientation for the duration of the dialogue,
- * and ensures the camera is reset to its previous state after the dialogue ends (or if an error occurs).
+ * Creates an override handle with the provided camera settings, then exposes helpers
+ * for starting the dialogue (committing the override) and manually releasing the camera.
+ * The override is automatically released when the dialogue promise settles, even if
+ * the dialogue throws.
  *
- * @param cameraController - The camera controller instance used to set and clear camera overrides.
- * @param pos - The target position for the camera override.
- * @param ori - The target orientation for the camera override
- * @param dialogueRoot - The root node of the dialogue to start.
- * @param anim - Optional. Whether to animate the camera transition. Defaults to false.
- * @param dialogueOptions - Optional. Additional options for starting the dialogue.
- * @returns A promise that resolves when the dialogue ends (used to await dialogue completion)
+ * @param cameraController - Camera controller that manages override state.
+ * @param ovr - Camera position/orientation/animation to apply while the dialogue runs.
+ * @param dialogueRoot - Root node of the dialogue that will be started on commit.
+ * @param dialogueOptions - Optional options forwarded to the dialogue service.
+ * @returns An object containing `start`, which commits the override and launches the dialogue,
+ *          and `ovrMgr`, which exposes the underlying override handle (commit/release/id) to be used for advanced mid-dialogue camera control.
  */
-export async function startDialogueWithCamOvr(
+export function createDialogueWithCamOvr(
     cameraController: CameraController,
-    pos: XYZ,
-    ori: Orientation,
+    ovr: CameraSettings,
     dialogueRoot: DialogueNode,
-    anim = false,
-    dialogueOptions?: StartDialogueOptions,
+    dialogueOptions?: StartDialogueOptions
 ) {
-    const {release} = cameraController.requestOverride({pos, ori, anim});
+    const ovrMgr = cameraController.createOverride(ovr);
 
-    // Using .finally to trigger camera return on error also.
-    try {
-        return await DialogueService.startDialogue(dialogueRoot, dialogueOptions);
-    } finally {
-        release(anim)
+    return {
+        start: async () => {
+            if (DialogueService.dialogueOngoing()) return; // dialogue already active. Prevent double commit.
+            ovrMgr.commit();
+            try {
+                return await DialogueService.startDialogue(dialogueRoot, dialogueOptions);
+            } finally {
+                ovrMgr.release(ovr.anim);
+            }  
+        },
+        ovrMgr
     }
 }

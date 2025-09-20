@@ -7,7 +7,7 @@ import Billboard from "@/3d/components/Billboard";
 import { useDGShader } from '@/3d/pipeline/dgRender';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import createCameraController from '@/3d/camera/createCameraController';
-import { startDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
+import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
 
@@ -51,6 +51,12 @@ export default function Porch() {
     setTimeout(() => { // Will crossfade between tracks
         test.src = "PWL/erokia-496757.wav"
     }, 30000);
+
+    const viyaDialogue = createDialogueWithCamOvr(
+        cameraController, 
+        {pos: [-183, -322, 34], ori: {yaw: -84, pitch: 0}, anim: true},
+        viya_root,
+    )
 
     return (
         <lume-scene
@@ -107,13 +113,7 @@ export default function Porch() {
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
                         const dialogueMusic = MusicManager.pushTrack({src: 'PWL/pw_celesta_meloD.mp3'}).id
-                        startDialogueWithCamOvr(
-                            cameraController,
-                            [-183, -322, 34],
-                            {yaw: -84, pitch: 0},
-                            viya_root,
-                            true,
-                        ).finally(() => {
+                        viyaDialogue.start().finally(() => {
                             console.log("Viya dialogue done!");
                             MusicManager.removeTrack(dialogueMusic)
                         })

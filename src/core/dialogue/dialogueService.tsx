@@ -20,13 +20,13 @@ export type StartDialogueOptions = {
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
 
-let activeDialogue = null as string | null;
+let activeDialogue: null | string = null;
 let dialogueCompletionResolver: (() => void) | null = null;
 
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     if(activeDialogue) throw new Error("Dialogue already in progress.");
 
-    const id = `dialogue-${Date.now()}`;
+    const id = `dialogue-${Date.now()}`; // TODO: change this. Utilize pushUILayers id?
     activeDialogue = id;
 
     pushUILayer({
@@ -58,6 +58,10 @@ function endDialogue() {
     }
 }
 
+function dialogueOngoing(): boolean {
+    return activeDialogue != null;
+}
+
 export const DialogueService = { 
     /**
      * Launch a new Hermes instance (new dialogue sequence).
@@ -73,7 +77,11 @@ export const DialogueService = {
     endDialogue, 
     
     currentDialogueOverlay, 
-    setCurrentDialogueOverlay 
+    setCurrentDialogueOverlay,
+
+    dialogueOngoing
+    
+    
 };
 
 attachToConsole(DialogueService, "DG_DialogueService")
