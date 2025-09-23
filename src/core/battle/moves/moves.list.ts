@@ -1,4 +1,5 @@
-import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, SuccessfulEvadeBonus, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus } from "./moves.effects";
+import { VulnerableStatus } from "../statuses/statuses";
+import { ApplyOpponentVulnerable, ApplySelfHeal, ApplySelfPrepared, ApplySelfVulnerable, SuccessfulEvadeBonus, ExtendOpponentVulnerable, ExtendSelfPrepared, RequiresFocus, ApplyStatusToSelf } from "./moves.effects";
 import { NegatedByOverwhelm, EvadeCheck, OnlyDoDamageOnDefensive, PreparedAttackBonus, ReduceIncomingDamage } from "./moves.plsteps";
 import { Move, MoveType } from "./moves.types";
 
@@ -32,7 +33,7 @@ export const Heal: Move = {
     name: "heal",
     type: MoveType.Passive,
     behaviors: {
-        preEffects: [ApplySelfVulnerable],
+        preEffects: [ApplyStatusToSelf(VulnerableStatus)],
         immediatePostEffects: [RequiresFocus(ApplySelfHeal)]
     }
 }
@@ -43,7 +44,7 @@ export const Prepare: Move = {
     name: "prepare",
     type: MoveType.Passive,
     behaviors: {
-        preEffects: [ApplySelfVulnerable],
+        preEffects: [ApplyStatusToSelf(VulnerableStatus)],
         immediatePostEffects: [RequiresFocus(ExtendSelfPrepared)],
         postEffects: [RequiresFocus(ApplySelfPrepared)]
     }
@@ -67,7 +68,7 @@ export const OverwhelmMove: Move = {
     name: "Overwhelm",
     type: MoveType.Overwhelming,
     behaviors: {
-        preEffects: [ApplySelfVulnerable],
+        preEffects: [ApplyStatusToSelf(VulnerableStatus)],
         multpipeline: [OnlyDoDamageOnDefensive, PreparedAttackBonus]
     }
 }

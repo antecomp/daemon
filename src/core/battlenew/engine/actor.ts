@@ -47,14 +47,14 @@ export class Actor {
        this.statuses.set(status.type, statusStack);
     }
 
-    // TODO: Take some time to potentially redraft how the tick down and tick up
-    // works - I was never quite happy with that whole method of extending stuff
-    // into the next turn. Figure out why you have it the current way, and see if you can do
-    // something better!
+    // Reference that short brainstorming page you made.
+    // Flow is now tickButDontRemoveStatuses() -> postEffect() -> removeStaleStatuses();
+    // Idea being: move postEffects can now look at all the stale statuses, and spawn an extra instance of the status for every stale version.
 
     getStatusLevel(type: string): number {
-        return this.statuses.has(type) 
-            ? this.statuses.get(type)!.length 
-            : 0;
+        const statusStack = this.statuses.get(type)
+        if (!statusStack) return 0;
+        const activeStatuses = statusStack.filter(status => !status.isExpired());
+        return activeStatuses.length;
     }
 }

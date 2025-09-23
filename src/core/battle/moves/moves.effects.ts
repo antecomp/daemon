@@ -1,3 +1,4 @@
+import { Status } from "../statuses/status.types";
 import { ManiaStatus, PreparedStatus, VulnerableStatus } from "../statuses/statuses"
 import { MoveSEConditionalWrapper, MoveSideEffect, PostMoveContext, PostMoveSideEffect } from "./moves.types";
 
@@ -14,6 +15,20 @@ export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effe
             context.sequenceBuffer[context.index]['focusLost'] = true;
         }
     }   
+}
+
+// Hack to get constructor ("The Class as a thing itself") when we have an abstract class
+type StatusCtor<T extends Status = Status> = new (duration?: number) => T;
+export const ApplyStatusToSelf: ((StatusClass: StatusCtor) => MoveSideEffect) = (StatusClass) => {
+    return (({self}) => self.addStatus(new StatusClass(1))) as MoveSideEffect
+}
+
+// or if Status wasn't abstract, you can just use C extends typeof Status...
+// using a child class as an example here;
+function ApplyVulnToSelf<C extends typeof VulnerableStatus>(
+    Ctor: C,
+) {
+    return (({self}) => self.addStatus(new Ctor())) as MoveSideEffect;
 }
 
 export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {

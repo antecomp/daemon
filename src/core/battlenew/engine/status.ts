@@ -1,22 +1,69 @@
 import { AssetURL } from "@/shared/types/misc.types";
 import { MultiplierSet } from "./battle.types";
 
-export abstract class Status {
-    type: string;
-    icon?: AssetURL;
+export class Status {
+    type = "status";
+    icon?: AssetURL = undefined;
     duration: number;
 
-    constructor(type: string, duration: number = 1, icon?: AssetURL) {
-        this.type = type;
+    constructor(duration: number = 1) {
         this.duration = duration;
-        this.icon = icon;
     }
 
     tick() {
         this.duration--;
     }
 
-    abstract getStatusMultipliers(level: number): MultiplierSet;
+    // when duration is 0 - we just elapsed this tick, status is done but we may want to see it happened this round.
+    isStale() {
+        return this.duration == 0;
+    }
+
+    // less than zero is a zombie status that should have been reaped previously! Stale is strictly zero!
+    // more broad check, use when we're rejecting dead statuses, not for simply stale state.
+    isExpired() {
+        return this.duration >= 0;
+    }
+
+    // instead of abstract, we're gonna have a sensible default we override
+    // (also makes working with status as a generic/interface easier for a lot of things)
+    getStatusMultipliers(_level: number): MultiplierSet {
+        return {incoming: 1, outgoing: 1}
+    }
 
     // omitting pre/post effect stuff as we never used it. Feel free to add LATER.
 }
+
+
+// Now statuses inherit the (essentially passthru) getStatusMultipliers of the base class.
+// Useful for statuses that are instead flags to moves (f.e prepared with its single-sided bonuses),
+// No need to repeat ourselves with a generic {in: 1; out: 0}
+export class FlagStatus extends Status {
+    type = "flagstatus";
+    icon = "./some/link.png"
+    // constructor automatically inherited. No more annoying super calls!
+}
+
+// But when we have a status that changes combat multipliers, we can easily override!
+// So we can just as easily implement statuses like Vulnerable...
+export class CombatStatus extends Status {
+    type = "combatstatus";
+    // no icon, inherit default from Status (which rn is just undefined but we could totally have a stock icon!)
+
+    // override status multipliers with whatever this status does...
+    getStatusMultipliers(level: number): MultiplierSet {
+        return {incoming: 1, outgoing: 2 ** level}
+    }
+}
+
+// C extends typeof Status returns the constructor of any status
+// which more or less represents Status as a class itself (rather than an instance of Status)
+function makeSomeStatusAndDoStuffWithIt<C extends typeof Status>(
+    Ctor: C,
+    duration?: number
+) {
+    const anyStatus = new Ctor(duration);
+    console.log(anyStatus, anyStatus.type, anyStatus.icon, anyStatus.getStatusMultipliers(1));
+}
+
+makeSomeStatusAndDoStuffWithIt(CombatStatus);
