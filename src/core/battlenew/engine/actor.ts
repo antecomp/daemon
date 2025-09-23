@@ -48,6 +48,7 @@ export class Actor {
     }
 
     // Reference that short brainstorming page you made.
+    // DOnt need tickUpStatus, make tick and remove seperate operations.
     // Flow is now tickButDontRemoveStatuses() -> postEffect() -> removeStaleStatuses();
     // Idea being: move postEffects can now look at all the stale statuses, and spawn an extra instance of the status for every stale version.
 
@@ -57,4 +58,22 @@ export class Actor {
         const activeStatuses = statusStack.filter(status => !status.isExpired());
         return activeStatuses.length;
     }
+
+    tickStatuses() {
+        for(const [_type, stack] of this.statuses) {
+                stack.forEach(status => status.tick());
+        }
+    }
+
+    reapExpiredStatuses() {
+        for(const [type, stack] of this.statuses) {
+            const remaining = stack.filter(status => !status.isExpired());
+            if(remaining.length > 0) {
+                this.statuses.set(type, remaining);
+            } else {
+                this.statuses.delete(type);
+            }
+        }
+    }
+
 }

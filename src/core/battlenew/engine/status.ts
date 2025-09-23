@@ -1,5 +1,5 @@
 import { AssetURL } from "@/shared/types/misc.types";
-import { MultiplierSet } from "./battle.types";
+import { DamageMultipliers } from "./battle.types";
 
 // can't enforce an override unfortunately, but we can make the default obnoxious!
 const DEFAULT_STATUS_TYPE = "__EMPTY_STATUS_OVERRIDE_REQUIRED__";
@@ -34,7 +34,7 @@ export class Status {
 
     // instead of abstract, we're gonna have a sensible default we override
     // (also makes working with status as a generic/interface easier for a lot of things)
-    getStatusMultipliers(_level: number): MultiplierSet {
+    getStatusMultipliers(_level: number): DamageMultipliers {
         return {incoming: 1, outgoing: 1}
     }
 
@@ -58,15 +58,23 @@ export class CombatStatus extends Status {
     // no icon, inherit default from Status (which rn is just undefined but we could totally have a stock icon!)
 
     // override status multipliers with whatever this status does...
-    getStatusMultipliers(level: number): MultiplierSet {
+    getStatusMultipliers(level: number): DamageMultipliers {
         return {incoming: 1, outgoing: 2 ** level}
     }
 }
 
 // C extends typeof Status returns the constructor of any status
 // which more or less represents Status as a class itself (rather than an instance of Status)
-function makeSomeStatusAndDoStuffWithIt<C extends typeof Status>(
-    Ctor: C,
+// function makeSomeStatusAndDoStuffWithIt<C extends typeof Status>(
+//     Ctor: C,
+//     duration?: number
+// ) {
+//     const anyStatus = new Ctor(duration);
+//     console.log(anyStatus, anyStatus.type, anyStatus.icon, anyStatus.getStatusMultipliers(1));
+// }
+
+function makeSomeStatusAndDoStuffWithIt(
+    Ctor: typeof Status,
     duration?: number
 ) {
     const anyStatus = new Ctor(duration);

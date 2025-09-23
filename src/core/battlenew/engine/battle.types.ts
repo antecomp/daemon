@@ -1,1 +1,1 @@
-export type MultiplierSet = {incoming: number, outgoing: number};
+export type DamageMultipliers = {incoming: number, outgoing: number};
