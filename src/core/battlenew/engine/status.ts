@@ -1,8 +1,15 @@
 import { AssetURL } from "@/shared/types/misc.types";
 import { MultiplierSet } from "./battle.types";
 
+// can't enforce an override unfortunately, but we can make the default obnoxious!
+const DEFAULT_STATUS_TYPE = "__EMPTY_STATUS_OVERRIDE_REQUIRED__";
+
 export class Status {
-    type = "status";
+    // doing this is referred to a a "class field" declaration. It creates a default value for all instances
+    // that does not require the constructor to do anything (the constructor can override this though)
+    // particular helpful for our child classes, so they can easily just declare their type in the
+    // class definition and have no gross custom constructor that has to super for the same thing but w/ one change!
+    type = DEFAULT_STATUS_TYPE;
     icon?: AssetURL = undefined;
     duration: number;
 
@@ -14,7 +21,7 @@ export class Status {
         this.duration--;
     }
 
-    // when duration is 0 - we just elapsed this tick, status is done but we may want to see it happened this round.
+    // when duration is 0 - we just elapsed this tick, status is done but we may want to see it existed this round.
     isStale() {
         return this.duration == 0;
     }
