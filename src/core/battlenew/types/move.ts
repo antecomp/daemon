@@ -63,16 +63,17 @@ export interface Move {
     // these should remain relative primitive to just perform battle LOGIC!
 }
 
-export type MoveValidator = (workingSequence: DynamicMove[]) => boolean;
-export type DynamicMoveInstantiator = (
+export type MoveValidator = (workingSequence: PlannedMove[]) => boolean;
+export type PlannedMoveInstantiator = (
     context: {
-        mySequence: DynamicMove[],
-        theirSequence: DynamicMove[]
+        myPlan: PlannedMove[],
+        theirPlan: PlannedMove[]
+        index: number
         // Feel free to add more. But this is all we need for now.
     }
 ) => Move;
 
-export interface DynamicMove {
+export interface PlannedMove {
     // used so DynamicMoves can communicate what they are for logical checks. Also not the display name. Consider changing this property name to something else.
     name: string;
     canPerform?: MoveValidator;
@@ -80,10 +81,12 @@ export interface DynamicMove {
     // having generic moves just () => Move.
     // slightly more boilerplatey look but meh.
     //instantiate: Move | DynamicMoveInstantiator
-    instantiate: DynamicMoveInstantiator
+    instantiate: PlannedMoveInstantiator
 }
 
-export interface MoveMeta extends DynamicMove {
+// For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta) by name.
+// keep it all as just logic!
+export interface MoveMeta {
     displayName: string;
     icon: AssetURL;
     description?: AssetURL;

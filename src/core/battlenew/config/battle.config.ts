@@ -1,0 +1,1 @@
+export const SEQUENCE_LENGTH = 5;
