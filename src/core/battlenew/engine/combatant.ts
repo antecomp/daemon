@@ -1,6 +1,6 @@
 import { Status } from "./status";
 
-export class Actor {
+export class Combatant {
     name: string;
     maxHealth: number;
     health: number;

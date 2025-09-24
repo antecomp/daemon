@@ -1,5 +1,5 @@
 import { AssetURL } from "@/shared/types/misc.types";
-import { Actor } from "./actor";
+import { Combatant } from "./combatant";
 import { DamageMultipliers } from "./battle.types";
 
 /**
@@ -15,8 +15,8 @@ export enum MoveOutcome {
 }
 
 export interface MoveContext {
-    self: Actor;
-    opponent: Actor;
+    self: Combatant;
+    opponent: Combatant;
     sequence: Move[];
     index: number;
     // new idea in testing - communicate outcome instead of using sequenceBuffer. This will be mutated by pre/post effects
@@ -43,7 +43,8 @@ export type PostMoveSideEffect = (context: MoveContext) => void;
 
 export type MultiplierPipelineStep = (prevMultipliers: DamageMultipliers, context: MoveContext) => DamageMultipliers;
 
-// Omitting conditional wrapper stuff for now.
+export type MovePipelineStepConditionalWrapper = (pipelineStep: MultiplierPipelineStep) => MultiplierPipelineStep;
+export type MoveSideEffectConditionalWrapper<SEType = MoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 export interface Move {
     name: string; // Used for internal tracking / comparison. Not UI.
