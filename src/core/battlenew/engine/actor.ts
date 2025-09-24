@@ -34,7 +34,7 @@ export class Actor {
 
     /** Add a new status or stack upon existing status */
     public addStatus(status: Status) {
-        const statusStack = this.statuses.get(status.type) ?? [];
+        const statusStack = this.statuses.get(status.name) ?? [];
 
        // Insert status in sorted order
        let i = statusStack.findIndex(existing => existing.duration > status.duration);
@@ -44,7 +44,7 @@ export class Actor {
         statusStack.splice(i, 0, status);
        }
 
-       this.statuses.set(status.type, statusStack);
+       this.statuses.set(status.name, statusStack);
     }
 
     // Reference that short brainstorming page you made.

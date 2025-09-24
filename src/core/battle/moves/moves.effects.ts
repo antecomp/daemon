@@ -2,7 +2,7 @@ import { Status } from "../statuses/status.types";
 import { ManiaStatus, PreparedStatus, VulnerableStatus } from "../statuses/statuses"
 import { MoveSEConditionalWrapper, MoveSideEffect, PostMoveContext, PostMoveSideEffect } from "./moves.types";
 
-export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effect) => {
+export const RequiresFocus: MoveSEConditionalWrapper<PostMoveSideEffect> = (effect) => { // I dont think set for T is needed, could remain as default union  type.
     // Return a wrapper for effect to determine if the effect itself runs.
     return (context: PostMoveContext) => {
         if(context.damageTaken <= 0) {

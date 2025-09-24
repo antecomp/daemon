@@ -39,7 +39,7 @@ export interface MoveContext {
     opponent: Actor; // The opposing actor.
     movePerspective: MovePerspective; // Perspective of the move (Player or Opponent).
     index: number; // Index of the move in the sequence.
-    sequence: Move[]; // The sequence of moves being executed.
+    sequence: Move[]; // The sequence of moves being executed. <- revise note my dumbass juist use self.currentSequence. lol
     sequenceBuffer: SequenceBuffer; // Temporary data storage for the sequence.
     appendActionMessage: ActionMessageAppender; // Function to append action messages.
 }

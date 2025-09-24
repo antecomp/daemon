@@ -9,7 +9,7 @@ export class Status {
     // that does not require the constructor to do anything (the constructor can override this though)
     // particular helpful for our child classes, so they can easily just declare their type in the
     // class definition and have no gross custom constructor that has to super for the same thing but w/ one change!
-    type = DEFAULT_STATUS_TYPE;
+    name = DEFAULT_STATUS_TYPE;
     icon?: AssetURL = undefined;
     duration: number;
 
@@ -46,7 +46,7 @@ export class Status {
 // Useful for statuses that are instead flags to moves (f.e prepared with its single-sided bonuses),
 // No need to repeat ourselves with a generic {in: 1; out: 0}
 export class FlagStatus extends Status {
-    type = "flagstatus";
+    name = "flagstatus";
     icon = "./some/link.png"
     // constructor automatically inherited. No more annoying super calls!
 }
@@ -54,7 +54,7 @@ export class FlagStatus extends Status {
 // But when we have a status that changes combat multipliers, we can easily override!
 // So we can just as easily implement statuses like Vulnerable...
 export class CombatStatus extends Status {
-    type = "combatstatus";
+    name = "combatstatus";
     // no icon, inherit default from Status (which rn is just undefined but we could totally have a stock icon!)
 
     // override status multipliers with whatever this status does...
@@ -78,7 +78,7 @@ function makeSomeStatusAndDoStuffWithIt(
     duration?: number
 ) {
     const anyStatus = new Ctor(duration);
-    console.log(anyStatus, anyStatus.type, anyStatus.icon, anyStatus.getStatusMultipliers(1));
+    console.log(anyStatus, anyStatus.name, anyStatus.icon, anyStatus.getStatusMultipliers(1));
 }
 
 makeSomeStatusAndDoStuffWithIt(CombatStatus);
