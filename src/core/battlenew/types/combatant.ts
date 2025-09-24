@@ -1,7 +1,7 @@
 import { Status } from "./status";
 
 export class Combatant {
-    name: string;
+    //name: string; // <- is this even needed? UI will be a profile thing, wont read this. No need to track names for logic!
     maxHealth: number;
     health: number;
     /** Stack of statuses applied to the actor, holding multiple instances of the same status (to track several durations). */
@@ -15,8 +15,7 @@ export class Combatant {
 
     // Remove data: was unused except for testing one thing that could be checked by other means.
 
-    constructor(name: string, maxHealth: number) {
-        this.name = name;
+    constructor(maxHealth: number) {
         this.health = this.maxHealth = maxHealth;
     }
 

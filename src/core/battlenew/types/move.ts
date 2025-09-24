@@ -47,7 +47,7 @@ export type MovePipelineStepConditionalWrapper = (pipelineStep: MultiplierPipeli
 export type MoveSideEffectConditionalWrapper<SEType = MoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 export interface Move {
-    name: string; // Used for internal tracking / comparison. Not UI.
+    name: string; // Used for internal tracking / comparison. Not UI. Should rarely be used.
     type: MoveType;
 
     // dont forget that through each behavior now, we
@@ -76,7 +76,11 @@ export interface DynamicMove {
     // used so DynamicMoves can communicate what they are for logical checks. Also not the display name. Consider changing this property name to something else.
     name: string;
     canPerform?: MoveValidator;
-    instantiate: Move | DynamicMoveInstantiator
+    // consider just DynamicMoveInstantiator and just
+    // having generic moves just () => Move.
+    // slightly more boilerplatey look but meh.
+    //instantiate: Move | DynamicMoveInstantiator
+    instantiate: DynamicMoveInstantiator
 }
 
 export interface MoveMeta extends DynamicMove {
