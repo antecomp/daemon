@@ -59,6 +59,7 @@ export class Combatant {
     //     return [stat, level];
     // }
 
+    /** Returns an array of active (non zero duration) Statuses, along with their level as a tuple */
     get activeStatuses {
         const rtn = [] as [Status, number][];
         for(const [_, s] of this.statuses) {

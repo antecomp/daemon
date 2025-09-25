@@ -2,6 +2,7 @@
 
 import { DamageMultipliers } from "../types/battle.types";
 import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction } from "../types/move";
+import { Status } from "../types/status";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
  * @param sets - The multiplier sets to combine.
@@ -35,15 +36,18 @@ const BASE_MULTIPLIERS: Record<MoveType, DamageMultipliers> = {
 export function getBaseMultipliers(type: MoveType): DamageMultipliers {
     return BASE_MULTIPLIERS[type];
 }
-function computeStatusMultipliers(hvafaen?: unknown) {
-    // do that lol
+function computeStatusMultipliers(slop: [Status, number][]) {
+    return slop.reduce(
+        (multacc, [status, level]) => combineMultiplierSets(multacc, status.getStatusMultipliers(level)),
+        PASSTHROUGH_MULTPLIERS
+    )
 }
 
 // goofy name cuz we can also just get the status mults here also
 export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
     const moveMulitpliers = move.behaviors.damageScaling?.(ctx) ?? {incoming: 1, outgoing: 1}; // <- make this a const later.
-    const statusMultipliers = computeStatusMultipliers();
+    const statusMultipliers = computeStatusMultipliers(ctx.self.activeStatuses);
 
     return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)
 }
