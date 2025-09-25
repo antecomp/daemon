@@ -10,6 +10,11 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
+// we should likely change this to an interface that holds the outcome enum
+// because right now if we destructure, we loose any mutation within the context object.
+// in general I think thats a sign that we need a better way of communicating outcome stages
+// (f.e return of effects) instead of this dangerous ref/mutate object properties method.
+// especially if we're rebuilding the context anyways we'll loose this!
 export enum MoveOutcome {
     Attempted, Success, Failure
 }
