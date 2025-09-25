@@ -26,7 +26,7 @@ export interface PreMoveContext {
     sequence: Move[];
 }
 
-export interface MultiplierPipelineContext extends PreMoveContext {
+export interface DamageMultiplierContext extends PreMoveContext {
     preEffectOutcome: EffectOutcome | undefined;
 }
 
@@ -38,16 +38,16 @@ export interface ClashResult {
     theirMults: DamageMultipliers;
 }
 
-export type PostMoveContext = MultiplierPipelineContext & ClashResult;
+export type PostMoveContext = DamageMultiplierContext & ClashResult;
 
 export type EndOfMoveContext = PostMoveContext & {postEffectOutCome: EffectOutcome | undefined}
 
 // consider changing this PostMove___ naming scheme, its hard to intuit what that actually means.
 export type PreMoveSideEffect       = (context: PreMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
-export type MultiplierPipelineStep  = (prevMultipliers: DamageMultipliers, context: MultiplierPipelineContext) => DamageMultipliers;
+export type DamageMultiplierFunction  = (context: DamageMultiplierContext) => DamageMultipliers;
 export type PostMoveSideEffect      = (context: PostMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
 
-export type MovePipelineStepConditionalWrapper = (pipelineStep: MultiplierPipelineStep) => MultiplierPipelineStep;
+export type MovePipelineStepConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
 export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 export interface Move {
@@ -58,10 +58,12 @@ export interface Move {
     // want moves to carry a transient outcome that can be used
     // to communicate status between stages.
     // no need for immediate post effects.
+    // only need single function for each of these, if you need a pipeline reduce with a helper instead
+    // all existing move implementations only had a single one of these (or could be coerced into requiring just a single of each)
     behaviors: {
-        preEffects?: PreMoveSideEffect[];
-        multiplierPipeline: MultiplierPipelineStep[];
-        postEffects?: PostMoveSideEffect[];
+        preEffect?: PreMoveSideEffect;
+        damageScaling?: DamageMultiplierFunction;
+        postEffect?: PostMoveSideEffect;
     }
     // do not put animations here. We should instead have a reactionary animation system, instead of encoding the logic into the move itself.
     // these should remain relative primitive to just perform battle LOGIC!

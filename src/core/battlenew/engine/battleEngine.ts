@@ -4,7 +4,7 @@ import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
 import { BattleOutcome } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { EffectOutcome, Move, MultiplierPipelineContext, PlannedSequence, PreMoveContext } from "../types/move";
+import { EffectOutcome, Move, DamageMultiplierContext, PlannedSequence, PreMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 import { runMovePreEffects } from "../utils/battleUtils";
 
@@ -91,7 +91,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const multiplierPipelineContexts = Object.fromEntries(
                 roles.map(r => [r, { ...preMoveContexts[r], preEffectOutcome: preEffectOutcomes[r] }])
-            ) as RoleMap<MultiplierPipelineContext>;
+            ) as RoleMap<DamageMultiplierContext>;
 
             //...
 

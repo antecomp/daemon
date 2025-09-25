@@ -1,23 +1,7 @@
 // TODO: EVENTUALLY YOU WILL WANT TO SPLIT THIS INTO SEPERATE UTILITY FUNCTION BY ROUGH DOMAIN PURPOSE. JUST GROUPING FOR NOW FOR ROUGH PROTOTYPING.
 
 import { DamageMultipliers } from "../types/battle.types";
-import { EffectOutcome, Move, MoveType, MultiplierPipelineContext, MultiplierPipelineStep, PreMoveContext } from "../types/move";
-
-export function runMovePreEffects(move: Move, ctx: PreMoveContext): EffectOutcome | undefined {
-    // If we hit any outcome while moving through the effect stream, we update this
-    // last hit OUTCOME is what we'll actually return, or, if nobody had an outcome, we just spit out undefined.
-    let rtnOutcome: EffectOutcome | undefined = undefined;
-
-    // an idea is to have a transient outcome between effects in the stream (i.e use reduce)
-    // so preEffects can communicate their result downstream
-    // for now I am omitting this for simplicity, as I do not have a use case for such an idea (yet)
-    move.behaviors.preEffects?.forEach(effect => {
-        // run effect, if it has an output other than undefined, we update rtnOutcome, otherwise keep it the same.
-        rtnOutcome = effect(ctx) ?? rtnOutcome;
-    })
-
-    return rtnOutcome;
-}
+import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction } from "../types/move";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
  * @param sets - The multiplier sets to combine.
@@ -49,23 +33,15 @@ const BASE_MULTIPLIERS: Record<MoveType, DamageMultipliers> = {
 export function getBaseMultipliers(type: MoveType): DamageMultipliers {
     return BASE_MULTIPLIERS[type];
 }
-
-function runMultiplierPipeline(pipeline: MultiplierPipelineStep[] | undefined, initialMultipliers: DamageMultipliers, ctx: MultiplierPipelineContext) {
-    if(!pipeline) return initialMultipliers; // no pipeline to evaluate, just initial.
-
-    return pipeline.reduce(
-        (multAcc, step) => step(multAcc, ctx),
-        initialMultipliers
-    )
-}
-
 function computeStatusMultipliers(hvafaen?: unknown) {
     // do that lol
 }
 
 // goofy name cuz we can also just get the status mults here also
-export function getPhaseMultipliers(move: Move, ctx: MultiplierPipelineContext) {
+export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
-    const moveMultipliers = runMultiplierPipeline(move.behaviors.multiplierPipeline, initialMultipliers, ctx);
+    const moveMulitpliers = move.behaviors.damageScaling?.(ctx) ?? {incoming: 1, outgoing: 1}; // <- make this a const later.
     const statusMultipliers = computeStatusMultipliers();
+
+    return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)
 }
