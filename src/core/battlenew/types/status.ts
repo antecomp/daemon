@@ -10,7 +10,9 @@ export class Status {
     // particular helpful for our child classes, so they can easily just declare their type in the
     // class definition and have no gross custom constructor that has to super for the same thing but w/ one change!
     name = DEFAULT_STATUS_TYPE;
-    icon?: AssetURL = undefined;
+    // might keep it like this just so I dont have an obnoxious mapping of status name -> icon. We dont need to be *that* anal about it.
+    // we will see how everything else goes together.
+    //icon?: AssetURL = undefined; // WHAT IS THIS UI SHIT DOING IN MY LOGICAL DESCRIPTOR!?!?!?!?!? >:O 
     duration: number;
 
     constructor(duration: number = 1) {
@@ -29,7 +31,7 @@ export class Status {
     // less than zero is a zombie status that should have been reaped previously! Stale is strictly zero!
     // more broad check, use when we're rejecting dead statuses, not for simply stale state.
     isExpired() {
-        return this.duration >= 0;
+        return this.duration <= 0;
     }
 
     // instead of abstract, we're gonna have a sensible default we override
@@ -47,7 +49,6 @@ export class Status {
 // No need to repeat ourselves with a generic {in: 1; out: 0}
 export class FlagStatus extends Status {
     name = "flagstatus";
-    icon = "./some/link.png"
     // constructor automatically inherited. No more annoying super calls!
 }
 
@@ -78,7 +79,7 @@ function makeSomeStatusAndDoStuffWithIt(
     duration?: number
 ) {
     const anyStatus = new Ctor(duration);
-    console.log(anyStatus, anyStatus.name, anyStatus.icon, anyStatus.getStatusMultipliers(1));
+    console.log(anyStatus, anyStatus.name, anyStatus.getStatusMultipliers(1));
 }
 
 makeSomeStatusAndDoStuffWithIt(CombatStatus);

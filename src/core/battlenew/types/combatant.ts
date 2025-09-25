@@ -62,6 +62,16 @@ export class Combatant {
         return activeStatuses.length;
     }
 
+    // return a tupe of a single instance of any status we have (nonExpired), alongside it's level (stack depth, # of instances of status applied, use to scale status output) 
+    get activeStatusLevels(): [Status, number][] {
+        const out: [Status, number][] = [];
+        for (const [_, stack] of this.statuses) {
+            const active = stack.filter(s => !s.isExpired());
+            if (active.length) out.push([active[0], active.length]);
+        }
+        return out;
+    }
+
     tickStatuses() {
         for(const [_type, stack] of this.statuses) {
                 stack.forEach(status => status.tick());

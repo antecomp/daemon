@@ -4,8 +4,9 @@ import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
 import { BattleOutcome } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { PlannedSequence, PreMoveContext } from "../types/move";
+import { EffectOutcome, Move, MultiplierPipelineContext, PlannedSequence, PreMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
+import { runMovePreEffects } from "../utils/battleUtils";
 
 // need hook for like useUIBattleEngine or some better name, that runs the above but 
 // injects all the Solid/Anim shit into reactionmap that we want, configires the UI,
@@ -59,6 +60,11 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     async function executeRound(playerPlan: PlannedSequence) {
+
+        const roles = ['player', 'opponent'] as const;
+        type Role = typeof roles[number];
+        type RoleMap<T> = Record<Role, T>
+
         // await reaction handlers for pre-round
 
         const playerSequence = initializePlannedMoves(playerPlan, opponentPlan);
@@ -68,29 +74,26 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         if(opponentSequence.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
-            // await reaction handlers for move start
+            // BP: await reaction handlers for move start
 
-            const playerMove = playerSequence[moveIndex];
-            const opponentMove = opponentSequence[moveIndex];
+            const moves = { player: playerSequence[moveIndex], opponent: opponentSequence[moveIndex] } as RoleMap<Move>;
 
+            const preMoveContexts = {
+                player: { self: player, opponent, sequence: playerSequence },
+                opponent: { self: opponent, opponent: player, sequence: opponentSequence },
+            } as RoleMap<PreMoveContext>;
 
-            const preMoveContexts: Record<"player" | "opponent", PreMoveContext> = {
-                player: {
-                    self: player,
-                    opponent: opponent,
-                    sequence: playerSequence
-                },
-                opponent: {
-                    self: opponent,
-                    opponent: player,
-                    sequence: opponentSequence
-                }
-            }
+            const preEffectOutcomes = Object.fromEntries(
+                roles.map(role => [role, runMovePreEffects(moves[role], preMoveContexts[role])])
+            ) as RoleMap<EffectOutcome>;
 
-            // what the fuck are you doing omni
-            const playerPreEffectOutcome = playerMove.behaviors.preEffects?.map(effect => effect(preMoveContexts.player)).find(result => result != undefined);
-            
+            // BP? Prob not, (considering I b4 bundled this all into one function before any events)
 
+            const multiplierPipelineContexts = Object.fromEntries(
+                roles.map(r => [r, { ...preMoveContexts[r], preEffectOutcome: preEffectOutcomes[r] }])
+            ) as RoleMap<MultiplierPipelineContext>;
+
+            //...
 
 
         }

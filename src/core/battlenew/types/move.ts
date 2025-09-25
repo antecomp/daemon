@@ -27,7 +27,7 @@ export interface PreMoveContext {
 }
 
 export interface MultiplierPipelineContext extends PreMoveContext {
-    preEffectOutcome: EffectOutcome;
+    preEffectOutcome: EffectOutcome | undefined;
 }
 
 // Is this a good name? Maybe change;
@@ -40,7 +40,7 @@ export interface ClashResult {
 
 export type PostMoveContext = MultiplierPipelineContext & ClashResult;
 
-export type EndOfMoveContext = PostMoveContext & {postEffectOutCome: EffectOutcome}
+export type EndOfMoveContext = PostMoveContext & {postEffectOutCome: EffectOutcome | undefined}
 
 // consider changing this PostMove___ naming scheme, its hard to intuit what that actually means.
 export type PreMoveSideEffect       = (context: PreMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
