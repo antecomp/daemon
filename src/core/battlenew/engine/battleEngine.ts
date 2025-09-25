@@ -4,7 +4,7 @@ import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
 import { BattleOutcome } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { PlannedMove } from "../types/move";
+import { PlannedSequence, PreMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 
 // need hook for like useUIBattleEngine or some better name, that runs the above but 
@@ -15,7 +15,7 @@ import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 // up to u
 
 // helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)
-function initializePlannedMoves(myPlan: PlannedMove[], theirPlan: PlannedMove[]) {
+function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
     return myPlan.map((plannedMove, index) => plannedMove.instantiate({myPlan, theirPlan, index}))
 } 
 
@@ -25,17 +25,32 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     
     // naming convention of DynamicMoves are uninstantiated "plans"
     // whereas the evaluated version is a "sequence"
-    let opponentPlan: PlannedMove[] = [];
+    let opponentPlan: PlannedSequence = [];
 
     const {promise: battleResolutionPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
     
     // do we need this?
     const forceBattleResolve = (outcome: BattleOutcome) => resolveBattle(outcome);
 
+    // This feels fucking stupid and I hate it
+    function handleDeathIfNeeded(): boolean {
+        let outcome: BattleOutcome | null = null;
+        // nice just overwriting shit. Come up with something more elegant, this is geniunely embarassing. Dont code after studying for 6 hours to """"relax"""""
+        if(player.isDead) outcome = BattleOutcome.OpponentVictory;
+        if(opponent.isDead) outcome = BattleOutcome.PlayerVictory;
+        if(player.isDead && opponent.isDead) outcome = BattleOutcome.Draw;
+        
+        if(outcome == null) return false;
+
+        handleBattleEnd(outcome); 
+        return true;
+    }
+
     // anticipates use of another helper getOutcome(ctx) => BattleOutcome | false. If there's an outcome we hand
     // off to this to do cleanup, set stages. Otherwise we just continue execution loop.
     async function handleBattleEnd(outcome: BattleOutcome) {
-        // noop for now
+        // await reaction handlers (death animations and whatnot)
+        resolveBattle(outcome);
     }
 
     async function setupRound() {
@@ -43,7 +58,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         // await reaction handlers for setup here.
     }
 
-    async function executeRound(playerPlan: PlannedMove[]) {
+    async function executeRound(playerPlan: PlannedSequence) {
         // await reaction handlers for pre-round
 
         const playerSequence = initializePlannedMoves(playerPlan, opponentPlan);
@@ -55,7 +70,33 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
             // await reaction handlers for move start
 
-            // ...
+            const playerMove = playerSequence[moveIndex];
+            const opponentMove = opponentSequence[moveIndex];
+
+
+            const preMoveContexts: Record<"player" | "opponent", PreMoveContext> = {
+                player: {
+                    self: player,
+                    opponent: opponent,
+                    sequence: playerSequence
+                },
+                opponent: {
+                    self: opponent,
+                    opponent: player,
+                    sequence: opponentSequence
+                }
+            }
+
+            // what the fuck are you doing omni
+            const playerPreEffectOutcome = playerMove.behaviors.preEffects?.map(effect => effect(preMoveContexts.player)).find(result => result != undefined);
+            
+
+
+
         }
+    }
+
+    return {
+        executeRound, setupRound, battleResolutionPromise, forceBattleResolve
     }
 }

@@ -31,6 +31,10 @@ export class Combatant {
         return this.health / this.maxHealth * 100;
     }
 
+    get isDead() {
+        return this.health <= 0;
+    }
+
     /** Add a new status or stack upon existing status */
     public addStatus(status: Status) {
         const statusStack = this.statuses.get(status.name) ?? [];

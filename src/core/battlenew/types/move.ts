@@ -10,27 +10,24 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
-// we should likely change this to an interface that holds the outcome enum
-// because right now if we destructure, we loose any mutation within the context object.
-// in general I think thats a sign that we need a better way of communicating outcome stages
-// (f.e return of effects) instead of this dangerous ref/mutate object properties method.
-// especially if we're rebuilding the context anyways we'll loose this!
-export enum MoveOutcome {
+// new idea in testing - communicate outcome instead of using sequenceBuffer. This will be set by the return of pre/post effects.
+// Can be read by mult pipeline to (purely) change move outcomes (instead of gambling direcrly inside evades pipeline step and running side effects!!!)
+// Also will be forwarded to appropriate hooks (i.e animations/sounds) so they can use that for conditional changes.
+// perspective only needed by animations - we can engineer a better system. Shouldn't be in the basic interface.
+// since animator pulled out anyways, we could just have a PlayerAnimator and OpponentAnimator that takes in the respective contexts and
+// discerns by nature that they only get one context and serve different purposes. Could get messy with lining up animation timing tho...
+export enum EffectOutcome {
     Attempted, Success, Failure
 }
 
-export interface MoveContext {
+export interface PreMoveContext {
     self: Combatant;
     opponent: Combatant;
     sequence: Move[];
-    index: number;
-    // new idea in testing - communicate outcome instead of using sequenceBuffer. This will be mutated by pre/post effects
-    // Can be read by mult pipeline to (purely) change move outcomes (instead of gambling direcrly inside evades pipeline step and running side effects!!!)
-    // Also will be forwarded to appropriate hooks (i.e animations/sounds) so they can use that for conditional changes.
-    outcome?: MoveOutcome
-    // perspective only needed by animations - we can engineer a better system. Shouldn't be in the basic interface.
-    // since animator pulled out anyways, we could just have a PlayerAnimator and OpponentAnimator that takes in the respective contexts and
-    // discerns by nature that they only get one context and serve different purposes. Could get messy with lining up animation timing tho...
+}
+
+export interface MultiplierPipelineContext extends PreMoveContext {
+    preEffectOutcome: EffectOutcome;
 }
 
 // Is this a good name? Maybe change;
@@ -41,15 +38,17 @@ export interface ClashResult {
     theirMults: DamageMultipliers;
 }
 
-// consider changing this PostMove___ naming scheme, its hard to intuit what that actually means.
-export type PostMoveContext = MoveContext & ClashResult;
-export type MoveSideEffect = (context: MoveContext) => void;
-export type PostMoveSideEffect = (context: MoveContext) => void;
+export type PostMoveContext = MultiplierPipelineContext & ClashResult;
 
-export type MultiplierPipelineStep = (prevMultipliers: DamageMultipliers, context: MoveContext) => DamageMultipliers;
+export type EndOfMoveContext = PostMoveContext & {postEffectOutCome: EffectOutcome}
+
+// consider changing this PostMove___ naming scheme, its hard to intuit what that actually means.
+export type PreMoveSideEffect       = (context: PreMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
+export type MultiplierPipelineStep  = (prevMultipliers: DamageMultipliers, context: MultiplierPipelineContext) => DamageMultipliers;
+export type PostMoveSideEffect      = (context: PostMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
 
 export type MovePipelineStepConditionalWrapper = (pipelineStep: MultiplierPipelineStep) => MultiplierPipelineStep;
-export type MoveSideEffectConditionalWrapper<SEType = MoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
+export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 export interface Move {
     name: string; // Used for internal tracking / comparison. Not UI. Should rarely be used.
@@ -60,7 +59,7 @@ export interface Move {
     // to communicate status between stages.
     // no need for immediate post effects.
     behaviors: {
-        preEffects?: MoveSideEffect[];
+        preEffects?: PreMoveSideEffect[];
         multiplierPipeline: MultiplierPipelineStep[];
         postEffects?: PostMoveSideEffect[];
     }
@@ -89,8 +88,12 @@ export interface PlannedMove {
     instantiate: PlannedMoveInstantiator
 }
 
-// For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta) by name.
+export type PlannedSequence = PlannedMove[];
+
+// For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta)
 // keep it all as just logic!
+// ^- this feels fucking stupid. How am I supposed to easily send off a sequence now?? I get the idea but you need to figure that shit all out again lol.
+
 export interface MoveMeta {
     displayName: string;
     icon: AssetURL;
