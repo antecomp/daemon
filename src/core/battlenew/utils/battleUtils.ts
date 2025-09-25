@@ -16,6 +16,8 @@ export function combineMultiplierSets(...sets: DamageMultipliers[]) {
     }, {incoming: 1, outgoing: 1})
 }
 
+export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
+
 /** Base multiplier registry, these are used as the initial values for the multipliers in the mult pipeline (reduce).
  * 
  * If you create a new MoveType, you must add it here.

@@ -1,4 +1,4 @@
-import { AssetURL } from "@/shared/types/misc.types";
+import { PASSTHROUGH_MULTPLIERS } from "../utils/battleUtils";
 import { DamageMultipliers } from "./battle.types";
 
 // can't enforce an override unfortunately, but we can make the default obnoxious!
@@ -13,31 +13,11 @@ export class Status {
     // might keep it like this just so I dont have an obnoxious mapping of status name -> icon. We dont need to be *that* anal about it.
     // we will see how everything else goes together.
     //icon?: AssetURL = undefined; // WHAT IS THIS UI SHIT DOING IN MY LOGICAL DESCRIPTOR!?!?!?!?!? >:O 
-    duration: number;
-
-    constructor(duration: number = 1) {
-        this.duration = duration;
-    }
-
-    tick() {
-        this.duration--;
-    }
-
-    // when duration is 0 - we just elapsed this tick, status is done but we may want to see it existed this round.
-    isStale() {
-        return this.duration == 0;
-    }
-
-    // less than zero is a zombie status that should have been reaped previously! Stale is strictly zero!
-    // more broad check, use when we're rejecting dead statuses, not for simply stale state.
-    isExpired() {
-        return this.duration <= 0;
-    }
 
     // instead of abstract, we're gonna have a sensible default we override
     // (also makes working with status as a generic/interface easier for a lot of things)
     getStatusMultipliers(_level: number): DamageMultipliers {
-        return {incoming: 1, outgoing: 1}
+        return PASSTHROUGH_MULTPLIERS
     }
 
     // omitting pre/post effect stuff as we never used it. Feel free to add LATER.
@@ -78,7 +58,7 @@ function makeSomeStatusAndDoStuffWithIt(
     Ctor: typeof Status,
     duration?: number
 ) {
-    const anyStatus = new Ctor(duration);
+    const anyStatus = new Ctor();
     console.log(anyStatus, anyStatus.name, anyStatus.getStatusMultipliers(1));
 }
 
