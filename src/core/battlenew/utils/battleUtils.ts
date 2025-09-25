@@ -36,8 +36,8 @@ const BASE_MULTIPLIERS: Record<MoveType, DamageMultipliers> = {
 export function getBaseMultipliers(type: MoveType): DamageMultipliers {
     return BASE_MULTIPLIERS[type];
 }
-function computeStatusMultipliers(slop: [Status, number][]) {
-    return slop.reduce(
+function computeStatusMultipliers(statusList: [Status, number][]) {
+    return statusList.reduce(
         (multacc, [status, level]) => combineMultiplierSets(multacc, status.getStatusMultipliers(level)),
         PASSTHROUGH_MULTPLIERS
     )
