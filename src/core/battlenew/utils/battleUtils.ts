@@ -5,6 +5,8 @@ import { Combatant } from "../types/combatant";
 import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
 import { Status } from "../types/status";
 
+export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
+
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
  * @param sets - The multiplier sets to combine.
  * @returns A single `DamageMultipliers` set with combined "incoming" and "outgoing" values.
@@ -15,10 +17,8 @@ export function combineMultiplierSets(...sets: DamageMultipliers[]) {
             outgoing: acc.outgoing * set.outgoing,
             incoming: acc.incoming * set.incoming
         }
-    }, {incoming: 1, outgoing: 1})
+    }, PASSTHROUGH_MULTPLIERS)
 }
-
-export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
 
 /** Base multiplier registry, these are used as the initial values for the multipliers in the mult pipeline (reduce).
  * 
@@ -47,7 +47,7 @@ function computeStatusMultipliers(statusList: [Status, number][]) {
 // goofy name cuz we can also just get the status mults here also
 export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
-    const moveMulitpliers = move.behaviors.damageScaling?.(ctx) ?? {incoming: 1, outgoing: 1}; // <- make this a const later.
+    const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? {incoming: 1, outgoing: 1}; // <- make this a const later.
     const statusMultipliers = computeStatusMultipliers(ctx.self.activeStatuses);
 
     return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)

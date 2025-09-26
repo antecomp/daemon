@@ -76,19 +76,19 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const moves = mapSides(sequences, seq => seq[moveIndex]);
 
-            const preCtxPair = buildSidesMap<PreMoveContext>(role => ({
-                self: combatants[role],
-                opponent: combatants[oppositeSide(role)],
-                sequence: sequences[role]
+            const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
+                self: combatants[side],
+                opponent: combatants[oppositeSide(side)],
+                sequence: sequences[side]
             }));
 
-            const preEffectOutcomes = mapSides(moves, (move, role) => runMovePreEffect(move, preCtxPair[role]))
+            const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
 
             // BP? Prob not, (considering I b4 bundled this all into one function before any events)
 
-            const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, role) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[role] }));
+            const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, side) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[side] }));
             
-            const damageMultipliers = mapSides(moves, (_m, role) => getPhaseMultipliers(moves[role], mulCtx[role]));
+            const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
             // BP - display multipliers
 
@@ -97,18 +97,18 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             if (handleDeathIfNeeded()) return;
 
-            const postCtx = buildSidesMap<PostMoveContext>((role) => ({
-                ...mulCtx[role],
-                ourMults: damageMultipliers[role],
-                theirMults: damageMultipliers[oppositeSide(role)],
-                damageDealt: damagesDealt[role],
-                damageTaken: damagesDealt[oppositeSide(role)],
+            const postCtx = buildSidesMap<PostMoveContext>((side) => ({
+                ...mulCtx[side],
+                ourMults: damageMultipliers[side],
+                theirMults: damageMultipliers[oppositeSide(side)],
+                damageDealt: damagesDealt[side],
+                damageTaken: damagesDealt[oppositeSide(side)],
             }));
 
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
             // Can add new statuses with duration 1, or extend statuses here.
-            const postOut = mapSides(moves, (_m, role) => runMovePostEffect(moves[role], postCtx[role]));
+            const postOut = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
             // will be handed to BP later.
 
             // BP - post effect results.

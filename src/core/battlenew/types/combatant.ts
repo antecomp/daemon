@@ -72,6 +72,12 @@ export class Combatant {
         return rtn;
     }
 
+    getStatusLevel(name: string): number {
+        const entry = this.statuses.get(name);
+        if(!entry) return 0;
+        else return entry.durationStack.filter(dur => dur > 0).length
+    }
+
     // No longer requires immediatePostEffect run, as this will revive any ticked statuses
     // (from 0 to amount) before the reap stage!
     // use the helper here!

@@ -62,7 +62,7 @@ export interface Move {
     // all existing move implementations only had a single one of these (or could be coerced into requiring just a single of each)
     behaviors: {
         preEffect?: PreMoveSideEffect;
-        damageScaling?: DamageMultiplierFunction;
+        damageMultipliers?: DamageMultiplierFunction;
         postEffect?: PostMoveSideEffect;
     }
     // do not put animations here. We should instead have a reactionary animation system, instead of encoding the logic into the move itself.
