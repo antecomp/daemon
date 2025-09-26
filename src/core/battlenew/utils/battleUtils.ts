@@ -2,7 +2,7 @@
 
 import { DamageMultipliers } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
+import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
 import { Status } from "../types/status";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 

@@ -7,37 +7,7 @@ import { Combatant } from "../types/combatant";
 import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
-
-
-const side = ['player', 'opponent'] as const;
-type Side = typeof side[number];
-// Change this name to be more specific!
-export type Sides<T> = Record<Side, T>
-const oppositeSide = (r: Side): Side => (r == 'player' ? 'opponent' : 'player');
-
-function mapSides<Input, Output>(pair: Sides<Input>, mapper: (value: Input, role: Side, whole: Sides<Input>) => Output): Sides<Output> {
-    return {
-        player: mapper(pair.player, 'player', pair),
-        opponent: mapper(pair.opponent, 'opponent', pair),
-    };
-}
-
-function forEachSide<T>(pair: Sides<T>, action: ((value: T, roll: Side) => void)) {
-    for(const [role, entry] of Object.entries(pair)) {
-        action(entry, role as Side);
-    }
-}
-
-function makeSidesMap<T>(player: T, opponent: T): Sides<T> { return { player, opponent } }
-
-const buildSidesMap = <T>(builder: (role: Side) => T): Sides<T> => ({
-    player: builder('player'),
-    opponent: builder('opponent'),
-});
-
-
-
-
+import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sideUtils";
 
 // need hook for like useUIBattleEngine or some better name, that runs the above but 
 // injects all the Solid/Anim shit into reactionmap that we want, configires the UI,
@@ -118,19 +88,19 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, role) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[role] }));
             
-            const multipliers = mapSides(moves, (_m, role) => getPhaseMultipliers(moves[role], mulCtx[role]));
+            const damageMultipliers = mapSides(moves, (_m, role) => getPhaseMultipliers(moves[role], mulCtx[role]));
 
             // BP - display multipliers
 
             // Change this to just take the combatants object.
-            const damagesDealt = calculateAndApplyDamage(combatants.player, combatants.opponent, multipliers);
+            const damagesDealt = calculateAndApplyDamage(combatants.player, combatants.opponent, damageMultipliers);
 
             if (handleDeathIfNeeded()) return;
 
             const postCtx = buildSidesMap<PostMoveContext>((role) => ({
                 ...mulCtx[role],
-                ourMults: multipliers[role],
-                theirMults: multipliers[oppositeSide(role)],
+                ourMults: damageMultipliers[role],
+                theirMults: damageMultipliers[oppositeSide(role)],
                 damageDealt: damagesDealt[role],
                 damageTaken: damagesDealt[oppositeSide(role)],
             }));
