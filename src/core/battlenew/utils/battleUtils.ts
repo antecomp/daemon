@@ -1,7 +1,8 @@
 // TODO: EVENTUALLY YOU WILL WANT TO SPLIT THIS INTO SEPERATE UTILITY FUNCTION BY ROUGH DOMAIN PURPOSE. JUST GROUPING FOR NOW FOR ROUGH PROTOTYPING.
 
 import { DamageMultipliers } from "../types/battle.types";
-import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction } from "../types/move";
+import { Combatant } from "../types/combatant";
+import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction, PreMoveContext, PostMoveContext, PlannedSequence } from "../types/move";
 import { Status } from "../types/status";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
@@ -50,4 +51,32 @@ export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const statusMultipliers = computeStatusMultipliers(ctx.self.activeStatuses);
 
     return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)
+}
+
+
+/**
+ * Cross-multiplies player and opponent multipliers and performs corresponding .takeDamage on each actor.
+ */
+export function calculateAndApplyDamage(player: Combatant, opponent: Combatant, multipliers:{opponent: DamageMultipliers, player: DamageMultipliers}) {
+    const playerDamageDealt = multipliers.player.outgoing * multipliers.opponent.incoming;
+    const opponentDamageDealt = multipliers.opponent.outgoing * multipliers.player.incoming;
+
+    opponent.takeDamage(playerDamageDealt);
+    player.takeDamage(opponentDamageDealt);
+
+    return {player: playerDamageDealt, opponent: opponentDamageDealt};
+}
+
+export function runMovePreEffect(move: Move, context: PreMoveContext) {
+    return move.behaviors.preEffect?.(context);
+}
+
+export function runMovePostEffect(move: Move, context: PostMoveContext) {
+    return move.behaviors.postEffect?.(context);
+}
+
+// helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)
+export function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
+    if(myPlan.some(plannedMove => !(plannedMove.canPerform?.(myPlan) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan);
+    return myPlan.map((plannedMove, index) => plannedMove.instantiate({ myPlan, theirPlan, index }));
 }

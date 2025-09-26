@@ -23,6 +23,8 @@ export interface OpponentAI {
     // For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta) by name.
     // keep it all as just logic!
     getSequence: (me: Combatant, player: Combatant) => PlannedMove[];
+
+    // consider making these return some information that may be needed context-wise for UI or whatever.
     preRoundBehavior?: (me: Combatant, player: Combatant, /*ctx: any <- for side effects*/) => void;
     postRoundBehavior?: (me: Combatant, player: Combatant, /*ctx: any <- for side effects*/) => void;
 }

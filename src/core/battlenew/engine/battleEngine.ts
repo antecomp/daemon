@@ -2,11 +2,13 @@
 
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
-import { BattleOutcome } from "../types/battle.types";
+import { BattleOutcome, DamageMultipliers } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { EffectOutcome, Move, DamageMultiplierContext, PlannedSequence, PreMoveContext } from "../types/move";
+import { EffectOutcome, Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
-import { runMovePreEffects } from "../utils/battleUtils";
+import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
+
+
 
 // need hook for like useUIBattleEngine or some better name, that runs the above but 
 // injects all the Solid/Anim shit into reactionmap that we want, configires the UI,
@@ -14,11 +16,6 @@ import { runMovePreEffects } from "../utils/battleUtils";
 // configured UI handlers are *then* passed as part of the reactionmap
 // hook should probably be in features rather than here? idk it's still just a "hook" no components.
 // up to u
-
-// helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)
-function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
-    return myPlan.map((plannedMove, index) => plannedMove.instantiate({myPlan, theirPlan, index}))
-} 
 
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, /* reactionmap, deps */) {
     const player = new Combatant(PLAYER_HEALTH_PLACEHOLDER);
@@ -72,6 +69,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         if(playerSequence.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
         if(opponentSequence.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
+
+        opponentAI.preRoundBehavior?.(opponent, player);
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
             // BP: await reaction handlers for move start
@@ -84,19 +83,63 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             } as RoleMap<PreMoveContext>;
 
             const preEffectOutcomes = Object.fromEntries(
-                roles.map(role => [role, runMovePreEffects(moves[role], preMoveContexts[role])])
-            ) as RoleMap<EffectOutcome>;
+                roles.map(role => [role, runMovePreEffect(moves[role], preMoveContexts[role])])
+            ) as RoleMap<EffectOutcome | undefined>;
 
             // BP? Prob not, (considering I b4 bundled this all into one function before any events)
 
-            const multiplierPipelineContexts = Object.fromEntries(
+            const damageMultiplierContexts = Object.fromEntries(
                 roles.map(r => [r, { ...preMoveContexts[r], preEffectOutcome: preEffectOutcomes[r] }])
             ) as RoleMap<DamageMultiplierContext>;
 
-            //...
+            const multipliers = Object.fromEntries(
+                roles.map(r => [r, getPhaseMultipliers(moves[r], damageMultiplierContexts[r])])
+            ) as RoleMap<DamageMultipliers>
 
+            // BP - display multipliers
 
+            const damagesDealt = calculateAndApplyDamage(player, opponent, multipliers);
+
+            if (handleDeathIfNeeded()) return;
+
+            // idk how to do the flip-floppy with maps. Maybe there's something better to do here.
+            const postMoveContexts = {
+                opponent: {
+                    ...damageMultiplierContexts.opponent,
+                    ourMults: multipliers.opponent,
+                    theirMults: multipliers.player,
+                    damageDealt: damagesDealt.opponent,
+                    damageTaken: damagesDealt.player
+                },
+                player: {
+                    ...damageMultiplierContexts.player,
+                    ourMults: multipliers.player,
+                    theirMults: multipliers.opponent,
+                    damageDealt: damagesDealt.player,
+                    damageTaken: damagesDealt.opponent
+                }
+            } as RoleMap<PostMoveContext>
+
+            player.tickStatuses();
+            opponent.tickStatuses();
+
+            // Can add new statuses with duration 1, or extend statuses here.
+            const postEffectOutcomes = Object.fromEntries(
+                roles.map(r => [r, runMovePostEffect(moves[r], postMoveContexts[r])])
+            ) as RoleMap<EffectOutcome | undefined>
+
+            const endOfMoveContexts = Object.fromEntries(
+                roles.map(r => [r, {...postMoveContexts[r], postEffectOutcome: postEffectOutcomes[r]}])
+            )
+
+            // BP - post effect results.
+            
+            
+            player.reapExpiredStatuses();
+            opponent.reapExpiredStatuses();
         }
+
+        opponentAI.postRoundBehavior?.(opponent, player);
     }
 
     return {
