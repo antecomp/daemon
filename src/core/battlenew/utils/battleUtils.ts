@@ -2,7 +2,7 @@
 
 import { DamageMultipliers } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction, PreMoveContext, PostMoveContext, PlannedSequence } from "../types/move";
+import { Move, MoveType, DamageMultiplierContext, DamageMultiplierFunction, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
 import { Status } from "../types/status";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
@@ -67,12 +67,12 @@ export function calculateAndApplyDamage(player: Combatant, opponent: Combatant, 
     return {player: playerDamageDealt, opponent: opponentDamageDealt};
 }
 
-export function runMovePreEffect(move: Move, context: PreMoveContext) {
-    return move.behaviors.preEffect?.(context);
+export function runMovePreEffect(move: Move, context: PreMoveContext): EffectOutcome | undefined {
+    return move.behaviors.preEffect?.(context) ?? undefined;
 }
 
-export function runMovePostEffect(move: Move, context: PostMoveContext) {
-    return move.behaviors.postEffect?.(context);
+export function runMovePostEffect(move: Move, context: PostMoveContext): EffectOutcome | undefined {
+    return move.behaviors.postEffect?.(context) ?? undefined;
 }
 
 // helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)

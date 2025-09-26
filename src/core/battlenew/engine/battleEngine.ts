@@ -2,11 +2,40 @@
 
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
-import { BattleOutcome, DamageMultipliers } from "../types/battle.types";
+import { BattleOutcome } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
-import { EffectOutcome, Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
+import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
+
+
+const side = ['player', 'opponent'] as const;
+type Side = typeof side[number];
+// Change this name to be more specific!
+export type Sides<T> = Record<Side, T>
+const oppositeSide = (r: Side): Side => (r == 'player' ? 'opponent' : 'player');
+
+function mapSides<Input, Output>(pair: Sides<Input>, mapper: (value: Input, role: Side, whole: Sides<Input>) => Output): Sides<Output> {
+    return {
+        player: mapper(pair.player, 'player', pair),
+        opponent: mapper(pair.opponent, 'opponent', pair),
+    };
+}
+
+function forEachSide<T>(pair: Sides<T>, action: ((value: T, roll: Side) => void)) {
+    for(const [role, entry] of Object.entries(pair)) {
+        action(entry, role as Side);
+    }
+}
+
+function makeSidesMap<T>(player: T, opponent: T): Sides<T> { return { player, opponent } }
+
+const buildSidesMap = <T>(builder: (role: Side) => T): Sides<T> => ({
+    player: builder('player'),
+    opponent: builder('opponent'),
+});
+
+
 
 
 
@@ -18,8 +47,7 @@ import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, r
 // up to u
 
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, /* reactionmap, deps */) {
-    const player = new Combatant(PLAYER_HEALTH_PLACEHOLDER);
-    const opponent = new Combatant(opponentStats.maxHealth);
+    const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))
     
     // naming convention of DynamicMoves are uninstantiated "plans"
     // whereas the evaluated version is a "sequence"
@@ -33,12 +61,14 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     // This feels fucking stupid and I hate it
     function handleDeathIfNeeded(): boolean {
         let outcome: BattleOutcome | null = null;
-        // nice just overwriting shit. Come up with something more elegant, this is geniunely embarassing. Dont code after studying for 6 hours to """"relax"""""
-        if(player.isDead) outcome = BattleOutcome.OpponentVictory;
-        if(opponent.isDead) outcome = BattleOutcome.PlayerVictory;
-        if(player.isDead && opponent.isDead) outcome = BattleOutcome.Draw;
-        
-        if(outcome == null) return false;
+
+        // Is there a cleaner way of doing this?
+        const deathStatuses = mapSides(combatants, x => x.isDead);
+        if(deathStatuses.player) outcome = BattleOutcome.OpponentVictory;
+        if(deathStatuses.opponent) outcome = BattleOutcome.PlayerVictory
+        if(deathStatuses.player && deathStatuses.opponent) outcome = BattleOutcome.Draw;
+
+        if (!outcome) return false;
 
         handleBattleEnd(outcome); 
         return true;
@@ -52,94 +82,71 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     async function setupRound() {
-        opponentPlan = opponentAI.getSequence(opponent, player);
+        opponentPlan = opponentAI.getSequence(combatants.opponent, combatants.player);
         // await reaction handlers for setup here.
     }
 
     async function executeRound(playerPlan: PlannedSequence) {
 
-        const roles = ['player', 'opponent'] as const;
-        type Role = typeof roles[number];
-        type RoleMap<T> = Record<Role, T>
-
         // await reaction handlers for pre-round
 
-        const playerSequence = initializePlannedMoves(playerPlan, opponentPlan);
-        const opponentSequence = initializePlannedMoves(opponentPlan, playerPlan);
+        // Alternatively use makeSidesMap; but I am making it by hand for readability;
+        const sequences: Sides<Move[]> = {
+            player: initializePlannedMoves(playerPlan, opponentPlan),
+            opponent: initializePlannedMoves(opponentPlan, playerPlan)
+        }
 
-        if(playerSequence.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
-        if(opponentSequence.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
+        if(sequences.player.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
+        if(sequences.opponent.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
 
-        opponentAI.preRoundBehavior?.(opponent, player);
+        opponentAI.preRoundBehavior?.(combatants.opponent, combatants.player);
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
             // BP: await reaction handlers for move start
 
-            const moves = { player: playerSequence[moveIndex], opponent: opponentSequence[moveIndex] } as RoleMap<Move>;
+            const moves = mapSides(sequences, seq => seq[moveIndex]);
 
-            const preMoveContexts = {
-                player: { self: player, opponent, sequence: playerSequence },
-                opponent: { self: opponent, opponent: player, sequence: opponentSequence },
-            } as RoleMap<PreMoveContext>;
+            const preCtxPair = buildSidesMap<PreMoveContext>(role => ({
+                self: combatants[role],
+                opponent: combatants[oppositeSide(role)],
+                sequence: sequences[role]
+            }));
 
-            const preEffectOutcomes = Object.fromEntries(
-                roles.map(role => [role, runMovePreEffect(moves[role], preMoveContexts[role])])
-            ) as RoleMap<EffectOutcome | undefined>;
+            const preEffectOutcomes = mapSides(moves, (move, role) => runMovePreEffect(move, preCtxPair[role]))
 
             // BP? Prob not, (considering I b4 bundled this all into one function before any events)
 
-            const damageMultiplierContexts = Object.fromEntries(
-                roles.map(r => [r, { ...preMoveContexts[r], preEffectOutcome: preEffectOutcomes[r] }])
-            ) as RoleMap<DamageMultiplierContext>;
-
-            const multipliers = Object.fromEntries(
-                roles.map(r => [r, getPhaseMultipliers(moves[r], damageMultiplierContexts[r])])
-            ) as RoleMap<DamageMultipliers>
+            const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, role) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[role] }));
+            
+            const multipliers = mapSides(moves, (_m, role) => getPhaseMultipliers(moves[role], mulCtx[role]));
 
             // BP - display multipliers
 
-            const damagesDealt = calculateAndApplyDamage(player, opponent, multipliers);
+            // Change this to just take the combatants object.
+            const damagesDealt = calculateAndApplyDamage(combatants.player, combatants.opponent, multipliers);
 
             if (handleDeathIfNeeded()) return;
 
-            // idk how to do the flip-floppy with maps. Maybe there's something better to do here.
-            const postMoveContexts = {
-                opponent: {
-                    ...damageMultiplierContexts.opponent,
-                    ourMults: multipliers.opponent,
-                    theirMults: multipliers.player,
-                    damageDealt: damagesDealt.opponent,
-                    damageTaken: damagesDealt.player
-                },
-                player: {
-                    ...damageMultiplierContexts.player,
-                    ourMults: multipliers.player,
-                    theirMults: multipliers.opponent,
-                    damageDealt: damagesDealt.player,
-                    damageTaken: damagesDealt.opponent
-                }
-            } as RoleMap<PostMoveContext>
+            const postCtx = buildSidesMap<PostMoveContext>((role) => ({
+                ...mulCtx[role],
+                ourMults: multipliers[role],
+                theirMults: multipliers[oppositeSide(role)],
+                damageDealt: damagesDealt[role],
+                damageTaken: damagesDealt[oppositeSide(role)],
+            }));
 
-            player.tickStatuses();
-            opponent.tickStatuses();
+            forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
             // Can add new statuses with duration 1, or extend statuses here.
-            const postEffectOutcomes = Object.fromEntries(
-                roles.map(r => [r, runMovePostEffect(moves[r], postMoveContexts[r])])
-            ) as RoleMap<EffectOutcome | undefined>
-
-            const endOfMoveContexts = Object.fromEntries(
-                roles.map(r => [r, {...postMoveContexts[r], postEffectOutcome: postEffectOutcomes[r]}])
-            )
+            const postOut = mapSides(moves, (_m, role) => runMovePostEffect(moves[role], postCtx[role]));
+            // will be handed to BP later.
 
             // BP - post effect results.
             
-            
-            player.reapExpiredStatuses();
-            opponent.reapExpiredStatuses();
+            forEachSide(combatants, (combatants) => combatants.reapExpiredStatuses());
         }
 
-        opponentAI.postRoundBehavior?.(opponent, player);
+        opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
     }
 
     return {
