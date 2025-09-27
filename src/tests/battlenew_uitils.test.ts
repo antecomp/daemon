@@ -2,9 +2,10 @@ import { idle as idleMove } from "@/core/battlenew/data/basemoves";
 import { VulnerableStatus } from "@/core/battlenew/data/statuses";
 import { DamageMultipliers } from "@/core/battlenew/types/battle.types";
 import { Combatant } from "@/core/battlenew/types/combatant";
-import { EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/types/move";
+import { DamageMultiplierFunction, EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/types/move";
 import { Status } from "@/core/battlenew/types/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, PASSTHROUGH_MULTPLIERS, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/battleUtils";
+import { effectPipeline, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sideUtils";
 import { describe, expect, test, vi } from "vitest";
 
@@ -458,4 +459,67 @@ describe("side utils", () => {
     });
 })
 
-// TODO - move behavior util tests
+describe("Move Behavior Util Methods", () => {
+    test("effectPipeline basics", () => {
+        let dummyPreEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Success);
+
+        const ctx: PreMoveContext = {
+            self: new Combatant(10),
+            opponent: new Combatant(20),
+            moves: {
+                player: idleMove,
+                opponent: idleMove
+            }
+        }
+        const result = effectPipeline(dummyPreEffect, dummyPreEffect)(ctx);
+        expect(dummyPreEffect).toHaveBeenCalledTimes(2);
+        expect(result).toBe(EffectOutcome.Success);
+    });
+
+    test("effectPipeline to take the last defined result in chain", () => {
+        let undefEffect = vi.fn<PreMoveSideEffect>(() => undefined);
+        let sucEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Success);
+        let failEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Failure);
+
+        const ctx: PreMoveContext = {
+            self: new Combatant(10),
+            opponent: new Combatant(20),
+            moves: {
+                player: idleMove,
+                opponent: idleMove
+            }
+        }
+
+        let result = effectPipeline(failEffect, sucEffect, undefEffect)(ctx);
+        expect(result).toBe(EffectOutcome.Success)
+    });
+
+    test("effectPipeline to forward undefined if no effect has outcome", () => {
+        let undefEffect = vi.fn<PreMoveSideEffect>(() => undefined);
+
+        const ctx: PreMoveContext = {
+            self: new Combatant(10),
+            opponent: new Combatant(20),
+            moves: {
+                player: idleMove,
+                opponent: idleMove
+            }
+        }
+
+        let result = effectPipeline(undefEffect, undefEffect, undefEffect)(ctx);
+        expect(result).toBe(undefined)       
+    });
+
+    test("multiplierPipeline basics", () => {
+        const mul1: DamageMultiplierFunction = () => ({incoming: 2, outgoing: 3});
+        const mul2: DamageMultiplierFunction = () => ({incoming: 5, outgoing: 7});
+        const mul3: DamageMultiplierFunction = () => ({incoming: 10, outgoing: 10});
+
+        //@ts-ignore - Context not needed for test. Not gonna bother building dummy.
+        expect(multiplierPipeline(mul1, mul2, mul3)(/* ctx */)).toEqual({incoming: 100, outgoing: 210});
+    });
+
+    // TODO: extendStatusOf, applyStatusTo, [OnlyDoDamageOnDefensive, NegatedByOverwhelm] <- These last two should be part of a different test suite (and file)
+
+
+})
