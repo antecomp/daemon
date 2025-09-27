@@ -113,7 +113,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             // BP - post effect results.
             
-            forEachSide(combatants, (combatants) => combatants.reapExpiredStatuses());
+            forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
         }
 
         opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);

@@ -37,7 +37,8 @@ const BASE_MULTIPLIERS: Record<MoveType, DamageMultipliers> = {
 export function getBaseMultipliers(type: MoveType): DamageMultipliers {
     return BASE_MULTIPLIERS[type];
 }
-function computeStatusMultipliers(statusList: [Status, number][]) {
+
+export function computeStatusMultipliers(statusList: [Status, number][]) {
     return statusList.reduce(
         (multacc, [status, level]) => combineMultiplierSets(multacc, status.getStatusMultipliers(level)),
         PASSTHROUGH_MULTPLIERS
@@ -47,7 +48,7 @@ function computeStatusMultipliers(statusList: [Status, number][]) {
 // goofy name cuz we can also just get the status mults here also
 export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
-    const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? {incoming: 1, outgoing: 1}; // <- make this a const later.
+    const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? PASSTHROUGH_MULTPLIERS;
     const statusMultipliers = computeStatusMultipliers(ctx.self.activeStatuses);
 
     return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)

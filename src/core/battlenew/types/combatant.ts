@@ -9,7 +9,7 @@ type StatusEntry = {
 export class Combatant {
     //name: string; // <- is this even needed? UI will be a profile thing, wont read this. No need to track names for logic!
     maxHealth: number;
-    health: number;
+    private _health: number;
     private statuses: Map<string, StatusEntry> = new Map();
 
     // remove damageSubscribers - obvious reasons.
@@ -17,26 +17,30 @@ export class Combatant {
     // Remove data: was unused except for testing one thing that could be checked by other means.
 
     constructor(maxHealth: number) {
-        this.health = this.maxHealth = maxHealth;
+        this._health = this.maxHealth = maxHealth;
     }
 
     public takeDamage(amount: number) {
-        this.health = Math.max(this.health - amount, 0);
+        this._health = Math.max(this._health - amount, 0);
     }
 
     public heal(amount: number) {
-        this.health = Math.min(this.maxHealth, this.health + amount);
+        this._health = Math.min(this.maxHealth, this._health + amount);
     }
 
     get healthPercent() {
-        return this.health / this.maxHealth * 100;
+        return this._health / this.maxHealth * 100;
+    }
+    
+    get health() {
+        return this._health;
     }
 
     get isDead() {
-        return this.health <= 0;
+        return this._health <= 0;
     }
 
-    addStatus(status: Status, duration: number) {
+    addStatus(status: Status, duration: number = 1) {
         if(this.statuses.has(status.name)) {
             this.statuses.get(status.name)!.durationStack.push(duration);
         } else {
@@ -53,12 +57,12 @@ export class Combatant {
         }
     }
 
-    // getStatusAndLevel(name: string) {
-    //     const entry = this.statuses.get(name);
-    //     const stat = entry?.status;
-    //     const level = entry?.durationStack.filter(dur => dur > 0).length
-    //     return [stat, level];
-    // }
+    getStatusAndLevel(name: string) {
+        const entry = this.statuses.get(name);
+        const stat = entry?.status;
+        const level = entry?.durationStack.filter(dur => dur > 0).length
+        return [stat, level];
+    }
 
     /** Returns an array of active (non zero duration) Statuses, along with their level as a tuple */
     get activeStatuses() {
@@ -81,8 +85,9 @@ export class Combatant {
     // No longer requires immediatePostEffect run, as this will revive any ticked statuses
     // (from 0 to amount) before the reap stage!
     // use the helper here!
-    extendStatus(name: string, amount: number) {
-        const entry = this.statuses.get(name);
+    extendStatus(status: string | Status, amount: number = 1) {
+        const key = (typeof status === 'string') ? status : status.name
+        const entry = this.statuses.get(key);
         if (!entry) return;
         entry.durationStack = entry.durationStack.map(dur => dur + amount);
     }
@@ -92,7 +97,6 @@ export class Combatant {
             if(!s.durationStack.some(dur => dur >0)) this.statuses.delete(key);
         }
     }
-
     // Notice how we never have any stuff for stale/expired statuses now,
     // as that logic shouldn't really be relevant to anyone else,
     // they can just call extendStatus and have an expectation of behavior!
