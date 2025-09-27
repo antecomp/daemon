@@ -124,7 +124,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
 
-        await emitBattleEvent('RoundEnd', {});
+        console.log(combatants.player.health);
+        await emitBattleEvent('RoundEnd', {combatants});
 
         // make calling the setup again the responsibility of engine user!
     }

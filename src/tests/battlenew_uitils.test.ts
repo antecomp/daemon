@@ -5,7 +5,7 @@ import { Combatant } from "@/core/battlenew/types/combatant";
 import { DamageMultiplierFunction, EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/types/move";
 import { Status } from "@/core/battlenew/types/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, PASSTHROUGH_MULTPLIERS, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/battleUtils";
-import { effectPipeline, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sideUtils";
 import { describe, expect, test, vi } from "vitest";
 
@@ -519,7 +519,62 @@ describe("Move Behavior Util Methods", () => {
         expect(multiplierPipeline(mul1, mul2, mul3)(/* ctx */)).toEqual({incoming: 100, outgoing: 210});
     });
 
-    // TODO: extendStatusOf, applyStatusTo, [OnlyDoDamageOnDefensive, NegatedByOverwhelm] <- These last two should be part of a different test suite (and file)
+    test("extendStatusOf", () => {
+        const doll = new Combatant(100);
+        const move: Move = {
+            name: 'dsfjkh',
+            type: MoveType.Passive,
+            behaviors: {
+                postEffect: extendStatusOf('self', VulnerableStatus)
+            }
+        }
 
+        const ctx: PreMoveContext = {
+            self: doll,
+            opponent: new Combatant(100),
+            moves: {
+                player: move,
+                opponent: move
+            }
+        }
 
+        doll.addStatus(new VulnerableStatus, 0);
+        expect(doll.getStatusLevel('vulnerable')).toBe(0);
+
+        // @ts-ignore - not gonna bother building full context.
+        runMovePostEffect(move, ctx);
+
+        expect(doll.getStatusLevel('vulnerable')).toBe(1);
+
+        // Extend doesnt work after status reaped.
+        doll.tickStatuses(); doll.reapExpiredStatuses();
+        expect(doll.getStatusLevel('vulnerable')).toBe(0);
+
+        // @ts-ignore
+        runMovePostEffect(move, ctx);
+        expect(doll.getStatusLevel('vulnerable')).toBe(0);
+    });
+
+    test("applyStatusTo", () => {
+        const doll = new Combatant(100);
+        const move: Move = {
+            name: 'dsfjkh',
+            type: MoveType.Passive,
+            behaviors: {
+                preEffect: applyStatusTo('self', VulnerableStatus)
+            }
+        }
+        const ctx: PreMoveContext = {
+            self: doll,
+            opponent: new Combatant(100),
+            moves: {
+                player: move,
+                opponent: move
+            }
+        }
+
+        runMovePreEffect(move, ctx);
+        expect(doll.getStatusLevel('vulnerable')).toBe(1);
+
+    })
 })

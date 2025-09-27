@@ -1,5 +1,7 @@
 import { Move, MoveType } from "../types/move";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline, NegatedByOverwhelm, OnlyDoDamageOnDefensive } from "../utils/movebehavior.utils";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "../utils/movebehavior.utils";
+import { NegatedByOverwhelm } from "./movebehaviors";
+import { OnlyDoDamageOnDefensive } from "./movebehaviors";
 import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./movebehaviors";
 import { PreparedStatus, VulnerableStatus } from "./statuses";
 
