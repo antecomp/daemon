@@ -1,4 +1,5 @@
-import { PreMoveContext, PostMoveContext, EffectOutcome, PostMoveSideEffect, PreMoveSideEffect, DamageMultiplierFunction, MoveType } from "../types/move";
+import { mul } from "three/tsl";
+import { PreMoveContext, PostMoveContext, EffectOutcome, PostMoveSideEffect, PreMoveSideEffect, DamageMultiplierFunction, MoveType, MoveMultiplierConditionalWrapper } from "../types/move";
 import { Status } from "../types/status";
 import { combineMultiplierSets, PASSTHROUGH_MULTPLIERS } from "./battleUtils";
 
@@ -39,5 +40,15 @@ export const OnlyDoDamageOnDefensive: DamageMultiplierFunction = ({moves}) => {
     return {
         incoming: 1,
         outgoing: Number(moves.opponent.type == MoveType.Defensive)
+    }
+}
+
+export const NegatedByOverwhelm: MoveMultiplierConditionalWrapper = (mul) => {
+    return (ctx) => {
+        if(ctx.moves.opponent.type == MoveType.Overwhelming) {
+            return PASSTHROUGH_MULTPLIERS; // skip
+        } else {
+            return mul(ctx)
+        }
     }
 }

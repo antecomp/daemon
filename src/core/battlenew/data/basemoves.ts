@@ -1,5 +1,5 @@
 import { Move, MoveType } from "../types/move";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline, OnlyDoDamageOnDefensive } from "../utils/movebehavior.utils";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline, NegatedByOverwhelm, OnlyDoDamageOnDefensive } from "../utils/movebehavior.utils";
 import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./movebehaviors";
 import { PreparedStatus, VulnerableStatus } from "./statuses";
 
@@ -35,7 +35,7 @@ export const evade: Move = {
     // TODO: Add Negated By Overwhelm
     behaviors: {
         preEffect: EvadeRoll,
-        damageMultipliers: EvadeDamageReduction,
+        damageMultipliers: NegatedByOverwhelm(EvadeDamageReduction),
         postEffect: SuccessfulEvadeBonus
     }
 }
@@ -66,9 +66,8 @@ export const prepare: Move = {
 export const defend: Move = {
     name: 'defend',
     type: MoveType.Defensive,
-    // TODO: Add Negated By Overwhelm
     behaviors: {
-        damageMultipliers: ReduceIncomingDamage
+        damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage)
     }
 }
 

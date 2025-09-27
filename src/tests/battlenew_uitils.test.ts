@@ -1,8 +1,10 @@
+import { idle as idleMove } from "@/core/battlenew/data/basemoves";
+import { VulnerableStatus } from "@/core/battlenew/data/statuses";
 import { DamageMultipliers } from "@/core/battlenew/types/battle.types";
 import { Combatant } from "@/core/battlenew/types/combatant";
-import { Move, MoveType } from "@/core/battlenew/types/move";
+import { EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/types/move";
 import { Status } from "@/core/battlenew/types/status";
-import { combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers } from "@/core/battlenew/utils/battleUtils";
+import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, PASSTHROUGH_MULTPLIERS, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/battleUtils";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sideUtils";
 import { describe, expect, test, vi } from "vitest";
 
@@ -160,7 +162,10 @@ describe("BattleEngine Utility Functions", () => {
             preEffectOutcome: undefined,
             self: doll,
             opponent: oppdoll,
-            sequence: [],
+            moves: {
+                player: agroMoveDummy,
+                opponent: agroMoveDummy
+            }
         };
 
         expect(
@@ -230,11 +235,177 @@ describe("BattleEngine Utility Functions", () => {
 
     })
 
+    test("Calculate And Apply Damage", () => {
+        let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
+        
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, PASSTHROUGH_MULTPLIERS));
+        expect(dolls.player.health).toBe(9);
+        expect(dolls.opponent.health).toBe(9);
 
-    // TODO: calculateAndApplyDamage, runMovePre/PostEffect, initializePlannedMoves.
+        dolls = makeSidesMap(new Combatant(10), new Combatant(10));
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, {incoming: 5, outgoing: 10}));
+        expect(dolls.player.health).toBe(0);
+        expect(dolls.opponent.health).toBe(5);
+
+        dolls = makeSidesMap(new Combatant(10), new Combatant(10));
+        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, PASSTHROUGH_MULTPLIERS));
+        expect(dolls.player.health).toBe(8);
+        expect(dolls.opponent.health).toBe(7);
+
+        dolls = makeSidesMap(new Combatant(10), new Combatant(10));
+        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, {incoming: 4, outgoing: 2}));
+        expect(dolls.player.health).toBe(6);
+        expect(dolls.opponent.health).toBe(0);
+    });
+
+    test("runMovePreEffect, runMovePostEffects", () => {
+        let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
+
+        const successEffect: PreMoveSideEffect = () => EffectOutcome.Success
+        const failEffect: PreMoveSideEffect = () => EffectOutcome.Failure
+        const resultlessEffect: PreMoveSideEffect = () => undefined
+        const selfModiEffect: PreMoveSideEffect = ({self}) => self.addStatus(new VulnerableStatus);
+
+        let moves = makeSidesMap(idleMove, idleMove);
+        const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
+            self: dolls[side],
+            opponent: dolls[oppositeSide(side)],
+            moves
+        }));
+
+        moves.player.behaviors.preEffect = successEffect;
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(EffectOutcome.Success)
+
+        moves.player.behaviors.preEffect = failEffect;
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(EffectOutcome.Failure)
+
+        moves.player.behaviors.preEffect = resultlessEffect;
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(undefined)
+
+        moves.player.behaviors.preEffect = selfModiEffect;
+        runMovePreEffect(moves.player, preCtxPair.player);
+        expect(dolls.player.activeStatuses).toEqual([[new VulnerableStatus, 1]]);
+
+        const postCtx = buildSidesMap<PostMoveContext>((side) => ({
+            ...preCtxPair[side],
+            preEffectOutcome: undefined,
+            damageDealt: 0,
+            damageTaken: 0,
+            theirMults: PASSTHROUGH_MULTPLIERS,
+            ourMults: PASSTHROUGH_MULTPLIERS
+        }));
+
+        moves.player.behaviors.postEffect = successEffect;
+        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(EffectOutcome.Success)
+
+        moves.player.behaviors.postEffect = failEffect;
+        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(EffectOutcome.Failure)
+
+        moves.player.behaviors.postEffect = resultlessEffect;
+        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(undefined)
+
+        moves.opponent.behaviors.postEffect = selfModiEffect;
+        runMovePostEffect(moves.opponent, postCtx.opponent);
+        expect(dolls.opponent.activeStatuses).toEqual([[new VulnerableStatus, 1]]);
+    })
+
+    test("initialize planned moves - basics", () => {
+        const theirPlan = [
+            { name: "opp-0", instantiate: vi.fn(), canPerform: vi.fn() },
+            { name: "opp-1", instantiate: vi.fn(), canPerform: vi.fn() },
+        ];
+
+        // Prepare instantiated return values to assert equality
+        const move0 = { name: "m0", type: MoveType.Aggressive, behaviors: {} };
+        const move1 = { name: "m1", type: MoveType.Aggressive, behaviors: {} };
+
+        let myPlanRef: any; // capture identity in closures
+        const myPlan = [
+        {
+            name: "p-0",
+            canPerform: vi.fn(() => true),
+            instantiate: vi.fn(({ myPlan, theirPlan, index }) => {
+            expect(myPlan).toBe(myPlanRef);
+            expect(theirPlan).toBe(theirPlanRef);
+            expect(index).toBe(0);
+            return move0;
+            }),
+        },
+        {
+            name: "p-1",
+            canPerform: vi.fn(() => true),
+            instantiate: vi.fn(({ myPlan, theirPlan, index }) => {
+            expect(myPlan).toBe(myPlanRef);
+            expect(theirPlan).toBe(theirPlanRef);
+            expect(index).toBe(1);
+            return move1;
+            }),
+        },
+        ];
+        const theirPlanRef = theirPlan;
+        myPlanRef = myPlan;
+
+        const instantiated = initializePlannedMoves(myPlan, theirPlan);
+
+        // Instantiated moves are exactly what instantiate returned, in order
+        expect(instantiated).toEqual([move0, move1]);
+
+        // Validate call counts
+        expect(myPlan[0].canPerform).toHaveBeenCalledTimes(1);
+        expect(myPlan[1].canPerform).toHaveBeenCalledTimes(1);
+        expect(myPlan[0].instantiate).toHaveBeenCalledTimes(1);
+        expect(myPlan[1].instantiate).toHaveBeenCalledTimes(1);
+
+    });
+
+    test("initialize planned moves - does not throw when canPerform is omitted", () => {
+        const theirPlan: any[] = [];
+        const myPlan = [
+            {
+                name: "no-validator",
+                // no canPerform
+                instantiate: vi.fn(() => ({
+                    name: "x",
+                    type: MoveType.Aggressive,
+                    behaviors: {},
+                })),
+            },
+        ];
+        expect(() => initializePlannedMoves(myPlan as any, theirPlan as any)).not.toThrow();
+        expect(myPlan[0].instantiate).toHaveBeenCalledTimes(1);
+    });
+
+    test("initialize planned moves = throws if any planned move is illegal by canPerform", () => {
+        const theirPlan: any[] = [];
+        let myPlanRef: any;
+
+        const bad = {
+            name: "illegal",
+            canPerform: vi.fn(() => false),
+            instantiate: vi.fn(),
+        };
+        const good = {
+            name: "legal",
+            canPerform: vi.fn(() => true),
+            instantiate: vi.fn(),
+        };
+
+        const myPlan = [good, bad, good];
+        myPlanRef = myPlan;
+
+        expect(() => initializePlannedMoves(myPlan as any, theirPlan as any)).toThrow();
+
+        // instantiate is never called when validation fails
+        expect(good.instantiate).not.toHaveBeenCalled();
+        expect(bad.instantiate).not.toHaveBeenCalled();
+
+        // At least one canPerform was evaluated (short-circuit behavior isn’t strictly asserted)
+        expect(good.canPerform).toHaveBeenCalledTimes(1);
+        expect(bad.canPerform).toHaveBeenCalledTimes(1);
+    });
 });
 
-// Need test for sideUtils!
+
 describe("side utils", () => {
     test("makeSidesMap creates Sides from values", () => {
         const m = makeSidesMap(1, 2);
@@ -286,3 +457,5 @@ describe("side utils", () => {
         expect(built).toEqual({ player: 10, opponent: 20 });
     });
 })
+
+// TODO - move behavior util tests

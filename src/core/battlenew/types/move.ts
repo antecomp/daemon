@@ -49,7 +49,7 @@ export type PreMoveSideEffect       = (context: PreMoveContext) => EffectOutcome
 export type DamageMultiplierFunction  = (context: DamageMultiplierContext) => DamageMultipliers;
 export type PostMoveSideEffect      = (context: PostMoveContext) => EffectOutcome | void; // have these saved to context as seperate outcomes!
 
-export type MovePipelineStepConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
+export type MoveMultiplierConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
 export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 export interface Move {
