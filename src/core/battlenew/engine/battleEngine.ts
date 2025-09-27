@@ -81,7 +81,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 self: combatants[side],
                 opponent: combatants[oppositeSide(side)],
-                sequence: sequences[side]
+                moves
+                //sequence: sequences[side]
             }));
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))

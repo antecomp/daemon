@@ -1,6 +1,7 @@
 import { AssetURL } from "@/shared/types/misc.types";
 import { Combatant } from "./combatant";
 import { DamageMultipliers } from "./battle.types";
+import { Sides } from "../utils/sideUtils";
 
 /**
  * Represents the type of a move, which determines its behavior (base multipliers) and interaction
@@ -23,7 +24,8 @@ export enum EffectOutcome {
 export interface PreMoveContext {
     self: Combatant;
     opponent: Combatant;
-    sequence: Move[];
+    moves: Sides<Move>
+    //sequence: Move[];
 }
 
 export interface DamageMultiplierContext extends PreMoveContext {
