@@ -229,6 +229,9 @@ describe("BattleEngine Utility Functions", () => {
         );
 
     })
+
+
+    // TODO: calculateAndApplyDamage, runMovePre/PostEffect, initializePlannedMoves.
 });
 
 // Need test for sideUtils!

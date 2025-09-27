@@ -3,32 +3,35 @@
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
 import { BattleOutcome } from "../types/battle.types";
+import { BattleReactions } from "../types/battleReactions.types";
 import { Combatant } from "../types/combatant";
 import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
 import { OpponentAI, OpponentStats } from "../types/opponentProfile";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sideUtils";
+import { BattleEvent, BattleEventPayload } from "../types/battleReactions.types";
 
-// need hook for like useUIBattleEngine or some better name, that runs the above but 
-// injects all the Solid/Anim shit into reactionmap that we want, configires the UI,
-// uses opponentProfile instead of opponentAI. opponentProfile used to configure UI shit beforehand
-// configured UI handlers are *then* passed as part of the reactionmap
-// hook should probably be in features rather than here? idk it's still just a "hook" no components.
-// up to u
+export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, /* deps? */) {
 
-export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, /* reactionmap, deps */) {
+    async function emitBattleEvent<K extends BattleEvent>(event: K, payload: BattleEventPayload[K]) {
+        for (const handler of reactions?.[event] ?? []) {
+            await handler(payload);
+        }
+    }
+
     const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))
-    
-    // naming convention of DynamicMoves are uninstantiated "plans"
-    // whereas the evaluated version is a "sequence"
+
     let opponentPlan: PlannedSequence = [];
 
     const {promise: battleResolutionPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
     
-    // do we need this?
-    const forceBattleResolve = (outcome: BattleOutcome) => resolveBattle(outcome);
+    // Will need to notify own breakpoints
+    const forceBattleResolve = async (outcome: BattleOutcome) => {
+        await emitBattleEvent('BattleEnd', {outcome});
+        resolveBattle(outcome);
+    };
 
-    // This feels fucking stupid and I hate it
+    // This function feels gross, I think it could be improved.
     function handleDeathIfNeeded(): boolean {
         let outcome: BattleOutcome | null = null;
 
@@ -41,24 +44,22 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         if (!outcome) return false;
 
         handleBattleEnd(outcome); 
-        return true;
+        return true; // bool check used to breask loop in executeRound.
     }
 
-    // anticipates use of another helper getOutcome(ctx) => BattleOutcome | false. If there's an outcome we hand
-    // off to this to do cleanup, set stages. Otherwise we just continue execution loop.
     async function handleBattleEnd(outcome: BattleOutcome) {
-        // await reaction handlers (death animations and whatnot)
+        await emitBattleEvent('BattleEnd', {outcome});
         resolveBattle(outcome);
     }
 
     async function setupRound() {
         opponentPlan = opponentAI.getSequence(combatants.opponent, combatants.player);
-        // await reaction handlers for setup here.
+        await emitBattleEvent('RoundPrepared', {combatants, opponentPlan});
     }
 
     async function executeRound(playerPlan: PlannedSequence) {
 
-        // await reaction handlers for pre-round
+        await emitBattleEvent('RoundStart', {plans: makeSidesMap(playerPlan, opponentPlan), combatants});
 
         // Alternatively use makeSidesMap; but I am making it by hand for readability;
         const sequences: Sides<Move[]> = {
@@ -72,9 +73,10 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         opponentAI.preRoundBehavior?.(combatants.opponent, combatants.player);
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
-            // BP: await reaction handlers for move start
 
             const moves = mapSides(sequences, seq => seq[moveIndex]);
+
+            await emitBattleEvent('MoveStart', {moveIndex, sequences, moves})
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 self: combatants[side],
@@ -84,18 +86,20 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
 
-            // BP? Prob not, (considering I b4 bundled this all into one function before any events)
+            // event here needed for certain indicators that were previously done just by effects running cbs (i.e status message)
+            await emitBattleEvent("PreEffectResolved", {preEffectOutcomes});
 
             const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, side) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[side] }));
             
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
-            // BP - display multipliers
+            await emitBattleEvent('MultipliersComputed', {damageMultipliers});
 
-            // Change this to just take the combatants object.
-            const damagesDealt = calculateAndApplyDamage(combatants.player, combatants.opponent, damageMultipliers);
+            const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 
             if (handleDeathIfNeeded()) return;
+
+            await emitBattleEvent('DamagesApplied', {combatants, damagesDealt})
 
             const postCtx = buildSidesMap<PostMoveContext>((side) => ({
                 ...mulCtx[side],
@@ -108,15 +112,20 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
             // Can add new statuses with duration 1, or extend statuses here.
-            const postOut = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
-            // will be handed to BP later.
+            const postEffectOutcomes = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
 
-            // BP - post effect results.
-            
+            await emitBattleEvent('PostEffectResolved', {postEffectOutcomes});
+
             forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
+
+            await emitBattleEvent('MoveEnd', {});
         }
 
         opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
+
+        await emitBattleEvent('RoundEnd', {});
+
+        // make calling the setup again the responsibility of engine user!
     }
 
     return {

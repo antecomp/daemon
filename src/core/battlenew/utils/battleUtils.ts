@@ -4,6 +4,7 @@ import { DamageMultipliers } from "../types/battle.types";
 import { Combatant } from "../types/combatant";
 import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
 import { Status } from "../types/status";
+import { Sides } from "./sideUtils";
 
 export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
 
@@ -58,7 +59,7 @@ export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
 /**
  * Cross-multiplies player and opponent multipliers and performs corresponding .takeDamage on each actor.
  */
-export function calculateAndApplyDamage(player: Combatant, opponent: Combatant, multipliers:{opponent: DamageMultipliers, player: DamageMultipliers}) {
+export function calculateAndApplyDamage({player, opponent}: Sides<Combatant>, multipliers:{opponent: DamageMultipliers, player: DamageMultipliers}) {
     const playerDamageDealt = multipliers.player.outgoing * multipliers.opponent.incoming;
     const opponentDamageDealt = multipliers.opponent.outgoing * multipliers.player.incoming;
 
@@ -68,6 +69,8 @@ export function calculateAndApplyDamage(player: Combatant, opponent: Combatant, 
     return {player: playerDamageDealt, opponent: opponentDamageDealt};
 }
 
+
+// Move these below to a move utils file?
 export function runMovePreEffect(move: Move, context: PreMoveContext): EffectOutcome | undefined {
     return move.behaviors.preEffect?.(context) ?? undefined;
 }
