@@ -1,12 +1,12 @@
-import { mul } from "three/tsl";
-import { PreMoveContext, PostMoveContext, EffectOutcome, PostMoveSideEffect, PreMoveSideEffect, DamageMultiplierFunction } from "../model/move";
+import { PreMoveContext, PostMoveContext, MoveSideEffectOutcome, PostMoveSideEffect, DamageMultiplierFunction } from "../model/move";
 import { Status } from "../model/status";
-import { combineMultiplierSets, PASSTHROUGH_MULTPLIERS } from "./battleUtils";
+import { combineMultiplierSets } from "./engine.utils";
+import { PASSTHROUGH_MULTPLIERS } from "../model/battle";
 
 
-export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pipeline: ((ctx: T) => EffectOutcome | void)[]): ((ctx: T) => EffectOutcome | void) {
+export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pipeline: ((ctx: T) => MoveSideEffectOutcome | void)[]): ((ctx: T) => MoveSideEffectOutcome | void) {
     return (ctx) => {
-        let result: EffectOutcome | undefined = undefined;
+        let result: MoveSideEffectOutcome | undefined = undefined;
         pipeline.forEach(effect => {
             result = effect(ctx) ?? result; // Save latest defined outcome.
         });
@@ -35,4 +35,3 @@ export function applyStatusTo<T extends PostMoveContext | PreMoveContext>(who: '
         ctx[who].addStatus(new Stat, duration)
     }
 }
-

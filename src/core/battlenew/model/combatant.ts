@@ -7,14 +7,9 @@ type StatusEntry = {
 }
 
 export class Combatant {
-    //name: string; // <- is this even needed? UI will be a profile thing, wont read this. No need to track names for logic!
     maxHealth: number;
     private _health: number;
     private statuses: Map<string, StatusEntry> = new Map();
-
-    // remove damageSubscribers - obvious reasons.
-
-    // Remove data: was unused except for testing one thing that could be checked by other means.
 
     constructor(maxHealth: number) {
         this._health = this.maxHealth = maxHealth;
@@ -82,9 +77,6 @@ export class Combatant {
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
-    // No longer requires immediatePostEffect run, as this will revive any ticked statuses
-    // (from 0 to amount) before the reap stage!
-    // use the helper here!
     extendStatus(status: string | Status, amount: number = 1) {
         const key = (typeof status === 'string') ? status : status.name
         const entry = this.statuses.get(key);
@@ -97,8 +89,4 @@ export class Combatant {
             if(!s.durationStack.some(dur => dur >0)) this.statuses.delete(key);
         }
     }
-    // Notice how we never have any stuff for stale/expired statuses now,
-    // as that logic shouldn't really be relevant to anyone else,
-    // they can just call extendStatus and have an expectation of behavior!
-
 }

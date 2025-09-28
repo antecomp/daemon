@@ -2,11 +2,12 @@ import { idle as idleMove } from "@/core/battlenew/moves/moves";
 import { VulnerableStatus } from "@/core/battlenew/statuses/statuses";
 import { DamageMultipliers } from "@/core/battlenew/model/battle";
 import { Combatant } from "@/core/battlenew/model/combatant";
-import { DamageMultiplierFunction, EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/model/move";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/model/move";
 import { Status } from "@/core/battlenew/model/status";
-import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, PASSTHROUGH_MULTPLIERS, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/battleUtils";
+import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/engine.utils";
+import { PASSTHROUGH_MULTPLIERS } from "@/core/battlenew/model/battle";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
-import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sideUtils";
+import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
 
 
@@ -262,8 +263,8 @@ describe("BattleEngine Utility Functions", () => {
     test("runMovePreEffect, runMovePostEffects", () => {
         let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
 
-        const successEffect: PreMoveSideEffect = () => EffectOutcome.Success
-        const failEffect: PreMoveSideEffect = () => EffectOutcome.Failure
+        const successEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Success
+        const failEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Failure
         const resultlessEffect: PreMoveSideEffect = () => undefined
         const selfModiEffect: PreMoveSideEffect = ({self}) => self.addStatus(new VulnerableStatus);
 
@@ -275,10 +276,10 @@ describe("BattleEngine Utility Functions", () => {
         }));
 
         moves.player.behaviors.preEffect = successEffect;
-        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(EffectOutcome.Success)
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(MoveSideEffectOutcome.Success)
 
         moves.player.behaviors.preEffect = failEffect;
-        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(EffectOutcome.Failure)
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(MoveSideEffectOutcome.Failure)
 
         moves.player.behaviors.preEffect = resultlessEffect;
         expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(undefined)
@@ -297,10 +298,10 @@ describe("BattleEngine Utility Functions", () => {
         }));
 
         moves.player.behaviors.postEffect = successEffect;
-        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(EffectOutcome.Success)
+        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(MoveSideEffectOutcome.Success)
 
         moves.player.behaviors.postEffect = failEffect;
-        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(EffectOutcome.Failure)
+        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(MoveSideEffectOutcome.Failure)
 
         moves.player.behaviors.postEffect = resultlessEffect;
         expect(runMovePostEffect(moves.player, postCtx.player)).toBe(undefined)
@@ -461,7 +462,7 @@ describe("side utils", () => {
 
 describe("Move Behavior Util Methods", () => {
     test("effectPipeline basics", () => {
-        let dummyPreEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Success);
+        let dummyPreEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Success);
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
@@ -473,13 +474,13 @@ describe("Move Behavior Util Methods", () => {
         }
         const result = effectPipeline(dummyPreEffect, dummyPreEffect)(ctx);
         expect(dummyPreEffect).toHaveBeenCalledTimes(2);
-        expect(result).toBe(EffectOutcome.Success);
+        expect(result).toBe(MoveSideEffectOutcome.Success);
     });
 
     test("effectPipeline to take the last defined result in chain", () => {
         let undefEffect = vi.fn<PreMoveSideEffect>(() => undefined);
-        let sucEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Success);
-        let failEffect = vi.fn<PreMoveSideEffect>(() => EffectOutcome.Failure);
+        let sucEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Success);
+        let failEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Failure);
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
@@ -491,7 +492,7 @@ describe("Move Behavior Util Methods", () => {
         }
 
         let result = effectPipeline(failEffect, sucEffect, undefEffect)(ctx);
-        expect(result).toBe(EffectOutcome.Success)
+        expect(result).toBe(MoveSideEffectOutcome.Success)
     });
 
     test("effectPipeline to forward undefined if no effect has outcome", () => {

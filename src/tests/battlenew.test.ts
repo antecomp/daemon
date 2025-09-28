@@ -4,7 +4,8 @@ import { PlanForRepeat } from "@/core/battlenew/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { Combatant } from "@/core/battlenew/model/combatant";
-import { PlannedMove, PlannedSequence } from "@/core/battlenew/model/move";
+import { PlannedSequence } from "@/core/battlenew/model/plannedmove";
+import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
 import { describe, it, expect, vi, test } from "vitest";
 

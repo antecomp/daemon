@@ -1,4 +1,4 @@
-import { MoveValidator } from "../model/move";
+import { MoveValidator } from "../model/plannedmove";
 
 export const CannotBeFirst: MoveValidator = (_workingPlan, index) => {
     return index > 0;

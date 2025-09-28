@@ -1,12 +1,9 @@
-// TODO: EVENTUALLY YOU WILL WANT TO SPLIT THIS INTO SEPERATE UTILITY FUNCTION BY ROUGH DOMAIN PURPOSE. JUST GROUPING FOR NOW FOR ROUGH PROTOTYPING.
-
-import { DamageMultipliers } from "../model/battle";
+import { DamageMultipliers, PASSTHROUGH_MULTPLIERS } from "../model/battle";
 import { Combatant } from "../model/combatant";
-import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../model/move";
+import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, MoveSideEffectOutcome } from "../model/move";
+import { PlannedSequence } from "../model/plannedmove";
 import { Status } from "../model/status";
-import { Sides } from "./sideUtils";
-
-export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
+import { Sides } from "./sides.utils";
 
 /** Helper function to multiply "incoming" and "outgoing" for multiple multiplier sets. 
  * @param sets - The multiplier sets to combine.
@@ -71,11 +68,11 @@ export function calculateAndApplyDamage({player, opponent}: Sides<Combatant>, mu
 
 
 // Move these below to a move utils file?
-export function runMovePreEffect(move: Move, context: PreMoveContext): EffectOutcome | undefined {
+export function runMovePreEffect(move: Move, context: PreMoveContext): MoveSideEffectOutcome | undefined {
     return move.behaviors.preEffect?.(context) ?? undefined;
 }
 
-export function runMovePostEffect(move: Move, context: PostMoveContext): EffectOutcome | undefined {
+export function runMovePostEffect(move: Move, context: PostMoveContext): MoveSideEffectOutcome | undefined {
     return move.behaviors.postEffect?.(context) ?? undefined;
 }
 

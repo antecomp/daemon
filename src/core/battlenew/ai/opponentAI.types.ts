@@ -1,16 +1,5 @@
-import { AssetURL } from "@/shared/types/misc.types";
 import { Combatant } from "../model/combatant";
-import { PlannedMove, MoveMeta } from "../model/move";
-import { Point } from "@/shared/types/3d.types";
-
-// Try to keep UI stuff, including sprites, completely out
-// of createBattleEngine. Instead, in our hook, we can
-// pass the profile data to the animator system to use
-// without it having to float around in the logic portion
-// Anim/UI self configure with Profile
-// Logic configure with just UI
-// Anims/UIs reactions (from earlier configure) utilize Profile data
-// to generate their reaction code thatll run.
+import { PlannedMove } from "../model/plannedmove";
 
 // Feels a bit silly having an interface with only one property but meh
 // any data needed to initialize the opponent combatant.
@@ -20,8 +9,6 @@ export interface OpponentStats {
 }
 
 export interface OpponentAI {
-    // For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta) by name.
-    // keep it all as just logic!
     getSequence: (me: Combatant, player: Combatant) => PlannedMove[];
 
     // consider making these return some information that may be needed context-wise for UI or whatever.

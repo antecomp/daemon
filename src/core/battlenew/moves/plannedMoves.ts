@@ -1,4 +1,4 @@
-import { PlannedMove } from "../model/move";
+import { PlannedMove } from "../model/plannedmove";
 import { nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
 

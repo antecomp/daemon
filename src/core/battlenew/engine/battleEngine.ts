@@ -1,14 +1,13 @@
-//export function createBattleEngine(opponentAI, reactionmap, deps);
-
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
 import { BattleOutcome } from "../model/battle";
 import { BattleReactions } from "../events/battleEvent.types";
 import { Combatant } from "../model/combatant";
-import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../model/move";
+import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
+import { PlannedSequence } from "../model/plannedmove";
 import { OpponentAI, OpponentStats } from "../ai/opponentAI.types";
-import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
-import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sideUtils";
+import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
+import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
 
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, /* deps? */) {
@@ -25,7 +24,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     const {promise: battleResolutionPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
     
-    // Will need to notify own breakpoints
     const forceBattleResolve = async (outcome: BattleOutcome) => {
         await emitBattleEvent('BattleEnd', {outcome});
         resolveBattle(outcome);
@@ -61,7 +59,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         await emitBattleEvent('RoundStart', {plans: makeSidesMap(playerPlan, opponentPlan), combatants});
 
-        // Alternatively use makeSidesMap; but I am making it by hand for readability;
         const sequences: Sides<Move[]> = {
             player: initializePlannedMoves(playerPlan, opponentPlan),
             opponent: initializePlannedMoves(opponentPlan, playerPlan)
@@ -82,12 +79,10 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
                 self: combatants[side],
                 opponent: combatants[oppositeSide(side)],
                 moves
-                //sequence: sequences[side]
             }));
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
 
-            // event here needed for certain indicators that were previously done just by effects running cbs (i.e status message)
             await emitBattleEvent("PreEffectResolved", {preEffectOutcomes});
 
             const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, side) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[side] }));
@@ -112,7 +107,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
-            // Can add new statuses with duration 1, or extend statuses here.
             const postEffectOutcomes = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
 
             await emitBattleEvent('PostEffectResolved', {postEffectOutcomes});
@@ -127,7 +121,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         console.log(combatants.player.health);
         await emitBattleEvent('RoundEnd', {combatants});
 
-        // make calling the setup again the responsibility of engine user!
+        // engine user should call setUp again themselves.
     }
 
     return {
