@@ -1,15 +1,15 @@
 //export function createBattleEngine(opponentAI, reactionmap, deps);
 
 import { SEQUENCE_LENGTH } from "../config/battle.config";
-import { PLAYER_HEALTH_PLACEHOLDER } from "../config/placeholders";
-import { BattleOutcome } from "../types/battle.types";
-import { BattleReactions } from "../types/battleReactions.types";
-import { Combatant } from "../types/combatant";
-import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../types/move";
-import { OpponentAI, OpponentStats } from "../types/opponentProfile";
+import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
+import { BattleOutcome } from "../model/battle";
+import { BattleReactions } from "../events/battleEvent.types";
+import { Combatant } from "../model/combatant";
+import { Move, DamageMultiplierContext, PlannedSequence, PreMoveContext, PostMoveContext } from "../model/move";
+import { OpponentAI, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/battleUtils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sideUtils";
-import { BattleEvent, BattleEventPayload } from "../types/battleReactions.types";
+import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
 
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, /* deps? */) {
 

@@ -1,5 +1,5 @@
 import { PASSTHROUGH_MULTPLIERS } from "../utils/battleUtils";
-import { DamageMultipliers } from "./battle.types";
+import { DamageMultipliers } from "./battle";
 
 // can't enforce an override unfortunately, but we can make the default obnoxious!
 const DEFAULT_STATUS_TYPE = "__EMPTY_STATUS_OVERRIDE_REQUIRED__";
@@ -43,23 +43,3 @@ export class CombatStatus extends Status {
         return {incoming: 1, outgoing: 2 ** level}
     }
 }
-
-// C extends typeof Status returns the constructor of any status
-// which more or less represents Status as a class itself (rather than an instance of Status)
-// function makeSomeStatusAndDoStuffWithIt<C extends typeof Status>(
-//     Ctor: C,
-//     duration?: number
-// ) {
-//     const anyStatus = new Ctor(duration);
-//     console.log(anyStatus, anyStatus.type, anyStatus.icon, anyStatus.getStatusMultipliers(1));
-// }
-
-function makeSomeStatusAndDoStuffWithIt(
-    Ctor: typeof Status,
-    duration?: number
-) {
-    const anyStatus = new Ctor();
-    console.log(anyStatus, anyStatus.name, anyStatus.getStatusMultipliers(1));
-}
-
-makeSomeStatusAndDoStuffWithIt(CombatStatus);

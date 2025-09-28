@@ -1,1 +1,2 @@
 export const SEQUENCE_LENGTH = 5;
+export const PLAYER_HEALTH_PLACEHOLDER = 10;

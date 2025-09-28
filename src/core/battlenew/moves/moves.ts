@@ -1,9 +1,10 @@
-import { Move, MoveType } from "../types/move";
+import { Move, MoveType } from "../model/move";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "../utils/movebehavior.utils";
-import { NegatedByOverwhelm } from "./movebehaviors";
-import { OnlyDoDamageOnDefensive } from "./movebehaviors";
-import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./movebehaviors";
-import { PreparedStatus, VulnerableStatus } from "./statuses";
+import { NegatedByOverwhelm } from "./behaviors";
+import { OnlyDoDamageOnDefensive } from "./behaviors";
+import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./behaviors";
+import { PreparedStatus } from "../statuses/statuses";
+import { VulnerableStatus } from "../statuses/statuses";
 
 export const nothingMove: Move = {
     name: 'idle',

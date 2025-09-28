@@ -1,7 +1,7 @@
 import { Sides } from "../utils/sideUtils";
-import { BattleOutcome, DamageMultipliers } from "./battle.types";
-import { Combatant } from "./combatant";
-import { EffectOutcome, Move, PlannedSequence } from "./move";
+import { BattleOutcome, DamageMultipliers } from "../model/battle";
+import { Combatant } from "../model/combatant";
+import { EffectOutcome, Move, PlannedSequence } from "../model/move";
 
 // Change to Enum?
 export type BattleEvent =

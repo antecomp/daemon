@@ -1,6 +1,6 @@
-import { DamageMultiplierFunction, EffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveContext, PostMoveSideEffect, PreMoveContext, PreMoveSideEffect } from "../types/move";
+import { DamageMultiplierFunction, EffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveContext, PostMoveSideEffect, PreMoveContext, PreMoveSideEffect } from "../model/move";
 import { PASSTHROUGH_MULTPLIERS } from "../utils/battleUtils";
-import { ManiaStatus } from "./statuses";
+import { ManiaStatus } from "../statuses/statuses";
 
 export const PreparedAttackBonus: DamageMultiplierFunction = ({self}) => {
     return {

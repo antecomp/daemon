@@ -1,6 +1,6 @@
 import { AssetURL } from "@/shared/types/misc.types";
-import { Combatant } from "./combatant";
-import { PlannedMove, MoveMeta } from "./move";
+import { Combatant } from "../model/combatant";
+import { PlannedMove, MoveMeta } from "../model/move";
 import { Point } from "@/shared/types/3d.types";
 
 // Try to keep UI stuff, including sprites, completely out
@@ -27,18 +27,4 @@ export interface OpponentAI {
     // consider making these return some information that may be needed context-wise for UI or whatever.
     preRoundBehavior?: (me: Combatant, player: Combatant, /*ctx: any <- for side effects*/) => void;
     postRoundBehavior?: (me: Combatant, player: Combatant, /*ctx: any <- for side effects*/) => void;
-}
-
-export interface OpponentProfile {
-    ai: OpponentAI;
-    stats: OpponentStats;
-    name: string;
-    icon: AssetURL;
-    sprite: AssetURL;
-    spriteOffset?: Point;
-    backgroundShader: string;
-    backgroundShaderTexture?: AssetURL;
-
-    // consider putting the mapping of move names to MoveMeta here,
-    // so it's per-opponent!
 }

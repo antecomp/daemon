@@ -1,6 +1,6 @@
-import { PlannedMove } from "../types/move";
-import { nothingMove } from "./basemoves";
-import { CannotBeFirst } from "./move.validators";
+import { PlannedMove } from "../model/move";
+import { nothingMove } from "./moves";
+import { CannotBeFirst } from "./validators";
 
 export const PlanForRepeat: PlannedMove = {
     name: "repeat",

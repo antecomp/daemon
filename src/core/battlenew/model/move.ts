@@ -1,6 +1,6 @@
 import { AssetURL } from "@/shared/types/misc.types";
 import { Combatant } from "./combatant";
-import { DamageMultipliers } from "./battle.types";
+import { DamageMultipliers } from "./battle";
 import { Sides } from "../utils/sideUtils";
 
 /**
@@ -96,15 +96,3 @@ export type PlannedSequence = PlannedMove[];
 
 // For the UI, we will do a mapping of DynamicMove to presentation data (MoveMeta)
 // keep it all as just logic!
-// ^- this feels fucking stupid. How am I supposed to easily send off a sequence now?? I get the idea but you need to figure that shit all out again lol.
-
-export interface MoveMeta {
-    displayName: string;
-    icon: AssetURL;
-    description?: AssetURL;
-}
-
-export interface PlayerMoveMeta extends MoveMeta {
-    rbIcon: string;
-    description: string; // required
-}

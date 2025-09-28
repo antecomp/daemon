@@ -1,6 +1,6 @@
 import { mul } from "three/tsl";
-import { PreMoveContext, PostMoveContext, EffectOutcome, PostMoveSideEffect, PreMoveSideEffect, DamageMultiplierFunction } from "../types/move";
-import { Status } from "../types/status";
+import { PreMoveContext, PostMoveContext, EffectOutcome, PostMoveSideEffect, PreMoveSideEffect, DamageMultiplierFunction } from "../model/move";
+import { Status } from "../model/status";
 import { combineMultiplierSets, PASSTHROUGH_MULTPLIERS } from "./battleUtils";
 
 

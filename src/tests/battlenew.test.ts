@@ -1,11 +1,11 @@
-import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/placeholders";
-import { attack, nothingMove } from "@/core/battlenew/data/basemoves";
-import { PlanForRepeat } from "@/core/battlenew/data/specialmoves";
+import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/battle.config";
+import { attack, nothingMove } from "@/core/battlenew/moves/moves";
+import { PlanForRepeat } from "@/core/battlenew/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
-import { BattleReactions } from "@/core/battlenew/types/battleReactions.types";
-import { Combatant } from "@/core/battlenew/types/combatant";
-import { PlannedMove, PlannedSequence } from "@/core/battlenew/types/move";
-import { OpponentAI, OpponentStats } from "@/core/battlenew/types/opponentProfile";
+import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
+import { Combatant } from "@/core/battlenew/model/combatant";
+import { PlannedMove, PlannedSequence } from "@/core/battlenew/model/move";
+import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
 import { describe, it, expect, vi, test } from "vitest";
 
 const PlanForNothing: PlannedMove = {

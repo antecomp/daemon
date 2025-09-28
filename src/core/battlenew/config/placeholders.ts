@@ -1,1 +1,0 @@
-export const PLAYER_HEALTH_PLACEHOLDER = 10;

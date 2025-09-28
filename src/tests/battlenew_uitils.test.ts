@@ -1,9 +1,9 @@
-import { idle as idleMove } from "@/core/battlenew/data/basemoves";
-import { VulnerableStatus } from "@/core/battlenew/data/statuses";
-import { DamageMultipliers } from "@/core/battlenew/types/battle.types";
-import { Combatant } from "@/core/battlenew/types/combatant";
-import { DamageMultiplierFunction, EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/types/move";
-import { Status } from "@/core/battlenew/types/status";
+import { idle as idleMove } from "@/core/battlenew/moves/moves";
+import { VulnerableStatus } from "@/core/battlenew/statuses/statuses";
+import { DamageMultipliers } from "@/core/battlenew/model/battle";
+import { Combatant } from "@/core/battlenew/model/combatant";
+import { DamageMultiplierFunction, EffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/model/move";
+import { Status } from "@/core/battlenew/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, PASSTHROUGH_MULTPLIERS, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/battleUtils";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sideUtils";

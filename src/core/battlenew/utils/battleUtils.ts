@@ -1,9 +1,9 @@
 // TODO: EVENTUALLY YOU WILL WANT TO SPLIT THIS INTO SEPERATE UTILITY FUNCTION BY ROUGH DOMAIN PURPOSE. JUST GROUPING FOR NOW FOR ROUGH PROTOTYPING.
 
-import { DamageMultipliers } from "../types/battle.types";
-import { Combatant } from "../types/combatant";
-import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../types/move";
-import { Status } from "../types/status";
+import { DamageMultipliers } from "../model/battle";
+import { Combatant } from "../model/combatant";
+import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, PlannedSequence, EffectOutcome } from "../model/move";
+import { Status } from "../model/status";
 import { Sides } from "./sideUtils";
 
 export const PASSTHROUGH_MULTPLIERS: DamageMultipliers = {incoming: 1, outgoing: 1};
