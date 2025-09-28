@@ -1,6 +1,14 @@
+import { Move } from "../model/move";
 import { PlannedMove } from "../model/plannedmove";
 import { nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
+
+export function planMove(move: Move): PlannedMove {
+    return {
+        name: move.name,
+        instantiate: () => move
+    }
+}
 
 export const repeatPlan: PlannedMove = {
     name: "repeat",
