@@ -8,6 +8,20 @@ export interface OpponentStats {
     // could also do stuff like initial statuses if u want.
 }
 
+
+/**
+ * This interface defines the contract for implementing AI behavior for an opponent,
+ * including move selection and optional pre- and post-round behaviors.
+ *
+ * @property getSequence - A function that determines the sequence of planned moves for the AI,
+ *   given the AI's own combatant state and the player's combatant state.
+ *
+ * @property preRoundBehavior - (Optional) A function executed before a round starts, allowing
+ *   the AI to perform side effects or context-specific logic.
+ *
+ * @property postRoundBehavior - (Optional) A function executed after a round ends, allowing
+ *   the AI to perform side effects or context-specific logic.
+ */
 export interface OpponentAI {
     getSequence: (me: Combatant, player: Combatant) => PlannedMove[];
 

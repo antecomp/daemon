@@ -4,6 +4,17 @@ import { DamageMultipliers } from "./battle";
 // can't enforce an override unfortunately, but we can make the default obnoxious!
 const DEFAULT_STATUS_TYPE = "__EMPTY_STATUS_OVERRIDE_REQUIRED__";
 
+/**
+ * Represents a status effect that can be applied to a combatant.
+ * 
+ * This base class provides a default implementation for status effects,
+ * including a unique name used for identification and a method for
+ * retrieving damage multipliers based on the status level.
+ * 
+ * To create a new status effect, extend this class and override the `name`
+ * property with a unique identifier and, if necessary, override the
+ * `getStatusMultipliers` method to provide custom multiplier logic.
+ */
 export class Status {
     /** Class Field Declaration Of Status Name -- Used for keying statuses in Combatant by name and other checks. 
      * All new statuses must override this with their own unique name! */

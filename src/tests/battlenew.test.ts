@@ -1,6 +1,6 @@
 import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/battle.config";
 import { attack, nothingMove } from "@/core/battlenew/moves/moves";
-import { PlanForRepeat } from "@/core/battlenew/moves/plannedMoves";
+import { repeatPlan } from "@/core/battlenew/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { Combatant } from "@/core/battlenew/model/combatant";
@@ -68,7 +68,7 @@ describe("Sequence Eval basics", () => {
             RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(8)}]
         }
 
-        const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, PlanForRepeat, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
+        const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
         engine.setupRound();
         await engine.executeRound(idlePlan);
     })

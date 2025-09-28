@@ -36,13 +36,24 @@ export type PostMoveContext = DamageMultiplierContext & ClashResult;
 
 export type EndOfMoveContext = PostMoveContext & {postEffectOutcome: MoveSideEffectOutcome | undefined}
 
-export type PreMoveSideEffect       = (context: PreMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
-export type DamageMultiplierFunction  = (context: DamageMultiplierContext) => DamageMultipliers;
-export type PostMoveSideEffect      = (context: PostMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
+export type PreMoveSideEffect = (context: PreMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
+export type DamageMultiplierFunction = (context: DamageMultiplierContext) => DamageMultipliers;
+export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
 
 export type MoveMultiplierConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
 export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
+
+/**
+ * Represents a battle move with a unique name, type, and associated behaviors.
+ *
+ * @property name - Move name used for internal tracking, comparison, and event mapping.
+ * @property type - The type/category of the move. Used for logical checks and to set initial damage multipliers.
+ * @property behaviors - Optional hooks for move side effects and damage calculation:
+ *   - preEffect: Function executed before the move's main effect.
+ *   - damageMultipliers: Function to calculate damage multipliers.
+ *   - postEffect: Function executed after the move's main effect.
+ */
 export interface Move {
     /** Move name - used for internal tracking and comparison. Can be used for mapping in emitted events. Should rarely be used otherwise. */
     name: string;

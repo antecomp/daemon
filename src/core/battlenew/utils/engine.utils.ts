@@ -36,6 +36,18 @@ export function getBaseMultipliers(type: MoveType): DamageMultipliers {
     return BASE_MULTIPLIERS[type];
 }
 
+
+/**
+ * Computes the combined status multipliers from a list of status-level pairs.
+ *
+ * Iterates through each `[Status, number]` tuple in the provided `statusList`,
+ * retrieves the multipliers for each status at the given level using `getStatusMultipliers`,
+ * and combines them using `combineMultiplierSets`. The combination starts from
+ * the `PASSTHROUGH_MULTPLIERS` as the initial accumulator.
+ *
+ * @param statusList - An array of tuples, where each tuple contains a `Status` object and a corresponding level (`number`). <- this is returned by combatant's `getStatuses()` method.
+ * @returns The resulting combined multipliers after applying all statuses in the list.
+ */
 export function computeStatusMultipliers(statusList: [Status, number][]) {
     return statusList.reduce(
         (multacc, [status, level]) => combineMultiplierSets(multacc, status.getStatusMultipliers(level)),
@@ -43,7 +55,7 @@ export function computeStatusMultipliers(statusList: [Status, number][]) {
     )
 }
 
-// goofy name cuz we can also just get the status mults here also
+/* Simple method to group and combine all multiplier calculations together. */
 export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
     const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? PASSTHROUGH_MULTPLIERS;
@@ -76,7 +88,6 @@ export function runMovePostEffect(move: Move, context: PostMoveContext): MoveSid
     return move.behaviors.postEffect?.(context) ?? undefined;
 }
 
-// helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)
 export function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
     if(myPlan.some((plannedMove, index) => !(plannedMove.canPerform?.(myPlan, index) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan);
     return myPlan.map((plannedMove, index) => plannedMove.instantiate({ myPlan, theirPlan, index }));

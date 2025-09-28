@@ -1,4 +1,14 @@
 /**
+ * @fileoverview
+ * Utilities for handling "sides" in battle logic. Where "sides" is simply a Record<'player' | 'opponent', any>
+ *
+ * This module provides types and helper functions for working with the two sides
+ * in a battle: the human player and the AI opponent. It includes utilities for
+ * mapping, iterating, and constructing objects keyed by side, as well as for
+ * flipping perspectives between sides.
+ */
+
+/**
  * Represents a side in battle logic.
  * - 'player' refers to the human player.
  * - 'opponent' refers to the AI combatant.
