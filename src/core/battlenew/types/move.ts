@@ -71,7 +71,7 @@ export interface Move {
     // these should remain relative primitive to just perform battle LOGIC!
 }
 
-export type MoveValidator = (workingSequence: PlannedMove[]) => boolean;
+export type MoveValidator = (workingPlan: PlannedMove[], index: number) => boolean;
 export type PlannedMoveInstantiator = (
     context: {
         myPlan: PlannedMove[],

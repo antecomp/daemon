@@ -1,5 +1,6 @@
 import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/placeholders";
 import { attack, nothingMove } from "@/core/battlenew/data/basemoves";
+import { PlanForRepeat } from "@/core/battlenew/data/specialmoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/types/battleReactions.types";
 import { Combatant } from "@/core/battlenew/types/combatant";
@@ -7,21 +8,21 @@ import { PlannedMove, PlannedSequence } from "@/core/battlenew/types/move";
 import { OpponentAI, OpponentStats } from "@/core/battlenew/types/opponentProfile";
 import { describe, it, expect, vi, test } from "vitest";
 
-const NothingMove: PlannedMove = {
+const PlanForNothing: PlannedMove = {
     name: 'nothing',
     instantiate: () => nothingMove
 }
 
-const idlePlan: PlannedSequence = [NothingMove, NothingMove, NothingMove, NothingMove, NothingMove]
+const idlePlan: PlannedSequence = [PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]
 
-const AttackMovePlan: PlannedMove = {
+const PlanForAttack: PlannedMove = {
     name: 'attack',
     instantiate: () => attack
 }
 
 function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     return {
-        getSequence: (_me, _player) => plan ?? [NothingMove, NothingMove, NothingMove, NothingMove, NothingMove]
+        getSequence: (_me, _player) => plan ?? [PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]
     }
 }
 
@@ -45,7 +46,7 @@ describe("battleEngine init", () => {
         engine.setupRound();
         expect(prepareReaction).toHaveBeenCalled();
 
-        engine.executeRound([NothingMove, NothingMove, NothingMove, NothingMove, NothingMove])
+        engine.executeRound([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing])
         expect(execReaction).toHaveBeenCalled();
     })
 })
@@ -56,7 +57,17 @@ describe("Sequence Eval basics", () => {
             RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(9)}]
         }
         
-        const engine = createBattleEngine(generateSampleOpponentAI([AttackMovePlan, NothingMove, NothingMove, NothingMove, NothingMove]), SAMPLE_OPPONENT_STATS, reactions);
+        const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
+        engine.setupRound();
+        await engine.executeRound(idlePlan);
+    })
+
+    test("Repeat performs attack twice", async () => {
+         const reactions: BattleReactions = {
+            RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(8)}]
+        }
+
+        const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, PlanForRepeat, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
         engine.setupRound();
         await engine.executeRound(idlePlan);
     })

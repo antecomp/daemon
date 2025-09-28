@@ -81,6 +81,6 @@ export function runMovePostEffect(move: Move, context: PostMoveContext): EffectO
 
 // helpers here for laziness, ofc we will want to move this all (to probably a BattleUtils class as a bunch of static methods)
 export function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
-    if(myPlan.some(plannedMove => !(plannedMove.canPerform?.(myPlan) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan);
+    if(myPlan.some((plannedMove, index) => !(plannedMove.canPerform?.(myPlan, index) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan);
     return myPlan.map((plannedMove, index) => plannedMove.instantiate({ myPlan, theirPlan, index }));
 }
