@@ -112,6 +112,16 @@ export class Combatant {
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
+    // kinda jank but needed for PostEffects that need to know the status level before ticking.
+    // better than the whole immediatePostEffect mess.
+    // Avoid using this unless you know exactly why you need this. This is a goofy hack
+    // to fix a logical error that arises from the whole status ticking thing.
+    getStatusLevelIncludingExpired(name: string): number {
+        const entry = this.statuses.get(name);
+        if (!entry) return 0;
+        return entry.durationStack.filter(dur => dur >= 0).length;
+    }    
+
     /**
      * Extends the duration of an existing status effect on the combatant.
      *
