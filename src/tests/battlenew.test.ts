@@ -1,9 +1,7 @@
-import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/battle.config";
 import { attack, defend, evade, heal, nothingMove, overwhelm, prepare } from "@/core/battlenew/moves/moves";
-import { planMove, repeatPlan } from "@/core/battlenew/moves/plannedMoves";
+import { mirrorPlan, planMove, repeatPlan } from "@/core/battlenew/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
-import { Combatant } from "@/core/battlenew/model/combatant";
 import { PlannedSequence } from "@/core/battlenew/model/plannedmove";
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
@@ -335,3 +333,151 @@ describe("Heal scaling with prepare", () => {
         expect(healAmountPrep).toBeGreaterThan(healAmountNorm);
     });
 });
+
+describe("Mirror move", () => {
+    test("Mirror clones basic move", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {player, opponent}}) => {
+                    expect(player.health).toBe(player.maxHealth - 1);
+                    expect(opponent.health).toBe(opponent.maxHealth -1);
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([mirrorPlan, mirrorPlan, mirrorPlan, mirrorPlan, mirrorPlan]);
+    });
+
+    test("Mirror clones basic move (opponent)", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {player, opponent}}) => {
+                    expect(player.health).toBe(player.maxHealth - 1);
+                    expect(opponent.health).toBe(opponent.maxHealth -1);
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([planMove(attack), mirrorPlan, mirrorPlan, mirrorPlan, mirrorPlan]);
+    });
+
+    test("Prepare mirror properly scales move output", async () => {
+            const engine = createBattleEngine(
+                generateSampleOpponentAI([PlanForNothing, planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing]),
+                SAMPLE_OPPONENT_STATS,
+                {
+                    RoundEnd: [({combatants: {player, opponent}}) => {
+                        expect(opponent.health).toBe(opponent.maxHealth - 2); // prepared attack
+                        expect(player.health).toBe(player.maxHealth -1); // Normal attack from opp.
+                    }]
+                }
+            );
+
+            engine.setupRound();
+            await engine.executeRound([planMove(prepare), mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+    test("Mirror->repeat mirrors twice accurately", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(attack), planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {opponent}}) => {
+                    expect(opponent.health).toBe(opponent.maxHealth - 2); // Hit twice
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([mirrorPlan, repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+    test("Mirror->repeat mirrors twice accurately (2)", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(attack), planMove(defend), PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {opponent}}) => {
+                    expect(opponent.health).toBe(opponent.maxHealth - 1); // Hit once once
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([mirrorPlan, repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+    test("Mirror on mirror fails", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {opponent, player}}) => {
+                    expect(opponent.health).toBe(opponent.maxHealth); // No damage taken
+                    expect(player.health).toBe(player.maxHealth);
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+    test("Mirror applies status moves to self correctly", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, planMove(prepare)]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {player, opponent}}) => {
+                    expect(player.getStatusLevel('prepared')).toBe(1);
+                    expect(opponent.getStatusLevel('prepared')).toBe(1);
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, mirrorPlan])
+    });
+
+    test("Mirror on self-effecting moves (e.g heal) properly target self", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing, planMove(heal)]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {player, opponent}}) => {
+                    expect(player.health).toBe(player.maxHealth);
+                    expect(opponent.health).toBe(opponent.maxHealth);
+                }]
+            }
+        );
+
+        engine.setupRound();
+        await engine.executeRound([planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing, mirrorPlan])
+    });
+
+    test("Mirror on repeat, runs *opponents* last move, not our own", async () => {
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(attack), repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundEnd: [({combatants: {opponent}}) => {
+                    expect(opponent.health).toBe(opponent.maxHealth -1);
+                }]
+            }
+        );
+
+        engine.setupRound();
+
+        await engine.executeRound([PlanForNothing, mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+
+
+
+})

@@ -23,3 +23,22 @@ export const repeatPlan: PlannedMove = {
     },
     canPerform: CannotBeFirst
 }
+
+export const mirrorPlan: PlannedMove = {
+    name: 'mirror',
+    instantiate(ctx) {
+        const oppmove = ctx.theirPlan[ctx.index];
+
+        if(oppmove.name == 'mirror') return nothingMove;
+
+        // Swap context as we want moves like repeat to be
+        // in regards to the opponents sequence, not our own.
+        return oppmove.instantiate({
+            myPlan: ctx.theirPlan,
+            theirPlan: ctx.myPlan,
+            index: ctx.index
+        })
+
+        //return oppmove.instantiate(ctx);
+    }
+}
