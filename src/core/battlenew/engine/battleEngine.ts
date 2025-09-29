@@ -125,8 +125,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
                 damageTaken: damagesDealt[oppositeSide(side)],
             }));
 
-            console.log(postCtx);
-
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
             const postEffectOutcomes = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
@@ -140,7 +138,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
 
-        console.log(combatants.player.health);
         await emitBattleEvent('RoundEnd', {combatants});
 
         // engine user should call setUp again themselves.

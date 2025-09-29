@@ -49,6 +49,7 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
 
 export const HealSelf: PostMoveSideEffect = ({self}) => {
     const healAmount = 2 * (1 + self.getStatusLevel('prepared'));
+    console.log(healAmount);
     self.heal(healAmount);
     // How do we communicate this amount back to the UI?
 }
