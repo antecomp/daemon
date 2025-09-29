@@ -34,7 +34,7 @@ export const observe: Move = {
 
 export const evade: Move = {
     name: 'evade',
-    type: MoveType.Aggressive,
+    type: MoveType.Defensive,
     behaviors: {
         preEffect: EvadeRoll,
         damageMultipliers: NegatedByOverwhelm(EvadeDamageReduction),

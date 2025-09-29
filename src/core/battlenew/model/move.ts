@@ -1,6 +1,5 @@
 import { Combatant } from "./combatant";
 import { DamageMultipliers } from "./battle";
-import { Sides } from "../utils/sides.utils";
 
 /**
  * Represents the type of a move, which determines its behavior (base multipliers) and interaction
@@ -17,8 +16,11 @@ export enum MoveSideEffectOutcome {
 
 export interface PreMoveContext {
     self: Combatant;
-    opponent: Combatant;
-    moves: Sides<Move>
+    them: Combatant;
+    moves: {
+        ours: Move,
+        theirs: Move
+    }
 }
 
 export interface DamageMultiplierContext extends PreMoveContext {

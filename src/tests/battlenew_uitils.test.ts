@@ -271,7 +271,7 @@ describe("BattleEngine Utility Functions", () => {
         let moves = makeSidesMap(idleMove, idleMove);
         const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
             self: dolls[side],
-            opponent: dolls[oppositeSide(side)],
+            them: dolls[oppositeSide(side)],
             moves
         }));
 
@@ -466,7 +466,7 @@ describe("Move Behavior Util Methods", () => {
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
-            opponent: new Combatant(20),
+            them: new Combatant(20),
             moves: {
                 player: idleMove,
                 opponent: idleMove
@@ -484,7 +484,7 @@ describe("Move Behavior Util Methods", () => {
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
-            opponent: new Combatant(20),
+            them: new Combatant(20),
             moves: {
                 player: idleMove,
                 opponent: idleMove
@@ -500,7 +500,7 @@ describe("Move Behavior Util Methods", () => {
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
-            opponent: new Combatant(20),
+            them: new Combatant(20),
             moves: {
                 player: idleMove,
                 opponent: idleMove
@@ -532,7 +532,7 @@ describe("Move Behavior Util Methods", () => {
 
         const ctx: PreMoveContext = {
             self: doll,
-            opponent: new Combatant(100),
+            them: new Combatant(100),
             moves: {
                 player: move,
                 opponent: move
@@ -567,7 +567,7 @@ describe("Move Behavior Util Methods", () => {
         }
         const ctx: PreMoveContext = {
             self: doll,
-            opponent: new Combatant(100),
+            them: new Combatant(100),
             moves: {
                 player: move,
                 opponent: move

@@ -1,6 +1,7 @@
 import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect } from "../model/move";
 import { PASSTHROUGH_MULTPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
+import { getBaseMultipliers } from "../utils/engine.utils";
 
 export const PreparedAttackBonus: DamageMultiplierFunction = ({self}) => {
     return {
@@ -62,14 +63,14 @@ export const ReduceIncomingDamage: DamageMultiplierFunction = ({self}) => {
 export const OnlyDoDamageOnDefensive: DamageMultiplierFunction = ({ moves }) => {
     return {
         incoming: 1,
-        outgoing: Number(moves.opponent.type == MoveType.Defensive)
+        outgoing: Number(moves.theirs.type == MoveType.Defensive)
     };
 };
 
 export const NegatedByOverwhelm: MoveMultiplierConditionalWrapper = (mul) => {
     return (ctx) => {
-        if (ctx.moves.opponent.type == MoveType.Overwhelming) {
-            return PASSTHROUGH_MULTPLIERS; // skip
+        if (ctx.moves.theirs.type == MoveType.Overwhelming) {
+            return getBaseMultipliers(MoveType.Defensive); // skip
         } else {
             return mul(ctx);
         }

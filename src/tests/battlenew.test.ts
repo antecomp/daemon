@@ -1,5 +1,5 @@
 import { PLAYER_HEALTH_PLACEHOLDER } from "@/core/battlenew/config/battle.config";
-import { attack, defend, heal, nothingMove, prepare } from "@/core/battlenew/moves/moves";
+import { attack, defend, evade, heal, nothingMove, overwhelm, prepare } from "@/core/battlenew/moves/moves";
 import { planMove, repeatPlan } from "@/core/battlenew/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
@@ -140,5 +140,42 @@ describe("Sequence Eval basics", () => {
         );
         engine.setupRound();
         await engine.executeRound([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, planMove(attack)]);        
-    })
+    });
+})
+
+describe("Overwhelm interactions", () => {
+
+    test("Overwhelm lands on defensive and evade", async () => {
+        const reactions: BattleReactions = {
+            RoundEnd: [({ combatants }) => {
+                expect(combatants.player.health).toBe(8); // two hits of 1 each
+                expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth);
+            }]
+        };
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(overwhelm), planMove(overwhelm), PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            reactions
+        );
+        engine.setupRound();
+        await engine.executeRound([planMove(defend), planMove(evade), PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
+    test("Overwhelm fails vs non-defensive, applies vulnerable to self", async () => {
+        const reactions: BattleReactions = {
+            RoundEnd: [({ combatants }) => {
+                expect(combatants.player.health).toBe(combatants.player.maxHealth); // overwhelm deals 0 vs attack
+                // player attack deals 1, opponent is vulnerable (1.5x incoming)
+                expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 1.5);
+            }]
+        };
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([planMove(overwhelm), PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
+            SAMPLE_OPPONENT_STATS,
+            reactions
+        );
+        engine.setupRound();
+        await engine.executeRound([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]);
+    });
+
 })

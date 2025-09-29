@@ -94,8 +94,11 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 self: combatants[side],
-                opponent: combatants[oppositeSide(side)],
-                moves
+                them: combatants[oppositeSide(side)],
+                moves: {
+                    ours: moves[side],
+                    theirs: moves[oppositeSide(side)]
+                }
             }));
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
@@ -121,6 +124,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
                 damageDealt: damagesDealt[side],
                 damageTaken: damagesDealt[oppositeSide(side)],
             }));
+
+            console.log(postCtx);
 
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
