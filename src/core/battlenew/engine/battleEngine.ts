@@ -50,14 +50,21 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     function handleDeathIfNeeded(): boolean {
         let outcome: BattleOutcome | null = null;
 
-        // Is there a cleaner way of doing this?
         const deathStatuses = mapSides(combatants, x => x.isDead);
-        if(deathStatuses.player) outcome = BattleOutcome.OpponentVictory;
-        if(deathStatuses.opponent) outcome = BattleOutcome.PlayerVictory
-        if(deathStatuses.player && deathStatuses.opponent) outcome = BattleOutcome.Draw;
+        switch (true) {
+            case deathStatuses.player && deathStatuses.opponent:
+                outcome = BattleOutcome.Draw;
+                break;
+            case deathStatuses.player:
+                outcome = BattleOutcome.OpponentVictory;
+                break;
+            case deathStatuses.opponent:
+                outcome = BattleOutcome.PlayerVictory;
+                break;
+        }
 
-        if (!outcome) return false;
-
+        if (outcome == null) return false;
+        
         handleBattleEnd(outcome); 
         return true; // bool check used to breask loop in executeRound.
     }

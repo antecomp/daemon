@@ -6,6 +6,7 @@ import { PlannedSequence } from "@/core/battlenew/model/plannedmove";
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
 import { describe, expect, vi, test } from "vitest";
+import { BattleOutcome } from "@/core/battlenew/model/battle";
 
 const PlanForNothing: PlannedMove = {
     name: 'nothing',
@@ -314,7 +315,7 @@ describe("Heal scaling with prepare", () => {
         const enginePrep = createBattleEngine(generateSampleOpponentAI(
             [PlanForNothing, planMove(prepare), planMove(heal), PlanForNothing, PlanForNothing]
         ), {maxHealth: 100}, {
-            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth); }],
+            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); }],
             RoundEnd: [({ combatants }) => { healAmountPrep = combatants.opponent.health; }]
         });
         await enginePrep.setupRound();
@@ -324,7 +325,7 @@ describe("Heal scaling with prepare", () => {
         const engineNorm = createBattleEngine(generateSampleOpponentAI(
             [PlanForNothing, PlanForNothing, planMove(heal), PlanForNothing, PlanForNothing]
         ), {maxHealth: 100}, {
-            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth); }],
+            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); }],
             RoundEnd: [({ combatants }) => { healAmountNorm = combatants.opponent.health; }]
         });
         await engineNorm.setupRound();
@@ -476,8 +477,75 @@ describe("Mirror move", () => {
 
         await engine.executeRound([PlanForNothing, mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing]);
     });
+})
 
+describe("Death tests", () => {
+    test.each([0,1,2,3,4])("Player death at %i", async (index) => {
 
+        let battleEndTrigger = vi.fn();
+        let moveHitTrigger = vi.fn();
+
+        const engine = createBattleEngine(
+            generateSampleOpponentAI([
+            ...Array(index).fill(PlanForNothing), // Fill with no moves until the attack index
+            planMove(attack), // Opponent attacks at the given index
+            ...Array(4 - index).fill(PlanForNothing) // Fill the remaining moves                
+            ]),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundPrepared: [({combatants: {player}}) => {
+                    player.takeDamage(player.maxHealth - 0.25);
+                }],
+                MoveStart: [moveHitTrigger], // to ensure we only go up to the killing move not the end of the sequence.
+                BattleEnd: [battleEndTrigger] 
+            }
+        );
+
+        await engine.setupRound();
+
+        await engine.executeRound(idlePlan);
+
+        let result = await engine.battleResolutionPromise;
+
+        expect(battleEndTrigger).toHaveBeenCalled();
+        expect(moveHitTrigger).toBeCalledTimes(index + 1);
+        expect(result).toBe(BattleOutcome.OpponentVictory)
+    });
+
+    test.each([0,1,2,3,4])("Opponent death at %i", async (index) => {
+
+        let battleEndTrigger = vi.fn();
+        let moveHitTrigger = vi.fn();
+
+        const engine = createBattleEngine(
+            generateSampleOpponentAI(idlePlan),
+            SAMPLE_OPPONENT_STATS,
+            {
+                RoundPrepared: [({combatants: {opponent}}) => {
+                    opponent.takeDamage(opponent.maxHealth - 0.25);
+                    expect(opponent.health).toBe(0.25);
+                }],
+                MoveStart: [moveHitTrigger], // to ensure we only go up to the killing move not the end of the sequence.
+                BattleEnd: [battleEndTrigger] 
+            }
+        );
+
+        await engine.setupRound();
+
+        await engine.executeRound(
+            [
+            ...Array(index).fill(PlanForNothing), // Fill with no moves until the attack index
+            planMove(attack), // Opponent attacks at the given index
+            ...Array(4 - index).fill(PlanForNothing) // Fill the remaining moves 
+            ]    
+        );
+
+        let result = await engine.battleResolutionPromise;
+
+        expect(battleEndTrigger).toHaveBeenCalled();
+        expect(moveHitTrigger).toBeCalledTimes(index + 1);
+        expect(result).toBe(BattleOutcome.PlayerVictory)
+    });
 
 
 })

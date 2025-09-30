@@ -6,7 +6,6 @@ import { PlannedSequence } from "../model/plannedmove";
 
 // Change to Enum?
 export type BattleEvent =
-    // | "BattleInit"
     | "RoundPrepared"
     | "RoundStart"
     | "MoveStart"
