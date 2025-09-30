@@ -1,0 +1,209 @@
+#battle-actionbar {
+    display: grid;
+    position: absolute; /* don't consume dom space (causes overflow) */
+    grid-template-columns: 320px 669px;
+    height: 113px;
+    translate: 0px -60px;
+
+    .left {
+        position: relative;
+        
+        background: url('../assets/actionbar-left-base.png');
+        background-repeat: no-repeat;
+
+        #runebuilder {
+            position: absolute;
+            /* top: calc(-100% - 18px); */
+            bottom: 0px;
+            left: -3px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #runebuilder circle {
+            pointer-events: auto;
+            transition: stroke linear 0.25s; /* fade effect for when we change the stroke colour */
+        }
+
+        #runebuilder line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 0.5s ease-in forwards;
+            pointer-events: none;
+        }
+
+        #rb-buttons {
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            align-items: start;
+            align-items: end;
+            gap: 3px;
+
+            margin-top: 6px;
+            margin-left: 128px;
+
+            #reset-button {
+                clip-path: polygon(73% 0, 103% 105%, 0 100%, 0 0);
+            }
+
+            #exec-button {
+                clip-path: polygon(100% 0, 100% 71%, 90% 100%, 0 100%, 0 0);
+            }
+
+            #reset-button.usable, #exec-button.usable {
+                filter: brightness(3);
+            }
+
+            /* change to require some sort of "active" class*/
+            #reset-button:active {
+                translate: 2px 0px;
+            }
+
+            #exec-button:active {
+                translate: 2px 0px;
+            }
+
+        }
+
+        #eject-button {
+            z-index: 3;
+            position: absolute;
+            bottom: 1px;
+            left: 0;
+        }
+
+        #eject-button:active {
+            translate: 2px -1px;            
+        }
+    }
+
+    .right {
+        position: relative;
+        background: url('../assets/actionbar-right-base.png');
+        background-repeat: no-repeat;
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: 30px 50px;
+
+        #fch-bar {
+            --level: 25%;
+            --offset: calc(100% - var(--level));
+            margin-top: 6px;
+            margin-left: 15px;
+            background-color: black; /* fallback */
+            background: linear-gradient(135deg, white 50%, black 50%);
+            background-size: 200% 100%;
+            background-position: var(--offset);
+            transition: background-position 0.5s linear;
+        }
+
+        #multbars {
+            display: flex;
+            position: relative;
+            justify-content: center;
+
+            .dbars {
+                position: absolute;
+                top: 0;
+                mix-blend-mode: difference;
+            }
+
+            .ur-bar {
+                --level: 80%;
+                background: linear-gradient(270deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--level);
+            }
+
+            .us-bar {
+                --level: 15%;
+                --offset: calc(100% - var(--level));
+                background: linear-gradient(90deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--offset);
+            }
+
+            .ds-bar {
+                --level: 0%;
+                background: linear-gradient(270deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--level);
+            }
+
+            .dr-bar {
+                --level: 43%;
+                --offset: calc(100% - var(--level));
+                background: linear-gradient(90deg, white 50%, black 50%);
+                background-size: 200% 100%;
+                background-position: var(--offset);
+            }
+
+            .player-statuses {
+                position: absolute;
+                top: 8px;
+                left: 82px;
+            }
+
+            .opp-statuses {
+                position: absolute;
+                top: 8px;
+                right: 82px;
+                display: flex;
+                flex-direction: row-reverse;
+            }
+
+
+        }
+
+        .moves {
+            display: flex;
+            translate: -28px;
+
+            .player-move {
+                display: flex;
+                height: 29px;
+                margin-right: -25px;
+                text-transform: capitalize;
+
+                & div {
+                    background-color: black;
+                    display: flex;
+                    align-items: center;
+                    border-top: solid white 1px;
+                    border-bottom: solid white 1px;
+                    height: 100%;
+                    padding: 5px;
+                }
+
+                & img {
+                    height: min-content;
+                    margin-right: 5px;
+                    margin-left: -8px;
+                    z-index: 2;
+                }
+            }
+
+            .player-move::before {
+                content: url('../assets/opp-hint-l.png');
+                transform: scaleY(-1);
+            }
+
+            .player-move::after {
+                content: url('../assets/opp-hint-r.png');
+                transform: scaleY(-1);
+            }
+        }
+    }
+}
+
+#multbars img {
+    transition: background-position 0.5s linear;
+}
+
+@keyframes drawLine {
+    to {
+        stroke-dashoffset: 0;
+    }
+}

@@ -64,7 +64,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         }
 
         if (outcome == null) return false;
-        
+
         handleBattleEnd(outcome); 
         return true; // bool check used to breask loop in executeRound.
     }
@@ -148,6 +148,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await emitBattleEvent('RoundEnd', {combatants});
 
         // engine user should call setUp again themselves.
+        //await setupRound();
     }
 
     return {
