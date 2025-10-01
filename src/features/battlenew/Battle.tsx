@@ -7,6 +7,7 @@ import { OpponentAI, OpponentStats } from '@/core/battlenew/ai/opponentAI.types'
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import { AssetURL } from '@/shared/types/misc.types';
 import OpponentStatusBar from './ui/OpponentStatusBar';
+import Actionbar from './ui/Actionbar';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -56,6 +57,7 @@ export default function Battle(props: {
                 </CornerRect>
                 <Actionbar
                     executeRound={engine.executeRound} 
+                    forceBattleResolve={engine.forceBattleResolve}
                     {...bridge}
                 />
             </div>

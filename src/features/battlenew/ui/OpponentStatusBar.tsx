@@ -9,10 +9,10 @@ interface OpponentStatusBarProps {
     name: string;
     icon: AssetURL;
     health: number;
-    planPreview: string[]; // TODO: Eventually this will be a proper thing with the icon.
+    planPreview: (string | undefined)[]; // TODO: Eventually this will be a proper thing with the icon.
 }
 
-function OppPlanEntry(props: {icon?: AssetURL, name: string}) {
+function OppPlanEntry(props: {icon?: AssetURL, name: string | undefined}) {
     return <span class="opp-hint">
             <div>
                 {props.icon && <img src={props.icon} alt="" />}
