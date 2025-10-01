@@ -1,60 +1,63 @@
-import { onMount } from 'solid-js';
-import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
-import OppStatusBar from './ui/OppStatusbar';
-import Actionbar from './ui/Actionbar';
-import { BattleOutcome, DVOpponentData } from '@/core/battle/engine/battle.types';
-import { BattleUIStateContext } from '@/core/battle/engine/battle.context';
-import { useBattleLogic } from '@/core/battle/engine/battle.logic';
-import BattleCanvas from './ui/BattleCanvas';
-import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
-
-import './ui/battle.css'
-import vtl from './assets/vtl.png'
-import vtr from './assets/vtr.png'
+import './ui/battle.css';
+import vtl from './assets/vtl.png';
+import vtr from './assets/vtr.png';
+import { Accessor, createContext, onMount, useContext } from 'solid-js';
 import { createUIBridedBattleEngine } from './bridge/battleEngineBridge';
 import { OpponentAI, OpponentStats } from '@/core/battlenew/ai/opponentAI.types';
+import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
+import { AssetURL } from '@/shared/types/misc.types';
+import OpponentStatusBar from './ui/OpponentStatusBar';
 
-export interface BattleProps {
-    opponentProfile: {
-        slop: any, // can maybe do the sprite shiut here. idk how u wanna organize it. This is just a rough example.
-        stats: OpponentStats
-        ai: OpponentAI
-    },
+export enum BattleUIState {WAITING, READY, EXECUTING, END};
+
+interface BattleUIStateMachine {
+    battleUIState: Accessor<BattleUIState>,
+    setBattleUIState: (newState: BattleUIState) => void;
 }
 
-export default function Battle(props: BattleProps) {
+export const BattleUIStateContext = createContext<BattleUIStateMachine>();
 
-    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
+export const useBattleUIState = () => {
+    const context = useContext(BattleUIStateContext);
+    if (!context) throw new Error("useBattleUIState must be within BattleUIState provider (Battle Component)");
+    return context;    
+}
 
-    const bridge = createUIBridedBattleEngine(props.opponentProfile.ai, props.opponentProfile.stats);
+interface OpponentProfile {
+    display: { /* all the shit for sprite, names, etc here */
+        name: string;
+        icon: AssetURL
+    } 
+    
+    logic: {
+        ai: OpponentAI,
+        stats: OpponentStats
+    }
+}
 
-    // Method of passing the promise up to caller (battleManager).
-    props.battleResultPromiseRef.current = battleResultPromise; 
+export default function Battle(props: {
+    opp: OpponentProfile
+}) {
+    const {engine, ...bridge} = createUIBridedBattleEngine(props.opp.logic.ai, props.opp.logic.stats);
 
-    onMount(() => {
-        bridge.engine.setupRound();
-    });
+    onMount(() => engine.setupRound());
 
     return (
-        <BattleUIStateContext.Provider value={{battleUIState, setBattleUIState}}>
-            {filterSVG}
-            <div 
-                id="battle-container" 
-                ref={mainUIRef}
-                style={{
-                    filter: `url(#${filterID})`
-                }}
-            >
+        <BattleUIStateContext.Provider value={{...bridge}}>
+            <div id="battle-container">
                 <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
-                    <OppStatusBar
-                        name={opponent.name.toUpperCase()}
-                        health={opponent.healthPercent}
-                        icon={props.opponentData.icon}
-                        sequenceHint={insight()}
+                    <OpponentStatusBar
+                        name={props.opp.display.name}
+                        icon={props.opp.display.icon}
+
+                        health={bridge.opponentHealthPercentage()}
+                        planPreview={bridge.opponentPlanPreview()}
                     />
-                    <BattleCanvas {...props.opponentData} />
                 </CornerRect>
-                <Actionbar execSequence={executeRound} playerHealth={player.healthPercent} {...{playerMults, opponentMults, currentStatuses, forceBattleResolve}} />
+                <Actionbar
+                    executeRound={engine.executeRound} 
+                    {...bridge}
+                />
             </div>
         </BattleUIStateContext.Provider>
     )

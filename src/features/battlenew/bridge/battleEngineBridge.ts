@@ -23,14 +23,15 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
-
+        
     };
 
 
     const engine = createBattleEngine(opponentAI, opponentStats, reactions);
 
     return {
-        playerMults, opponentMults, battleUIState, playerHealthPercentage, opponentHealthPercentage, opponentPlanPreview, engine
+        playerMults, opponentMults, battleUIState, playerHealthPercentage, opponentHealthPercentage, opponentPlanPreview, engine,
+        setBattleUIState
     }
 
 
