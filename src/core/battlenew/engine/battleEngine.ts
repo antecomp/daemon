@@ -30,9 +30,7 @@ import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, /* deps? */) {
 
     async function emitBattleEvent<K extends BattleEvent>(event: K, payload: BattleEventPayload[K]) {
-        for (const handler of reactions?.[event] ?? []) {
-            await handler(payload);
-        }
+        await reactions[event]?.(payload);
     }
 
     const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))

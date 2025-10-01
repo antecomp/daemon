@@ -37,8 +37,8 @@ describe("battleEngine init", () => {
         const execReaction = vi.fn();
 
         const reactions: BattleReactions = {
-            RoundPrepared: [prepareReaction],
-            RoundStart: [execReaction]
+            RoundPrepared: prepareReaction,
+            RoundStart: execReaction
         }
 
         const engine = createBattleEngine(generateSampleOpponentAI(), SAMPLE_OPPONENT_STATS, reactions);
@@ -54,7 +54,7 @@ describe("battleEngine init", () => {
 describe("Sequence Eval basics", () => {
     test("Attack damage dealt", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(9)}]
+            RoundEnd: ({combatants}) => {expect(combatants.player.health).toBe(9)}
         }
         
         const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
@@ -64,7 +64,7 @@ describe("Sequence Eval basics", () => {
 
     test("Repeat performs attack twice", async () => {
          const reactions: BattleReactions = {
-            RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(8)}]
+            RoundEnd: ({combatants}) => {expect(combatants.player.health).toBe(8)}
         }
 
         const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
@@ -74,7 +74,7 @@ describe("Sequence Eval basics", () => {
 
     test("Defend reduces incoming damage", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({combatants}) => {expect(combatants.player.health).toBe(9.5)}]
+            RoundEnd: ({combatants}) => {expect(combatants.player.health).toBe(9.5)}
         }
         
         const engine = createBattleEngine(generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]), SAMPLE_OPPONENT_STATS, reactions);
@@ -84,8 +84,8 @@ describe("Sequence Eval basics", () => {
 
     test("Heal fails based on RequiresFocus", async () => {
          const reactions: BattleReactions = {
-            RoundStart: [({combatants}) => combatants.opponent.takeDamage(10)],
-            RoundEnd: [({combatants}) => {expect(combatants.opponent.health).toBeLessThan(combatants.opponent.maxHealth - 10)}]
+            RoundStart: ({combatants}) => combatants.opponent.takeDamage(10),
+            RoundEnd: ({combatants}) => {expect(combatants.opponent.health).toBeLessThan(combatants.opponent.maxHealth - 10)}
         };
 
         const engine = createBattleEngine(
@@ -99,8 +99,8 @@ describe("Sequence Eval basics", () => {
 
     test("Heal succeeds with focus", async () => {
          const reactions: BattleReactions = {
-            RoundStart: [({combatants}) => combatants.opponent.takeDamage(10)],
-            RoundEnd: [({combatants}) => {expect(combatants.opponent.health).toBeGreaterThan(combatants.opponent.maxHealth - 10)}]
+            RoundStart: ({combatants}) => combatants.opponent.takeDamage(10),
+            RoundEnd: ({combatants}) => {expect(combatants.opponent.health).toBeGreaterThan(combatants.opponent.maxHealth - 10)}
         };
 
         const engine = createBattleEngine(
@@ -114,7 +114,7 @@ describe("Sequence Eval basics", () => {
 
     test("Prepare adds status on success", async () => {
          const reactions: BattleReactions = {
-            RoundEnd: [({combatants}) => {expect(combatants.opponent.getStatusLevel('prepared')).toBe(1)}]
+            RoundEnd: ({combatants}) => {expect(combatants.opponent.getStatusLevel('prepared')).toBe(1)}
         };
 
         const engine = createBattleEngine(
@@ -129,7 +129,7 @@ describe("Sequence Eval basics", () => {
 
     test("Prepare fails without focus", async () => {
          const reactions: BattleReactions = {
-            RoundEnd: [({combatants}) => {expect(combatants.opponent.getStatusLevel('prepared')).toBe(0)}]
+            RoundEnd: ({combatants}) => {expect(combatants.opponent.getStatusLevel('prepared')).toBe(0)}
         };
 
         const engine = createBattleEngine(
@@ -146,10 +146,10 @@ describe("Overwhelm interactions", () => {
 
     test("Overwhelm lands on defensive and evade", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.player.health).toBe(8); // two hits of 1 each
                 expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth);
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([planMove(overwhelm), planMove(overwhelm), PlanForNothing, PlanForNothing, PlanForNothing]),
@@ -162,11 +162,11 @@ describe("Overwhelm interactions", () => {
 
     test("Overwhelm fails vs non-defensive, applies vulnerable to self", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.player.health).toBe(combatants.player.maxHealth); // overwhelm deals 0 vs attack
                 // player attack deals 1, opponent is vulnerable (1.5x incoming)
                 expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 1.5);
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([planMove(overwhelm), PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
@@ -181,16 +181,16 @@ describe("Overwhelm interactions", () => {
 describe("Prepare effects", () => {
     test("Prepare attack does bonus damage", async () => {
         const engine = createBattleEngine(generateSampleOpponentAI(), SAMPLE_OPPONENT_STATS, {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 2);
-            }]
+            }
         });
         engine.setupRound();
         await engine.executeRound([planMove(prepare), PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing]);
         const engine2 = createBattleEngine(generateSampleOpponentAI(), SAMPLE_OPPONENT_STATS, {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 4);
-            }]
+            }
         });
         engine2.setupRound();
         await engine2.executeRound([planMove(prepare), repeatPlan, PlanForAttack, PlanForNothing, PlanForNothing]);
@@ -198,7 +198,7 @@ describe("Prepare effects", () => {
     test("Prepare wraps to next round", async () => {
         let phase = 0;
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 if (phase === 0) {
                     // After first round ending with prepare at last index, prepared should persist
                     expect(combatants.player.getStatusLevel('prepared')).toBe(1);
@@ -207,7 +207,7 @@ describe("Prepare effects", () => {
                     // After second round starting with attack, should deal 2 damage
                     expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 2);
                 }
-            }]
+            }
         };
         const engine = createBattleEngine(generateSampleOpponentAI(), SAMPLE_OPPONENT_STATS, reactions);
         await engine.setupRound();
@@ -222,12 +222,12 @@ describe("Evade behavior", () => {
         let success = 0;
         let runs = 1000;
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 if (combatants.player.health === combatants.player.maxHealth) success++;
                 // heal back to max for reuse
                 combatants.player.heal(999);
                 combatants.opponent.heal(999);
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
@@ -246,11 +246,11 @@ describe("Evade behavior", () => {
         let success = 0;
         let runs = 500; // Slightly lower to keep runtime reasonable
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 if (combatants.player.health === combatants.player.maxHealth) success++;
                 combatants.player.heal(999);
                 combatants.opponent.heal(999);
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([PlanForNothing, PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing]),
@@ -267,9 +267,9 @@ describe("Evade behavior", () => {
     });
     test("Evade guaranteed on prepare + repeat", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.player.health).toBe(combatants.player.maxHealth);
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([PlanForNothing, PlanForNothing, PlanForAttack, PlanForNothing, PlanForNothing]),
@@ -281,10 +281,10 @@ describe("Evade behavior", () => {
     });
     test("Evade counterattack bonus (mania)", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.player.health).toBe(combatants.player.maxHealth); // evaded
                 expect(combatants.opponent.health).toBe(combatants.opponent.maxHealth - 2); // mania doubles next attack
-            }]
+            }
         };
         const engine = createBattleEngine(
             generateSampleOpponentAI([PlanForNothing, PlanForNothing, PlanForAttack, PlanForNothing, PlanForNothing]),
@@ -296,9 +296,9 @@ describe("Evade behavior", () => {
     });
     test("No mania if not attacked", async () => {
         const reactions: BattleReactions = {
-            RoundEnd: [({ combatants }) => {
+            RoundEnd: ({ combatants }) => {
                 expect(combatants.player.getStatusLevel('mania')).toBe(0);
-            }]
+            }
         };
         const engine = createBattleEngine(generateSampleOpponentAI(), SAMPLE_OPPONENT_STATS, reactions);
         await engine.setupRound();
@@ -315,8 +315,8 @@ describe("Heal scaling with prepare", () => {
         const enginePrep = createBattleEngine(generateSampleOpponentAI(
             [PlanForNothing, planMove(prepare), planMove(heal), PlanForNothing, PlanForNothing]
         ), {maxHealth: 100}, {
-            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); }],
-            RoundEnd: [({ combatants }) => { healAmountPrep = combatants.opponent.health; }]
+            RoundStart: ({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); },
+            RoundEnd: ({ combatants }) => { healAmountPrep = combatants.opponent.health; }
         });
         await enginePrep.setupRound();
         await enginePrep.executeRound(idlePlan);
@@ -325,8 +325,8 @@ describe("Heal scaling with prepare", () => {
         const engineNorm = createBattleEngine(generateSampleOpponentAI(
             [PlanForNothing, PlanForNothing, planMove(heal), PlanForNothing, PlanForNothing]
         ), {maxHealth: 100}, {
-            RoundStart: [({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); }],
-            RoundEnd: [({ combatants }) => { healAmountNorm = combatants.opponent.health; }]
+            RoundStart: ({ combatants }) => { combatants.opponent.takeDamage(combatants.opponent.maxHealth - 1); },
+            RoundEnd: ({ combatants }) => { healAmountNorm = combatants.opponent.health; }
         });
         await engineNorm.setupRound();
         await engineNorm.executeRound(idlePlan);
@@ -341,10 +341,10 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([PlanForAttack, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {player, opponent}}) => {
+                RoundEnd: ({combatants: {player, opponent}}) => {
                     expect(player.health).toBe(player.maxHealth - 1);
                     expect(opponent.health).toBe(opponent.maxHealth -1);
-                }]
+                }
             }
         );
 
@@ -357,10 +357,10 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {player, opponent}}) => {
+                RoundEnd: ({combatants: {player, opponent}}) => {
                     expect(player.health).toBe(player.maxHealth - 1);
                     expect(opponent.health).toBe(opponent.maxHealth -1);
-                }]
+                }
             }
         );
 
@@ -373,10 +373,10 @@ describe("Mirror move", () => {
                 generateSampleOpponentAI([PlanForNothing, planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing]),
                 SAMPLE_OPPONENT_STATS,
                 {
-                    RoundEnd: [({combatants: {player, opponent}}) => {
+                    RoundEnd: ({combatants: {player, opponent}}) => {
                         expect(opponent.health).toBe(opponent.maxHealth - 2); // prepared attack
                         expect(player.health).toBe(player.maxHealth -1); // Normal attack from opp.
-                    }]
+                    }
                 }
             );
 
@@ -389,9 +389,9 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([planMove(attack), planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {opponent}}) => {
+                RoundEnd: ({combatants: {opponent}}) => {
                     expect(opponent.health).toBe(opponent.maxHealth - 2); // Hit twice
-                }]
+                }
             }
         );
 
@@ -404,9 +404,9 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([planMove(attack), planMove(defend), PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {opponent}}) => {
+                RoundEnd: ({combatants: {opponent}}) => {
                     expect(opponent.health).toBe(opponent.maxHealth - 1); // Hit once once
-                }]
+                }
             }
         );
 
@@ -419,10 +419,10 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([mirrorPlan, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {opponent, player}}) => {
+                RoundEnd: ({combatants: {opponent, player}}) => {
                     expect(opponent.health).toBe(opponent.maxHealth); // No damage taken
                     expect(player.health).toBe(player.maxHealth);
-                }]
+                }
             }
         );
 
@@ -435,10 +435,10 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, planMove(prepare)]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {player, opponent}}) => {
+                RoundEnd: ({combatants: {player, opponent}}) => {
                     expect(player.getStatusLevel('prepared')).toBe(1);
                     expect(opponent.getStatusLevel('prepared')).toBe(1);
-                }]
+                }
             }
         );
 
@@ -451,10 +451,10 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([planMove(attack), PlanForNothing, PlanForNothing, PlanForNothing, planMove(heal)]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {player, opponent}}) => {
+                RoundEnd: ({combatants: {player, opponent}}) => {
                     expect(player.health).toBe(player.maxHealth);
                     expect(opponent.health).toBe(opponent.maxHealth);
-                }]
+                }
             }
         );
 
@@ -467,9 +467,9 @@ describe("Mirror move", () => {
             generateSampleOpponentAI([planMove(attack), repeatPlan, PlanForNothing, PlanForNothing, PlanForNothing]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundEnd: [({combatants: {opponent}}) => {
+                RoundEnd: ({combatants: {opponent}}) => {
                     expect(opponent.health).toBe(opponent.maxHealth -1);
-                }]
+                }
             }
         );
 
@@ -493,11 +493,11 @@ describe("Death tests", () => {
             ]),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundPrepared: [({combatants: {player}}) => {
+                RoundPrepared: ({combatants: {player}}) => {
                     player.takeDamage(player.maxHealth - 0.25);
-                }],
-                MoveStart: [moveHitTrigger], // to ensure we only go up to the killing move not the end of the sequence.
-                BattleEnd: [battleEndTrigger] 
+                },
+                MoveStart: moveHitTrigger, // to ensure we only go up to the killing move not the end of the sequence.
+                BattleEnd: battleEndTrigger 
             }
         );
 
@@ -521,12 +521,12 @@ describe("Death tests", () => {
             generateSampleOpponentAI(idlePlan),
             SAMPLE_OPPONENT_STATS,
             {
-                RoundPrepared: [({combatants: {opponent}}) => {
+                RoundPrepared: ({combatants: {opponent}}) => {
                     opponent.takeDamage(opponent.maxHealth - 0.25);
                     expect(opponent.health).toBe(0.25);
-                }],
-                MoveStart: [moveHitTrigger], // to ensure we only go up to the killing move not the end of the sequence.
-                BattleEnd: [battleEndTrigger] 
+                },
+                MoveStart: moveHitTrigger, // to ensure we only go up to the killing move not the end of the sequence.
+                BattleEnd: battleEndTrigger
             }
         );
 

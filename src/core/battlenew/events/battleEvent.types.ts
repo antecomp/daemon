@@ -57,5 +57,5 @@ export type BattleEventPayload = {
 }
 
 export type Reaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;
-export type BattleReactions = Partial<{[K in BattleEvent]: Reaction<K>[]}>;
+export type BattleReactions = Partial<{[K in BattleEvent]: Reaction<K>}>;
 
