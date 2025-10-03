@@ -4,19 +4,21 @@ import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
 import { For } from 'solid-js';
+import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types';
 
 interface OpponentStatusBarProps {
     name: string;
     icon: AssetURL;
     health: number;
     planPreview: (string | undefined)[]; // TODO: Eventually this will be a proper thing with the icon.
+    lexicon: MoveLexicon
 }
 
-function OppPlanEntry(props: {icon?: AssetURL, name: string | undefined}) {
+function OppPlanEntry(props: {icon?: AssetURL, label: string}) {
     return <span class="opp-hint">
             <div>
-                {props.icon && <img src={props.icon} alt="" />}
-                {props.name ?? "???"}
+                {props.icon && <img src={props.icon}/>}
+                {props.label}
             </div>        
     </span>
 }
@@ -38,7 +40,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
             </div>
             <div id="opp-hint-container">
                 <For each={props.planPreview}>
-                    {(plannedMove) => <OppPlanEntry name={plannedMove}/>}
+                    {(plannedMove) => <OppPlanEntry {...(plannedMove ? props.lexicon[plannedMove] : {label: '???'})}/>}
                 </For>
             </div>
         </div>

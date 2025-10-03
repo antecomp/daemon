@@ -8,6 +8,8 @@ import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import { AssetURL } from '@/shared/types/misc.types';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
+import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types';
+import { BASE_MOVE_LEXICON } from '@/core/battlenew/lexicon/moveLexicon';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -28,6 +30,7 @@ interface OpponentProfile {
     display: { /* all the shit for sprite, names, etc here */
         name: string;
         icon: AssetURL
+        lexicon: Partial<MoveLexicon>
     } 
     
     logic: {
@@ -36,21 +39,34 @@ interface OpponentProfile {
     }
 }
 
+interface PlayerProfile {
+    display: {
+        lexicon:Partial<MoveLexicon>
+    }    
+}
+
 export default function Battle(props: {
-    opp: OpponentProfile
+    opponentProfile: OpponentProfile
+    playerProfile: PlayerProfile
 }) {
-    const {engine, ...bridge} = createUIBridedBattleEngine(props.opp.logic.ai, props.opp.logic.stats);
+    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats);
 
     onMount(() => engine.setupRound());
+
+    // Unelegant type cast because Partial technically means we can set a value to undefined (overriding BASE). This 'as' ignores that, but
+    // relies on us not being a moron. TODO LATER: Research a partialButNotUndefined shit.
+    const playerLexicon = {...BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
+
+    const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
 
     return (
         <BattleUIStateContext.Provider value={{...bridge}}>
             <div id="battle-container">
                 <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                     <OpponentStatusBar
-                        name={props.opp.display.name}
-                        icon={props.opp.display.icon}
-
+                        name={props.opponentProfile.display.name}
+                        icon={props.opponentProfile.display.icon}
+                        lexicon={opponentLexicon}
                         health={bridge.opponentHealthPercentage()}
                         planPreview={bridge.opponentPlanPreview()}
                     />
