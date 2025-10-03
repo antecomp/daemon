@@ -10,7 +10,7 @@ interface OpponentStatusBarProps {
     name: string;
     icon: AssetURL;
     health: number;
-    planPreview: (string | undefined)[]; // TODO: Eventually this will be a proper thing with the icon.
+    planPreview: (string | null)[]; // TODO: Eventually this will be a proper thing with the icon.
     lexicon: MoveLexicon
 }
 

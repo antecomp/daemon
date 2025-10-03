@@ -12,14 +12,14 @@ export enum BattleUIState {
 
 const HINT_AMOUNT = 3;
 
-const generateHint = (seq: PlannedMove[]): (string | undefined)[] => { /* Later this should return some nicer interface. */
+const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this should return some nicer interface. */
     const indices = new Set<number>
 
     while (indices.size < HINT_AMOUNT) {
         indices.add(Math.floor(Math.random() * seq.length));
     }
 
-    return seq.map((item, index) => indices.has(index) ? undefined : item.name);
+    return seq.map((item, index) => indices.has(index) ? null : item.name);
 }
 
 export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats) {
@@ -30,7 +30,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
-    const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | undefined)[]>([]); // will just do names until we have proper mapping code.
+    const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]); // will just do names until we have proper mapping code.
 
     // holding off on the current statuses thing until I have more mapping info.
 
