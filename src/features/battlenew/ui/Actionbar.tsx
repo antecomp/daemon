@@ -8,10 +8,12 @@ import ur_bar from '../assets/mult_ur.png'
 import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
-import { Accessor, For } from 'solid-js'
+import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battlenew/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
+import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types'
+import Runebuilder from './Runebuilder'
 
 interface SelectedMoveProps {
     icon?: string // img url
@@ -36,6 +38,7 @@ interface ActionbarProps {
     opponentMults: Accessor<DamageMultipliers>,
     // currentStatuses
     forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
+    lexicon: MoveLexicon
 }
 
 // Scaling from a multiplier range of 1/5 to 5 to a nice percentage amount for visualization
@@ -54,13 +57,35 @@ function mapMultiplier(multiplier: number): number {
 export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
 
-    // TODO: DECIDE ON PROPER MAPPING SYSTEM FOR UI MOVES TO MOVES
-    // DO WE DO A MAPPING OR WRAPPER?
-
     const handleEject = () => {
         if(battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
             props.forceBattleResolve(BattleOutcome.PlayerEject);
         }
+    }
+
+    // Just buffer the plans by name, then we will map to the actual logical object from some bank
+    const [planBuffer, setPlanBuffer] = createSignal<string[]>([]);
+    const appendToPlan = (toAdd: string) => {
+        if(battleUIState() != BattleUIState.WAITING) return;
+
+        setPlanBuffer(prev => {
+            // Validate Before Adding
+
+            // Add (Return Updated)
+
+            // Run state update side effect if appropriate (sequence ready)
+
+            return prev; // noop
+        })
+    }
+
+    const handleExecClick = async () => {
+        // todo
+    }
+
+    const resetPlan = () => {
+        // check if battle state allows this
+        // set plan buffer to []
     }
 
     return (
@@ -70,19 +95,23 @@ export default function Actionbar(props: ActionbarProps) {
                     onClick={handleEject}
                 />
             </div>
-            <Runebuilder />
+            <Runebuilder
+                lexicon={props.lexicon}
+                appendToPlan={appendToPlan}
+                planBuffer={planBuffer()}
+            />
             <div id="rb-buttons">
                 <img
                     id='reset-button'
                     src={reset_button}
-                // onClick={resetRunes} 
-                // classList={{usable: sequenceBuffer().length > 0}}
+                    onClick={resetPlan} 
+                    classList={{usable: planBuffer().length > 0}}
                 />
                 <img
                     id='exec-button'
                     src={exec_button}
                     classList={{ usable: (battleUIState() == BattleUIState.READY) }}
-                // onClick={handleExecClick}
+                    onClick={handleExecClick}
                 />
             </div>
             <div class="right">
