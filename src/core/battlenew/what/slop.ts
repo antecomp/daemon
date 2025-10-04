@@ -15,4 +15,6 @@ export const playerRunes = {
     prepare: planMove(prepare)
 }
 
-export const playerRuneNames = Object.keys(playerRunes) as (keyof typeof playerRunes)[];
+export type PlayerRuneName = keyof typeof playerRunes;
+
+export const playerRuneNames = Object.keys(playerRunes) as PlayerRuneName[];

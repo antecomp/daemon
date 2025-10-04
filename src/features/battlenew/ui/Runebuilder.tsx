@@ -3,7 +3,7 @@ import { BattleUIState, useBattleUIState } from "../Battle";
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
-import { playerRuneNames } from "@/core/battlenew/what/slop";
+import { PlayerRuneName, playerRuneNames } from "@/core/battlenew/what/slop";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
@@ -13,7 +13,7 @@ const RB_ACTIVE_COLOUR = "white";
 
 export default function Runebuilder(props: {
     lexicon: MoveLexicon,
-    appendToPlan: (toAdd: string) => void;
+    appendToPlan: (toAdd: PlayerRuneName) => void;
     planBuffer: string[] 
 }) {
     const {battleUIState} = useBattleUIState();

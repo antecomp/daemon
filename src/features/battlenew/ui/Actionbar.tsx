@@ -14,18 +14,21 @@ import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
 import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types'
 import Runebuilder from './Runebuilder'
+import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
+import { PlayerRuneName, playerRunes } from '@/core/battlenew/what/slop'
 
-interface SelectedMoveProps {
-    icon?: string // img url
-    name: string
-}
+function SelectedMove(props: {
+    lexicon: MoveLexicon
+    moveName: string
+}) {
 
-function SelectedMove(props: SelectedMoveProps) {
+    const entry = props.lexicon[props.moveName];
+
     return (
         <span class="player-move">
             <div>
-                <img src={props.icon}/>
-                {props.name}
+                <img src={entry.icon}/>
+                {entry.label}
             </div>
         </span>
     )
@@ -54,6 +57,8 @@ function mapMultiplier(multiplier: number): number {
 
 }
 
+const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => playerRunes[movename]);
+
 export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
 
@@ -64,28 +69,42 @@ export default function Actionbar(props: ActionbarProps) {
     }
 
     // Just buffer the plans by name, then we will map to the actual logical object from some bank
-    const [planBuffer, setPlanBuffer] = createSignal<string[]>([]);
-    const appendToPlan = (toAdd: string) => {
+    const [planBuffer, setPlanBuffer] = createSignal<PlayerRuneName[]>([]);
+    const appendToPlan = (toAdd: PlayerRuneName) => {
         if(battleUIState() != BattleUIState.WAITING) return;
 
         setPlanBuffer(prev => {
             // Validate Before Adding
+            if(prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full
+            if (prev.some(item => item == toAdd)) return prev;
+
+            const canPerform = playerRunes[toAdd].canPerform
+            if (canPerform && !canPerform(actualizePlan(prev), prev.length)) return prev;
+
+            // TODO: Add visual indication of rune selection rejection (when the above fails)
 
             // Add (Return Updated)
-
+            const rtn = [...prev, toAdd];
             // Run state update side effect if appropriate (sequence ready)
+            if(rtn.length == 5) {
+                setBattleUIState(BattleUIState.READY);
+            }
 
-            return prev; // noop
+            return rtn;
         })
     }
 
     const handleExecClick = async () => {
-        // todo
+        if(battleUIState() != BattleUIState.READY) return;
+        await props.executeRound(actualizePlan(planBuffer()));
+        setPlanBuffer([]);
     }
 
     const resetPlan = () => {
-        // check if battle state allows this
-        // set plan buffer to []
+        if(battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
+            setBattleUIState(BattleUIState.WAITING);
+            setPlanBuffer([]);
+        }
     }
 
     return (
@@ -116,9 +135,9 @@ export default function Actionbar(props: ActionbarProps) {
             </div>
             <div class="right">
                 <div class="moves">
-                    {/* <For each={sequenceBuffer()}>
-                        {(x) => <SelectedMove {...x} />}
-                    </For> */}
+                    <For each={planBuffer()}>
+                        {(m) => <SelectedMove moveName={m} lexicon={props.lexicon}/>}
+                    </For>
                 </div>
                 <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />
                 <div id="multbars">
