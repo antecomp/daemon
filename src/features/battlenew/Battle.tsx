@@ -1,4 +1,5 @@
 import './ui/battle.css';
+
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
 import { Accessor, createContext, onMount, useContext } from 'solid-js';
@@ -9,7 +10,9 @@ import { AssetURL } from '@/shared/types/misc.types';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
 import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types';
-import { BASE_MOVE_LEXICON } from '@/core/battlenew/lexicon/moveLexicon';
+import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/core/battlenew/lexicon/moveLexicon';
+import BattleCanvas from './ui/BattleCanvas';
+import attachToConsole from '@/devtools/attachToConsole';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -51,10 +54,15 @@ export default function Battle(props: {
 }) {
     const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats);
 
-    onMount(() => engine.setupRound());
+    onMount(
+        () => {
+            engine.setupRound();
+            attachToConsole(engine, "B_ENGINE");
+        }
+    );
 
     // Probably want to change this to better unwrap the custom lexicon (so we don't have to redefine the icon when we alias a move.)
-    const playerLexicon = {...BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
+    const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
 
     const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
 
@@ -69,6 +77,7 @@ export default function Battle(props: {
                         health={bridge.opponentHealthPercentage()}
                         planPreview={bridge.opponentPlanPreview()}
                     />
+                    <BattleCanvas/>
                 </CornerRect>
                 <Actionbar
                     lexicon={playerLexicon}

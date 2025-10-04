@@ -8,6 +8,7 @@ import ur_bar from '../assets/mult_ur.png'
 import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
+
 import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battlenew/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
@@ -113,7 +114,6 @@ export default function Actionbar(props: ActionbarProps) {
                 <img src={eject_button} id="eject-button"
                     onClick={handleEject}
                 />
-            </div>
             <Runebuilder
                 lexicon={props.lexicon}
                 appendToPlan={appendToPlan}
@@ -132,6 +132,7 @@ export default function Actionbar(props: ActionbarProps) {
                     classList={{ usable: (battleUIState() == BattleUIState.READY) }}
                     onClick={handleExecClick}
                 />
+            </div>
             </div>
             <div class="right">
                 <div class="moves">

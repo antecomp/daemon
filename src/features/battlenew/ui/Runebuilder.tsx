@@ -80,7 +80,7 @@ export default function Runebuilder(props: {
                                         onMouseOut={() => hideTooltip()}
                                     ></circle>
                                     <image
-                                        href={props.lexicon[runename].icon}
+                                        href={props.lexicon[runename].largeIcon}
                                         x={x - 16} // TODO - REMOVE THIS MAGIC NUMBER!!!
                                         y={y - 16}
                                         preserveAspectRatio="xMidYMid meet"

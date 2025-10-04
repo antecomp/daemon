@@ -75,6 +75,69 @@ export const BASE_MOVE_LEXICON: MoveLexicon = {
     },
 }
 
+export const PLAYER_BASE_MOVE_LEXICON = {
+    repeat: {
+        label: "apprentice",
+        icon: apprentice_icon,
+        largeIcon: apprentice_icon_ex,
+        lore: `Like the flowers, knowledge comes from the rotting ones. \n \n Maintain momentum. Repeats previous rune. \n Cannot be used first.`,        
+    },
+
+    evade: {
+        label: "trickster",
+        icon: trickster_icon,
+        largeIcon: trickster_icon_ex,
+        lore: `Our first understanding of self comes from a two-faced fox. \n\n Localized distortion of existence, chance to completely negate damage of incoming attacks.`
+    },
+
+    heal: {
+        label: "priestess",
+        icon: priestess_icon,
+        largeIcon: priestess_icon_ex,
+        lore: `We only stay for the pretty music. \n\n Focus on restoring a sense of reality. If not attacked, heal.`
+    },
+
+    prepare: {
+        label: "hourglass",
+        icon: hourglass_icon,
+        largeIcon: hourglass_icon_ex,
+        lore: `The sand is nauseous from your constant turmoil. \n\n Carefully calculate strategy. Increases effectiveness of subsequent rune.`
+    },
+
+    defend: {
+        label: "praetorian",
+        icon: prae_icon,
+        largeIcon: prae_icon_ex,
+        lore: `The bravest coward you'll ever meet. \n\n Cling to personal illusion. Reduce damage of incoming attacks.`
+    },
+
+    attack: {
+        label: "candlelight",
+        icon: candle_icon,
+        largeIcon: candle_icon_ex,
+        lore: `If moonlight heals, what does candlelight do? \n \n Directly challenge opponents' sense of reality. Deals damage.`
+    },
+
+    overwhelm: {
+        label: "overwhelm",
+        icon: chain_icon,
+        largeIcon: chain_icon_ex,
+        lore: `We are still ultimately animals. \n\n Anticipate opponent will cling to reality. Deals damage only on defensive moves.`
+    },
+
+    mirror: {
+        label: "mirror",
+        icon: mage_icon,
+        largeIcon: mage_icon_ex,
+        lore: `Distorted truths cut like knives. \n \n Perform the same action as opponent.`
+    },
+
+    idle: {
+        label: "idle",
+        icon: stock_icon,
+    },
+}
+
 // Reminder;
 /* *
 const merged = { ...a, ...b };

@@ -34,5 +34,11 @@ const plyr: PlayerProfile = {
     }
 }
 
-const root = document.getElementById('battle-test');
-render(() => <Battle opponentProfile={opp} playerProfile={plyr} />, root!)
+const root = document.getElementById('root');
+render(() => (
+    <main id="game-root">
+        <Battle opponentProfile={opp} playerProfile={plyr} />
+        <div id="modal-root"/>
+    </main>
+)
+, root!)

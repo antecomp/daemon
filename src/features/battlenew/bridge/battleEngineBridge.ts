@@ -36,9 +36,10 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
-        RoundStart({plans}) {
+        RoundPrepared({opponentPlan}) {
             // will add UI animations here.
-            setOpponentPlanPreview(generateHint(plans.opponent))
+            console.log('egg');
+            setOpponentPlanPreview(generateHint(opponentPlan))
         },
 
         MultipliersComputed({damageMultipliers}) {
