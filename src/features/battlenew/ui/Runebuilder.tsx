@@ -4,6 +4,7 @@ import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
 import { PlayerRuneName, playerRuneNames } from "@/core/battlenew/what/slop";
+import { MoveTooltipContent } from "./MoveTooltipContent";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
@@ -75,8 +76,8 @@ export default function Runebuilder(props: {
                                         stroke={props.planBuffer.includes(runename) ? RB_ACTIVE_COLOUR : RB_INACTIVE_COLOUR}
                                         fill="black"
                                         onClick={() => props.appendToPlan(runename)}
-                                        // onMouseEnter={() => showTooltip(() => kdfjfkdlsjklsdfj)}
-                                        // onMouseOut={() => hideTooltip()}
+                                        onMouseEnter={() => showTooltip(() => <MoveTooltipContent runeName={runename} lexicon={props.lexicon}/>)}
+                                        onMouseOut={() => hideTooltip()}
                                     ></circle>
                                     <image
                                         href={props.lexicon[runename].icon}

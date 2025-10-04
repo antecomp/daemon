@@ -26,7 +26,7 @@ export const useBattleUIState = () => {
     return context;    
 }
 
-interface OpponentProfile {
+export interface OpponentProfile {
     display: { /* all the shit for sprite, names, etc here */
         name: string;
         icon: AssetURL
@@ -39,7 +39,7 @@ interface OpponentProfile {
     }
 }
 
-interface PlayerProfile {
+export interface PlayerProfile {
     display: {
         lexicon:Partial<MoveLexicon>
     }    
@@ -53,8 +53,7 @@ export default function Battle(props: {
 
     onMount(() => engine.setupRound());
 
-    // Unelegant type cast because Partial technically means we can set a value to undefined (overriding BASE). This 'as' ignores that, but
-    // relies on us not being a moron. TODO LATER: Research a partialButNotUndefined shit.
+    // Probably want to change this to better unwrap the custom lexicon (so we don't have to redefine the icon when we alias a move.)
     const playerLexicon = {...BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
 
     const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
@@ -72,6 +71,7 @@ export default function Battle(props: {
                     />
                 </CornerRect>
                 <Actionbar
+                    lexicon={playerLexicon}
                     executeRound={engine.executeRound} 
                     forceBattleResolve={engine.forceBattleResolve}
                     {...bridge}
