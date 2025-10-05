@@ -1,3 +1,6 @@
+import { AssetURL } from "../types/misc.types";
+import { loadImage } from "./loadImage";
+
 export function createShader(gl: WebGL2RenderingContext, type: number, source: string) {
   const shader = gl.createShader(type);
   if (!shader) return null;
@@ -27,4 +30,17 @@ export function createProgram(gl: WebGL2RenderingContext, vertexSource: string, 
     return null;
   }
   return program;
+}
+
+export async function createTexture(gl: WebGL2RenderingContext, url: AssetURL): Promise<WebGLTexture> {
+  const img = await loadImage(url);
+
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true); // Flip image to match u,v coords.
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  gl.generateMipmap(gl.TEXTURE_2D);
+
+  return texture!;
 }

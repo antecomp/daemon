@@ -13,6 +13,7 @@ import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types';
 import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/core/battlenew/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
+import { Point } from '@/shared/types/3d.types';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -34,6 +35,12 @@ export interface OpponentProfile {
         name: string;
         icon: AssetURL
         lexicon: Partial<MoveLexicon>
+
+        sprite: AssetURL
+        spriteOffset?: Point
+
+        backgroundShader: string;
+        backgroundShaderTexture?: AssetURL;
     } 
     
     logic: {
@@ -77,7 +84,9 @@ export default function Battle(props: {
                         health={bridge.opponentHealthPercentage()}
                         planPreview={bridge.opponentPlanPreview()}
                     />
-                    <BattleCanvas/>
+                    <BattleCanvas
+                        {...props.opponentProfile.display}
+                    />
                 </CornerRect>
                 <Actionbar
                     lexicon={playerLexicon}

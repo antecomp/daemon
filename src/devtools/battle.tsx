@@ -9,6 +9,9 @@ import { idle } from "@/core/battlenew/moves/moves";
 
 import '@/shared/styles/base.css'
 
+import test_sprite from '@/assets/artwork/dæmons/debug_angel.png'
+import bg_shader from '@/features/battlenew/backgrounds/vortex.glsl'
+
 function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     return {
         getSequence: (_me, _player) => plan ?? [planMove(idle), planMove(idle), planMove(idle), planMove(idle), planMove(idle)]
@@ -19,7 +22,9 @@ const opp: OpponentProfile = {
     display: {
         name: 'test opponent',
         icon: opp_icon,
-        lexicon: {}
+        lexicon: {},
+        sprite: test_sprite,
+        backgroundShader: bg_shader
     },
 
     logic: {
