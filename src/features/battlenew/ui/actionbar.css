@@ -185,6 +185,11 @@
                 }
             }
 
+            .player-move.executing {
+                transform: translate(-5px, -5px);
+                /* add cool animation here or whatever */
+            }
+
             .player-move::before {
                 content: url('../assets/opp-hint-l.png');
                 transform: scaleY(-1);

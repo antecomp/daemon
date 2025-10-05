@@ -134,7 +134,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const postEffectOutcomes = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
 
-            await emitBattleEvent('PostEffectResolved', {postEffectOutcomes});
+            await emitBattleEvent('PostEffectResolved', {postEffectOutcomes, combatants});
 
             forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
 

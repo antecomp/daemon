@@ -83,6 +83,7 @@ export default function Battle(props: {
                         lexicon={opponentLexicon}
                         health={bridge.opponentHealthPercentage()}
                         planPreview={bridge.opponentPlanPreview()}
+                        currentlyExecutingMoveIndex={bridge.currentlyExecutingMoveIndex}
                     />
                     <BattleCanvas
                         {...props.opponentProfile.display}

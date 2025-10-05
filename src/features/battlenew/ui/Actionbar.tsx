@@ -23,6 +23,7 @@ import rb2 from '@/assets/sfx/battle/rb/2.wav'
 import rb3 from '@/assets/sfx/battle/rb/3.wav'
 import rb4 from '@/assets/sfx/battle/rb/4.wav'
 import rb5 from '@/assets/sfx/battle/rb/5.wav'
+import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
@@ -30,12 +31,13 @@ const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 function SelectedMove(props: {
     lexicon: MoveLexicon
     moveName: string
+    isExecuting: boolean
 }) {
 
     const entry = props.lexicon[props.moveName];
 
     return (
-        <span class="player-move">
+        <span class="player-move" classList={{executing: props.isExecuting}}>
             <div>
                 <img src={entry.icon}/>
                 {entry.label}
@@ -51,7 +53,8 @@ interface ActionbarProps {
     opponentMults: Accessor<DamageMultipliers>,
     // currentStatuses
     forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
-    lexicon: MoveLexicon
+    lexicon: MoveLexicon,
+    currentlyExecutingMoveIndex: Accessor<number | null>
 }
 
 // Scaling from a multiplier range of 1/5 to 5 to a nice percentage amount for visualization
@@ -89,7 +92,10 @@ export default function Actionbar(props: ActionbarProps) {
             if (prev.some(item => item == toAdd)) return prev;
 
             const canPerform = playerRunes[toAdd].canPerform
-            if (canPerform && !canPerform(actualizePlan(prev), prev.length)) return prev;
+            if (canPerform && !canPerform(actualizePlan(prev), prev.length)) {
+                playSound(rb_fail, 0.5);
+                return prev
+            };
 
             // TODO: Add visual indication of rune selection rejection (when the above fails)
 
@@ -147,7 +153,7 @@ export default function Actionbar(props: ActionbarProps) {
             <div class="right">
                 <div class="moves">
                     <For each={planBuffer()}>
-                        {(m) => <SelectedMove moveName={m} lexicon={props.lexicon}/>}
+                        {(m, idx) => <SelectedMove moveName={m} lexicon={props.lexicon} isExecuting={idx() == props.currentlyExecutingMoveIndex()}/>}
                     </For>
                 </div>
                 <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />

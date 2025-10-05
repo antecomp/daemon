@@ -44,6 +44,7 @@ export type BattleEventPayload = {
     };
     PostEffectResolved: {
         postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
+        combatants: Sides<Combatant> // In case of extra damage / healing.
     };
     MoveEnd: {
 

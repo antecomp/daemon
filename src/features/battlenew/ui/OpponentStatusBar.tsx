@@ -3,7 +3,7 @@ import name_postcut from '../assets/name-postcut.png'
 import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
-import { For } from 'solid-js';
+import { Accessor, For } from 'solid-js';
 import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types';
 
 interface OpponentStatusBarProps {
@@ -11,11 +11,12 @@ interface OpponentStatusBarProps {
     icon: AssetURL;
     health: number;
     planPreview: (string | null)[]; // TODO: Eventually this will be a proper thing with the icon.
-    lexicon: MoveLexicon
+    lexicon: MoveLexicon,
+    currentlyExecutingMoveIndex: Accessor<number | null>
 }
 
-function OppPlanEntry(props: {icon?: AssetURL, label: string}) {
-    return <span class="opp-hint">
+function OppPlanEntry(props: {icon?: AssetURL, label: string, isExecuting: boolean}) {
+    return <span class="opp-hint" classList={{executing: props.isExecuting}}>
             <div>
                 {props.icon && <img src={props.icon}/>}
                 {props.label}
@@ -40,7 +41,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
             </div>
             <div id="opp-hint-container">
                 <For each={props.planPreview}>
-                    {(plannedMove) => <OppPlanEntry {...(plannedMove ? props.lexicon[plannedMove] : {label: '???'})}/>}
+                    {(plannedMove, idx) => <OppPlanEntry isExecuting={idx() == props.currentlyExecutingMoveIndex()} {...(plannedMove ? props.lexicon[plannedMove] : {label: '???'})}/>}
                 </For>
             </div>
         </div>

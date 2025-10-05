@@ -114,6 +114,11 @@
         }
     }
 
+    .opp-hint.executing {
+        /* put animation or other cool indicator here */
+        opacity: 0.5;
+    }
+
     .opp-hint::before {
         content: url('../assets/opp-hint-l.png');
     }

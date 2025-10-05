@@ -5,7 +5,7 @@ import opp_icon from "@/assets/artwork/dæmons/debug_angel_icon.png"
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { OpponentAI } from "@/core/battlenew/ai/opponentAI.types";
 import { planMove } from "@/core/battlenew/moves/plannedMoves";
-import { idle } from "@/core/battlenew/moves/moves";
+import { attack, idle } from "@/core/battlenew/moves/moves";
 
 import '@/shared/styles/base.css'
 
@@ -14,7 +14,7 @@ import bg_shader from '@/features/battlenew/backgrounds/vortex.glsl'
 
 function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     return {
-        getSequence: (_me, _player) => plan ?? [planMove(idle), planMove(idle), planMove(idle), planMove(idle), planMove(idle)]
+        getSequence: (_me, _player) => plan ?? [planMove(idle), planMove(attack), planMove(idle), planMove(idle), planMove(idle)]
     }
 }
 
@@ -29,7 +29,7 @@ const opp: OpponentProfile = {
 
     logic: {
         ai: generateSampleOpponentAI(),
-        stats: {maxHealth: 100}
+        stats: {maxHealth: 15}
     }
 }
 

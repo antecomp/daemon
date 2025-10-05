@@ -3,6 +3,7 @@ import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { DamageMultipliers } from "@/core/battlenew/model/battle";
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
+import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
 
 export enum BattleUIState {
@@ -19,7 +20,7 @@ const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this 
         indices.add(Math.floor(Math.random() * seq.length));
     }
 
-    return seq.map((item, index) => indices.has(index) ? null : item.name);
+    return seq.map((plannedMove, index) => indices.has(index) ? null : plannedMove.name);
 }
 
 export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats) {
@@ -31,15 +32,24 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]); // will just do names until we have proper mapping code.
+    const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
 
     // holding off on the current statuses thing until I have more mapping info.
 
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
         RoundPrepared({opponentPlan}) {
-            // will add UI animations here.
-            console.log('egg');
-            setOpponentPlanPreview(generateHint(opponentPlan))
+            setBattleUIState(BattleUIState.WAITING);
+            setOpponentPlanPreview(generateHint(opponentPlan));
+        },
+
+        RoundStart({plans}) {
+            setBattleUIState(BattleUIState.EXECUTING);
+            setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
+        },
+
+        MoveStart({moveIndex}){
+            setCurrentlyExecutingMoveIndex(moveIndex);
         },
 
         MultipliersComputed({damageMultipliers}) {
@@ -47,9 +57,31 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setOpponentMults(damageMultipliers.opponent);
         },
 
-        DamagesApplied({combatants}) {
+        async DamagesApplied({combatants}) {
+
+            // Animations here?
+            await sleep(1000);
+
             setPlayerHealthPercentage(combatants.player.healthPercent);
             setOpponentHealthPercentage(combatants.opponent.healthPercent)
+        },
+
+        PostEffectResolved({combatants}) {
+            // In case of events like healing + status damage
+            setPlayerHealthPercentage(combatants.player.healthPercent);
+            setOpponentHealthPercentage(combatants.opponent.healthPercent)
+        },
+
+        MoveEnd() {
+            setPlayerMults({incoming: 0, outgoing: 0});
+            setOpponentMults({incoming: 0, outgoing: 0});
+        },
+
+        RoundEnd() {
+            setBattleUIState(BattleUIState.WAITING);
+            setCurrentlyExecutingMoveIndex(null);
+
+            engine.setupRound();
         }
     };
 
@@ -57,9 +89,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const engine = createBattleEngine(opponentAI, opponentStats, reactions);
 
     return {
-        playerMults, opponentMults, battleUIState, playerHealthPercentage, opponentHealthPercentage, opponentPlanPreview, engine,
-        setBattleUIState
+        playerMults, opponentMults, 
+        battleUIState, setBattleUIState,
+        playerHealthPercentage, opponentHealthPercentage, 
+        opponentPlanPreview, 
+        currentlyExecutingMoveIndex,
+        engine,
     }
-
-
 }
