@@ -1,6 +1,6 @@
 import './move-tooltip-content.css'
-import { PlayerRuneName } from "@/core/battlenew/what/slop"
-import { MoveLexicon } from "@/core/battlenew/lexicon/lexicon.types"
+import { PlayerRuneName } from "@/core/battlenew/moves/runeRegistry"
+import { MoveLexicon } from "@/features/battlenew/lexicon/lexicon.types"
 
 interface MoveTooltipContentProps {
     runeName: PlayerRuneName

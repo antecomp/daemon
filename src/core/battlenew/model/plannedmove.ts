@@ -10,6 +10,7 @@ import { Move } from "./move";
  * @returns `true` if the move at the specified index is valid, otherwise `false`.
  */
 export type MoveValidator = (workingPlan: PlannedMove[], index: number) => boolean;
+// TODO - REMOVE THE INDEX PART OF THIS. IT JUST MAKES THINGS CONFUSING. INDEX CAN BE INFERRED FROM WORKING PLAN.
 
 
 /**

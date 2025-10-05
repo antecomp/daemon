@@ -13,10 +13,10 @@ import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battlenew/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
-import { MoveLexicon } from '@/core/battlenew/lexicon/lexicon.types'
+import { MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
-import { PlayerRuneName, playerRunes } from '@/core/battlenew/what/slop'
+import { PlayerRuneName, playerRuneRegistry } from '@/core/battlenew/moves/runeRegistry'
 
 import rb1 from '@/assets/sfx/battle/rb/1.wav'
 import rb2 from '@/assets/sfx/battle/rb/2.wav'
@@ -70,7 +70,7 @@ function mapMultiplier(multiplier: number): number {
 
 }
 
-const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => playerRunes[movename]);
+const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => playerRuneRegistry[movename]);
 
 export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
@@ -91,7 +91,7 @@ export default function Actionbar(props: ActionbarProps) {
             if(prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full
             if (prev.some(item => item == toAdd)) return prev;
 
-            const canPerform = playerRunes[toAdd].canPerform
+            const canPerform = playerRuneRegistry[toAdd].canPerform
             if (canPerform && !canPerform(actualizePlan(prev), prev.length)) {
                 playSound(rb_fail, 0.5);
                 return prev

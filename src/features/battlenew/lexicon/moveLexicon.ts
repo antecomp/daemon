@@ -1,22 +1,22 @@
 import { MoveLexicon } from "./lexicon.types"
 
-import apprentice_icon_ex from '../icons/apprentice_ex.png'
-import candle_icon_ex from '../icons/candle_ex.png'
-import chain_icon_ex from '../icons/chain_ex.png'
-import hourglass_icon_ex from '../icons/hourglass_ex.png'
-import mage_icon_ex from '../icons/mage_ex.png'
-import prae_icon_ex from '../icons/prae_ex.png'
-import priestess_icon_ex from '../icons/priestess_ex.png'
-import trickster_icon_ex from '../icons/trickster_ex.png'
+import apprentice_icon_ex from '../assets/icons/runes/apprentice_ex.png'
+import candle_icon_ex from '../assets/icons/runes/candle_ex.png'
+import chain_icon_ex from '../assets/icons/runes/chain_ex.png'
+import hourglass_icon_ex from '../assets/icons/runes/hourglass_ex.png'
+import mage_icon_ex from '../assets/icons/runes/mage_ex.png'
+import prae_icon_ex from '../assets/icons/runes/prae_ex.png'
+import priestess_icon_ex from '../assets/icons/runes/priestess_ex.png'
+import trickster_icon_ex from '../assets/icons/runes/trickster_ex.png'
 
-import candle_icon from '../icons/candle.png'
-import apprentice_icon from '../icons/apprentice.png'
-import chain_icon from '../icons/chains.png'
-import hourglass_icon from '../icons/hourglass.png'
-import mage_icon from '../icons/mage.png'
-import prae_icon from '../icons/PRAETORIAN.png'
-import priestess_icon from '../icons/priestess.png'
-import trickster_icon from '../icons/trickster.png'
+import candle_icon from '../assets/icons/runes/candle.png'
+import apprentice_icon from '../assets/icons/runes/apprentice.png'
+import chain_icon from '../assets/icons/runes/chains.png'
+import hourglass_icon from '../assets/icons/runes/hourglass.png'
+import mage_icon from '../assets/icons/runes/mage.png'
+import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
+import priestess_icon from '../assets/icons/runes/priestess.png'
+import trickster_icon from '../assets/icons/runes/trickster.png'
 import stock_icon from "@/features/battle/assets/placeholder_move_icon.png"
 
 // map planned moves by ID to their associated UI fallback data.
@@ -147,5 +147,5 @@ Then, all properties from b are copied in.
 
 If b has the same property key as a, it overwrites the value from a.
 
-Use this to have defaults (such as icons kept) for the moves, while shadowing other parts.
+Use this to have defaults (such as assets/icons/runes kept) for the moves, while shadowing other parts.
 */
