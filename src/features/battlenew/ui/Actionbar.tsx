@@ -18,6 +18,15 @@ import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
 import { PlayerRuneName, playerRunes } from '@/core/battlenew/what/slop'
 
+import rb1 from '@/assets/sfx/battle/rb/1.wav'
+import rb2 from '@/assets/sfx/battle/rb/2.wav'
+import rb3 from '@/assets/sfx/battle/rb/3.wav'
+import rb4 from '@/assets/sfx/battle/rb/4.wav'
+import rb5 from '@/assets/sfx/battle/rb/5.wav'
+import { playSound } from '@/shared/utils/playSound'
+
+const rbSounds = [rb1, rb2, rb3, rb4, rb5];
+
 function SelectedMove(props: {
     lexicon: MoveLexicon
     moveName: string
@@ -85,6 +94,7 @@ export default function Actionbar(props: ActionbarProps) {
             // TODO: Add visual indication of rune selection rejection (when the above fails)
 
             // Add (Return Updated)
+            playSound(rbSounds[prev.length], 0.5);
             const rtn = [...prev, toAdd];
             // Run state update side effect if appropriate (sequence ready)
             if(rtn.length == 5) {
