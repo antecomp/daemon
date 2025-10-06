@@ -19,7 +19,7 @@ export function buildSequenceFromWeightMap<M extends PlanMap>(
     const workingSequence: PlannedSequence = [];
 
     // Initial move is picked completely at random
-    const validFirstMoves = keys.filter(key => !planBank[key].canPerform || planBank[key].canPerform([], 0));
+    const validFirstMoves = keys.filter(key => !planBank[key].canPerform || planBank[key].canPerform([]));
     if (validFirstMoves.length == 0) throw new Error("[Weighted Sequence AI] No valid moves available for the first step.");
 
     const firstKey = pickRandom(validFirstMoves);
@@ -34,7 +34,7 @@ export function buildSequenceFromWeightMap<M extends PlanMap>(
         // Filter for valid subsequent moves;
         const options = keys.filter(key => {
             const move = planBank[key];
-            return !selectedKeys.includes(key) && (!move.canPerform || move.canPerform(workingSequence, selectedKeys.length))
+            return !selectedKeys.includes(key) && (!move.canPerform || move.canPerform(workingSequence))
         });
 
         if(options.length == 0) throw new Error("[Weighted Sequence AI] No valid moves available to complete the sequence.");

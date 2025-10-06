@@ -92,7 +92,7 @@ export default function Actionbar(props: ActionbarProps) {
             if (prev.some(item => item == toAdd)) return prev;
 
             const canPerform = playerRuneRegistry[toAdd].canPerform
-            if (canPerform && !canPerform(actualizePlan(prev), prev.length)) {
+            if (canPerform && !canPerform(actualizePlan(prev))) {
                 playSound(rb_fail, 0.5);
                 return prev
             };

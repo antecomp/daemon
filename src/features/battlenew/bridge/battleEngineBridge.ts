@@ -82,6 +82,10 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setCurrentlyExecutingMoveIndex(null);
 
             engine.setupRound();
+        },
+
+        BattleEnd() {
+            setBattleUIState(BattleUIState.END);
         }
     };
 

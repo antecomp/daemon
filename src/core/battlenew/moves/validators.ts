@@ -1,5 +1,5 @@
 import { MoveValidator } from "../model/plannedmove";
 
-export const CannotBeFirst: MoveValidator = (_workingPlan, index) => {
-    return index > 0;
+export const CannotBeFirst: MoveValidator = (workingPlan) => {
+    return workingPlan.length > 0;
 }
