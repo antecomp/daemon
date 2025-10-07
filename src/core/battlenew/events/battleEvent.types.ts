@@ -33,7 +33,8 @@ export type BattleEventPayload = {
         moves: Sides<Move>
     };
     PreEffectResolved: {
-        preEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
+        preEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
+        combatants: Sides<Combatant> // for reading statuses
     };
     MultipliersComputed: {
         damageMultipliers: Sides<DamageMultipliers>
@@ -44,7 +45,7 @@ export type BattleEventPayload = {
     };
     PostEffectResolved: {
         postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
-        combatants: Sides<Combatant> // In case of extra damage / healing.
+        combatants: Sides<Combatant> // In case of extra damage / healing + reading statuses
     };
     MoveEnd: {
 

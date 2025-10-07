@@ -26,6 +26,7 @@ import rb5 from '@/assets/sfx/battle/rb/5.wav'
 import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/battleRefRegistryCTX'
+import { Sides } from '@/core/battlenew/utils/sides.utils'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
@@ -52,7 +53,7 @@ interface ActionbarProps {
     playerHealthPercentage: Accessor<number>,
     playerMults: Accessor<DamageMultipliers>,
     opponentMults: Accessor<DamageMultipliers>,
-    // currentStatuses
+    currentStatusIcons: Accessor<Sides<string[]>>
     forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
     lexicon: MoveLexicon,
     currentlyExecutingMoveIndex: Accessor<number | null>
@@ -170,14 +171,14 @@ export default function Actionbar(props: ActionbarProps) {
                         <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.opponentMults().incoming)}%`} />
                     </div>
                     <div class="player-statuses">
-                        {/* <For each={props.currentStatuses().player}>
+                        <For each={props.currentStatusIcons().player}>
                             {stat => <img class="status-icon" src={stat} />}
-                        </For> */}
+                        </For>
                     </div>
                     <div class="opp-statuses">
-                        {/* <For each={props.currentStatuses().opp}>
+                        <For each={props.currentStatusIcons().opponent}>
                             {stat => <img class="status-icon" src={stat} />}
-                        </For> */}
+                        </For>
                     </div>
                 </div>
             </div>

@@ -14,6 +14,9 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MoveLexicon } from "../lexicon/lexicon.types";
+import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
+import { AssetURL } from "@/shared/types/misc.types";
+import { STATUS_LEXICON } from "../lexicon/statusLexicon";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -42,6 +45,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]); // will just do names until we have proper mapping code.
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
+    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
 
     // holding off on the current statuses thing until I have more mapping info.
 
@@ -61,6 +65,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         MoveStart({moveIndex}){
             setCurrentlyExecutingMoveIndex(moveIndex);
+        },
+
+        PreEffectResolved({combatants}) {
+            // bro why.
+            setCurrentStatusIcons(mapSides(combatants, (combatant) => combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon!)));
         },
 
         MultipliersComputed({damageMultipliers}) {
@@ -91,7 +100,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         PostEffectResolved({combatants}) {
             // In case of events like healing + status damage
             setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent)
+            setOpponentHealthPercentage(combatants.opponent.healthPercent);
         },
 
         MoveEnd() {
@@ -99,10 +108,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setOpponentMults({incoming: 0, outgoing: 0});
         },
 
-        RoundEnd() {
+        RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-
+            // >:(
+            setCurrentStatusIcons(mapSides(combatants, (combatant) => combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon!)));
             engine.setupRound();
         },
 
@@ -121,6 +131,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         opponentPlanPreview, 
         currentlyExecutingMoveIndex,
         attachToRegistry,
+        currentStatusIcons,
         engine,
     }
 }

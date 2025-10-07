@@ -108,7 +108,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
 
-            await emitBattleEvent("PreEffectResolved", {preEffectOutcomes});
+            await emitBattleEvent("PreEffectResolved", {preEffectOutcomes, combatants});
 
             const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, side) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[side] }));
             
