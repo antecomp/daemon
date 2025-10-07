@@ -14,6 +14,7 @@ import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlene
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
 import { Point } from '@/shared/types/3d.types';
+import { BattleRefRegistryCTX } from './animation/battleRefRegistryCTX';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -74,28 +75,30 @@ export default function Battle(props: {
     const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
 
     return (
-        <BattleUIStateContext.Provider value={{...bridge}}>
-            <div id="battle-container">
-                <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
-                    <OpponentStatusBar
-                        name={props.opponentProfile.display.name}
-                        icon={props.opponentProfile.display.icon}
-                        lexicon={opponentLexicon}
-                        health={bridge.opponentHealthPercentage()}
-                        planPreview={bridge.opponentPlanPreview()}
-                        currentlyExecutingMoveIndex={bridge.currentlyExecutingMoveIndex}
+        <BattleRefRegistryCTX.Provider value={{attachToRegistry: bridge.attachToRegistry}}>
+            <BattleUIStateContext.Provider value={{...bridge}}>
+                <div id="battle-container">
+                    <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
+                        <OpponentStatusBar
+                            name={props.opponentProfile.display.name}
+                            icon={props.opponentProfile.display.icon}
+                            lexicon={opponentLexicon}
+                            health={bridge.opponentHealthPercentage()}
+                            planPreview={bridge.opponentPlanPreview()}
+                            currentlyExecutingMoveIndex={bridge.currentlyExecutingMoveIndex}
+                        />
+                        <BattleCanvas
+                            {...props.opponentProfile.display}
+                        />
+                    </CornerRect>
+                    <Actionbar
+                        lexicon={playerLexicon}
+                        executeRound={engine.executeRound} 
+                        forceBattleResolve={engine.forceBattleResolve}
+                        {...bridge}
                     />
-                    <BattleCanvas
-                        {...props.opponentProfile.display}
-                    />
-                </CornerRect>
-                <Actionbar
-                    lexicon={playerLexicon}
-                    executeRound={engine.executeRound} 
-                    forceBattleResolve={engine.forceBattleResolve}
-                    {...bridge}
-                />
-            </div>
-        </BattleUIStateContext.Provider>
+                </div>
+            </BattleUIStateContext.Provider>
+        </BattleRefRegistryCTX.Provider>
     )
 }

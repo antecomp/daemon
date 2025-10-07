@@ -5,6 +5,7 @@ import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
 import { Accessor, For } from 'solid-js';
 import { MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types';
+import { createBattleRefAttacher } from '../animation/battleRefRegistryCTX';
 
 interface OpponentStatusBarProps {
     name: string;
@@ -25,9 +26,12 @@ function OppPlanEntry(props: {icon?: AssetURL, label: string, isExecuting: boole
 }
 
 export default function OpponentStatusBar(props: OpponentStatusBarProps) {
+
+    const x = createBattleRefAttacher('test');
+
     return (
         <div id="opp-statusbar-container">
-            <img src={props.icon} id="opp-icon" />
+            <img src={props.icon} id="opp-icon" ref={x} />
             <div id="opp-bar">
                 <div class="nametag">
                     <span>{props.name}</span>

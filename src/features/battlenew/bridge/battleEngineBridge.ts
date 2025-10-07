@@ -3,8 +3,10 @@ import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { DamageMultipliers } from "@/core/battlenew/model/battle";
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
+import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
+import { BattleRefNames } from "../animation/battleRefRegistryCTX";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -36,6 +38,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     // holding off on the current statuses thing until I have more mapping info.
 
+    const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
+
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
         RoundPrepared({opponentPlan}) {
@@ -46,6 +50,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         RoundStart({plans}) {
             setBattleUIState(BattleUIState.EXECUTING);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
+            console.log(refRegistry);
         },
 
         MoveStart({moveIndex}){
@@ -98,6 +103,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         playerHealthPercentage, opponentHealthPercentage, 
         opponentPlanPreview, 
         currentlyExecutingMoveIndex,
+        attachToRegistry,
         engine,
     }
 }
