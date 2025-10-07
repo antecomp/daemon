@@ -1,13 +1,13 @@
 import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
-import { DamageMultipliers } from "@/core/battlenew/model/battle";
+import { BattleOutcome, DamageMultipliers } from "@/core/battlenew/model/battle";
 import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
 import { BattleRefNames } from "../animation/battleRefRegistryCTX";
-import { animateOpponentDamageFlash } from "../animation/uiAnimations";
+import { animateOpponentDamageFlash, animateOpponentDeathFade } from "../animation/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
@@ -38,6 +38,7 @@ const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this 
 export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn) {
     // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.
 
+    // TODO: Consider changing all these per-combatant related signals to a single Sides signal like you did for status icons!
     const [playerMults, setPlayerMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
     const [opponentMults, setOpponentMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
@@ -116,8 +117,27 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             engine.setupRound();
         },
 
-        BattleEnd() {
+        BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
+            setPlayerMults({incoming: 0, outgoing: 0});
+            setOpponentMults({incoming: 0, outgoing: 0});      
+            setPlayerHealthPercentage(combatants.player.healthPercent);
+            setOpponentHealthPercentage(combatants.opponent.healthPercent);   
+            
+            switch(outcome) {
+                case BattleOutcome.PlayerVictory:
+                    // Play opponent death sound here.
+                    animateOpponentDeathFade(refRegistry.opponentSprite);
+                break;
+                case BattleOutcome.OpponentVictory:
+                    // Player death sound here.
+                    startMeltAnimation(false, 20, 5);
+                    // no longer await ui fade out, instead that should happen as a natural reaction to the END state in css.
+                break;
+                case BattleOutcome.Draw:
+                    animateOpponentDeathFade(refRegistry.opponentSprite);
+                    // Do some sort of unique other animation or event in case of draw here.
+            }
         }
     };
 

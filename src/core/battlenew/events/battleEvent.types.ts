@@ -55,6 +55,7 @@ export type BattleEventPayload = {
     };
     BattleEnd: {
         outcome: BattleOutcome
+        combatants: Sides<Combatant>
     };
 }
 

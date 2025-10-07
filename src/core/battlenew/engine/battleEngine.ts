@@ -40,7 +40,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     const {promise: battleResolutionPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
     
     const forceBattleResolve = async (outcome: BattleOutcome) => {
-        await emitBattleEvent('BattleEnd', {outcome});
+        await emitBattleEvent('BattleEnd', {outcome, combatants});
         resolveBattle(outcome);
     };
 
@@ -68,7 +68,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     async function handleBattleEnd(outcome: BattleOutcome) {
-        await emitBattleEvent('BattleEnd', {outcome});
+        await emitBattleEvent('BattleEnd', {outcome, combatants});
         resolveBattle(outcome);
     }
 
