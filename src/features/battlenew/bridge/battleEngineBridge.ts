@@ -7,7 +7,7 @@ import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
 import { BattleRefNames } from "../animation/battleRefRegistryCTX";
-import { animateOpponentDamageFlash, animateOpponentDeathFade } from "../animation/uiAnimations";
+import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
@@ -54,14 +54,18 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
-        RoundPrepared({opponentPlan}) {
+        async RoundPrepared({opponentPlan}) {
             setBattleUIState(BattleUIState.WAITING);
+            await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
+            await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        RoundStart({plans}) {
+        async RoundStart({plans}) {
             setBattleUIState(BattleUIState.EXECUTING);
+            await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => opponentLexicon[plan.name].label));
+            await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
         MoveStart({moveIndex}){
@@ -70,7 +74,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         PreEffectResolved({combatants}) {
             // bro why.
-            setCurrentStatusIcons(mapSides(combatants, (combatant) => combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon!)));
+            setCurrentStatusIcons(
+                mapSides(combatants, (combatant) => 
+                    combatant.activeStatuses.map(([status]) => 
+                        STATUS_LEXICON[status.name].icon!
+            )));
         },
 
         MultipliersComputed({damageMultipliers}) {
@@ -117,7 +125,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             engine.setupRound();
         },
 
-        BattleEnd({outcome, combatants}) {
+        async BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
             setPlayerMults({incoming: 0, outgoing: 0});
             setOpponentMults({incoming: 0, outgoing: 0});      
@@ -127,7 +135,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             switch(outcome) {
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.
-                    animateOpponentDeathFade(refRegistry.opponentSprite);
+                    await animateOpponentDeathFade(refRegistry.opponentSprite);
                 break;
                 case BattleOutcome.OpponentVictory:
                     // Player death sound here.
