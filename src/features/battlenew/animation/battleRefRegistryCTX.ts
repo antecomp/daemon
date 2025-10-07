@@ -3,7 +3,7 @@ import { createContext, useContext } from "solid-js";
 
 
 
-export type BattleRefNames = ["sequenceViewPlayer", "sequenceViewOpponent", "mainUI", "opponentSprite"];
+export type BattleRefNames = ["sequenceViewPlayer", "sequenceViewOpponent", "opponentSprite"];
 
 interface BattleRefRegistry {
     attachToRegistry: RegistryAttacher<BattleRefNames>

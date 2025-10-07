@@ -14,7 +14,8 @@ import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlene
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
 import { Point } from '@/shared/types/3d.types';
-import { BattleRefRegistryCTX, createBattleRefAttacher } from './animation/battleRefRegistryCTX';
+import { BattleRefRegistryCTX } from './animation/battleRefRegistryCTX';
+import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -60,7 +61,15 @@ export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
 }) {
-    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats);
+
+    // Probably want to change this to better unwrap the custom lexicon (so we don't have to redefine the icon when we alias a move.)
+    const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
+
+    const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
+
+    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
+
+    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats, opponentLexicon, startMeltAnimation);
 
     onMount(
         () => {
@@ -69,15 +78,14 @@ export default function Battle(props: {
         }
     );
 
-    // Probably want to change this to better unwrap the custom lexicon (so we don't have to redefine the icon when we alias a move.)
-    const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
-
-    const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
-
     return (
         <BattleRefRegistryCTX.Provider value={{attachToRegistry: bridge.attachToRegistry}}>
             <BattleUIStateContext.Provider value={{...bridge}}>
-                <div id="battle-container">
+                {filterSVG}
+                <div 
+                    id="battle-container"
+                    style={{ filter: `url(#${filterID})` }}
+                >
                     <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                         <OpponentStatusBar
                             name={props.opponentProfile.display.name}

@@ -9,8 +9,11 @@ import { createSignal } from "solid-js";
 import { BattleRefNames } from "../animation/battleRefRegistryCTX";
 import { animateOpponentDamageFlash } from "../animation/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
+import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
+import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
+import { MoveLexicon } from "../lexicon/lexicon.types";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -29,7 +32,7 @@ const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this 
     return seq.map((plannedMove, index) => indices.has(index) ? null : plannedMove.name);
 }
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats) {
+export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn) {
     // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.
 
     const [playerMults, setPlayerMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
@@ -53,8 +56,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         RoundStart({plans}) {
             setBattleUIState(BattleUIState.EXECUTING);
-            setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
-            console.log(refRegistry);
+            setOpponentPlanPreview(plans.opponent.map(plan => opponentLexicon[plan.name].label));
         },
 
         MoveStart({moveIndex}){
@@ -78,6 +80,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
                 playSound(opponent_pain_sfx);
                 animateOpponentDamageFlash(refRegistry.opponentSprite);
             };
+
+            if(damagesDealt.opponent > 0) {
+                playSound(player_pain_sfx);
+                startMeltAnimation?.(true, 20, 0.5);
+            }
             
         },
 

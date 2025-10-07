@@ -1,5 +1,8 @@
 import { createSignal, Show } from "solid-js";
 
+import { detect } from "detect-browser";
+const browser = detect();
+
 // Exposed signature for animate function.
 export type MeltAnimationFn = (pingPong?: boolean, maxScale?: number, duration?: number) => Promise<void>;
 
@@ -42,6 +45,7 @@ export function createMeltingEffect(initialScale = 0) {
     let animateElement: SVGAnimateElement | undefined = undefined;
 
     async function startMeltAnimation(pingPong = false, maxScale = 10, duration = 1): Promise<void> {
+        if(browser?.name == 'safari') return;
         setShowFilter(true);
 
         return new Promise<void>(async (resolve, reject) => {
