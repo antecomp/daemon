@@ -85,6 +85,7 @@ export default function Battle(props: {
                 <div 
                     id="battle-container"
                     style={{ filter: `url(#${filterID})` }}
+                    classList={{"battle-end": bridge.battleUIState() === BattleUIState.END}}
                 >
                     <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                         <OpponentStatusBar

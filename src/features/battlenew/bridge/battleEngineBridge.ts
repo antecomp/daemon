@@ -84,6 +84,10 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         MultipliersComputed({damageMultipliers}) {
             setPlayerMults(damageMultipliers.player);
             setOpponentMults(damageMultipliers.opponent);
+
+            // animations should probably go here not in damages applied,
+            // as death event skips damagesapplied
+            // of course, this depends on if you want to branch for 'killing blow' overlay anims.
         },
 
         async DamagesApplied({combatants, damagesDealt}) {

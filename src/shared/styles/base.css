@@ -100,6 +100,12 @@ button {
   }
 }
 
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
 .fademein {
   opacity: 0;
   animation: fade-in forwards; /* attr(data-fade-duration ms, 500ms); /* unreliable on firefox ig */

@@ -12,6 +12,12 @@
     animation: fade-in forwards 1s;
 }
 
+#battle-container.battle-end {
+    opacity: 1;
+    animation: fade-out forwards 1s;
+    animation-delay: 2s;
+}
+
 #battle-container, #battle-view {
     user-select: none;
     -webkit-user-drag: none;
