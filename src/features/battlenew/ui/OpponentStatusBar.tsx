@@ -27,11 +27,11 @@ function OppPlanEntry(props: {icon?: AssetURL, label: string, isExecuting: boole
 
 export default function OpponentStatusBar(props: OpponentStatusBarProps) {
 
-    const x = createBattleRefAttacher('test');
+    const sequenceViewOpponentRef = createBattleRefAttacher('sequenceViewOpponent');
 
     return (
         <div id="opp-statusbar-container">
-            <img src={props.icon} id="opp-icon" ref={x} />
+            <img src={props.icon} id="opp-icon"/>
             <div id="opp-bar">
                 <div class="nametag">
                     <span>{props.name}</span>
@@ -43,7 +43,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
                     <img src={sbb_right}/>
                 </div>
             </div>
-            <div id="opp-hint-container">
+            <div id="opp-hint-container" ref={sequenceViewOpponentRef}>
                 <For each={props.planPreview}>
                     {(plannedMove, idx) => <OppPlanEntry isExecuting={idx() == props.currentlyExecutingMoveIndex()} {...(plannedMove ? props.lexicon[plannedMove] : {label: '???'})}/>}
                 </For>

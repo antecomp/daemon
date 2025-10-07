@@ -3,6 +3,7 @@ import { Point } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { createProgram, createTexture } from "@/shared/utils/webgl.utils";
 import { onMount } from "solid-js";
+import { createBattleRefAttacher } from "../animation/battleRefRegistryCTX";
 
 export default function BattleCanvas(props: {
     sprite: AssetURL,
@@ -88,6 +89,8 @@ export default function BattleCanvas(props: {
         init();
     });
 
+    const opponentSpriteRef = createBattleRefAttacher('opponentSprite');
+
     // TODO - Remove these magic numbers!
     return (
         <>
@@ -97,6 +100,7 @@ export default function BattleCanvas(props: {
                 width="985" height={SCENE_DIMENSIONS.height + 26}
             />
             <img
+                ref={opponentSpriteRef}
                 src={props.sprite}
                 id="battle-sprite"
                 style={{

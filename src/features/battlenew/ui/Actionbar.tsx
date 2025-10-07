@@ -25,6 +25,7 @@ import rb4 from '@/assets/sfx/battle/rb/4.wav'
 import rb5 from '@/assets/sfx/battle/rb/5.wav'
 import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
+import { createBattleRefAttacher } from '../animation/battleRefRegistryCTX'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
@@ -124,6 +125,8 @@ export default function Actionbar(props: ActionbarProps) {
         }
     }
 
+    const playerSequenceConRef = createBattleRefAttacher('sequenceViewPlayer');
+
     return (
         <div id="battle-actionbar">
             <div class="left">
@@ -151,7 +154,7 @@ export default function Actionbar(props: ActionbarProps) {
             </div>
             </div>
             <div class="right">
-                <div class="moves">
+                <div class="moves" ref={playerSequenceConRef}>
                     <For each={planBuffer()}>
                         {(m, idx) => <SelectedMove moveName={m} lexicon={props.lexicon} isExecuting={idx() == props.currentlyExecutingMoveIndex()}/>}
                     </For>

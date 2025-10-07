@@ -14,7 +14,7 @@ import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlene
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
 import { Point } from '@/shared/types/3d.types';
-import { BattleRefRegistryCTX } from './animation/battleRefRegistryCTX';
+import { BattleRefRegistryCTX, createBattleRefAttacher } from './animation/battleRefRegistryCTX';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 

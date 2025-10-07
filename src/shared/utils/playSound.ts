@@ -1,4 +1,6 @@
-export async function playSound(src: string, volume?: number): Promise<void> {
+import { AssetURL } from "../types/misc.types";
+
+export async function playSound(src: AssetURL, volume?: number): Promise<void> {
     return new Promise((resolve, reject) => {
         const audio = new Audio(src);
         if(volume) audio.volume = volume;

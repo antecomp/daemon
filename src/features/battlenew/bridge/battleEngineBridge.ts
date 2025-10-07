@@ -7,6 +7,10 @@ import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
 import { BattleRefNames } from "../animation/battleRefRegistryCTX";
+import { animateOpponentDamageFlash } from "../animation/uiAnimations";
+import { playSound } from "@/shared/utils/playSound";
+
+import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -62,13 +66,19 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setOpponentMults(damageMultipliers.opponent);
         },
 
-        async DamagesApplied({combatants}) {
+        async DamagesApplied({combatants, damagesDealt}) {
 
             // Animations here?
             await sleep(1000);
 
             setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent)
+            setOpponentHealthPercentage(combatants.opponent.healthPercent);
+
+            if(damagesDealt.player > 0) {
+                playSound(opponent_pain_sfx);
+                animateOpponentDamageFlash(refRegistry.opponentSprite);
+            };
+            
         },
 
         PostEffectResolved({combatants}) {
