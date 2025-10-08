@@ -29,6 +29,7 @@ export default function OverlayAnimator() {
             video.muted = true;
             video.playsInline = true;
 
+            // Why not just use a css tag?
             Object.assign(video.style, {
                 position: "absolute",
                 translate: `${position[0]}px ${position[1]}px`,

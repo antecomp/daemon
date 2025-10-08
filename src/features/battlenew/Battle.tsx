@@ -16,6 +16,8 @@ import attachToConsole from '@/devtools/attachToConsole';
 import { Point } from '@/shared/types/3d.types';
 import { BattleRefRegistryCTX } from './animation/battleRefRegistryCTX';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
+import OverlayAnimator from './ui/OverlayAnimator';
+import { createOverlayAnimationQueue } from './animation/overlayAnimationQueue';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -69,7 +71,9 @@ export default function Battle(props: {
 
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 
-    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats, opponentLexicon, startMeltAnimation);
+    const {overlayAnimRequests, requestOverlayAnimation} = createOverlayAnimationQueue();
+
+    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats, opponentLexicon, startMeltAnimation, requestOverlayAnimation);
 
     onMount(
         () => {
@@ -99,6 +103,7 @@ export default function Battle(props: {
                         <BattleCanvas
                             {...props.opponentProfile.display}
                         />
+                        <OverlayAnimator overlayAnimationRequests={overlayAnimRequests}/>
                     </CornerRect>
                     <Actionbar
                         lexicon={playerLexicon}

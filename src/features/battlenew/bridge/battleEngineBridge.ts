@@ -35,7 +35,7 @@ const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this 
     return seq.map((plannedMove, index) => indices.has(index) ? null : plannedMove.name);
 }
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn) {
+export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: (name: string, position: [number, number]) => Promise<void>) {
     // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.
 
     // TODO: Consider changing all these per-combatant related signals to a single Sides signal like you did for status icons!
@@ -88,11 +88,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // animations should probably go here not in damages applied,
             // as death event skips damagesapplied
             // of course, this depends on if you want to branch for 'killing blow' overlay anims.
+            // this is also where the animations were originally triggered in logic
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
 
-            // Animations here?
             await sleep(1000);
 
             setPlayerHealthPercentage(combatants.player.healthPercent);
@@ -114,6 +114,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // In case of events like healing + status damage
             setPlayerHealthPercentage(combatants.player.healthPercent);
             setOpponentHealthPercentage(combatants.opponent.healthPercent);
+
+            // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
         MoveEnd() {
@@ -126,6 +128,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setCurrentlyExecutingMoveIndex(null);
             // >:(
             setCurrentStatusIcons(mapSides(combatants, (combatant) => combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon!)));
+
             engine.setupRound();
         },
 
