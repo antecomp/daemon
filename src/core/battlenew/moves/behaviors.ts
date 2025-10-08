@@ -50,7 +50,6 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
 export const HealSelf: PostMoveSideEffect = ({self}) => {
     const healAmount = 2 * (1 + self.getStatusLevelIncludingExpired('prepared'));
     self.heal(healAmount);
-    // How do we communicate this amount back to the UI?
 }
 
 export const ReduceIncomingDamage: DamageMultiplierFunction = ({self}) => {

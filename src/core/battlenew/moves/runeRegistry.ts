@@ -1,5 +1,3 @@
-// WHERE DO I PUT THIS FILE LOL???
-
 import { attack, defend, evade, heal, overwhelm, prepare } from "./moves";
 import { mirrorPlan, planMove, repeatPlan } from "./plannedMoves";
 

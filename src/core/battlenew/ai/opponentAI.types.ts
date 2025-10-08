@@ -1,5 +1,5 @@
 import { Combatant } from "../model/combatant";
-import { PlannedMove } from "../model/plannedmove";
+import { PlannedSequence } from "../model/plannedmove";
 
 // Feels a bit silly having an interface with only one property but meh
 // any data needed to initialize the opponent combatant.
@@ -23,7 +23,7 @@ export interface OpponentStats {
  *   the AI to perform side effects or context-specific logic.
  */
 export interface OpponentAI {
-    getSequence: (me: Combatant, player: Combatant) => PlannedMove[];
+    getSequence: (me: Combatant, player: Combatant) => PlannedSequence;
 
     // consider making these return some information that may be needed context-wise for UI or whatever.
     preRoundBehavior?: (me: Combatant, player: Combatant, /*ctx: any <- for side effects*/) => void;
