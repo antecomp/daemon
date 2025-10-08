@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["src"],
+  "plugin": ["typedoc-plugin-markdown"],
+  "hideBreadcrumbs": true,
+  "hidePageTitle": false,
+  "readme": "none",
+  "categorizeByGroup": false
+}
