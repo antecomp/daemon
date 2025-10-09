@@ -21,8 +21,8 @@ export const overlayAnimationDefinitions: overlayAnimationTable = {
 
     "slash_majes": {
         src: slash_mages,
-        width: 411,
-        height: 497,
+        width: 812,
+        height: 651,
     },
 
     "slash_elag": {
@@ -37,11 +37,6 @@ export const overlayAnimationDefinitions: overlayAnimationTable = {
         height: 344,
     }
 }
-
-export const overlayAnimationSrcMap = Object.fromEntries(
-    Object.entries(overlayAnimationDefinitions).map(([name, { src }]) => [name, src])
-);
-  
 
 // Lazily just calling it here for now, we will want to be smart about it when we actually have dynamic resources.
 requestAssetPrefetch([slashnorm, slash_purpose, slash_mages, slash_elag, shield]);

@@ -90,3 +90,7 @@ export const overwhelm: Move = {
         )
     }
 }
+
+export const MOVEBANK = {
+    idle, overwhelm, defend, prepare, heal, evade, observe, attack
+}

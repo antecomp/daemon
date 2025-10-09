@@ -64,7 +64,7 @@ export default function Battle(props: {
     playerProfile: PlayerProfile
 }) {
 
-    // Probably want to change this to better unwrap the custom lexicon (so we don't have to redefine the icon when we alias a move.)
+    // TODO: Change this to a more robust merger of lexicon data so you dont need to redefine everything!
     const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
 
     const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;

@@ -11,6 +11,7 @@ import '@/shared/styles/base.css'
 
 import test_sprite from '@/assets/artwork/dæmons/debug_angel.png'
 import bg_shader from '@/features/battlenew/backgrounds/vortex.glsl'
+import { OPPONENT_ANGEL } from "@/data/battles/angel";
 
 function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     return {
@@ -42,7 +43,7 @@ const plyr: PlayerProfile = {
 const root = document.getElementById('root');
 render(() => (
     <main id="game-root">
-        <Battle opponentProfile={opp} playerProfile={plyr} />
+        <Battle opponentProfile={OPPONENT_ANGEL} playerProfile={plyr} />
         <div id="modal-root"/>
     </main>
 )

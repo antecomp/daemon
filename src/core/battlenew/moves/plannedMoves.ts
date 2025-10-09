@@ -1,6 +1,7 @@
+import { mapObject } from "@/shared/utils/mapObject";
 import { Move } from "../model/move";
 import { PlannedMove } from "../model/plannedmove";
-import { nothingMove } from "./moves";
+import { attack, MOVEBANK, nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
 
 export function planMove(move: Move): PlannedMove {
@@ -42,3 +43,11 @@ export const mirrorPlan: PlannedMove = {
         //return oppmove.instantiate(ctx);
     }
 }
+
+// Move this?
+export const STOCK_PLANBANK: Record<string, PlannedMove> = {
+    repeat: repeatPlan,
+    mirror: mirrorPlan,
+
+    ...mapObject(MOVEBANK, (move => planMove(move)))
+} 
