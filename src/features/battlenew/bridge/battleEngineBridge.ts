@@ -17,6 +17,7 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
+import { MOVE_DELAY } from "./timings.config";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -68,8 +69,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        MoveStart({moveIndex}){
+        async MoveStart({moveIndex}){
             setCurrentlyExecutingMoveIndex(moveIndex);
+
+            // Short delay for index anim to play without anything else happening
+            await sleep(1000);
         },
 
         PreEffectResolved({combatants}) {
@@ -118,9 +122,11 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
-        MoveEnd() {
+        async MoveEnd() {
             setPlayerMults({incoming: 0, outgoing: 0});
             setOpponentMults({incoming: 0, outgoing: 0});
+
+            await sleep(MOVE_DELAY);
         },
 
         RoundEnd({combatants}) {

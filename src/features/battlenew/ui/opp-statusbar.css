@@ -116,7 +116,8 @@
 
     .opp-hint.executing {
         /* put animation or other cool indicator here */
-        opacity: 0.5;
+        /* opacity: 0.5; */
+        animation: active-move-pulse infinite 1s;
     }
 
     .opp-hint::before {
@@ -125,5 +126,17 @@
 
     .opp-hint::after {
         content: url('../assets/opp-hint-r.png');
+    }
+}
+
+@keyframes active-move-pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
     }
 }
