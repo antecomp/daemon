@@ -114,7 +114,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
-            await emitBattleEvent('MultipliersComputed', {damageMultipliers});
+            await emitBattleEvent('MultipliersComputed', {moves, damageMultipliers, preEffectOutcomes});
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 

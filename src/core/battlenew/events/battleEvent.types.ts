@@ -37,7 +37,9 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant> // for reading statuses
     };
     MultipliersComputed: {
-        damageMultipliers: Sides<DamageMultipliers>
+        moves: Sides<Move>,
+        damageMultipliers: Sides<DamageMultipliers>,
+        preEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
     };
     DamagesApplied: {
         combatants: Sides<Combatant>
