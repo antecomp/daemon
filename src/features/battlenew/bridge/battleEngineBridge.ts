@@ -17,9 +17,10 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
-import { MOVE_DELAY } from "./timings.config";
+import { MIN_CLASH_DURATION, MOVE_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReaction } from "./clashMapper";
+import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "./clashReactionDefinitions";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -87,7 +88,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             )));
         },
 
-        MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
+        async MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
             setPlayerMults(damageMultipliers.player);
             setOpponentMults(damageMultipliers.opponent);
 
@@ -96,7 +97,10 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // of course, this depends on if you want to branch for 'killing blow' overlay anims.
             // this is also where the animations were originally triggered in logic
 
-            runClashReaction(mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation})
+            await Promise.all([
+                await runClashReaction(PLAYER_CLASH_REACTIONS, 'player', mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
+                await runClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
+            ]);
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
