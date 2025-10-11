@@ -25,7 +25,7 @@ import rb4 from '@/assets/sfx/battle/rb/4.wav'
 import rb5 from '@/assets/sfx/battle/rb/5.wav'
 import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
-import { createBattleRefAttacher } from '../animation/battleRefRegistryCTX'
+import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battlenew/utils/sides.utils'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];

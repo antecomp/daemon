@@ -3,7 +3,7 @@ import slash_purpose from '@/features/battle/assets/overlay-animations/slash/sla
 import slash_mages from '@/features/battle/assets/overlay-animations/slash/slash_majes.webm'
 import slash_elag from '@/features/battle/assets/overlay-animations/slash/slash_elag.webm'
 import shield from '@/features/battle/assets/overlay-animations/shield/shield_opp.webm'
-import { overlayAnimationTable } from "../../../core/battle/animation/overlayAnim.types";
+import { overlayAnimationTable } from './overlayAnimations.types'
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 
 export const overlayAnimationDefinitions: overlayAnimationTable = {

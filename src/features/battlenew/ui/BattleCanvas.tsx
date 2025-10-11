@@ -3,7 +3,7 @@ import { Point } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { createProgram, createTexture } from "@/shared/utils/webgl.utils";
 import { onMount } from "solid-js";
-import { createBattleRefAttacher } from "../animation/battleRefRegistryCTX";
+import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
 export default function BattleCanvas(props: {
     sprite: AssetURL,

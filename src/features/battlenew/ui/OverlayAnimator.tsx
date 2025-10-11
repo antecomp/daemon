@@ -1,8 +1,8 @@
 // Just doing a very lazy port for now, we can always redesign this component later!
 
 import { Accessor, createEffect } from "solid-js";
-import { OverlayAnimReq } from "../animation/overlayAnimations.types";
-import { overlayAnimationDefinitions } from "../animation/overlayAnimationDefinitions";
+import { OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
+import { overlayAnimationDefinitions } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
 import './overlay-animator.css';
 

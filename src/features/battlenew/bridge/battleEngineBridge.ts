@@ -6,8 +6,8 @@ import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
-import { BattleRefNames } from "../animation/battleRefRegistryCTX";
-import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations";
+import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
+import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 

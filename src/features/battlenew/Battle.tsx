@@ -14,10 +14,11 @@ import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlene
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
 import { Point } from '@/shared/types/3d.types';
-import { BattleRefRegistryCTX } from './animation/battleRefRegistryCTX';
+import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 import OverlayAnimator from './ui/OverlayAnimator';
-import { createOverlayAnimationQueue } from './animation/overlayAnimationQueue';
+import { createOverlayAnimationQueue } from './animation/overlayAnimations/overlayAnimationQueue';
+import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -38,7 +39,7 @@ export interface OpponentProfile {
     display: { /* all the shit for sprite, names, etc here */
         name: string;
         icon: AssetURL
-        lexicon: Partial<MoveLexicon>
+        lexicon: Partial<Partial<MoveLexicon>>
 
         sprite: AssetURL
         spriteOffset?: Point
@@ -55,7 +56,7 @@ export interface OpponentProfile {
 
 export interface PlayerProfile {
     display: {
-        lexicon:Partial<MoveLexicon>
+        lexicon:Partial<Partial<MoveLexicon>>
     }    
 }
 
@@ -65,9 +66,11 @@ export default function Battle(props: {
 }) {
 
     // TODO: Change this to a more robust merger of lexicon data so you dont need to redefine everything!
-    const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
+    //const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
+    const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
-    const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
+    //const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
+    const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON, props.opponentProfile.display.lexicon);
 
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 
