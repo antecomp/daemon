@@ -16,4 +16,6 @@ export interface OverlayAnimReq {
     onFinish: () => void;
 }
 
+export type OverlayAnimationRequester = (name: string, position?: [number, number]) => Promise<void>
+
 export type overlayAnimationTable = Record<string, OverlayAnimData>;

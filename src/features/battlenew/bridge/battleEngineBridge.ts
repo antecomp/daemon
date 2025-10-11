@@ -18,6 +18,8 @@ import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
 import { MOVE_DELAY } from "./timings.config";
+import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
+import { runClashReaction } from "./clashMapper";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -36,8 +38,8 @@ const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this 
     return seq.map((plannedMove, index) => indices.has(index) ? null : plannedMove.name);
 }
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: (name: string, position: [number, number]) => Promise<void>) {
-    // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.
+export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+    // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.ß
 
     // TODO: Consider changing all these per-combatant related signals to a single Sides signal like you did for status icons!
     const [playerMults, setPlayerMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
@@ -85,7 +87,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             )));
         },
 
-        MultipliersComputed({damageMultipliers}) {
+        MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
             setPlayerMults(damageMultipliers.player);
             setOpponentMults(damageMultipliers.opponent);
 
@@ -93,6 +95,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // as death event skips damagesapplied
             // of course, this depends on if you want to branch for 'killing blow' overlay anims.
             // this is also where the animations were originally triggered in logic
+
+            runClashReaction(mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation})
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
