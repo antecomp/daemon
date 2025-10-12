@@ -17,9 +17,9 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
-import { MIN_CLASH_DURATION, MOVE_DELAY } from "./timings.config";
+import { MIN_CLASH_DURATION, MOVE_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { runClashReaction } from "./clashMapper";
+import { hasClashReaction, runClashReaction } from "./clashMapper";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "./clashReactionDefinitions";
 
 export enum BattleUIState {
@@ -89,23 +89,25 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         },
 
         async MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
+
+            const moveNames = mapSides(moves, move => move.name);
+
             setPlayerMults(damageMultipliers.player);
             setOpponentMults(damageMultipliers.opponent);
 
-            // animations should probably go here not in damages applied,
-            // as death event skips damagesapplied
-            // of course, this depends on if you want to branch for 'killing blow' overlay anims.
-            // this is also where the animations were originally triggered in logic
+            await sleep(PRE_ANIMATION_DELAY);
 
-            await Promise.all([
-                await runClashReaction(PLAYER_CLASH_REACTIONS, 'player', mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
-                await runClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', mapSides(moves, move => move.name), damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
-            ]);
+            if(hasClashReaction(PLAYER_CLASH_REACTIONS, 'player', moveNames) || hasClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', moveNames)) {
+                await Promise.all([
+                    runClashReaction(PLAYER_CLASH_REACTIONS, 'player', moveNames, damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
+                    runClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', moveNames, damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
+                ]);
+            } else {
+                await sleep(MIN_CLASH_DURATION);
+            }
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
-
-            await sleep(1000);
 
             setPlayerHealthPercentage(combatants.player.healthPercent);
             setOpponentHealthPercentage(combatants.opponent.healthPercent);

@@ -1,17 +1,20 @@
+import { playSound } from "@/shared/utils/playSound";
 import { ClashMap } from "./clashMapper";
+
+import candle_sfx from '@/assets/sfx/battle/candle.wav'
 
 export const PLAYER_CLASH_REACTIONS: ClashMap = {
     attack: {
-        _({requestOverlayAnimation}) {
-            requestOverlayAnimation('slash_norm');
+        async _({requestOverlayAnimation}) {
+            playSound(candle_sfx);
+            await requestOverlayAnimation('slash_norm');
         }
     }
 }
 
 export const OPPONENT_CLASH_REACTIONS: ClashMap = {
     defend: {
-        async _({requestOverlayAnimation}) {
-            await requestOverlayAnimation('shield');
-        }
+        // you can also just return the promise of reqOverlayAnimation (instead of awaiting it yourself. Same outcome.)
+        _: ({requestOverlayAnimation}) => requestOverlayAnimation('shield')
     }
 }
