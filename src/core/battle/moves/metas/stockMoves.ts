@@ -40,7 +40,7 @@ const stockMoves: Record<string, MoveMeta> = {
             // If we recycle the animation between opponents just go ahead and attach it here as a default.
             animations: { // <- But then we can override it with new animations!
                 pre: [{
-                    priority: 1,
+                    priority: 1, // why did I add this when everything I made uses priority one lol?
                     execute: async ({opponent, index, movePerspective}) => {
                         // Close enough approximation, we defend when we anticipate an aggressive move.
                         if(movePerspective == MovePerspective.Opponent) {
