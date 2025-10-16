@@ -19,8 +19,8 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
 import { MIN_CLASH_DURATION, MOVE_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { hasClashReaction, runClashReaction } from "./clashMapper";
-import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "./clashReactionDefinitions";
+import { runClashReactionsByPlacement } from "../clash/clashReaction";
+import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -97,14 +97,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
             await sleep(PRE_ANIMATION_DELAY);
 
-            if(hasClashReaction(PLAYER_CLASH_REACTIONS, 'player', moveNames) || hasClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', moveNames)) {
-                await Promise.all([
-                    runClashReaction(PLAYER_CLASH_REACTIONS, 'player', moveNames, damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
-                    runClashReaction(OPPONENT_CLASH_REACTIONS, 'opponent', moveNames, damageMultipliers, preEffectOutcomes, {requestOverlayAnimation}),
-                ]);
-            } else {
-                await sleep(MIN_CLASH_DURATION);
-            }
+            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, moveNames})
+
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
