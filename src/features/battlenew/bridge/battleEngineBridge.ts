@@ -58,11 +58,14 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
+
         async RoundPrepared({opponentPlan}) {
             setBattleUIState(BattleUIState.WAITING);
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
+
+            console.log(opponentPlan.map(plan => plan.name));
         },
 
         async RoundStart({plans}) {
@@ -88,10 +91,9 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             )));
         },
 
-        async MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
+        async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes}) {
 
-            // TODO: CHANGE THIS TO PLAN NAMES SO MIRROR CAN HAVE UNIQUE ANIMATION!!!!
-            const moveNames = mapSides(moves, move => move.name);
+            const moveNames = mapSides(plannedMoves, plan => plan.name);
 
             setPlayerMults(damageMultipliers.player);
             setOpponentMults(damageMultipliers.opponent);

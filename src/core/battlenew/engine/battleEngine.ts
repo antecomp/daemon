@@ -79,7 +79,9 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     async function executeRound(playerPlan: PlannedSequence) {
 
-        await emitBattleEvent('RoundStart', {plans: makeSidesMap(playerPlan, opponentPlan), combatants});
+        const plans = makeSidesMap(playerPlan, opponentPlan);
+
+        await emitBattleEvent('RoundStart', {plans, combatants});
 
         const sequences: Sides<Move[]> = {
             player: initializePlannedMoves(playerPlan, opponentPlan),
@@ -114,7 +116,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
-            await emitBattleEvent('MultipliersComputed', {moves, damageMultipliers, preEffectOutcomes});
+            await emitBattleEvent('MultipliersComputed', {moves, damageMultipliers, preEffectOutcomes, plannedMoves: mapSides(plans, plan => plan[moveIndex])});
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 

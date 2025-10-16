@@ -1,4 +1,7 @@
+import { playSound } from "@/shared/utils/playSound";
 import { ClashReactionMap } from "./clashReaction";
+
+import slash_sfx from '@/assets/sfx/battle/candle.wav';
 
 // For now I am just assuming every move has a single animation at a single slot.
 // This could very easily change in the future (i.e needed slot changing based on what happened)
@@ -10,7 +13,7 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
         perform({requestOverlayAnimation}) {
             // Forward up promise from this instead of making a new one with await.
 
-            // playSound
+            playSound(slash_sfx);
             // branch this based on attack context
             return requestOverlayAnimation('slash_norm');
         } 
@@ -19,7 +22,7 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
 
 export const OPPONENT_CLASH_REACTIONS: ClashReactionMap = {
     defend: {
-        place: 0,
+        place: 1,
         async perform({requestOverlayAnimation}, {mults}) {
             if(mults.player.outgoing == 0) return; // noop
             await requestOverlayAnimation('shield');
