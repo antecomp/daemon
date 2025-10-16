@@ -37,7 +37,7 @@ export async function runClashReactionsByPlacement(player: ClashReactionEntry | 
         return;
     }
 
-    const [first, second] = player.place > opponent.place ? [player, opponent] : [opponent, player];
+    const [first, second] = player.place < opponent.place ? [player, opponent] : [opponent, player];
 
     await first.perform(deps, ctx);
     await second.perform(deps, ctx);

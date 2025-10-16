@@ -90,6 +90,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         async MultipliersComputed({damageMultipliers, moves, preEffectOutcomes}) {
 
+            // TODO: CHANGE THIS TO PLAN NAMES SO MIRROR CAN HAVE UNIQUE ANIMATION!!!!
             const moveNames = mapSides(moves, move => move.name);
 
             setPlayerMults(damageMultipliers.player);

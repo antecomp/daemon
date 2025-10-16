@@ -19,7 +19,7 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
 
 export const OPPONENT_CLASH_REACTIONS: ClashReactionMap = {
     defend: {
-        place: 1,
+        place: 0,
         async perform({requestOverlayAnimation}, {mults}) {
             if(mults.player.outgoing == 0) return; // noop
             await requestOverlayAnimation('shield');
