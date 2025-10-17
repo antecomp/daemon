@@ -13,7 +13,7 @@ import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battlenew/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
-import { MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types'
+import { KnownPlanName, MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
 import { PlayerRuneName, playerRuneRegistry } from '@/core/battlenew/moves/runeRegistry'
@@ -36,7 +36,7 @@ function SelectedMove(props: {
     isExecuting: boolean
 }) {
 
-    const entry = props.lexicon[props.moveName];
+    const entry = props.lexicon[props.moveName as KnownPlanName];
 
     return (
         <span class="player-move" classList={{executing: props.isExecuting}}>
@@ -98,8 +98,6 @@ export default function Actionbar(props: ActionbarProps) {
                 playSound(rb_fail, 0.5);
                 return prev
             };
-
-            // TODO: Add visual indication of rune selection rejection (when the above fails)
 
             // Add (Return Updated)
             playSound(rbSounds[prev.length], 0.5);

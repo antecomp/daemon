@@ -5,6 +5,11 @@ import { createProgram, createTexture } from "@/shared/utils/webgl.utils";
 import { onMount } from "solid-js";
 import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
+const BATTLE_CANVAS_DIMENSIONS = {
+    width: SCENE_DIMENSIONS.width + 45,
+    height: SCENE_DIMENSIONS.height + 26
+}
+
 export default function BattleCanvas(props: {
     sprite: AssetURL,
     spriteOffset?: Point
@@ -91,13 +96,12 @@ export default function BattleCanvas(props: {
 
     const opponentSpriteRef = createBattleRefAttacher('opponentSprite');
 
-    // TODO - Remove these magic numbers!
     return (
         <>
             <canvas
                 ref={(el) => {canvasRef = el}}
                 id="battle-bg"
-                width="985" height={SCENE_DIMENSIONS.height + 26}
+                {...BATTLE_CANVAS_DIMENSIONS}
             />
             <img
                 ref={opponentSpriteRef}

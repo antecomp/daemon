@@ -12,6 +12,8 @@ const CENTER = SVG_DIM / 2;
 const RB_INACTIVE_COLOUR = "#999";
 const RB_ACTIVE_COLOUR = "white";
 
+const LARGE_ICON_SIZE = 32;
+
 export default function Runebuilder(props: {
     lexicon: MoveLexicon,
     appendToPlan: (toAdd: PlayerRuneName) => void;
@@ -81,8 +83,8 @@ export default function Runebuilder(props: {
                                     ></circle>
                                     <image
                                         href={props.lexicon[runename].largeIcon}
-                                        x={x - 16} // TODO - REMOVE THIS MAGIC NUMBER!!!
-                                        y={y - 16}
+                                        x={x - LARGE_ICON_SIZE / 2}
+                                        y={y - LARGE_ICON_SIZE / 2}
                                         preserveAspectRatio="xMidYMid meet"
                                     />
                                 </>

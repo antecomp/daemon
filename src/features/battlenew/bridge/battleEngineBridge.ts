@@ -12,7 +12,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { KnownPlanName, MoveLexicon } from "../lexicon/lexicon.types";
+import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
@@ -28,7 +28,7 @@ export enum BattleUIState {
 
 export const HINT_AMOUNT = 3;
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
     // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.ß
 
     // TODO: Consider changing all these per-combatant related signals to a single Sides signal like you did for status icons!
