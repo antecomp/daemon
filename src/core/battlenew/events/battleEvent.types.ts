@@ -51,7 +51,7 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant> // In case of extra damage / healing + reading statuses
     };
     MoveEnd: {
-
+        combatants: Sides<Combatant>
     };
     RoundEnd: {
         combatants: Sides<Combatant>

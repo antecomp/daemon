@@ -16,3 +16,4 @@ export const STATUS_LEXICON: StatusLexicon = {
         icon: mania_icon
     }
 }
+

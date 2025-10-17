@@ -140,15 +140,13 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
 
-            await emitBattleEvent('MoveEnd', {});
+            await emitBattleEvent('MoveEnd', {combatants});
         }
 
         opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
 
         await emitBattleEvent('RoundEnd', {combatants});
 
-        // engine user should call setUp again themselves.
-        //await setupRound();
     }
 
     return {

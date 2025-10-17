@@ -2,7 +2,6 @@ import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types"
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { BattleOutcome, DamageMultipliers } from "@/core/battlenew/model/battle";
-import { PlannedMove } from "@/core/battlenew/model/plannedmove";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
@@ -16,8 +15,8 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
-import { STATUS_LEXICON } from "../lexicon/statusLexicon";
-import { MIN_CLASH_DURATION, MOVE_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
+import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
+import { MOVE_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
@@ -27,17 +26,7 @@ export enum BattleUIState {
     END // Temporary state when animating the UI closing on battle end.    
 }
 
-const HINT_AMOUNT = 3;
-
-const generateHint = (seq: PlannedMove[]): (string | null)[] => { /* Later this should return some nicer interface. */
-    const indices = new Set<number>
-
-    while (indices.size < HINT_AMOUNT) {
-        indices.add(Math.floor(Math.random() * seq.length));
-    }
-
-    return seq.map((plannedMove, index) => indices.has(index) ? null : plannedMove.name);
-}
+export const HINT_AMOUNT = 3;
 
 export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, opponentLexicon: MoveLexicon, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
     // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.ß
@@ -52,11 +41,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
     const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
 
-    // holding off on the current statuses thing until I have more mapping info.
-
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
 
-    // Make reactions here! Will likely split up into smaller helpers later.
     const reactions: BattleReactions = {
 
         async RoundPrepared({opponentPlan}) {
@@ -83,12 +69,9 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         },
 
         PreEffectResolved({combatants}) {
-            // bro why.
             setCurrentStatusIcons(
-                mapSides(combatants, (combatant) => 
-                    combatant.activeStatuses.map(([status]) => 
-                        STATUS_LEXICON[status.name].icon!
-            )));
+                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
+            );
         },
 
         async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes}) {
@@ -129,18 +112,20 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
-        async MoveEnd() {
+        async MoveEnd({combatants}) {
             setPlayerMults({incoming: 0, outgoing: 0});
             setOpponentMults({incoming: 0, outgoing: 0});
+
+            setCurrentStatusIcons(
+                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
+            );
 
             await sleep(MOVE_DELAY);
         },
 
-        RoundEnd({combatants}) {
+        RoundEnd() {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-            // >:(
-            setCurrentStatusIcons(mapSides(combatants, (combatant) => combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon!)));
 
             engine.setupRound();
         },
