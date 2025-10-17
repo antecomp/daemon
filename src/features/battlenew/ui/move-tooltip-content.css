@@ -4,7 +4,7 @@
     height: auto;
     background-color: black;
     border: solid 1px white;
-    outline: solid black 4px;
+    /* outline: solid black 4px; */
 
     display: grid;
     grid-template-columns: auto;

@@ -16,7 +16,7 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { MOVE_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
+import { MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
@@ -65,7 +65,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             setCurrentlyExecutingMoveIndex(moveIndex);
 
             // Short delay for index anim to play without anything else happening
-            await sleep(1000);
+            await sleep(MOVE_INIT_DELAY);
         },
 
         PreEffectResolved({combatants}) {

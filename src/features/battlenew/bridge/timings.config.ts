@@ -5,3 +5,6 @@ export const MOVE_DELAY = 2000;
 
 /** Delay between showing multipliers and animations starting */
 export const PRE_ANIMATION_DELAY = 1000;
+
+/** Delay between the start of the move and all the multiplier bar stuff + other animations */
+export const MOVE_INIT_DELAY = 1000;
