@@ -10,10 +10,20 @@ import slash_sfx from '@/assets/sfx/battle/candle.wav';
 export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
     attack: {
         place: 1,
-        perform({requestOverlayAnimation}) {
+        perform({requestOverlayAnimation}, {combatants}) {
             // Forward up promise from this instead of making a new one with await.
 
             playSound(slash_sfx);
+
+            if(combatants.player.getStatusLevel('mania') > 0) {
+                return requestOverlayAnimation('slash_elag');
+            } else {
+                const preparedLevel = combatants.player.getStatusLevel('prepared');
+                return requestOverlayAnimation(['slash_norm', 'slash_purpose', 'slash_majes'][preparedLevel] ?? 'slash_majes');
+            }
+
+
+
             // branch this based on attack context
             return requestOverlayAnimation('slash_norm');
         } 

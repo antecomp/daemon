@@ -3,14 +3,14 @@ import { mirrorPlan, planMove, repeatPlan } from "./plannedMoves";
 
 // This will eventually be in some global store of equipted moves or similar.
 export const playerRuneRegistry = {
-    attack: planMove(attack),
+    repeat: repeatPlan,
     defend: planMove(defend),
     evade: planMove(evade),
     overwhelm: planMove(overwhelm),
+    attack: planMove(attack),
     mirror: mirrorPlan,
-    repeat: repeatPlan,
     heal: planMove(heal),
-    prepare: planMove(prepare)
+    prepare: planMove(prepare),
 }
 
 export type PlayerRuneName = keyof typeof playerRuneRegistry;

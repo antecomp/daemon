@@ -39,6 +39,7 @@ export type BattleEventPayload = {
     MultipliersComputed: {
         plannedMoves: Sides<PlannedMove>,
         moves: Sides<Move>,
+        combatants: Sides<Combatant>,
         damageMultipliers: Sides<DamageMultipliers>,
         preEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
     };
