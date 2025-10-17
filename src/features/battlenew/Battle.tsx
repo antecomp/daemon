@@ -39,7 +39,7 @@ export interface OpponentProfile {
     display: { /* all the shit for sprite, names, etc here */
         name: string;
         icon: AssetURL
-        lexicon: Partial<Partial<MoveLexicon>>
+        lexicon: Partial<MoveLexicon>
 
         sprite: AssetURL
         spriteOffset?: Point
@@ -56,7 +56,7 @@ export interface OpponentProfile {
 
 export interface PlayerProfile {
     display: {
-        lexicon:Partial<Partial<MoveLexicon>>
+        lexicon:Partial<MoveLexicon>
     }    
 }
 
@@ -65,11 +65,8 @@ export default function Battle(props: {
     playerProfile: PlayerProfile
 }) {
 
-    // TODO: Change this to a more robust merger of lexicon data so you dont need to redefine everything!
-    //const playerLexicon = {...PLAYER_BASE_MOVE_LEXICON, ...props.playerProfile.display.lexicon} as MoveLexicon;
     const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
-    //const opponentLexicon = {...BASE_MOVE_LEXICON, ...props.opponentProfile.display.lexicon} as MoveLexicon;
     const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON, props.opponentProfile.display.lexicon);
 
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();

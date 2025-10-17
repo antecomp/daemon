@@ -4,8 +4,8 @@ type MoveDisplayEntry = {label: string, icon?: AssetURL, largeIcon?: AssetURL, l
 type StatusDisplayEntry = {icon?: AssetURL} // may add label/lore here also, for status tooltips/labels?
 
 
-// TODO: Change this record to restrict to a bank of known planned moves.
-export type MoveLexicon = Record<string, MoveDisplayEntry>
+export type KnownPlanName = "repeat" | "evade" | "heal" | "prepare" | "defend" | "attack" | "overwhelm" | "mirror" | "idle";
+export type KnownStatusName = "prepared" | "vulnerable" | "mania"
 
-// TODO: Same idea for statuses (only map to bank of known statuses)
-export type StatusLexicon = Record<string, StatusDisplayEntry>
+export type MoveLexicon = Record<KnownPlanName, MoveDisplayEntry>
+export type StatusLexicon = Record<KnownStatusName, StatusDisplayEntry>

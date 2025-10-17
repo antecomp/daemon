@@ -18,11 +18,16 @@ export const OPPONENT_ANGEL: OpponentProfile = {
     display: {
         name: "DEBVG ANGEL",
         icon: debug_angel_icon,
-        lexicon: {}, // Use default for now
+        lexicon: {
+            'mirror': {
+                label: 'Reflect' // Test label override for opponent
+            }
+        },
         sprite: debug_angel_sprite,
         backgroundShader: testShader,
         backgroundShaderTexture: basic_grid_bg
     },
+
     logic: {
         ai: {
             getSequence(me) {
@@ -55,6 +60,7 @@ export const OPPONENT_ANGEL: OpponentProfile = {
             }
 
         },
+        
         stats: { maxHealth: 10 }
     },
 }

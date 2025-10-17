@@ -25,7 +25,6 @@ export async function animateOpponentDeathFade(spriteRef: HTMLElement | undefine
     )
 }
 
-// TODO: Extract these magic numbers!
 export async function fadeElementOut(ref: HTMLElement | undefined) {
     if (!ref) return;
 

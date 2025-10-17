@@ -12,7 +12,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { MoveLexicon } from "../lexicon/lexicon.types";
+import { KnownPlanName, MoveLexicon } from "../lexicon/lexicon.types";
 import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
@@ -57,7 +57,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         async RoundStart({plans}) {
             setBattleUIState(BattleUIState.EXECUTING);
             await fadeElementOut(refRegistry.sequenceViewOpponent);
-            setOpponentPlanPreview(plans.opponent.map(plan => opponentLexicon[plan.name].label));
+            setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
@@ -83,6 +83,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
             await sleep(PRE_ANIMATION_DELAY);
 
+            // May have custom clash reactions per opponent later, but for now we can just use a constant one.
             await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, moveNames})
 
         },

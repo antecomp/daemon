@@ -137,15 +137,3 @@ export const PLAYER_BASE_MOVE_LEXICON = {
         icon: stock_icon,
     },
 }
-
-// Reminder;
-/* *
-const merged = { ...a, ...b };
-First, all properties from a are copied into the new object.
-
-Then, all properties from b are copied in.
-
-If b has the same property key as a, it overwrites the value from a.
-
-Use this to have defaults (such as assets/icons/runes kept) for the moves, while shadowing other parts.
-*/
