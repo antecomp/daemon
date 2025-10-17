@@ -76,7 +76,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             );
         },
 
-        async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes, combatants}) {
+        async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes, combatants, plannedSequences, moveIndex}) {
 
             const moveNames = mapSides(plannedMoves, plan => plan.name);
 
@@ -85,7 +85,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             await sleep(PRE_ANIMATION_DELAY);
 
             // May have custom clash reactions per opponent later, but for now we can just use a constant one.
-            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, moveNames, combatants})
+            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, moveNames, combatants, plannedSequences, moveIndex})
 
         },
 

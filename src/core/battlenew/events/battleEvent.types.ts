@@ -37,6 +37,8 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant> // for reading statuses
     };
     MultipliersComputed: {
+        plannedSequences: Sides<PlannedSequence>,
+        moveIndex: number,
         plannedMoves: Sides<PlannedMove>,
         moves: Sides<Move>,
         combatants: Sides<Combatant>,

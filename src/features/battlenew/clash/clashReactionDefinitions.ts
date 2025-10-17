@@ -21,12 +21,14 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
                 return requestOverlayAnimation(['slash_norm', 'slash_purpose', 'slash_majes'][preparedLevel] ?? 'slash_majes');
             }
-
-
-
-            // branch this based on attack context
-            return requestOverlayAnimation('slash_norm');
         } 
+    },
+
+    repeat: {
+        place: 1, // Can't easily emulate place of previous clash...
+        async perform() {
+            // How should I do this? Maybe do a different animation?
+        }
     }
 }
 

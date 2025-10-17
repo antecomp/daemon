@@ -34,7 +34,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
             <img src={props.icon} id="opp-icon"/>
             <div id="opp-bar">
                 <div class="nametag">
-                    <span>{props.name}</span>
+                    <span>{props.name.toUpperCase()}</span>
                     <img src={name_postcut} />
                 </div>
                 <div class="statbar" style={{'--level': `${props.health}%`}}>
