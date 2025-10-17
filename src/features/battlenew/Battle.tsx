@@ -4,21 +4,18 @@ import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
 import { Accessor, createContext, onMount, useContext } from 'solid-js';
 import { createUIBridedBattleEngine } from './bridge/battleEngineBridge';
-import { OpponentAI, OpponentStats } from '@/core/battlenew/ai/opponentAI.types';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
-import { AssetURL } from '@/shared/types/misc.types';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
-import { MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types';
 import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlenew/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import attachToConsole from '@/devtools/attachToConsole';
-import { Point } from '@/shared/types/3d.types';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 import OverlayAnimator from './ui/OverlayAnimator';
 import { createOverlayAnimationQueue } from './animation/overlayAnimations/overlayAnimationQueue';
 import twoLevelMerge from '@/shared/utils/twoLevelMerge';
+import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -35,34 +32,10 @@ export const useBattleUIState = () => {
     return context;    
 }
 
-export interface OpponentProfile {
-    display: { /* all the shit for sprite, names, etc here */
-        name: string;
-        icon: AssetURL
-        lexicon: Partial<MoveLexicon>
-
-        sprite: AssetURL
-        spriteOffset?: Point
-
-        backgroundShader: string;
-        backgroundShaderTexture?: AssetURL;
-    } 
-    
-    logic: {
-        ai: OpponentAI,
-        stats: OpponentStats
-    }
-}
-
-export interface PlayerProfile {
-    display: {
-        lexicon:Partial<MoveLexicon>
-    }    
-}
-
 export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
+    // onEnd callback please do NOT DO THAT GODAWFUL RESOLVER BY REF GARBAGE!!!
 }) {
 
     const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);

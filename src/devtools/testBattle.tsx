@@ -1,4 +1,5 @@
-import Battle, { OpponentProfile, PlayerProfile } from "@/features/battlenew/Battle";
+import Battle, {  } from "@/features/battlenew/Battle";
+import { OpponentProfile, PlayerProfile } from '@/features/battlenew/bridge/battleProfiles';
 import { render } from "solid-js/web";
 
 import opp_icon from "@/assets/artwork/dæmons/debug_angel_icon.png"
@@ -10,7 +11,7 @@ import { attack, idle, prepare } from "@/core/battlenew/moves/moves";
 import '@/shared/styles/base.css'
 
 import test_sprite from '@/assets/artwork/dæmons/debug_angel.png'
-import bg_shader from '@/features/battlenew/backgrounds/vortex.glsl'
+import bg_shader from '@/assets/background-shaders/vortex.glsl'
 import { OPPONENT_ANGEL } from "@/data/battles/angel";
 
 function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {

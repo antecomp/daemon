@@ -37,7 +37,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
 
-    const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]); // will just do names until we have proper mapping code.
+    const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
 
     const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
