@@ -51,8 +51,7 @@ function SelectedMove(props: {
 interface ActionbarProps {
     executeRound: (playerPlan: PlannedSequence) => Promise<void>
     playerHealthPercentage: Accessor<number>,
-    playerMults: Accessor<DamageMultipliers>,
-    opponentMults: Accessor<DamageMultipliers>,
+    displayMults: Accessor<Sides<DamageMultipliers>>,
     currentStatusIcons: Accessor<Sides<string[]>>
     forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
     lexicon: MoveLexicon,
@@ -161,12 +160,12 @@ export default function Actionbar(props: ActionbarProps) {
                 <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />
                 <div id="multbars">
                     <div class="userbars">
-                        <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.playerMults().incoming)}%`} />
-                        <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.playerMults().outgoing)}%`} />
+                        <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.displayMults().player.incoming)}%`} />
+                        <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.displayMults().player.outgoing)}%`} />
                     </div>
                     <div class="dbars">
-                        <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.opponentMults().outgoing)}%`} />
-                        <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.opponentMults().incoming)}%`} />
+                        <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.displayMults().opponent.outgoing)}%`} />
+                        <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.displayMults().opponent.incoming)}%`} />
                     </div>
                     <div class="player-statuses">
                         <For each={props.currentStatusIcons().player}>

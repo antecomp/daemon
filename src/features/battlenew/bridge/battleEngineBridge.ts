@@ -12,8 +12,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { MoveLexicon } from "../lexicon/lexicon.types";
-import { mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
+import { makeSidesMap, mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
@@ -28,17 +27,20 @@ export enum BattleUIState {
 
 export const HINT_AMOUNT = 3;
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
-    // Gonna do a very messy translation layer first for testing then we can refine the whole UI to better work with the enging.ß
+const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
 
-    // TODO: Consider changing all these per-combatant related signals to a single Sides signal like you did for status icons!
-    const [playerMults, setPlayerMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
-    const [opponentMults, setOpponentMults] = createSignal<DamageMultipliers>({incoming: 0, outgoing: 0});
+export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
+
+    // Keeping these seperate instead of using Sides as they are forwarded to different UI components.
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
+
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]); // will just do names until we have proper mapping code.
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
+
+    const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
     const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
 
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
@@ -78,8 +80,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
             const moveNames = mapSides(plannedMoves, plan => plan.name);
 
-            setPlayerMults(damageMultipliers.player);
-            setOpponentMults(damageMultipliers.opponent);
+            setDisplayMults(damageMultipliers);
 
             await sleep(PRE_ANIMATION_DELAY);
 
@@ -114,8 +115,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         },
 
         async MoveEnd({combatants}) {
-            setPlayerMults({incoming: 0, outgoing: 0});
-            setOpponentMults({incoming: 0, outgoing: 0});
+
+            setDisplayMults(emptyMults)
 
             setCurrentStatusIcons(
                 mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
@@ -133,8 +134,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         async BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
-            setPlayerMults({incoming: 0, outgoing: 0});
-            setOpponentMults({incoming: 0, outgoing: 0});      
+            setDisplayMults(emptyMults);
             setPlayerHealthPercentage(combatants.player.healthPercent);
             setOpponentHealthPercentage(combatants.opponent.healthPercent);   
             
@@ -159,7 +159,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const engine = createBattleEngine(opponentAI, opponentStats, reactions);
 
     return {
-        playerMults, opponentMults, 
+        displayMults,
         battleUIState, setBattleUIState,
         playerHealthPercentage, opponentHealthPercentage, 
         opponentPlanPreview, 
