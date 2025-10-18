@@ -16,6 +16,7 @@ import OverlayAnimator from './ui/OverlayAnimator';
 import { createOverlayAnimationQueue } from './animation/overlayAnimations/overlayAnimationQueue';
 import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
+import ActionMessages from './ui/ActionMessages';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -64,6 +65,7 @@ export default function Battle(props: {
                     style={{ filter: `url(#${filterID})` }}
                     classList={{"battle-end": bridge.battleUIState() === BattleUIState.END}}
                 >
+                    <ActionMessages messages={bridge.actionMessages}/>
                     <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
                         <OpponentStatusBar
                             name={props.opponentProfile.display.name}

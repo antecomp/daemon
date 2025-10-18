@@ -10,7 +10,7 @@ export type ClashReactionCTX = {
         combatants: Sides<Combatant>,
         mults: Sides<DamageMultipliers>,
         outcomes: Sides<MoveSideEffectOutcome | undefined>,
-        moveNames: Sides<string>,
+        plannedMoveNames: Sides<string>,
         plannedSequences: Sides<PlannedSequence>,
         moveIndex: number
 }

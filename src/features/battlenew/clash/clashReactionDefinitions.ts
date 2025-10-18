@@ -28,6 +28,7 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
         place: 1, // Can't easily emulate place of previous clash...
         async perform() {
             // How should I do this? Maybe do a different animation?
+            // Could be based on mults, two different repeat animations, one for doing damage and one for passive stuff?
         }
     }
 }

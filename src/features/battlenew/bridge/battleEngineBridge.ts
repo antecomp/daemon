@@ -15,10 +15,11 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { makeSidesMap, mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "./timings.config";
+import { MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
+import { ActionMessage, ActionMessageAppender } from "./actionMessages";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -45,6 +46,13 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
 
+    const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
+    const appendActionMessage: ActionMessageAppender = (text, icon) => {
+        setActionMessages(prev => [...prev, { text, icon}])
+
+        setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
+    }
+
     const reactions: BattleReactions = {
 
         async RoundPrepared({opponentPlan}) {
@@ -52,7 +60,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
-
+            appendActionMessage('test');
+            appendActionMessage('test2')
             console.log(opponentPlan.map(plan => plan.name));
         },
 
@@ -78,14 +87,14 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
 
         async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes, combatants, plannedSequences, moveIndex}) {
 
-            const moveNames = mapSides(plannedMoves, plan => plan.name);
+            const plannedMoveNames = mapSides(plannedMoves, plan => plan.name);
 
             setDisplayMults(damageMultipliers);
 
             await sleep(PRE_ANIMATION_DELAY);
 
             // May have custom clash reactions per opponent later, but for now we can just use a constant one.
-            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, moveNames, combatants, plannedSequences, moveIndex})
+            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[plannedMoveNames.player], OPPONENT_CLASH_REACTIONS[plannedMoveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames, combatants, plannedSequences, moveIndex})
 
         },
 
@@ -167,5 +176,6 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         attachToRegistry,
         currentStatusIcons,
         engine,
+        actionMessages
     }
 }
