@@ -16,6 +16,9 @@ export const attack: Move = {
     name: 'attack',
     type: MoveType.Aggressive,
     behaviors: {
+        preEffect({deps}) {
+            deps.logger('ATTACK RUN', 'focus')
+        },
         damageMultipliers: PreparedAttackBonus
     }
 }

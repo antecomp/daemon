@@ -1,5 +1,6 @@
 import { Combatant } from "./combatant";
 import { DamageMultipliers } from "./battle";
+import { BattleEngineDependencies } from "../engine/battleEngine";
 
 /**
  * Represents the type of a move, which determines its behavior (base multipliers) and interaction
@@ -15,6 +16,7 @@ export enum MoveSideEffectOutcome {
 }
 
 export interface PreMoveContext {
+    deps: BattleEngineDependencies;
     self: Combatant;
     them: Combatant;
     moves: {

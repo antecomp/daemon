@@ -10,6 +10,13 @@ import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, r
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
 
+export interface BattleEngineDependencies {
+    logger: (message: string, tag?: string) => void;
+}
+
+const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
+    logger: (message) => console.log(message)
+}
 
 /**
  * Creates and initializes a new battle engine instance for handling turn-based combat between a player and an AI opponent.
@@ -27,7 +34,7 @@ import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
  * @remarks
  * The engine manages combatants, move execution, event emission, and battle resolution. Consumers should call `setupRound` before each round and `executeRound` with the player's moves. The engine emits events at key points for UI updates or logging.
  */
-export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, /* deps? */) {
+export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, deps: BattleEngineDependencies = ENGINE_DEP_FALLBACK) {
 
     async function emitBattleEvent<K extends BattleEvent>(event: K, payload: BattleEventPayload[K]) {
         await reactions[event]?.(payload);
@@ -100,6 +107,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             await emitBattleEvent('MoveStart', {moveIndex, sequences, moves})
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
+                deps,
                 self: combatants[side],
                 them: combatants[oppositeSide(side)],
                 moves: {

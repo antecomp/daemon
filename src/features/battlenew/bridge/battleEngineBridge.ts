@@ -47,8 +47,8 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
 
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
-    const appendActionMessage: ActionMessageAppender = (text, icon) => {
-        setActionMessages(prev => [...prev, { text, icon}])
+    const appendActionMessage: ActionMessageAppender = (text, iconName) => {
+        setActionMessages(prev => [...prev, { text, iconName}])
 
         setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
     }
@@ -165,7 +165,7 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
     };
 
 
-    const engine = createBattleEngine(opponentAI, opponentStats, reactions);
+    const engine = createBattleEngine(opponentAI, opponentStats, reactions, {logger(m, t) {appendActionMessage(m, t)}});
 
     return {
         displayMults,
