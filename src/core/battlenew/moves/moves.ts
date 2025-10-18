@@ -72,6 +72,9 @@ export const defend: Move = {
     name: 'defend',
     type: MoveType.Defensive,
     behaviors: {
+        preEffect({emit}) {
+            emit({message: 'TEST DEFEND'});
+        },
         damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage)
     }
 }

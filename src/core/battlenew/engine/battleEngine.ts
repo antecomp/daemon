@@ -108,6 +108,13 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 deps,
+                emit(s) {
+                    emitBattleEvent('MoveEmission', {
+                        moveName: moves[side].name,
+                        signal: s,
+                        perspective: side
+                    })
+                },
                 self: combatants[side],
                 them: combatants[oppositeSide(side)],
                 moves: {

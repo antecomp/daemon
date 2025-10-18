@@ -10,6 +10,11 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
+export interface MoveSignal {
+    result?: MoveSideEffectOutcome
+    message: string // remove this later
+}
+
 export enum MoveSideEffectOutcome {
     Success, Failure,
     /* Attempted */ // feel free to add more if needed.
@@ -17,6 +22,7 @@ export enum MoveSideEffectOutcome {
 
 export interface PreMoveContext {
     deps: BattleEngineDependencies;
+    emit: (signal: MoveSignal) => void; // TODO: Make signal more robust/predictable than just a string
     self: Combatant;
     them: Combatant;
     moves: {

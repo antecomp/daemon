@@ -1,7 +1,7 @@
 import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "../model/battle";
 import { Combatant } from "../model/combatant";
-import { MoveSideEffectOutcome, Move } from "../model/move";
+import { MoveSideEffectOutcome, Move, MoveSignal } from "../model/move";
 import { PlannedMove, PlannedSequence } from "../model/plannedmove";
 
 // Change to Enum?
@@ -16,6 +16,7 @@ export type BattleEvent =
     | "MoveEnd"
     | "RoundEnd"
     | "BattleEnd"
+    | "MoveEmission" // Random Emissions from move side effects.
 
 // Update this as needed for whatever information is needed/available.
 export type BattleEventPayload = {
@@ -63,6 +64,12 @@ export type BattleEventPayload = {
         outcome: BattleOutcome
         combatants: Sides<Combatant>
     };
+
+    MoveEmission: {
+        moveName: string
+        signal: MoveSignal, // TODO: make this a more robust predictable indicator!
+        perspective: 'opponent' | 'player'
+    }
 }
 
 export type Reaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;

@@ -161,6 +161,10 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
                     animateOpponentDeathFade(refRegistry.opponentSprite);
                     // Do some sort of unique other animation or event in case of draw here.
             }
+        },
+
+        MoveEmission({moveName, signal, perspective}) {
+            appendActionMessage(`${moveName}:${perspective} ${signal.message}`)
         }
     };
 
