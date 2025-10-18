@@ -42,6 +42,10 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
         if(ctx.damageTaken <= 0) {
             return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
         } else {
+            // We want to change to some sort of EMIT system (dep injected). UIBridge has the handler for that
+            // emit -- and it will do the action message stuff
+            // Because this wont work without overreaching into UI state (bad!)
+            ctx.deps.logger('Focus Shattered! Cannot ' + ctx.moves.ours.name);
             return MoveSideEffectOutcome.Failure
         }
     }
