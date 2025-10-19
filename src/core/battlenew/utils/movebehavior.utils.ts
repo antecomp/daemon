@@ -24,13 +24,13 @@ export function multiplierPipeline(...pipeline: DamageMultiplierFunction[]): Dam
 
 }
 
-export function extendStatusOf(who: 'opponent' | 'self', Stat: typeof Status, amount: number = 1): PostMoveSideEffect {
+export function extendStatusOf(who: 'them' | 'self', Stat: typeof Status, amount: number = 1): PostMoveSideEffect {
     return (ctx) => {
         ctx[who].extendStatus(new Stat, amount);
     };
 }
 
-export function applyStatusTo<T extends PostMoveContext | PreMoveContext>(who: 'opponent' | 'self', Stat: typeof Status, duration: number = 1){
+export function applyStatusTo<T extends PostMoveContext | PreMoveContext>(who: 'them' | 'self', Stat: typeof Status, duration: number = 1){
     return (ctx: T) => {
         ctx[who].addStatus(new Stat, duration)
     }

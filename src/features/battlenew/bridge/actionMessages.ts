@@ -2,7 +2,6 @@ import ai_plain_icon from '@/features/battle/assets/icons/battle-alerts/plain.pn
 import ai_heal_icon from '@/features/battle/assets/icons/battle-alerts/heal.png'
 import ai_focus_icon from '@/features/battle/assets/icons/battle-alerts/focus.png'
 import ai_mania_icon from '@/features/battle/assets/icons/battle-alerts/mania.png'
-import { AssetURL } from '@/shared/types/misc.types'
 import { Side, Sides } from '@/core/battlenew/utils/sides.utils'
 import { MoveLexicon } from '../lexicon/lexicon.types'
 import { BattleEventPayload } from '@/core/battlenew/events/battleEvent.types'

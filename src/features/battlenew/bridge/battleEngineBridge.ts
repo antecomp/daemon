@@ -1,4 +1,3 @@
-import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
 import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
 import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
 import { BattleOutcome, DamageMultipliers } from "@/core/battlenew/model/battle";

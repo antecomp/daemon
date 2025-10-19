@@ -26,8 +26,8 @@ export const observe: Move = {
     behaviors: {
         postEffect: effectPipeline(
             // extend before apply.
-            extendStatusOf('opponent', VulnerableStatus),
-            applyStatusTo('opponent', VulnerableStatus)
+            extendStatusOf('them', VulnerableStatus),
+            applyStatusTo('them', VulnerableStatus)
         )
     }
 }
