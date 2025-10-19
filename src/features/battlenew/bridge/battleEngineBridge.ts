@@ -19,7 +19,9 @@ import { MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
-import { ActionMessage, ActionMessageAppender } from "./actionMessages";
+import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
+import { MoveLexicon } from "../lexicon/lexicon.types";
+import { OpponentProfile } from "./battleProfiles";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -30,7 +32,7 @@ export const HINT_AMOUNT = 3;
 
 const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
 
-export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
 
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
 
@@ -161,23 +163,13 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             }
         },
 
-        MoveEmission({moveName, signal, perspective}) {
-            //appendActionMessage(`${moveName}:${perspective} ${signal.type} | ${signal.payload}`)
-
-            // Make this a resolver we pass in, so we can seperate logic and so I don't have to worry about also adding lexicons in here!
-            switch(signal.type) {
-                case 'mechanic:focus':
-                    if(signal.payload.lost == true) appendActionMessage(`${(perspective == 'player' ? 'You' : 'Da Enemy')} lost focus! Unable to ${moveName}`)
-                break;
-                case 'effect:heal': {
-                    
-                }
-            }
+        MoveEmission: (data) => {
+            generateActionMessageFromMoveEmission(data, opponentProfile, lexicons, appendActionMessage);
         }
     };
 
 
-    const engine = createBattleEngine(opponentAI, opponentStats, reactions, {logger(m, t) {appendActionMessage(m, t)}});
+    const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, {logger(m) {appendActionMessage(m, 'default')}});
 
     return {
         displayMults,

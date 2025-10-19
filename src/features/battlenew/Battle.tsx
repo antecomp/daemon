@@ -47,7 +47,7 @@ export default function Battle(props: {
 
     const {overlayAnimRequests, requestOverlayAnimation} = createOverlayAnimationQueue();
 
-    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile.logic.ai, props.opponentProfile.logic.stats, startMeltAnimation, requestOverlayAnimation);
+    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile, {opponent: opponentLexicon, player: playerLexicon}, startMeltAnimation, requestOverlayAnimation);
 
     onMount(
         () => {

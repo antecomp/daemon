@@ -36,10 +36,11 @@ export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome
     }
 }
 
-export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults}) => {
+export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults, emit}) => {
     if(preEffectOutcome == MoveSideEffectOutcome.Success) {
         if(damageTaken === 0 && theirMults.outgoing > 0) {
-            self.addStatus(new ManiaStatus)
+            self.addStatus(new ManiaStatus);
+            emit({type: 'mechanic:mania', payload: {'manic': true}});
             return MoveSideEffectOutcome.Success
         }
     }
@@ -61,9 +62,13 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
     }
 }
 
-export const HealSelf: PostMoveSideEffect = ({self}) => {
+export const HealSelf: PostMoveSideEffect = ({self, emit}) => {
     const healAmount = 2 * (1 + self.getStatusLevelIncludingExpired('prepared'));
     self.heal(healAmount);
+    emit({
+        type: 'effect:heal',
+        payload: {'amount': healAmount, capped: self.health == self.maxHealth}
+    })
 }
 
 export const ReduceIncomingDamage: DamageMultiplierFunction = ({self}) => {

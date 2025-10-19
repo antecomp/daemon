@@ -16,9 +16,6 @@ export const attack: Move = {
     name: 'attack',
     type: MoveType.Aggressive,
     behaviors: {
-        preEffect({deps}) {
-            deps.logger('ATTACK RUN', 'focus')
-        },
         damageMultipliers: PreparedAttackBonus
     }
 }
@@ -62,7 +59,8 @@ export const prepare: Move = {
         postEffect: RequiresFocus(
             effectPipeline(
                 extendStatusOf('self', PreparedStatus),
-                applyStatusTo('self', PreparedStatus)
+                applyStatusTo('self', PreparedStatus),
+                ({emit, self}) => {emit({type: 'status:prepare', payload: {'level': self.getStatusLevel('prepared')}})}
             )
         )
     }
