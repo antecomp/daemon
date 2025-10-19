@@ -3,6 +3,15 @@ import { PASSTHROUGH_MULTPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
 import { getBaseMultipliers } from "../utils/engine.utils";
 
+declare global {
+    interface MoveSignalMap {
+        'effect:heal': {amount: number, capped: boolean},
+        'status:prepare': {level: number}
+        'mechanic:mania': {manic: boolean},
+        'mechanic:focus': {lost: boolean}
+    }
+}
+
 export const PreparedAttackBonus: DamageMultiplierFunction = ({self}) => {
     return {
         incoming: 1,
@@ -42,10 +51,11 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
         if(ctx.damageTaken <= 0) {
             return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
         } else {
-            // We want to change to some sort of EMIT system (dep injected). UIBridge has the handler for that
-            // emit -- and it will do the action message stuff
-            // Because this wont work without overreaching into UI state (bad!)
-            ctx.deps.logger('Focus Shattered! Cannot ' + ctx.moves.ours.name);
+            //ctx.deps.logger('Focus Shattered! Cannot ' + ctx.moves.ours.name);
+            ctx.emit({
+                type: 'mechanic:focus',
+                payload: {lost: true}
+            })
             return MoveSideEffectOutcome.Failure
         }
     }

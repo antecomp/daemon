@@ -10,10 +10,29 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
-export interface MoveSignal {
-    result?: MoveSideEffectOutcome
-    message: string // remove this later
+// TODO: Make signal more robust/predictable than just a string
+
+// Declare global interface that we can extend from anywhere (allowing us to easily append new information as part of move effects)
+declare global {
+    interface MoveSignalMap {
+        'example': {x: number}
+    } // For Third-Party Extension.
 }
+
+// export type MoveSignal<K extends keyof MoveSignalMap = keyof MoveSignalMap> = {
+//     type: K,
+//     payload: MoveSignalMap[K]
+// }
+
+export type MoveSignalOf<K extends keyof MoveSignalMap> = {
+    type: K;
+    payload: MoveSignalMap[K];
+}
+
+// Distributed union over all keys - to actually correlate type to payload for narrowing to work.
+export type MoveSignal = {
+    [K in keyof MoveSignalMap]: MoveSignalOf<K>
+}[keyof MoveSignalMap];
 
 export enum MoveSideEffectOutcome {
     Success, Failure,
@@ -22,7 +41,7 @@ export enum MoveSideEffectOutcome {
 
 export interface PreMoveContext {
     deps: BattleEngineDependencies;
-    emit: (signal: MoveSignal) => void; // TODO: Make signal more robust/predictable than just a string
+    emit: (signal: MoveSignal) => void;
     self: Combatant;
     them: Combatant;
     moves: {

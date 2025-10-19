@@ -25,11 +25,11 @@ export const ApplyStatusToSelf: ((StatusClass: StatusCtor) => MoveSideEffect) = 
 
 // or if Status wasn't abstract, you can just use C extends typeof Status...
 // using a child class as an example here;
-function ApplyVulnToSelf<C extends typeof VulnerableStatus>(
-    Ctor: C,
-) {
-    return (({self}) => self.addStatus(new Ctor())) as MoveSideEffect;
-}
+// function ApplyVulnToSelf<C extends typeof VulnerableStatus>(
+//     Ctor: C,
+// ) {
+//     return (({self}) => self.addStatus(new Ctor())) as MoveSideEffect;
+// }
 
 export const ApplySelfVulnerable: MoveSideEffect = ({self}) => {
     self.addStatus(new VulnerableStatus(1));

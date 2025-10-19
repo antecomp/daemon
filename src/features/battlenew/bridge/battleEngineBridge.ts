@@ -60,8 +60,6 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
-            appendActionMessage('test');
-            appendActionMessage('test2')
             console.log(opponentPlan.map(plan => plan.name));
         },
 
@@ -164,7 +162,17 @@ export function createUIBridedBattleEngine(opponentAI: OpponentAI, opponentStats
         },
 
         MoveEmission({moveName, signal, perspective}) {
-            appendActionMessage(`${moveName}:${perspective} ${signal.message}`)
+            //appendActionMessage(`${moveName}:${perspective} ${signal.type} | ${signal.payload}`)
+
+            // Make this a resolver we pass in, so we can seperate logic and so I don't have to worry about also adding lexicons in here!
+            switch(signal.type) {
+                case 'mechanic:focus':
+                    if(signal.payload.lost == true) appendActionMessage(`${(perspective == 'player' ? 'You' : 'Da Enemy')} lost focus! Unable to ${moveName}`)
+                break;
+                case 'effect:heal': {
+                    
+                }
+            }
         }
     };
 

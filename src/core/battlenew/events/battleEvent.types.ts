@@ -1,4 +1,4 @@
-import { Sides } from "../utils/sides.utils";
+import { Side, Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "../model/battle";
 import { Combatant } from "../model/combatant";
 import { MoveSideEffectOutcome, Move, MoveSignal } from "../model/move";
@@ -68,7 +68,9 @@ export type BattleEventPayload = {
     MoveEmission: {
         moveName: string
         signal: MoveSignal, // TODO: make this a more robust predictable indicator!
-        perspective: 'opponent' | 'player'
+        perspective: Side
+        // Consider adding a 'phase' section?
+        // feel free to add other stuff like index or whatever. 
     }
 }
 
