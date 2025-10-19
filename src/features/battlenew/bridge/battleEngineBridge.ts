@@ -84,16 +84,18 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             );
         },
 
-        async MultipliersComputed({damageMultipliers, plannedMoves, preEffectOutcomes, combatants, plannedSequences, moveIndex}) {
+        async MultipliersComputed({damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex}) {
 
-            const plannedMoveNames = mapSides(plannedMoves, plan => plan.name);
+            console.log(moves);
+            const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name); // this is fucking stupid.
+            const moveTags = mapSides(moves, x => x.tags ?? []);
 
             setDisplayMults(damageMultipliers);
 
             await sleep(PRE_ANIMATION_DELAY);
 
             // May have custom clash reactions per opponent later, but for now we can just use a constant one.
-            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[plannedMoveNames.player], OPPONENT_CLASH_REACTIONS[plannedMoveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames, combatants, plannedSequences, moveIndex})
+            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
 
         },
 

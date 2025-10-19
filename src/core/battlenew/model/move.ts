@@ -10,6 +10,9 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
+// Tag for logic to indicate if a move spawned as a result of mirroring/repeating or other fancy logic (for animations)
+export type MoveTags = ('mirrored' | 'repeated')[];
+
 // TODO: Make signal more robust/predictable than just a string
 
 // Declare global interface that we can extend from anywhere (allowing us to easily append new information as part of move effects)
@@ -87,7 +90,7 @@ export interface Move {
     /** Move name - used for internal tracking and comparison. Can be used for mapping in emitted events. Should rarely be used otherwise. */
     name: string;
     type: MoveType;
-
+    tags?: MoveTags
     behaviors: {
         preEffect?: PreMoveSideEffect;
         damageMultipliers?: DamageMultiplierFunction;

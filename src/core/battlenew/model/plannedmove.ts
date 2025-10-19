@@ -1,4 +1,4 @@
-import { Move } from "./move";
+import { Move, MoveTags } from "./move";
 
 
 /**
@@ -14,18 +14,13 @@ export type MoveValidator = (workingPlan: PlannedMove[]) => boolean;
 
 /**
  * A function type that creates a `Move` instance based on the provided planning context.
- *
- * @param context - An object containing:
- *   - `myPlan`: The array of `PlannedMove` objects representing the current player's planned moves.
- *   - `theirPlan`: The array of `PlannedMove` objects representing the opponent's planned moves.
- *   - `index`: The index within the plan arrays for which the move should be instantiated.
- * @returns A `Move` object representing the action to be taken at the specified index.
- */
+*/
 export type PlannedMoveInstantiator = (
     context: {
         myPlan: PlannedMove[];
         theirPlan: PlannedMove[];
         index: number;
+        tags?: MoveTags // tag to apply to the move.
     }
 ) => Move;
 

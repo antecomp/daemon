@@ -1,13 +1,13 @@
 import { mapObject } from "@/shared/utils/mapObject";
 import { Move } from "../model/move";
 import { PlannedMove } from "../model/plannedmove";
-import { attack, MOVEBANK, nothingMove } from "./moves";
+import { MOVEBANK, nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
 
 export function planMove(move: Move): PlannedMove {
     return {
         name: move.name,
-        instantiate: () => move
+        instantiate: ({tags}) => ({...move, tags: tags})
     }
 }
 
@@ -20,7 +20,7 @@ export const repeatPlan: PlannedMove = {
             return nothingMove;
         }
 
-        return prevMove.instantiate(ctx);
+        return prevMove.instantiate({...ctx, tags: ['repeated', ...(ctx.tags ?? [])]}); // TODO MAKE THIS CLEANER!!!
     },
     canPerform: CannotBeFirst
 }
@@ -37,7 +37,8 @@ export const mirrorPlan: PlannedMove = {
         return oppmove.instantiate({
             myPlan: ctx.theirPlan,
             theirPlan: ctx.myPlan,
-            index: ctx.index
+            index: ctx.index,
+            tags: ['mirrored', ...(ctx.tags ?? [])] // TODO MAKE THIS LESS FORSAKEN!!!!
         })
 
         //return oppmove.instantiate(ctx);

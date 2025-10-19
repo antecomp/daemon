@@ -1,5 +1,5 @@
 import { DamageMultipliers } from "@/core/battlenew/model/battle";
-import { MoveSideEffectOutcome } from "@/core/battlenew/model/move";
+import { MoveSideEffectOutcome, MoveTags } from "@/core/battlenew/model/move";
 import { Sides } from "@/core/battlenew/utils/sides.utils";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { Combatant } from "@/core/battlenew/model/combatant";
@@ -12,7 +12,8 @@ export type ClashReactionCTX = {
         outcomes: Sides<MoveSideEffectOutcome | undefined>,
         plannedMoveNames: Sides<string>,
         plannedSequences: Sides<PlannedSequence>,
-        moveIndex: number
+        moveIndex: number,
+        moveTags: Sides<MoveTags>
 }
 
 export type ClashReaction = (
