@@ -1,3 +1,5 @@
+import { availableOverlayAnimationNames, overlayAnimationDefinitions } from "./overlayAnimationDefinitions";
+
 /** 
  * Contains the data for an overlay animation, where an "overlay animation" is a short animation that
  * plays over the battle scene, such as a character's attack animation.
@@ -16,6 +18,4 @@ export interface OverlayAnimReq {
     onFinish: () => void;
 }
 
-export type OverlayAnimationRequester = (name: string, position?: [number, number]) => Promise<void>
-
-export type overlayAnimationTable = Record<string, OverlayAnimData>;
+export type OverlayAnimationRequester = (name: availableOverlayAnimationNames, position?: [number, number]) => Promise<void>

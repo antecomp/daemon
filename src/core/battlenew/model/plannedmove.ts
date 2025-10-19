@@ -20,7 +20,6 @@ export type PlannedMoveInstantiator = (
         myPlan: PlannedMove[];
         theirPlan: PlannedMove[];
         index: number;
-        tags?: MoveTags // tag to apply to the move.
     }
 ) => Move;
 

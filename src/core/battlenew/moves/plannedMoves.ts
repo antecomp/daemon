@@ -7,7 +7,7 @@ import { CannotBeFirst } from "./validators";
 export function planMove(move: Move): PlannedMove {
     return {
         name: move.name,
-        instantiate: ({tags}) => ({...move, tags: tags})
+        instantiate: () => move
     }
 }
 
@@ -20,7 +20,9 @@ export const repeatPlan: PlannedMove = {
             return nothingMove;
         }
 
-        return prevMove.instantiate({...ctx, tags: ['repeated', ...(ctx.tags ?? [])]}); // TODO MAKE THIS CLEANER!!!
+        // TODO MAKE THIS CLEANER!!!
+        const move = prevMove.instantiate(ctx);
+        return {...move, tags: [...(move.tags ?? []), 'repeated']}
     },
     canPerform: CannotBeFirst
 }
@@ -28,20 +30,20 @@ export const repeatPlan: PlannedMove = {
 export const mirrorPlan: PlannedMove = {
     name: 'mirror',
     instantiate(ctx) {
-        const oppmove = ctx.theirPlan[ctx.index];
+        const oppPlan = ctx.theirPlan[ctx.index];
 
-        if(oppmove.name == 'mirror') return nothingMove;
+        if(oppPlan.name == 'mirror') return nothingMove;
 
         // Swap context as we want moves like repeat to be
         // in regards to the opponents sequence, not our own.
-        return oppmove.instantiate({
+        const oppMove = oppPlan.instantiate({
             myPlan: ctx.theirPlan,
             theirPlan: ctx.myPlan,
             index: ctx.index,
-            tags: ['mirrored', ...(ctx.tags ?? [])] // TODO MAKE THIS LESS FORSAKEN!!!!
-        })
+        });
 
-        //return oppmove.instantiate(ctx);
+        // TODO MAKE THIS CLEANER!!!
+        return {...oppMove, tags: [...(oppMove.tags ?? []), 'mirrored']}
     }
 }
 

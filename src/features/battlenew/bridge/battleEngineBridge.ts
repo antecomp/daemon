@@ -87,7 +87,9 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         async MultipliersComputed({damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex}) {
 
             console.log(moves);
-            const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name); // this is fucking stupid.
+
+            // Hacky but it works - If the move is the result of a mirror, play the mirror anim instead!
+            const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
             const moveTags = mapSides(moves, x => x.tags ?? []);
 
             setDisplayMults(damageMultipliers);

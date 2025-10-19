@@ -5,10 +5,10 @@ import slash_elag from '@/assets/artwork/battle_overlay_animations/slash/slash_e
 import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash_repeat.webm'
 import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
-import { overlayAnimationTable } from './overlayAnimations.types'
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
+import { mapObject } from '@/shared/utils/mapObject'
 
-export const overlayAnimationDefinitions: overlayAnimationTable = {
+export const overlayAnimationDefinitions = {
     "slash_norm": {
         src: slashnorm,
         width: 567,
@@ -52,5 +52,7 @@ export const overlayAnimationDefinitions: overlayAnimationTable = {
     }
 }
 
+export type availableOverlayAnimationNames = keyof typeof overlayAnimationDefinitions;
+
 // Lazily just calling it here for now, we will want to be smart about it when we actually have dynamic resources.
-requestAssetPrefetch([slashnorm, slash_purpose, slash_mages, slash_elag, shield]);
+requestAssetPrefetch(Object.values(overlayAnimationDefinitions).map(a => a.src));
