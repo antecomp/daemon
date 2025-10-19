@@ -2,6 +2,8 @@ import { playSound } from "@/shared/utils/playSound";
 import { ClashReactionMap } from "./clashReaction";
 
 import slash_sfx from '@/assets/sfx/battle/candle.wav';
+import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
+import sleep from "@/shared/utils/sleep";
 
 // For now I am just assuming every move has a single animation at a single slot.
 // This could very easily change in the future (i.e needed slot changing based on what happened)
@@ -50,6 +52,7 @@ export const OPPONENT_CLASH_REACTIONS: ClashReactionMap = {
         place: 1,
         async perform({requestOverlayAnimation}, {mults}) {
             if(mults.opponent.outgoing == 0) return;
+            sleep(500).then(() => playSound(deflect_noise))
             await requestOverlayAnimation('mirror');
         }
     }
