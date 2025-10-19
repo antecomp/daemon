@@ -24,11 +24,16 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
         } 
     },
 
+    // Might have to do some exception/hack for repeat, I am unsure.
     repeat: {
         place: 1, // Can't easily emulate place of previous clash...
-        async perform() {
+        async perform({requestOverlayAnimation}, {plannedSequences, moveIndex}) {
             // How should I do this? Maybe do a different animation?
             // Could be based on mults, two different repeat animations, one for doing damage and one for passive stuff?
+            if(plannedSequences.player[moveIndex - 1].name == 'attack') {
+                playSound(slash_sfx);
+                await requestOverlayAnimation('slash_repeat')
+            }
         }
     }
 }
@@ -39,6 +44,13 @@ export const OPPONENT_CLASH_REACTIONS: ClashReactionMap = {
         async perform({requestOverlayAnimation}, {mults}) {
             if(mults.player.outgoing == 0) return; // noop
             await requestOverlayAnimation('shield');
+        }
+    },
+    mirror: {
+        place: 1,
+        async perform({requestOverlayAnimation}, {mults}) {
+            if(mults.opponent.outgoing == 0) return;
+            await requestOverlayAnimation('mirror');
         }
     }
 }

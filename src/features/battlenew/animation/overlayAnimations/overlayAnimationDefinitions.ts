@@ -1,8 +1,10 @@
-import slashnorm from '@/features/battle/assets/overlay-animations/slash/slash_norm.webm'
-import slash_purpose from '@/features/battle/assets/overlay-animations/slash/slash_purp.webm'
-import slash_mages from '@/features/battle/assets/overlay-animations/slash/slash_majes.webm'
-import slash_elag from '@/features/battle/assets/overlay-animations/slash/slash_elag.webm'
-import shield from '@/features/battle/assets/overlay-animations/shield/shield_opp.webm'
+import slashnorm from '@/assets/artwork/battle_overlay_animations/slash/slash_norm.webm'
+import slash_purpose from '@/assets/artwork/battle_overlay_animations/slash/slash_purp.webm'
+import slash_mages from '@/assets/artwork/battle_overlay_animations/slash/slash_majes.webm'
+import slash_elag from '@/assets/artwork/battle_overlay_animations/slash/slash_elag.webm'
+import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash_repeat.webm'
+import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
+import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import { overlayAnimationTable } from './overlayAnimations.types'
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 
@@ -31,10 +33,22 @@ export const overlayAnimationDefinitions: overlayAnimationTable = {
         height: 625,
     },
 
+    "slash_repeat": {
+        src: slash_repeat,
+        width: 447,
+        height: 417
+    },
+
     "shield": {
         src: shield,
         width: 317,
         height: 344,
+    },
+
+    "mirror": {
+        src: mirror,
+        width: 500,
+        height: 500
     }
 }
 

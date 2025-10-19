@@ -7,6 +7,7 @@ import { render } from "solid-js/web";
 
 
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
+import { OPPONENT_ANGEL } from '@/data/battles/angel';
 
 const plyr: PlayerProfile = {
     display: {
@@ -17,7 +18,7 @@ const plyr: PlayerProfile = {
 const root = document.getElementById('root');
 render(() => (
     <main id="game-root">
-        <Battle opponentProfile={OPPONENT_SERPENT} playerProfile={plyr} />
+        <Battle opponentProfile={OPPONENT_ANGEL} playerProfile={plyr} />
         <div id="modal-root"/>
     </main>
 )
