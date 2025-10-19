@@ -22,6 +22,8 @@ import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmis
 import { MoveLexicon } from "../lexicon/lexicon.types";
 import { OpponentProfile } from "./battleProfiles";
 
+import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
     END // Temporary state when animating the UI closing on battle end.    
@@ -153,6 +155,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             switch(outcome) {
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.
+                    playSound(opponent_death_sound);
                     await animateOpponentDeathFade(refRegistry.opponentSprite);
                 break;
                 case BattleOutcome.OpponentVictory:
