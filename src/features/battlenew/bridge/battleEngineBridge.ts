@@ -20,7 +20,7 @@ import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/lexicon.types";
-import { OpponentProfile } from "./battleProfiles";
+import { OpponentDisplayBehavior, OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 
@@ -56,6 +56,22 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
     }
 
+    const opponentRanBehaviors = {
+        pre: new Set<string>(),
+        post: new Set<string>()
+    }
+
+    function handleOpponentBehaviors(stage: 'pre' | 'post', behaviors: OpponentDisplayBehavior[] | undefined, predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
+        if(!behaviors) return;
+        behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
+            if(behavior.once) {
+                if(opponentRanBehaviors[stage].has(behavior.key)) return;
+                opponentRanBehaviors[stage].add(behavior.key);
+            }
+            behavior.run(runnerDeps)
+        })
+    }
+
     const reactions: BattleReactions = {
 
         async RoundPrepared({opponentPlan}) {
@@ -68,7 +84,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
 
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
-            opponentProfile.display.behaviors?.preRound?.(combatants, {appendActionMessage});
+            handleOpponentBehaviors('pre', opponentProfile.display.behaviors?.preRound, {combatants}, {appendActionMessage});
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
@@ -143,7 +159,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-            opponentProfile.display.behaviors?.postRound?.(combatants, {appendActionMessage});
+            handleOpponentBehaviors('post', opponentProfile.display.behaviors?.postRound, {combatants}, {appendActionMessage});
             engine.setupRound();
         },
 

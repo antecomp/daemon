@@ -1,4 +1,4 @@
-import { OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
+import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import distortedGridShader from "@/features/battle/backgrounds/disgrid.glsl";
@@ -25,11 +25,18 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
         backgroundShader: distortedGridShader,
         spriteOffset: {x: -14, y: 15},
         behaviors: {
-            postRound({opponent: me}, {appendActionMessage}) {
-                if (me.health < 5) {
-                    appendActionMessage('The Mimicry appears desperate!')
+            postRound: [
+                {
+                    key: 'desperation',
+                    when({combatants: {opponent}}) {
+                        return opponent.health < 5;
+                    },
+                    run({appendActionMessage}) {
+                        appendActionMessage('The Mimicry appears desperate!');
+                    },
+                    once: true
                 }
-            }
+            ]
         }
     },
 

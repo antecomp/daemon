@@ -25,7 +25,32 @@ export const OPPONENT_ANGEL: OpponentProfile = {
         },
         sprite: debug_angel_sprite,
         backgroundShader: testShader,
-        backgroundShaderTexture: basic_grid_bg
+        backgroundShaderTexture: basic_grid_bg,
+        behaviors: {
+            preRound: [
+                {
+                    key: 'exasdf',
+                    run({ appendActionMessage }) {
+                        appendActionMessage('This should run at the very first round and never again!');
+                    },
+                    once: true
+                },
+                {
+                    key: 'egg',
+                    run({ appendActionMessage }) {
+                        appendActionMessage('This will run every round!')
+                    },
+                    when() { return true }
+                },
+                {
+                    key: 'sdflkgjh',
+                    run({ appendActionMessage }) {
+                        appendActionMessage('This should never run!')
+                    },
+                    when() { return false }
+                }
+            ],
+        }
     },
 
     logic: {
@@ -63,7 +88,7 @@ export const OPPONENT_ANGEL: OpponentProfile = {
             }
 
         },
-        
+
         stats: { maxHealth: 10 }
     },
 }

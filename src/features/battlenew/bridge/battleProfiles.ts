@@ -6,6 +6,15 @@ import { Combatant } from '@/core/battlenew/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
 import { Sides } from '@/core/battlenew/utils/sides.utils';
 
+export type OpponentDisplayPredicateArgs = {combatants: Sides<Combatant>} // Or whatever other needed for conditions
+export type OpponentDisplayBehaviorDeps = {appendActionMessage: ActionMessageAppender}
+
+export interface OpponentDisplayBehavior {
+    key: string;
+    when?: (args: OpponentDisplayPredicateArgs) => boolean; 
+    run: (deps: OpponentDisplayBehaviorDeps) => void;
+    once?: boolean
+}
 
 export interface OpponentProfile {
     display: {
@@ -21,8 +30,8 @@ export interface OpponentProfile {
 
         // UI-Based Contextual Behaviors.
         behaviors?: {
-            preRound?: (combatants: Sides<Combatant>, deps: {appendActionMessage: ActionMessageAppender}) => void;
-            postRound?: (combatants: Sides<Combatant>, deps: {appendActionMessage: ActionMessageAppender}) => void;
+            preRound?: OpponentDisplayBehavior[]
+            postRound?: OpponentDisplayBehavior[]
         }
     };
 
