@@ -66,8 +66,9 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             console.log(opponentPlan.map(plan => plan.name));
         },
 
-        async RoundStart({plans}) {
+        async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
+            opponentProfile.display.behaviors?.preRound?.(combatants, {appendActionMessage});
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
@@ -139,10 +140,10 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             await sleep(MOVE_DELAY);
         },
 
-        RoundEnd() {
+        RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-
+            opponentProfile.display.behaviors?.postRound?.(combatants, {appendActionMessage});
             engine.setupRound();
         },
 

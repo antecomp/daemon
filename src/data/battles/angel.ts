@@ -30,6 +30,9 @@ export const OPPONENT_ANGEL: OpponentProfile = {
 
     logic: {
         ai: {
+            preRoundBehavior(self) {
+                self.takeDamage(1);
+            },
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {

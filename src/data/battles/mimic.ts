@@ -23,7 +23,14 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
         },
         sprite: mimicry_sprite,
         backgroundShader: distortedGridShader,
-        spriteOffset: {x: -14, y: 15}
+        spriteOffset: {x: -14, y: 15},
+        behaviors: {
+            postRound({opponent: me}, {appendActionMessage}) {
+                if (me.health < 5) {
+                    appendActionMessage('The Mimicry appears desperate!')
+                }
+            }
+        }
     },
 
     logic: {

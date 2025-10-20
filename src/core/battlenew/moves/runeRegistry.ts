@@ -4,8 +4,8 @@ import { mirrorPlan, planMove, repeatPlan } from "./plannedMoves";
 // This will eventually be in some global store of equipted moves or similar.
 export const playerRuneRegistry = {
     repeat: repeatPlan,
-    defend: planMove(defend),
     evade: planMove(evade),
+    defend: planMove(defend),
     overwhelm: planMove(overwhelm),
     attack: planMove(attack),
     mirror: mirrorPlan,

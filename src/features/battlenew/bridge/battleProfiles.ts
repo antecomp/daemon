@@ -2,6 +2,9 @@ import { OpponentAI, OpponentStats } from '@/core/battlenew/ai/opponentAI.types'
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
 import { MoveLexicon } from '../lexicon/lexicon.types';
+import { Combatant } from '@/core/battlenew/model/combatant';
+import { ActionMessageAppender } from './actionMessages';
+import { Sides } from '@/core/battlenew/utils/sides.utils';
 
 
 export interface OpponentProfile {
@@ -15,6 +18,12 @@ export interface OpponentProfile {
 
         backgroundShader: string;
         backgroundShaderTexture?: AssetURL;
+
+        // UI-Based Contextual Behaviors.
+        behaviors?: {
+            preRound?: (combatants: Sides<Combatant>, deps: {appendActionMessage: ActionMessageAppender}) => void;
+            postRound?: (combatants: Sides<Combatant>, deps: {appendActionMessage: ActionMessageAppender}) => void;
+        }
     };
 
     logic: {
