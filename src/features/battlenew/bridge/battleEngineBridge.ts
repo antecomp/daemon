@@ -23,6 +23,7 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { OpponentDisplayBehavior, OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+import { Combatant } from "@/core/battlenew/model/combatant";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -41,11 +42,20 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
 
+    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
+
+    function refreshCombatantInfo(combatants: Sides<Combatant>) {
+        setOpponentHealthPercentage(combatants.opponent.healthPercent);
+        setPlayerHealthPercentage(combatants.player.healthPercent);
+        setCurrentStatusIcons(
+            mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
+        );
+    }
+
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
 
     const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
-    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
 
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
 
@@ -89,14 +99,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
             handleOpponentBehaviors('pre', opponentProfile.display.behaviors?.preRound, {combatants}, {appendActionMessage});
-
-            // In case opponentBehaviors changed this state. (TODO: EXTRACT TO GENERATE UPDATE UI FOR COMBATANT STATE METHOD!!)
-            setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent);            
-            setCurrentStatusIcons(
-                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
-            );
-
+            refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
@@ -110,9 +113,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         },
 
         PreEffectResolved({combatants}) {
-            setCurrentStatusIcons(
-                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
-            );
+            refreshCombatantInfo(combatants);
         },
 
         async MultipliersComputed({damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex}) {
@@ -134,8 +135,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
 
         async DamagesApplied({combatants, damagesDealt}) {
 
-            setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent);
+            refreshCombatantInfo(combatants);
 
             if(damagesDealt.player > 0) {
                 playSound(opponent_pain_sfx);
@@ -146,13 +146,11 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
                 playSound(player_pain_sfx);
                 startMeltAnimation?.(true, 20, 0.5);
             }
-            
+
         },
 
         PostEffectResolved({combatants}) {
-            // In case of events like healing + status damage
-            setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent);
+            refreshCombatantInfo(combatants)
 
             // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
@@ -161,9 +159,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
 
             setDisplayMults(emptyMults)
 
-            setCurrentStatusIcons(
-                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
-            );
+            refreshCombatantInfo(combatants);
 
             await sleep(MOVE_DELAY);
         },
@@ -172,20 +168,14 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
             handleOpponentBehaviors('post', opponentProfile.display.behaviors?.postRound, {combatants}, {appendActionMessage});
-            // In case opponentBehaviors changed this state. 
-            setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent);
-            setCurrentStatusIcons(
-                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
-            );
+            refreshCombatantInfo(combatants);
             engine.setupRound();
         },
 
         async BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
             setDisplayMults(emptyMults);
-            setPlayerHealthPercentage(combatants.player.healthPercent);
-            setOpponentHealthPercentage(combatants.opponent.healthPercent);   
+            refreshCombatantInfo(combatants);
             
             switch(outcome) {
                 case BattleOutcome.PlayerVictory:
