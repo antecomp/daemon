@@ -6,7 +6,7 @@ import { Side, Sides } from '@/core/battlenew/utils/sides.utils'
 import { MoveLexicon } from '../lexicon/lexicon.types'
 import { BattleEventPayload } from '@/core/battlenew/events/battleEvent.types'
 import { OpponentProfile } from './battleProfiles'
-import { capitalizeFirstLetter } from '@/shared/utils/stringUtils'
+import { capitalizeFirstLetter, capitalizeWords } from '@/shared/utils/stringUtils'
 
 export const actionIcons = {
     "default": ai_plain_icon,
@@ -24,7 +24,7 @@ export interface ActionMessage {
 export type ActionMessageAppender = (text: string, iconName?: availableActionIcons) => void;
 
 function nameOfAffected(perspective: Side, profile: OpponentProfile) {
-    return perspective == 'player' ? 'Arda' : profile.display.name
+    return perspective == 'player' ? 'Arda' : capitalizeWords(profile.display.name);
 }
 
 export function generateActionMessageFromMoveEmission(data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) {
