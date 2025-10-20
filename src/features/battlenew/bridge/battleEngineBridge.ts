@@ -51,8 +51,7 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
 
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text, iconName) => {
-        setActionMessages(prev => [...prev, { text, iconName}])
-
+        setActionMessages(prev => [...prev, { text, iconName}]);
         setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
     }
 
@@ -61,14 +60,19 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         post: new Set<string>()
     }
 
-    function handleOpponentBehaviors(stage: 'pre' | 'post', behaviors: OpponentDisplayBehavior[] | undefined, predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
+    function handleOpponentBehaviors(
+            stage: 'pre' | 'post', 
+            behaviors: OpponentDisplayBehavior[] | undefined, 
+            predicateArgs: OpponentDisplayPredicateArgs, 
+            runnerDeps: OpponentDisplayBehaviorDeps
+    ) {
         if(!behaviors) return;
         behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
             if(behavior.once) {
                 if(opponentRanBehaviors[stage].has(behavior.key)) return;
                 opponentRanBehaviors[stage].add(behavior.key);
             }
-            behavior.run(runnerDeps)
+            behavior.run(runnerDeps);
         })
     }
 
@@ -85,6 +89,14 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
             handleOpponentBehaviors('pre', opponentProfile.display.behaviors?.preRound, {combatants}, {appendActionMessage});
+
+            // In case opponentBehaviors changed this state. (TODO: EXTRACT TO GENERATE UPDATE UI FOR COMBATANT STATE METHOD!!)
+            setPlayerHealthPercentage(combatants.player.healthPercent);
+            setOpponentHealthPercentage(combatants.opponent.healthPercent);            
+            setCurrentStatusIcons(
+                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
+            );
+
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await fadeElementIn(refRegistry.sequenceViewOpponent);
@@ -160,6 +172,12 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
             handleOpponentBehaviors('post', opponentProfile.display.behaviors?.postRound, {combatants}, {appendActionMessage});
+            // In case opponentBehaviors changed this state. 
+            setPlayerHealthPercentage(combatants.player.healthPercent);
+            setOpponentHealthPercentage(combatants.opponent.healthPercent);
+            setCurrentStatusIcons(
+                mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
+            );
             engine.setupRound();
         },
 

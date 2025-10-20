@@ -5,7 +5,7 @@ import { BattleReactions } from "../events/battleEvent.types";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
 import { PlannedSequence } from "../model/plannedmove";
-import { OpponentAI, OpponentStats } from "../ai/opponentAI.types";
+import { OpponentAI, OpponentAIBehavior, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
@@ -79,6 +79,27 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         resolveBattle(outcome);
     }
 
+    const opponentRanBehaviors = {
+        pre: new Set<string>(),
+        post: new Set<string>()        
+    }
+
+    function handleOpponentBehaviors(
+        stage: 'pre' | 'post', 
+        behaviors: OpponentAIBehavior[] | undefined, 
+        predicateArgs: OpponentAIBehaviorPredicateArgs, 
+        runnerDeps: OpponentAIBehaviorDeps
+    ) {
+        if(!behaviors) return;
+        behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
+            if(behavior.once) {
+                if(opponentRanBehaviors[stage].has(behavior.key)) return;
+                opponentRanBehaviors[stage].add(behavior.key);
+            }
+            behavior.run(runnerDeps);
+        })
+    }
+
     async function setupRound() {
         opponentPlan = opponentAI.getSequence(combatants.opponent, combatants.player);
         await emitBattleEvent('RoundPrepared', {combatants, opponentPlan});
@@ -98,7 +119,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         if(sequences.player.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
         if(sequences.opponent.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
 
-        opponentAI.preRoundBehavior?.(combatants.opponent, combatants.player);
+        handleOpponentBehaviors('pre', opponentAI.behaviors?.preRound, {combatants}, {combatants, engineDeps: deps});
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
 
@@ -158,7 +179,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             await emitBattleEvent('MoveEnd', {combatants});
         }
 
-        opponentAI.postRoundBehavior?.(combatants.opponent, combatants.player);
+        handleOpponentBehaviors('post', opponentAI.behaviors?.postRound, {combatants}, {combatants, engineDeps: deps});
 
         await emitBattleEvent('RoundEnd', {combatants});
 

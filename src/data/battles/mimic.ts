@@ -5,12 +5,16 @@ import distortedGridShader from "@/features/battle/backgrounds/disgrid.glsl";
 import { mirrorPlan, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
+import { OpponentAIBehaviorDeps } from '@/core/battlenew/ai/opponentAI.types';
+import { ManiaStatus } from '@/core/battlenew/statuses/statuses';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
+
+const DESPERATION_HEALTH = 3;
 
 export const OPPONENT_MIMICRY: OpponentProfile = {
     display: {
@@ -29,7 +33,7 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                 {
                     key: 'desperation',
                     when({combatants: {opponent}}) {
-                        return opponent.health < 5;
+                        return opponent.health < DESPERATION_HEALTH;
                     },
                     run({appendActionMessage}) {
                         appendActionMessage('The Mimicry appears desperate!');
@@ -69,8 +73,19 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                         evade: { attack: 3 }
                     }
                 )
+            },
+            behaviors: {
+                postRound: [{
+                    key: 'desperation',
+                    when({combatants: {opponent}}) {
+                        return opponent.health < DESPERATION_HEALTH
+                    },
+                    run({combatants: {opponent}}) {
+                        opponent.addStatus(new ManiaStatus, 999);
+                    },
+                    once: true
+                }]
             }
-
         },
         
         stats: { maxHealth: 10 }
