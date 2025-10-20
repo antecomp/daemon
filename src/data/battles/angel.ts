@@ -7,6 +7,7 @@ import testShader from "@/assets/background-shaders/test.glsl";
 import { mirrorPlan, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
+import { OpponentAIBehaviorDeps } from '@/core/battlenew/ai/opponentAI.types';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
@@ -55,9 +56,6 @@ export const OPPONENT_ANGEL: OpponentProfile = {
 
     logic: {
         ai: {
-            preRoundBehavior(self) {
-                self.takeDamage(1);
-            },
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {
@@ -85,8 +83,15 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                         evade: { attack: 3 }
                     }
                 )
+            },
+            behaviors: {
+                preRound: [{
+                    key: 'example',
+                    run({combatants}){
+                        combatants.opponent.health > 1 && combatants.opponent.takeDamage(1);
+                    }   
+                }]
             }
-
         },
 
         stats: { maxHealth: 10 }

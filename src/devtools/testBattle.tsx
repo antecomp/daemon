@@ -19,7 +19,7 @@ const plyr: PlayerProfile = {
 const root = document.getElementById('root');
 render(() => (
     <main id="game-root">
-        <Battle opponentProfile={OPPONENT_MIMICRY} playerProfile={plyr} />
+        <Battle opponentProfile={OPPONENT_ANGEL} playerProfile={plyr} />
         <div id="modal-root"/>
     </main>
 )

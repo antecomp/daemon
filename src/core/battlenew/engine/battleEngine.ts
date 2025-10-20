@@ -109,6 +109,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         const plans = makeSidesMap(playerPlan, opponentPlan);
 
+        handleOpponentBehaviors('pre', opponentAI.behaviors?.preRound, {combatants}, {combatants, engineDeps: deps});
+        
         await emitBattleEvent('RoundStart', {plans, combatants});
 
         const sequences: Sides<Move[]> = {
@@ -118,8 +120,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         if(sequences.player.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
         if(sequences.opponent.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
-
-        handleOpponentBehaviors('pre', opponentAI.behaviors?.preRound, {combatants}, {combatants, engineDeps: deps});
         
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
 
