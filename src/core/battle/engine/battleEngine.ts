@@ -44,11 +44,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     let opponentPlan: PlannedSequence = [];
 
-    const {promise: battleResolutionPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
-    
-    const forceBattleResolve = async (outcome: BattleOutcome) => {
+    async function forceBattleResolve(outcome: BattleOutcome){
         await emitBattleEvent('BattleEnd', {outcome, combatants});
-        resolveBattle(outcome);
     };
 
     // This function feels gross, I think it could be improved.
@@ -76,7 +73,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     async function handleBattleEnd(outcome: BattleOutcome) {
         await emitBattleEvent('BattleEnd', {outcome, combatants});
-        resolveBattle(outcome);
     }
 
     const opponentRanBehaviors = {
@@ -152,7 +148,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
-            await emitBattleEvent('MultipliersComputed', {moveIndex, plannedSequences: plans,combatants, moves, damageMultipliers, preEffectOutcomes, plannedMoves: mapSides(plans, plan => plan[moveIndex])});
+            await emitBattleEvent('MultipliersComputed', {moveIndex, plannedSequences: plans,combatants, moves, damageMultipliers, preEffectOutcomes});
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 
@@ -186,6 +182,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     return {
-        executeRound, setupRound, battleResolutionPromise, forceBattleResolve
+        executeRound, setupRound, forceBattleResolve
     }
 }

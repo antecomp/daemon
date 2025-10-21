@@ -2,7 +2,7 @@ import { Side, Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "../model/battle";
 import { Combatant } from "../model/combatant";
 import { MoveSideEffectOutcome, Move, MoveSignal } from "../model/move";
-import { PlannedMove, PlannedSequence } from "../model/plannedmove";
+import { PlannedSequence } from "../model/plannedmove";
 
 // Change to Enum?
 export type BattleEvent =
@@ -40,7 +40,6 @@ export type BattleEventPayload = {
     MultipliersComputed: {
         plannedSequences: Sides<PlannedSequence>,
         moveIndex: number,
-        plannedMoves: Sides<PlannedMove>,
         moves: Sides<Move>,
         combatants: Sides<Combatant>,
         damageMultipliers: Sides<DamageMultipliers>,

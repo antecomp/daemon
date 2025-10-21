@@ -482,7 +482,8 @@ describe("Mirror move", () => {
 describe("Death tests", () => {
     test.each([0,1,2,3,4])("Player death at %i", async (index) => {
 
-        let battleEndTrigger = vi.fn();
+        let battleResult: BattleOutcome | undefined = undefined;
+        let battleEndTrigger = vi.fn(({outcome}) => battleResult = outcome);
         let moveHitTrigger = vi.fn();
 
         const engine = createBattleEngine(
@@ -505,16 +506,15 @@ describe("Death tests", () => {
 
         await engine.executeRound(idlePlan);
 
-        let result = await engine.battleResolutionPromise;
-
         expect(battleEndTrigger).toHaveBeenCalled();
         expect(moveHitTrigger).toBeCalledTimes(index + 1);
-        expect(result).toBe(BattleOutcome.OpponentVictory)
+        expect(battleResult).toBe(BattleOutcome.OpponentVictory)
     });
 
     test.each([0,1,2,3,4])("Opponent death at %i", async (index) => {
 
-        let battleEndTrigger = vi.fn();
+        let battleResult: BattleOutcome | undefined = undefined;
+        let battleEndTrigger = vi.fn(({outcome}) => battleResult = outcome);
         let moveHitTrigger = vi.fn();
 
         const engine = createBattleEngine(
@@ -540,11 +540,9 @@ describe("Death tests", () => {
             ]    
         );
 
-        let result = await engine.battleResolutionPromise;
-
         expect(battleEndTrigger).toHaveBeenCalled();
         expect(moveHitTrigger).toBeCalledTimes(index + 1);
-        expect(result).toBe(BattleOutcome.PlayerVictory)
+        expect(battleResult).toBe(BattleOutcome.PlayerVictory)
     });
 
 
