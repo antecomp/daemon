@@ -1,11 +1,11 @@
-import { OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
+import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import distortedGridShader from '@/assets/background-shaders/disgrid.glsl'
-import { mirrorPlan, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
+import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
-import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
-import { ManiaStatus } from '@/core/battlenew/statuses/statuses';
+import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import { ManiaStatus } from '@/core/battle/statuses/statuses';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),

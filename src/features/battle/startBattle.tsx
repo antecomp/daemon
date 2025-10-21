@@ -1,4 +1,4 @@
-import { BattleOutcome } from "@/core/battlenew/model/battle";
+import { BattleOutcome } from "@/core/battle/model/battle";
 import { OpponentProfile, PlayerProfile } from "./bridge/battleProfiles";
 import { pushUILayer } from "@/app/shell/layers/UILayerManager";
 import Battle from "./Battle";

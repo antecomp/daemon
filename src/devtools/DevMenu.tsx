@@ -9,7 +9,7 @@ import { For } from "solid-js";
 import { OPPONENT_MIMICRY as OPPONENT_MIMICRY_NEW } from "@/data/battles/mimic";
 import { OPPONENT_ANGEL } from "@/data/battles/angel";
 
-import { startBattle as startNewBattle } from "@/features/battlenew/startBattle";
+import { startBattle as startNewBattle } from "@/features/battle/startBattle";
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
 
 const eggggg: TextOverlaySequence = [

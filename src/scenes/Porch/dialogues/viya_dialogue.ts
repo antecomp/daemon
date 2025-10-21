@@ -1,8 +1,8 @@
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
-import { startBattle } from "@/features/battlenew/startBattle";
+import { startBattle } from "@/features/battle/startBattle";
 import { createDialogueNode, createInlineDialogueTree, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/shared/utils/pickRandom";
-import { BattleOutcome } from "@/core/battlenew/model/battle";
+import { BattleOutcome } from "@/core/battle/model/battle";
 import sleep from "@/shared/utils/sleep";
 
 const characters = Object.freeze({

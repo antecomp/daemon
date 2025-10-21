@@ -1,9 +1,9 @@
-import { DamageMultipliers } from "@/core/battlenew/model/battle";
-import { MoveSideEffectOutcome, MoveTags } from "@/core/battlenew/model/move";
-import { Sides } from "@/core/battlenew/utils/sides.utils";
+import { DamageMultipliers } from "@/core/battle/model/battle";
+import { MoveSideEffectOutcome, MoveTags } from "@/core/battle/model/move";
+import { Sides } from "@/core/battle/utils/sides.utils";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { Combatant } from "@/core/battlenew/model/combatant";
-import { PlannedSequence } from "@/core/battlenew/model/plannedmove";
+import { Combatant } from "@/core/battle/model/combatant";
+import { PlannedSequence } from "@/core/battle/model/plannedmove";
 
 export type ClashReactionDeps = {requestOverlayAnimation: OverlayAnimationRequester}
 export type ClashReactionCTX = {

@@ -1,10 +1,10 @@
-import { OpponentAI, OpponentStats } from '@/core/battlenew/ai/opponentAI.types';
+import { OpponentAI, OpponentStats } from '@/core/battle/ai/opponentAI.types';
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
 import { MoveLexicon } from '../lexicon/lexicon.types';
-import { Combatant } from '@/core/battlenew/model/combatant';
+import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
-import { Sides } from '@/core/battlenew/utils/sides.utils';
+import { Sides } from '@/core/battle/utils/sides.utils';
 
 export type OpponentDisplayPredicateArgs = {combatants: Sides<Combatant>} // Or whatever other needed for conditions
 export type OpponentDisplayBehaviorDeps = {appendActionMessage: ActionMessageAppender}

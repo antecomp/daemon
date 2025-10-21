@@ -1,7 +1,7 @@
 import '@/shared/styles/base.css'
 
-import Battle from "@/features/battlenew/Battle";
-import { PlayerProfile } from '@/features/battlenew/bridge/battleProfiles';
+import Battle from "@/features/battle/Battle";
+import { PlayerProfile } from '@/features/battle/bridge/battleProfiles';
 import { render } from "solid-js/web";
 
 

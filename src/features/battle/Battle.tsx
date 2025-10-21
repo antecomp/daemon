@@ -7,7 +7,7 @@ import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
-import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlenew/lexicon/moveLexicon';
+import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
@@ -16,7 +16,7 @@ import { createOverlayAnimationQueue } from './animation/overlayAnimations/overl
 import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
-import { BattleOutcome } from '@/core/battlenew/model/battle';
+import { BattleOutcome } from '@/core/battle/model/battle';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 

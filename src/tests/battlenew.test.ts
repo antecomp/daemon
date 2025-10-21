@@ -1,12 +1,12 @@
-import { attack, defend, evade, heal, nothingMove, overwhelm, prepare } from "@/core/battlenew/moves/moves";
-import { mirrorPlan, planMove, repeatPlan } from "@/core/battlenew/moves/plannedMoves";
-import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
-import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
-import { PlannedSequence } from "@/core/battlenew/model/plannedmove";
-import { PlannedMove } from "@/core/battlenew/model/plannedmove";
-import { OpponentAI, OpponentStats } from "@/core/battlenew/ai/opponentAI.types";
+import { attack, defend, evade, heal, nothingMove, overwhelm, prepare } from "@/core/battle/moves/moves";
+import { mirrorPlan, planMove, repeatPlan } from "@/core/battle/moves/plannedMoves";
+import { createBattleEngine } from "@/core/battle/engine/battleEngine";
+import { BattleReactions } from "@/core/battle/events/battleEvent.types";
+import { PlannedSequence } from "@/core/battle/model/plannedmove";
+import { PlannedMove } from "@/core/battle/model/plannedmove";
+import { OpponentAI, OpponentStats } from "@/core/battle/ai/opponentAI.types";
 import { describe, expect, vi, test } from "vitest";
-import { BattleOutcome } from "@/core/battlenew/model/battle";
+import { BattleOutcome } from "@/core/battle/model/battle";
 
 const PlanForNothing: PlannedMove = {
     name: 'nothing',

@@ -1,9 +1,9 @@
-import { MoveLexicon } from "@/features/battlenew/lexicon/lexicon.types";
+import { MoveLexicon } from "@/features/battle/lexicon/lexicon.types";
 import { BattleUIState, useBattleUIState } from "../Battle";
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
-import { PlayerRuneName, playerRuneNames } from "@/core/battlenew/moves/runeRegistry";
+import { PlayerRuneName, playerRuneNames } from "@/core/battle/moves/runeRegistry";
 import { MoveTooltipContent } from "./MoveTooltipContent";
 
 const RUNEBUILDER_RADIUS = 89;

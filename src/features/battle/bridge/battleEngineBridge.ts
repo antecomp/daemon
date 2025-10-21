@@ -1,6 +1,6 @@
-import { createBattleEngine } from "@/core/battlenew/engine/battleEngine";
-import { BattleReactions } from "@/core/battlenew/events/battleEvent.types";
-import { BattleOutcome, DamageMultipliers } from "@/core/battlenew/model/battle";
+import { createBattleEngine } from "@/core/battle/engine/battleEngine";
+import { BattleReactions } from "@/core/battle/events/battleEvent.types";
+import { BattleOutcome, DamageMultipliers } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { createSignal } from "solid-js";
@@ -11,7 +11,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { makeSidesMap, mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
+import { makeSidesMap, mapSides, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
@@ -23,7 +23,7 @@ import { MoveLexicon } from "../lexicon/lexicon.types";
 import { OpponentDisplayBehavior, OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
-import { Combatant } from "@/core/battlenew/model/combatant";
+import { Combatant } from "@/core/battle/model/combatant";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 

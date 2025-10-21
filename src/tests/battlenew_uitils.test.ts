@@ -1,13 +1,13 @@
-import { idle as idleMove } from "@/core/battlenew/moves/moves";
-import { VulnerableStatus } from "@/core/battlenew/statuses/statuses";
-import { DamageMultipliers } from "@/core/battlenew/model/battle";
-import { Combatant } from "@/core/battlenew/model/combatant";
-import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battlenew/model/move";
-import { Status } from "@/core/battlenew/model/status";
-import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battlenew/utils/engine.utils";
-import { PASSTHROUGH_MULTPLIERS } from "@/core/battlenew/model/battle";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battlenew/utils/movebehavior.utils";
-import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battlenew/utils/sides.utils";
+import { idle as idleMove } from "@/core/battle/moves/moves";
+import { VulnerableStatus } from "@/core/battle/statuses/statuses";
+import { DamageMultipliers } from "@/core/battle/model/battle";
+import { Combatant } from "@/core/battle/model/combatant";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battle/model/move";
+import { Status } from "@/core/battle/model/status";
+import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
+import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battle/utils/movebehavior.utils";
+import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battle/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
 
 

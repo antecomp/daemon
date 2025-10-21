@@ -1,13 +1,13 @@
-import { OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
+import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 
 import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
 import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
 import basic_grid_bg from '@/assets/artwork/battle_bgs/debug_angel_bg.png';
 import testShader from "@/assets/background-shaders/test.glsl";
-import { mirrorPlan, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
+import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
-import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
-import { OpponentAIBehaviorDeps } from '@/core/battlenew/ai/opponentAI.types';
+import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import { OpponentAIBehaviorDeps } from '@/core/battle/ai/opponentAI.types';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),

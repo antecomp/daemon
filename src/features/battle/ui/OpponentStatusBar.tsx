@@ -4,7 +4,7 @@ import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
 import { Accessor, For } from 'solid-js';
-import { KnownPlanName, MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types';
+import { KnownPlanName, MoveLexicon } from '@/features/battle/lexicon/lexicon.types';
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry';
 
 interface OpponentStatusBarProps {

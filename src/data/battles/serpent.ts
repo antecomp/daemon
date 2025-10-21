@@ -1,11 +1,11 @@
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan_sprite from "@/assets/artwork/dæmons/snaek.png"
 import vortexShader from '@/assets/background-shaders/vortex.glsl';
-import { planMove, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
+import { planMove, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
-import { attack } from "@/core/battlenew/moves/moves";
-import { OpponentProfile } from "@/features/battlenew/bridge/battleProfiles";
-import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
+import { attack } from "@/core/battle/moves/moves";
+import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
+import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
 const SERPENT_PLANBANK = {
     ...pick(STOCK_PLANBANK, ['attack', 'idle', 'prepare', 'defend']),

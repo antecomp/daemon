@@ -1,7 +1,7 @@
-import { Combatant } from "@/core/battlenew/model/combatant";
+import { Combatant } from "@/core/battle/model/combatant";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
-import { PlannedMove } from "@/core/battlenew/model/plannedmove";
+import { PlannedMove } from "@/core/battle/model/plannedmove";
 import { HINT_AMOUNT } from "./battleEngineBridge";
 import { KnownStatusName } from "../lexicon/lexicon.types";
 

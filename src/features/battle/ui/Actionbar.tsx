@@ -10,13 +10,13 @@ import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
 
 import { Accessor, createSignal, For } from 'solid-js'
-import { BattleOutcome, DamageMultipliers } from '@/core/battlenew/model/battle'
+import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
-import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
-import { KnownPlanName, MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types'
+import { PlannedSequence } from '@/core/battle/model/plannedmove'
+import { KnownPlanName, MoveLexicon } from '@/features/battle/lexicon/lexicon.types'
 import Runebuilder from './Runebuilder'
-import { SEQUENCE_LENGTH } from '@/core/battlenew/config/battle.config'
-import { PlayerRuneName, playerRuneRegistry } from '@/core/battlenew/moves/runeRegistry'
+import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
+import { PlayerRuneName, playerRuneRegistry } from '@/core/battle/moves/runeRegistry'
 
 import rb1 from '@/assets/sfx/battle/rb/1.wav'
 import rb2 from '@/assets/sfx/battle/rb/2.wav'
@@ -26,7 +26,7 @@ import rb5 from '@/assets/sfx/battle/rb/5.wav'
 import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
-import { Sides } from '@/core/battlenew/utils/sides.utils'
+import { Sides } from '@/core/battle/utils/sides.utils'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
