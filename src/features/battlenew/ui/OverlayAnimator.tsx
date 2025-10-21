@@ -38,7 +38,7 @@ export default function OverlayAnimator(props: {
                 video.style.translate = `${position[0]}px ${position[1]}px`;
 
                 video.onended = () => {
-                    console.log("overlay animation done playing");
+                    //console.log("overlay animation done playing");
                     processedAnimationRequests.delete(id);
                     video.remove();
                     onFinish();

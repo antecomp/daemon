@@ -14,7 +14,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { makeSidesMap, mapSides, Sides } from "@/core/battlenew/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
+import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
@@ -34,7 +34,7 @@ export const HINT_AMOUNT = 3;
 
 const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
 
-export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
 
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
 
@@ -117,9 +117,6 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
         },
 
         async MultipliersComputed({damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex}) {
-
-            console.log(moves);
-
             // Hacky but it works - If the move is the result of a mirror, play the mirror anim instead!
             const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
             const moveTags = mapSides(moves, x => x.tags ?? []);
@@ -186,12 +183,14 @@ export function createUIBridedBattleEngine(opponentProfile: OpponentProfile, lex
                 case BattleOutcome.OpponentVictory:
                     // Player death sound here.
                     startMeltAnimation(false, 20, 5);
-                    // no longer await ui fade out, instead that should happen as a natural reaction to the END state in css.
+                    // Consider switching back to fading with code animation so we can await it
                 break;
                 case BattleOutcome.Draw:
-                    animateOpponentDeathFade(refRegistry.opponentSprite);
+                    await animateOpponentDeathFade(refRegistry.opponentSprite);
                     // Do some sort of unique other animation or event in case of draw here.
             }
+            await sleep(BATTLE_END_SLEEP_TIME);
+            onEnd(outcome);
         },
 
         MoveEmission: (data) => {

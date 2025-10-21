@@ -3,13 +3,12 @@ import './ui/battle.css';
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
 import { Accessor, createContext, onMount, useContext } from 'solid-js';
-import { createUIBridedBattleEngine } from './bridge/battleEngineBridge';
+import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
 import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battlenew/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
-import attachToConsole from '@/devtools/attachToConsole';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 import OverlayAnimator from './ui/OverlayAnimator';
@@ -17,6 +16,7 @@ import { createOverlayAnimationQueue } from './animation/overlayAnimations/overl
 import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
+import { BattleOutcome } from '@/core/battlenew/model/battle';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -36,7 +36,7 @@ export const useBattleUIState = () => {
 export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
-    // onEnd callback please do NOT DO THAT GODAWFUL RESOLVER BY REF GARBAGE!!!
+    onEnd: (outcome: BattleOutcome) => void;
 }) {
 
     const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
@@ -47,14 +47,9 @@ export default function Battle(props: {
 
     const {overlayAnimRequests, requestOverlayAnimation} = createOverlayAnimationQueue();
 
-    const {engine, ...bridge} = createUIBridedBattleEngine(props.opponentProfile, {opponent: opponentLexicon, player: playerLexicon}, startMeltAnimation, requestOverlayAnimation);
+    const {engine, ...bridge} = createUIBridgedBattleEngine(props.opponentProfile, {opponent: opponentLexicon, player: playerLexicon}, props.onEnd, startMeltAnimation, requestOverlayAnimation);
 
-    onMount(
-        () => {
-            engine.setupRound();
-            attachToConsole(engine, "B_ENGINE");
-        }
-    );
+    onMount(engine.setupRound);
 
     return (
         <BattleRefRegistryCTX.Provider value={{attachToRegistry: bridge.attachToRegistry}}>

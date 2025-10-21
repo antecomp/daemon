@@ -1,8 +1,8 @@
-import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
-import { startBattle } from "@/core/battle/startBattle";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
+import { startBattle } from "@/features/battlenew/startBattle";
 import { createDialogueNode, createInlineDialogueTree, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 import pickRandom from "@/shared/utils/pickRandom";
-import { BattleOutcome } from "@/core/battle/engine/battle.types";
+import { BattleOutcome } from "@/core/battlenew/model/battle";
 import sleep from "@/shared/utils/sleep";
 
 const characters = Object.freeze({
@@ -107,13 +107,13 @@ questions.addCAROptionChild(
         })
         .next = (() => {
             switch(mimicryResult) {
-                case(BattleOutcome.Player):
+                case(BattleOutcome.PlayerVictory):
                     return createDialogueNode("Wow, nice job. I'm impressed.", "Viya");
-                case(BattleOutcome.Opponent):
+                case(BattleOutcome.OpponentVictory):
                     return createDialogueNode("Damn you suck at this. How are you going to survive the fringenet?", "Viya");
                 case(BattleOutcome.Draw):
                     return createDialogueNode("Close call! Things will only get harder from here...", "Viya");
-                case(BattleOutcome.Eject):
+                case(BattleOutcome.PlayerEject):
                     const response = createDialogueNode("Coward.", "Viya");
                     const atLeast = response.addChild("If you're not going to fight, do you at least have some questions?")
                         atLeast.addCAROptionChild("Yes", "Sure.", questionLoopback);

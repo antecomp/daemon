@@ -12,6 +12,11 @@ import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { For } from "solid-js";
 
+import { OPPONENT_MIMICRY as OPPONENT_MIMICRY_NEW } from "@/data/battles/mimic";
+import { OPPONENT_ANGEL } from "@/data/battles/angel";
+
+import { startBattle as startNewBattle } from "@/features/battlenew/startBattle";
+
 const eggggg: TextOverlaySequence = [
     {segments: [{text: "This is the first line, one color", color: "red"}], sideEffect: () => console.log("side effect triggered")}, 
     {segments: [{text: "This uses the default colour"}]},
@@ -44,6 +49,12 @@ export default function DebugMenu() {
                 OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY, OPPONENT_ANTHOUSAI
             ]}>
                 {opp => <button onClick={() => startBattle(opp)}>{opp.name}</button>}
+            </For>
+            <h2>New Battles</h2>
+            <For each={[
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL
+            ]}>
+                {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
             <h2>MUSIC STACK</h2>
             <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-496757.wav"})}>SONG 1</button>
