@@ -1,11 +1,10 @@
-import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
+import { OpponentProfile } from '@/features/battlenew/bridge/battleProfiles';
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
-import distortedGridShader from "@/features/battle/backgrounds/disgrid.glsl";
+import distortedGridShader from '@/assets/background-shaders/disgrid.glsl'
 import { mirrorPlan, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battlenew/ai/weightedSequenceAI";
-import { OpponentAIBehaviorDeps } from '@/core/battlenew/ai/opponentAI.types';
 import { ManiaStatus } from '@/core/battlenew/statuses/statuses';
 
 const mimicry_planbank = {

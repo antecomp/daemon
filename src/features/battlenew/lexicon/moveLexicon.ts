@@ -17,7 +17,7 @@ import mage_icon from '../assets/icons/runes/mage.png'
 import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
 import priestess_icon from '../assets/icons/runes/priestess.png'
 import trickster_icon from '../assets/icons/runes/trickster.png'
-import stock_icon from "@/features/battle/assets/placeholder_move_icon.png"
+import stock_icon from "../assets/icons/runes/candle.png"
 
 // map planned moves by ID to their associated UI fallback data.
 export const BASE_MOVE_LEXICON: MoveLexicon = {

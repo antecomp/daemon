@@ -1,6 +1,6 @@
 import pan_icon from "@/assets/artwork/dæmons/snaek_icon.png"
 import pan_sprite from "@/assets/artwork/dæmons/snaek.png"
-import vortexShader from "@/features/battle/backgrounds/vortex.glsl";
+import vortexShader from '@/assets/background-shaders/vortex.glsl';
 import { planMove, STOCK_PLANBANK } from "@/core/battlenew/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { attack } from "@/core/battlenew/moves/moves";

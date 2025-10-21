@@ -1,11 +1,5 @@
 import { MusicManager } from "@/core/audio/musicManager";
-import { startBattle } from "@/core/battle/startBattle";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import { OPPONENT_ANTHOUSAI } from "@/data/battles/anthousai";
-import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
-import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
-import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
-import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
 import { playTextOverlay, TextOverlaySequence } from "@/features/text-overlay/TextOverlay";
 import openingTextScene from "@/scenes/Elevator/data/opening_textscene";
 import root from "@/tests/dialogues/intro_dia";
@@ -16,6 +10,7 @@ import { OPPONENT_MIMICRY as OPPONENT_MIMICRY_NEW } from "@/data/battles/mimic";
 import { OPPONENT_ANGEL } from "@/data/battles/angel";
 
 import { startBattle as startNewBattle } from "@/features/battlenew/startBattle";
+import { OPPONENT_SERPENT } from "@/data/battles/serpent";
 
 const eggggg: TextOverlaySequence = [
     {segments: [{text: "This is the first line, one color", color: "red"}], sideEffect: () => console.log("side effect triggered")}, 
@@ -46,13 +41,7 @@ export default function DebugMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY, OPPONENT_ANTHOUSAI
-            ]}>
-                {opp => <button onClick={() => startBattle(opp)}>{opp.name}</button>}
-            </For>
-            <h2>New Battles</h2>
-            <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>

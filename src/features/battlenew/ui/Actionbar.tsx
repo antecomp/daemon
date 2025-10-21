@@ -15,7 +15,7 @@ import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battlenew/model/plannedmove'
 import { KnownPlanName, MoveLexicon } from '@/features/battlenew/lexicon/lexicon.types'
 import Runebuilder from './Runebuilder'
-import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
+import { SEQUENCE_LENGTH } from '@/core/battlenew/config/battle.config'
 import { PlayerRuneName, playerRuneRegistry } from '@/core/battlenew/moves/runeRegistry'
 
 import rb1 from '@/assets/sfx/battle/rb/1.wav'
