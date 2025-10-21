@@ -13,8 +13,6 @@ export enum MoveType {
 // Tag for logic to indicate if a move spawned as a result of mirroring/repeating or other fancy logic (for animations)
 export type MoveTags = ('mirrored' | 'repeated')[];
 
-// TODO: Make signal more robust/predictable than just a string
-
 // Declare global interface that we can extend from anywhere (allowing us to easily append new information as part of move effects)
 declare global {
     interface MoveSignalMap {

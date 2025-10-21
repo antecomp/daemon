@@ -1,8 +1,14 @@
 import { mapObject } from "@/shared/utils/mapObject";
-import { Move } from "../model/move";
+import { Move, MoveTags } from "../model/move";
 import { PlannedMove } from "../model/plannedmove";
 import { MOVEBANK, nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
+
+const tagMove = (move: Move, tag: MoveTags[number]): Move => {
+    const existingTags = move.tags;
+    const nextTags = existingTags ? [...existingTags, tag] : [tag];
+    return { ...move, tags: nextTags };
+};
 
 export function planMove(move: Move): PlannedMove {
     return {
@@ -20,9 +26,7 @@ export const repeatPlan: PlannedMove = {
             return nothingMove;
         }
 
-        // TODO MAKE THIS CLEANER!!!
-        const move = prevMove.instantiate(ctx);
-        return {...move, tags: [...(move.tags ?? []), 'repeated']}
+        return tagMove(prevMove.instantiate(ctx), 'repeated');
     },
     canPerform: CannotBeFirst
 }
@@ -42,8 +46,7 @@ export const mirrorPlan: PlannedMove = {
             index: ctx.index,
         });
 
-        // TODO MAKE THIS CLEANER!!!
-        return {...oppMove, tags: [...(oppMove.tags ?? []), 'mirrored']}
+        return tagMove(oppMove, 'mirrored');
     }
 }
 

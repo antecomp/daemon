@@ -67,7 +67,7 @@ export type BattleEventPayload = {
 
     MoveEmission: {
         moveName: string
-        signal: MoveSignal, // TODO: make this a more robust predictable indicator!
+        signal: MoveSignal,
         perspective: Side
         // Consider adding a 'phase' section?
         // feel free to add other stuff like index or whatever. 
