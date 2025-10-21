@@ -82,7 +82,7 @@ button {
 #root {
   perspective: 0px;
   transform: perspective(0px);
-
+  background: black; /* Weird thing to make blending and other stuff calculate correctly */
 }
 
 .tooltip {

@@ -19,6 +19,7 @@ main {
 #bottom-bar {
     display: flex;
     gap: 2px;
+    background: black;
 
     #event-log {
         padding: 5px;

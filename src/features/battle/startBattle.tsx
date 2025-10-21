@@ -2,6 +2,10 @@ import { BattleOutcome } from "@/core/battle/model/battle";
 import { OpponentProfile, PlayerProfile } from "./bridge/battleProfiles";
 import { pushUILayer } from "@/app/shell/layers/UILayerManager";
 import Battle from "./Battle";
+import { JSX } from "solid-js";
+import TransitionVideo from "./TransitionVideo";
+import battle_transition_video from '@/assets/ui/misc/battle transition.webm'
+import sleep from "@/shared/utils/sleep";
 
 
 const plyr: PlayerProfile = {
@@ -11,6 +15,25 @@ const plyr: PlayerProfile = {
 }
 
 export async function startBattle(opponentProfile: OpponentProfile) {
+
+    const {promise: transitionPromise, resolve: endTransition} = Promise.withResolvers<void>();
+    const {popLayer: popAnimLayer} = pushUILayer({
+        component: () => 
+            <TransitionVideo 
+                src={battle_transition_video} 
+                onFinished={endTransition}
+                style={{'filter': 'contrast(10)'}} // Darken to hide compression artifacts.
+            />,
+        blockBehind: true,
+        style: {
+            'mix-blend-mode': 'darken',
+            'translate': '0px -1px' // idk
+        }
+    })
+
+    await transitionPromise;
+    sleep(1000).then(popAnimLayer);
+
     const {promise: battleEndPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
 
     const {popLayer} = pushUILayer({

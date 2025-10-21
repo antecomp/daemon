@@ -1,7 +1,7 @@
 #sidebar {
     border-bottom: solid white 2px;
     border-left: solid white 2px;
-
+    background: black;
     position: relative;
     display: flex;
     flex-direction: column;
