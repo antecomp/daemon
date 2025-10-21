@@ -1,8 +1,7 @@
-import { idle as idleMove } from "@/core/battle/moves/moves";
-import { VulnerableStatus } from "@/core/battle/statuses/statuses";
+import { idle as idleMove, nothingMove } from "@/core/battle/moves/moves";
 import { DamageMultipliers } from "@/core/battle/model/battle";
 import { Combatant } from "@/core/battle/model/combatant";
-import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect } from "@/core/battle/model/move";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal } from "@/core/battle/model/move";
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
 import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";
@@ -10,6 +9,9 @@ import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } fro
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battle/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
 
+class MockStatus extends Status {
+    name = 'mock';
+}
 
 describe("Combatant Class Tests", () => {
     test("Initializes to have maxhealth", () => {
@@ -160,13 +162,17 @@ describe("BattleEngine Utility Functions", () => {
             behaviors: {}
         }
 
-        const ctx = {
+        const ctx: DamageMultiplierContext = {
             preEffectOutcome: undefined,
+            deps: {logger(m) {console.log(m)}},
+            emit(signal: MoveSignal) {
+                console.log("Move emitted signal: " + signal);
+            },
             self: doll,
-            opponent: oppdoll,
+            them: oppdoll,
             moves: {
-                player: agroMoveDummy,
-                opponent: agroMoveDummy
+                ours: nothingMove,
+                theirs: nothingMove
             }
         };
 
@@ -266,13 +272,20 @@ describe("BattleEngine Utility Functions", () => {
         const successEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Success
         const failEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Failure
         const resultlessEffect: PreMoveSideEffect = () => undefined
-        const selfModiEffect: PreMoveSideEffect = ({self}) => self.addStatus(new VulnerableStatus);
+        const selfModiEffect: PreMoveSideEffect = ({self}) => self.addStatus(new MockStatus);
 
         let moves = makeSidesMap(idleMove, idleMove);
         const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
             self: dolls[side],
             them: dolls[oppositeSide(side)],
-            moves
+            moves: {
+                ours: moves.player,
+                theirs: moves.opponent
+            },
+            deps: {
+                logger(m) {console.log(m)}
+            },
+            emit(s){console.log('move emitted signal' + s)}
         }));
 
         moves.player.behaviors.preEffect = successEffect;
@@ -286,7 +299,7 @@ describe("BattleEngine Utility Functions", () => {
 
         moves.player.behaviors.preEffect = selfModiEffect;
         runMovePreEffect(moves.player, preCtxPair.player);
-        expect(dolls.player.activeStatuses).toEqual([[new VulnerableStatus, 1]]);
+        expect(dolls.player.activeStatuses).toEqual([[new MockStatus, 1]]);
 
         const postCtx = buildSidesMap<PostMoveContext>((side) => ({
             ...preCtxPair[side],
@@ -308,7 +321,7 @@ describe("BattleEngine Utility Functions", () => {
 
         moves.opponent.behaviors.postEffect = selfModiEffect;
         runMovePostEffect(moves.opponent, postCtx.opponent);
-        expect(dolls.opponent.activeStatuses).toEqual([[new VulnerableStatus, 1]]);
+        expect(dolls.opponent.activeStatuses).toEqual([[new MockStatus, 1]]);
     })
 
     test("initialize planned moves - basics", () => {
@@ -379,7 +392,6 @@ describe("BattleEngine Utility Functions", () => {
 
     test("initialize planned moves = throws if any planned move is illegal by canPerform", () => {
         const theirPlan: any[] = [];
-        let myPlanRef: any;
 
         const bad = {
             name: "illegal",
@@ -393,7 +405,6 @@ describe("BattleEngine Utility Functions", () => {
         };
 
         const myPlan = [good, bad, good];
-        myPlanRef = myPlan;
 
         expect(() => initializePlannedMoves(myPlan as any, theirPlan as any)).toThrow();
 
@@ -468,9 +479,11 @@ describe("Move Behavior Util Methods", () => {
             self: new Combatant(10),
             them: new Combatant(20),
             moves: {
-                player: idleMove,
-                opponent: idleMove
-            }
+                ours: idleMove,
+                theirs: idleMove
+            },
+            deps: {logger(){}},
+            emit(){}
         }
         const result = effectPipeline(dummyPreEffect, dummyPreEffect)(ctx);
         expect(dummyPreEffect).toHaveBeenCalledTimes(2);
@@ -486,9 +499,11 @@ describe("Move Behavior Util Methods", () => {
             self: new Combatant(10),
             them: new Combatant(20),
             moves: {
-                player: idleMove,
-                opponent: idleMove
-            }
+                ours: idleMove,
+                theirs: idleMove
+            },
+            deps: {logger(){}},
+            emit(){}
         }
 
         let result = effectPipeline(failEffect, sucEffect, undefEffect)(ctx);
@@ -502,9 +517,11 @@ describe("Move Behavior Util Methods", () => {
             self: new Combatant(10),
             them: new Combatant(20),
             moves: {
-                player: idleMove,
-                opponent: idleMove
-            }
+                ours: idleMove,
+                theirs: idleMove
+            },
+            deps: {logger(){}},
+            emit(){}
         }
 
         let result = effectPipeline(undefEffect, undefEffect, undefEffect)(ctx);
@@ -526,7 +543,7 @@ describe("Move Behavior Util Methods", () => {
             name: 'dsfjkh',
             type: MoveType.Passive,
             behaviors: {
-                postEffect: extendStatusOf('self', VulnerableStatus)
+                postEffect: extendStatusOf('self', MockStatus)
             }
         }
 
@@ -534,18 +551,20 @@ describe("Move Behavior Util Methods", () => {
             self: doll,
             them: new Combatant(100),
             moves: {
-                player: move,
-                opponent: move
-            }
+                ours: move,
+                theirs: move
+            },
+            deps: {logger(){}},
+            emit(){}
         }
 
-        doll.addStatus(new VulnerableStatus, 0);
+        doll.addStatus(new MockStatus, 1);
+        console.log((new MockStatus).name)
         expect(doll.getStatusLevel('vulnerable')).toBe(0);
 
         // @ts-ignore - not gonna bother building full context.
         runMovePostEffect(move, ctx);
-
-        expect(doll.getStatusLevel('vulnerable')).toBe(1);
+        expect(doll.getStatusLevel('mock')).toBe(1);
 
         // Extend doesnt work after status reaped.
         doll.tickStatuses(); doll.reapExpiredStatuses();
@@ -562,20 +581,22 @@ describe("Move Behavior Util Methods", () => {
             name: 'dsfjkh',
             type: MoveType.Passive,
             behaviors: {
-                preEffect: applyStatusTo('self', VulnerableStatus)
+                preEffect: applyStatusTo('self', MockStatus)
             }
         }
         const ctx: PreMoveContext = {
             self: doll,
             them: new Combatant(100),
             moves: {
-                player: move,
-                opponent: move
-            }
+                ours: move,
+                theirs: move
+            },
+            deps: {logger(){}},
+            emit(){}
         }
 
         runMovePreEffect(move, ctx);
-        expect(doll.getStatusLevel('vulnerable')).toBe(1);
+        expect(doll.getStatusLevel('mock')).toBe(1);
 
     })
 })

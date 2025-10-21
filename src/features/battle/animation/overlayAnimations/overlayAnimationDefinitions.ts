@@ -6,7 +6,6 @@ import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash
 import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
-import { mapObject } from '@/shared/utils/mapObject'
 
 export const overlayAnimationDefinitions = {
     "slash_norm": {

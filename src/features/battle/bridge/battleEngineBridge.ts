@@ -30,8 +30,6 @@ export enum BattleUIState {
     END // Temporary state when animating the UI closing on battle end.    
 }
 
-export const HINT_AMOUNT = 3;
-
 const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
 
 export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
@@ -148,16 +146,12 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         PostEffectResolved({combatants}) {
             refreshCombatantInfo(combatants)
-
             // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
         async MoveEnd({combatants}) {
-
             setDisplayMults(emptyMults)
-
             refreshCombatantInfo(combatants);
-
             await sleep(MOVE_DELAY);
         },
 
@@ -189,6 +183,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
                     await animateOpponentDeathFade(refRegistry.opponentSprite);
                     // Do some sort of unique other animation or event in case of draw here.
             }
+            
             await sleep(BATTLE_END_SLEEP_TIME);
             onEnd(outcome);
         },

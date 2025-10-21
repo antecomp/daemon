@@ -15,13 +15,13 @@ export const actionIcons = {
     "mania": ai_mania_icon
 }
 
-type availableActionIcons = keyof typeof actionIcons;
+type AvailableActionIcons = keyof typeof actionIcons;
 
 export interface ActionMessage {
-    iconName?: availableActionIcons
+    iconName?: AvailableActionIcons
     text: string
 }
-export type ActionMessageAppender = (text: string, iconName?: availableActionIcons) => void;
+export type ActionMessageAppender = (text: string, iconName?: AvailableActionIcons) => void;
 
 function nameOfAffected(perspective: Side, profile: OpponentProfile) {
     return perspective == 'player' ? 'Arda' : capitalizeWords(profile.display.name);
