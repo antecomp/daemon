@@ -2,8 +2,7 @@ import { BattleOutcome } from "@/core/battle/model/battle";
 import { OpponentProfile, PlayerProfile } from "./bridge/battleProfiles";
 import { pushUILayer } from "@/app/shell/layers/UILayerManager";
 import Battle from "./Battle";
-import { JSX } from "solid-js";
-import TransitionVideo from "./TransitionVideo";
+import TransitionVideo from "@/shared/ui/primitives/TransitionVideo";
 import battle_transition_video from '@/assets/ui/misc/battle transition.webm'
 import sleep from "@/shared/utils/sleep";
 

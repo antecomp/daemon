@@ -36,6 +36,7 @@ export default function Runebuilder(props: {
                     stroke={(battleUIState() != BattleUIState.WAITING) ? "white" : "#aaa"}
                     stroke-width="2"
                     fill="black"
+                    class="main-rb-circle"
                 />
 
                 {/* Rune Lines */}

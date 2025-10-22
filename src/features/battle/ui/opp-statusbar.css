@@ -24,16 +24,23 @@
 
     .nametag {
         display: flex;
-        background: white;
         color: black;
         align-items: center;
-        padding-left: 4px;
         letter-spacing: 5px;
         white-space: nowrap;
+        z-index: 3;
 
         & img {
             margin-left: -6px;
             z-index: 3;
+        }
+
+        & span {
+            background: #ffffff;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            padding-left: 4px;
         }
     }
 

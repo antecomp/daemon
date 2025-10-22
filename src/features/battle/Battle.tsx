@@ -1,4 +1,5 @@
 import './ui/battle.css';
+import './ui/battle-opening-animation.css'
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
@@ -61,7 +62,7 @@ export default function Battle(props: {
                     classList={{"battle-end": bridge.battleUIState() === BattleUIState.END}}
                 >
                     <ActionMessages messages={bridge.actionMessages}/>
-                    <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]}>
+                    <CornerRect id="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]} style={{'border-bottom': 'none'}}>
                         <OpponentStatusBar
                             name={props.opponentProfile.display.name}
                             icon={props.opponentProfile.display.icon}

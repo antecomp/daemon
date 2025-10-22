@@ -70,7 +70,7 @@
         #eject-button {
             z-index: 3;
             position: absolute;
-            bottom: 1px;
+            bottom: 0.5px; /* idk */
             left: 0;
         }
 

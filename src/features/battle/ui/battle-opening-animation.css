@@ -1,0 +1,146 @@
+#opp-statusbar-container {
+    opacity: 0;
+    z-index: 1; /* ? */
+    animation: fade-in 2s 7s forwards;
+
+    .statbar {
+        animation: fch-appear 5s 7s;
+    }
+}
+
+#battle-actionbar .right {
+    opacity: 0;
+    animation: fade-in 2s 7s forwards;
+
+    #fch-bar {
+        animation: fch-appear 5s 7s;
+    }
+
+    #multbars {
+        opacity: 0;
+        animation: fade-in 2s 9s forwards;
+    }
+}
+
+#battle-actionbar .left {
+    opacity: 0;
+    animation: fade-in 2s 7s forwards;
+
+    #eject-button, #rb-buttons {
+        opacity: 0;
+        animation: fade-in 2s 11s forwards;
+    }
+
+    #runebuilder {
+        opacity: 0;
+        animation: fade-in 2s 7s forwards;
+
+        .main-rb-circle {
+            stroke-opacity: 0;
+            animation: fade-rb-circle-stroke-in 2s 9s forwards;
+        }
+
+        & g {
+            circle:nth-child(1), image:nth-child(2) {
+                opacity: 0;
+                animation: fade-in 2s 9.25s forwards;
+            }
+            circle:nth-child(3), image:nth-child(4) {
+                opacity: 0;
+                animation: fade-in 2s 9.5s forwards;
+            }
+            circle:nth-child(5), image:nth-child(6) {
+                opacity: 0;
+                animation: fade-in 2s 9.75s forwards;
+            }
+            circle:nth-child(7), image:nth-child(8) {
+                opacity: 0;
+                animation: fade-in 2s 10s forwards;
+            }
+            circle:nth-child(9), image:nth-child(10) {
+                opacity: 0;
+                animation: fade-in 2s 10.25s forwards;
+            }
+            circle:nth-child(11), image:nth-child(12) {
+                opacity: 0;
+                animation: fade-in 2s 10.5s forwards;
+            }
+            circle:nth-child(13), image:nth-child(14) {
+                opacity: 0;
+                animation: fade-in 2s 10.75s forwards;
+            }
+            circle:nth-child(15), image:nth-child(16) {
+                opacity: 0;
+                animation: fade-in 2s 11s forwards;
+            }
+        }
+    }
+}
+
+#battle-view {
+    animation: fade-border-in 10s forwards;
+    border-bottom: none;
+
+    .tl, .tr {
+        filter: brightness(0);
+        animation: fade-border-corners-in 2s 7s forwards;
+    }
+
+    #battle-bg {
+        opacity: 0;
+        animation: fade-in 2s 9s forwards;
+    }
+}
+
+/* Can't use delay because we need this transparent to start immediately (can't beat style= specificity)
+So we have to hack it like this.
+*/
+@keyframes fade-border-in {
+    0% {
+        border-color: transparent;
+    }
+    70% {
+        border-color: transparent;
+    }
+    100% {
+        border-color: inherit;
+    }
+}
+
+@keyframes fade-border-corners-in {
+    to {
+        filter: brightness(1);
+    }
+}
+
+@keyframes fade-rb-circle-stroke-in {
+    to {
+        stroke-opacity: 1;
+    }
+}
+
+@keyframes fch-appear {
+    0% {
+        opacity: 0;
+        background-position: 100%;
+    }
+    50% {
+        opacity: 1;
+        background-position: 100%;
+    }
+    to {
+        background-position: 0%;
+    }
+}
+
+@keyframes opp-statbar-fill {
+    0% {
+        background-position: 100%;
+    }
+    50% {
+        background-position: 100%;
+    }
+    to {
+        background-position: 0%;
+    }    
+}
