@@ -7,7 +7,7 @@ import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRe
 
 const BATTLE_CANVAS_DIMENSIONS = {
     width: SCENE_DIMENSIONS.width + 45,
-    height: SCENE_DIMENSIONS.height + 26
+    height: SCENE_DIMENSIONS.height
 }
 
 export default function BattleCanvas(props: {

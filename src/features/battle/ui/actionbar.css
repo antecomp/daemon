@@ -1,9 +1,9 @@
 #battle-actionbar {
     display: grid;
     position: absolute; /* don't consume dom space (causes overflow) */
-    grid-template-columns: 320px 669px;
+    grid-template-columns: 320px 669px; /* TODO: REMOVE THESE MAGIC NUMBERS */
     height: 113px;
-    translate: 0px -60px;
+    translate: 0px -36px; /* TODO: REMOVE THESE MAGIC NUMBERS */
 
     .left {
         position: relative;
