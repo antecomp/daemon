@@ -27,8 +27,8 @@
 }
 
 #battle-actionbar .right {
-  opacity: 0;
-  animation: fade-in var(--dur-fade) var(--t-core) forwards;
+  filter: brightness(0);
+  animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards;
 
   #fch-bar {
     animation: fch-appear var(--dur-fch);
@@ -41,8 +41,8 @@
 }
 
 #battle-actionbar .left {
-  opacity: 0;
-  animation: fade-in var(--dur-fade) var(--t-core) forwards;
+  filter: brightness(0);
+  animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards;
 
   #eject-button, #rb-buttons {
     opacity: 0;
@@ -50,8 +50,8 @@
   }
 
   #runebuilder {
-    opacity: 0;
-    animation: fade-in var(--dur-fade) var(--t-core) forwards;
+    /* filter: brightness(0); */
+    /* animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards; */
 
     .main-rb-circle {
       stroke-opacity: 0;
@@ -150,4 +150,9 @@
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes brightness-fade-in {
+    from {filter: brightness(0)}
+    to   {filter: inherit}
 }
