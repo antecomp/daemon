@@ -1,146 +1,153 @@
-#opp-statusbar-container {
-    opacity: 0;
-    z-index: 1; /* ? */
-    animation: fade-in 2s 7s forwards;
+:root {
+  /* Durations */
+  --dur-fade: 2s;
+  --dur-fch: 5s;
+  --dur-opp-bar: 5s;
+  --dur-border: 3s; /* keeps the 70% hold hack proportional */
 
-    .statbar {
-        animation: fch-appear 5s 7s;
-    }
+  /* Section starts (tweak these to retime whole chunks) */
+  --t-core: 1s;            /* frame, action bars, opp status, fch bars, etc. */
+  --t-background: 0.8s;     /* da background */
+  --t-fill: 2s;            /* mult-bars, rb circle stroke */
+  --t-rb-cascade: 2.25s;   /* first pair in rune-builder cascade */
+  --t-late-controls: 3s;  /* eject + rb buttons, final UI bits */
+
+  /* Local micro-stagger only for the rune-builder cascade */
+  --rb-step: 0.15s;
+}
+/* Opponent status bar */
+#opp-statusbar-container {
+  opacity: 0;
+  z-index: 1;
+  animation: fade-in var(--dur-fade) var(--t-core) forwards;
+
+  .statbar {
+    animation: opp-statbar-fill var(--dur-opp-bar);
+  }
 }
 
 #battle-actionbar .right {
+  opacity: 0;
+  animation: fade-in var(--dur-fade) var(--t-core) forwards;
+
+  #fch-bar {
+    animation: fch-appear var(--dur-fch);
+  }
+
+  #multbars {
     opacity: 0;
-    animation: fade-in 2s 7s forwards;
-
-    #fch-bar {
-        animation: fch-appear 5s 7s;
-    }
-
-    #multbars {
-        opacity: 0;
-        animation: fade-in 2s 9s forwards;
-    }
+    animation: fade-in var(--dur-fade) var(--t-fill) forwards;
+  }
 }
 
 #battle-actionbar .left {
+  opacity: 0;
+  animation: fade-in var(--dur-fade) var(--t-core) forwards;
+
+  #eject-button, #rb-buttons {
     opacity: 0;
-    animation: fade-in 2s 7s forwards;
+    animation: fade-in var(--dur-fade) var(--t-late-controls) forwards;
+  }
 
-    #eject-button, #rb-buttons {
-        opacity: 0;
-        animation: fade-in 2s 11s forwards;
+  #runebuilder {
+    opacity: 0;
+    animation: fade-in var(--dur-fade) var(--t-core) forwards;
+
+    .main-rb-circle {
+      stroke-opacity: 0;
+      animation: fade-rb-circle-stroke-in var(--dur-fade) var(--t-fill) forwards;
     }
 
-    #runebuilder {
+    & g {
+      /* Rune-builder cascade: keeps a local, contained stagger */
+      circle:nth-child(1), image:nth-child(2) {
         opacity: 0;
-        animation: fade-in 2s 7s forwards;
-
-        .main-rb-circle {
-            stroke-opacity: 0;
-            animation: fade-rb-circle-stroke-in 2s 9s forwards;
-        }
-
-        & g {
-            circle:nth-child(1), image:nth-child(2) {
-                opacity: 0;
-                animation: fade-in 2s 9.25s forwards;
-            }
-            circle:nth-child(3), image:nth-child(4) {
-                opacity: 0;
-                animation: fade-in 2s 9.5s forwards;
-            }
-            circle:nth-child(5), image:nth-child(6) {
-                opacity: 0;
-                animation: fade-in 2s 9.75s forwards;
-            }
-            circle:nth-child(7), image:nth-child(8) {
-                opacity: 0;
-                animation: fade-in 2s 10s forwards;
-            }
-            circle:nth-child(9), image:nth-child(10) {
-                opacity: 0;
-                animation: fade-in 2s 10.25s forwards;
-            }
-            circle:nth-child(11), image:nth-child(12) {
-                opacity: 0;
-                animation: fade-in 2s 10.5s forwards;
-            }
-            circle:nth-child(13), image:nth-child(14) {
-                opacity: 0;
-                animation: fade-in 2s 10.75s forwards;
-            }
-            circle:nth-child(15), image:nth-child(16) {
-                opacity: 0;
-                animation: fade-in 2s 11s forwards;
-            }
-        }
+        animation: fade-in var(--dur-fade)
+                   var(--t-rb-cascade) forwards;
+      }
+      circle:nth-child(3), image:nth-child(4) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 1 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(5), image:nth-child(6) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 2 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(7), image:nth-child(8) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(9), image:nth-child(10) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 4 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(11), image:nth-child(12) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 5 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(13), image:nth-child(14) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 6 * var(--rb-step)) forwards;
+      }
+      circle:nth-child(15), image:nth-child(16) {
+        opacity: 0;
+        animation: fade-in var(--dur-fade)
+                   calc(var(--t-rb-cascade) + 7 * var(--rb-step)) forwards;
+      }
     }
+  }
 }
 
 #battle-view {
-    animation: fade-border-in 10s forwards;
-    border-bottom: none;
+  animation: fade-border-in var(--dur-border) forwards;
+  border-bottom: none;
 
-    .tl, .tr {
-        filter: brightness(0);
-        animation: fade-border-corners-in 2s 7s forwards;
-    }
+  .tl, .tr {
+    filter: brightness(0);
+    animation: fade-border-corners-in var(--dur-fade) var(--t-core) forwards;
+  }
 
-    #battle-bg {
-        opacity: 0;
-        animation: fade-in 2s 9s forwards;
-    }
+  #battle-bg {
+    opacity: 0;
+    animation: fade-in var(--dur-fade) var(--t-background) forwards;
+  }
 }
 
-/* Can't use delay because we need this transparent to start immediately (can't beat style= specificity)
-So we have to hack it like this.
-*/
+
 @keyframes fade-border-in {
-    0% {
-        border-color: transparent;
-    }
-    70% {
-        border-color: transparent;
-    }
-    100% {
-        border-color: inherit;
-    }
+  0%   { border-color: transparent; }
+  40%  { border-color: transparent; } /* acts like a built-in delay fraction - tweak to get proportionally correct */
+  100% { border-color: inherit; }
 }
 
 @keyframes fade-border-corners-in {
-    to {
-        filter: brightness(1);
-    }
+  to { filter: brightness(1); }
 }
 
 @keyframes fade-rb-circle-stroke-in {
-    to {
-        stroke-opacity: 1;
-    }
+  to { stroke-opacity: 1; }
 }
 
 @keyframes fch-appear {
-    0% {
-        opacity: 0;
-        background-position: 100%;
-    }
-    50% {
-        opacity: 1;
-        background-position: 100%;
-    }
-    to {
-        background-position: 0%;
-    }
+  0%   { opacity: 0; background-position: 100%; }
+  50%   { opacity: 0; background-position: 100%; }
+  70%  { opacity: 1; background-position: 100%; } /* acts like a built-in delay fraction - tweak to get proportionally correct */
+  100% { background-position: 0%; }
 }
 
 @keyframes opp-statbar-fill {
-    0% {
-        background-position: 100%;
-    }
-    50% {
-        background-position: 100%;
-    }
-    to {
-        background-position: 0%;
-    }    
+  0%   { background-position: 100%; }
+  70%  { background-position: 100%; } /* acts like a built-in delay fraction - tweak to get proportionally correct */
+  100% { background-position: 0%; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
