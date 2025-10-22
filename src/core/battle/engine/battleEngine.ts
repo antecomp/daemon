@@ -5,11 +5,13 @@ import { BattleReactions } from "../events/battleEvent.types";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
 import { PlannedSequence } from "../model/plannedmove";
-import { OpponentAI, OpponentAIBehavior, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
+import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
 
+/** Engine dependencies (swappable handlers)
+ * (f.e logger uses console for testing, but UI version can have a dedicated display handler.) */
 export interface BattleEngineDependencies {
     logger: (message: string, tag?: string) => void;
 }
@@ -25,30 +27,24 @@ const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
  * @param opponentStats - The statistics object describing the opponent's initial state (e.g., max health).
  * @param reactions - An object mapping battle events to arrays of asynchronous event handler functions.
  *                  - These 'reactions' fire (and block) at their associated battle stages and are provided information about battle state.
+ *                  - Namely used to interweave animations into logic (@ref BattleEngineBridge)
  * @returns An object containing methods and properties to control the battle flow:
  *   - `executeRound(playerPlan: PlannedSequence): Promise<void>`: Executes a round using the player's planned sequence of moves.
  *   - `setupRound(): Promise<void>`: Prepares the next round, generating the opponent's plan and emitting relevant events.
- *   - `battleResolutionPromise: Promise<BattleOutcome>`: A promise that resolves with the outcome of the battle when it ends.
- *   - `forceBattleResolve(outcome: BattleOutcome): Promise<void>`: Immediately ends the battle with the specified outcome.
+ *   - `forceBattleResolve(): void`: Forces a battle end state with a given outcome (namely used for "Eject")
  *
  * @remarks
  * The engine manages combatants, move execution, event emission, and battle resolution. Consumers should call `setupRound` before each round and `executeRound` with the player's moves. The engine emits events at key points for UI updates or logging.
  */
 export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, deps: BattleEngineDependencies = ENGINE_DEP_FALLBACK) {
 
+    const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))
+    let opponentPlan: PlannedSequence = [];
+
     async function emitBattleEvent<K extends BattleEvent>(event: K, payload: BattleEventPayload[K]) {
         await reactions[event]?.(payload);
     }
 
-    const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))
-
-    let opponentPlan: PlannedSequence = [];
-
-    async function forceBattleResolve(outcome: BattleOutcome){
-        await emitBattleEvent('BattleEnd', {outcome, combatants});
-    };
-
-    // This function feels gross, I think it could be improved.
     function handleDeathIfNeeded(): boolean {
         let outcome: BattleOutcome | null = null;
 
@@ -75,17 +71,22 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await emitBattleEvent('BattleEnd', {outcome, combatants});
     }
 
+    async function forceBattleResolve(outcome: BattleOutcome){
+        await emitBattleEvent('BattleEnd', {outcome, combatants});
+    };
+
+
     const opponentRanBehaviors = {
-        pre: new Set<string>(),
-        post: new Set<string>()        
+        preRound: new Set<string>(),
+        postRound: new Set<string>()        
     }
 
     function handleOpponentBehaviors(
-        stage: 'pre' | 'post', 
-        behaviors: OpponentAIBehavior[] | undefined, 
+        stage: 'preRound' | 'postRound', 
         predicateArgs: OpponentAIBehaviorPredicateArgs, 
         runnerDeps: OpponentAIBehaviorDeps
     ) {
+        const behaviors = opponentAI.behaviors?.[stage];
         if(!behaviors) return;
         behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
             if(behavior.once) {
@@ -105,7 +106,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         const plans = makeSidesMap(playerPlan, opponentPlan);
 
-        handleOpponentBehaviors('pre', opponentAI.behaviors?.preRound, {combatants}, {combatants, engineDeps: deps});
+        handleOpponentBehaviors('preRound', {combatants}, {combatants, engineDeps: deps});
         
         await emitBattleEvent('RoundStart', {plans, combatants});
 
@@ -152,6 +153,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 
+            // handleDeathIfNeeded returns true if there was a death. If so, we want to end all execution here.
             if (handleDeathIfNeeded()) return;
 
             await emitBattleEvent('DamagesApplied', {combatants, damagesDealt})
@@ -175,7 +177,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             await emitBattleEvent('MoveEnd', {combatants});
         }
 
-        handleOpponentBehaviors('post', opponentAI.behaviors?.postRound, {combatants}, {combatants, engineDeps: deps});
+        handleOpponentBehaviors('postRound', {combatants}, {combatants, engineDeps: deps});
 
         await emitBattleEvent('RoundEnd', {combatants});
 

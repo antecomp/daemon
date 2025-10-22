@@ -4,7 +4,7 @@ import { Combatant } from "../model/combatant";
 import { MoveSideEffectOutcome, Move, MoveSignal } from "../model/move";
 import { PlannedSequence } from "../model/plannedmove";
 
-// Change to Enum?
+/** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
 export type BattleEvent =
     | "RoundPrepared"
     | "RoundStart"
@@ -18,7 +18,9 @@ export type BattleEvent =
     | "BattleEnd"
     | "MoveEmission" // Random Emissions from move side effects.
 
-// Update this as needed for whatever information is needed/available.
+/** Payload shape for each of the battle events (lifecycle stages). Provided by battleEngine.
+ * Update as needed.
+  */
 export type BattleEventPayload = {
     RoundPrepared: {
         combatants: Sides<Combatant>  
@@ -73,6 +75,13 @@ export type BattleEventPayload = {
     }
 }
 
-export type Reaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;
-export type BattleReactions = Partial<{[K in BattleEvent]: Reaction<K>}>;
+type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;
+
+/** BattleReactions is a map of named battle lifecycle stages (f.e `RoundStart`, or `DamagesApplied`) to a (optionally async blocking) callback
+ * Used to "react" to parts of the battle execution, and potentially block evaluation to run supplamental code first.
+ * Each lifecycle event has a different payload (context) that is provided to it, for varying context.
+ * 
+ * This is namely used by battleEngineBridge to update the UI, run animations, etc (blocking engine where necessary).
+  */
+export type BattleReactions = Partial<{[K in BattleEvent]: BattleReaction<K>}>;
 

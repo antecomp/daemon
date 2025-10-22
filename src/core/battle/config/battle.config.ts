@@ -1,2 +1,5 @@
+/** Number of moves per game turn. */
 export const SEQUENCE_LENGTH = 5;
+
+/** REPLACE THIS LATER WITH PROPER GAME STATE REPRESENTING PLAYER! */
 export const PLAYER_HEALTH_PLACEHOLDER = 10;

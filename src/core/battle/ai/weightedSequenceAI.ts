@@ -2,12 +2,20 @@ import pickRandom, { pickRandomWeighted } from "@/shared/utils/pickRandom";
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PlannedMove, PlannedSequence } from "../model/plannedmove";
 
+// Type exports just for the test suite to access.
 export type PlanMap = Record<string, PlannedMove>
-
 export type PlanWeightMap<M extends Record<string, PlannedMove>> = {
     [K in keyof M]?: Partial<Record<keyof M, number>>
 }
 
+/**
+ * buildSequenceFromWeightMap is a simple method to be used with OpponentAIs getSequence. 
+ * It generates an opponent sequence given a movebank and weight mappings (liklihood that one move should follow another) from one move to another
+ * @param planBank - A record of PlannedMoves, to use multiple instances of the same plannedMove, just write a custom key name for each.
+ * @param weightMap - A mapping from each move to each other move (from planBank) of the form {[moveName]: {[otherMoveName]: `number`}}
+ *                   where the `number` represents a weight (liklihood) for otherMoveName to follow moveName (if not already selected)
+ * @returns A weighted, random planned sequence based on the planBank and weightMap provided.
+ */
 export function buildSequenceFromWeightMap<M extends PlanMap>(
     planBank: M,
     weightMap: PlanWeightMap<M>
