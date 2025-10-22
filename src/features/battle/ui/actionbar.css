@@ -104,6 +104,10 @@
             position: relative;
             justify-content: center;
 
+            .userbars {
+                translate: 0px; /* firefox shit */
+            }
+
             .dbars {
                 position: absolute;
                 top: 0;
