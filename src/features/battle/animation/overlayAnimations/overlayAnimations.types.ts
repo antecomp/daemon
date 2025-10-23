@@ -1,4 +1,4 @@
-import { availableOverlayAnimationNames } from "./overlayAnimationDefinitions";
+import { AvailableOverlayAnimationNames } from "./overlayAnimationDefinitions";
 
 /** 
  * Contains the data for an overlay animation, where an "overlay animation" is a short animation that
@@ -12,10 +12,11 @@ export interface OverlayAnimData {
 
 /** Request used internally to actually track the animation *requests* that we've called. */ 
 export interface OverlayAnimReq {
-    name: availableOverlayAnimationNames;
+    name: AvailableOverlayAnimationNames;
     position: [number, number];
     id: string
     onFinish: () => void;
 }
 
-export type OverlayAnimationRequester = (name: availableOverlayAnimationNames, position?: [number, number]) => Promise<void>
+/** Signature of requestOverlayAnimation. Placed here as this method is passed between several components. */
+export type OverlayAnimationRequester = (name: AvailableOverlayAnimationNames, position?: [number, number]) => Promise<void>

@@ -4,7 +4,7 @@ import { ClashReactionMap } from "./clashReaction";
 import slash_sfx from '@/assets/sfx/battle/candle.wav';
 import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
 import sleep from "@/shared/utils/sleep";
-import { availableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
+import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
 // For now I am just assuming every move has a single animation at a single slot.
 // This could very easily change in the future (i.e needed slot changing based on what happened)
@@ -24,7 +24,7 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
                 return requestOverlayAnimation('slash_repeat');
             } else {
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
-                return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] as availableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
+                return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] as AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
         } 
     },

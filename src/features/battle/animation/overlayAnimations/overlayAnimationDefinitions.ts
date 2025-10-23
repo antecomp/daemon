@@ -7,6 +7,7 @@ import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_o
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 
+/** Named overlay animations for battle that contain the `src` of the video, and a `width` and `height` for properly scaling the video element. */
 export const overlayAnimationDefinitions = {
     "slash_norm": {
         src: slashnorm,
@@ -51,7 +52,8 @@ export const overlayAnimationDefinitions = {
     }
 }
 
-export type availableOverlayAnimationNames = keyof typeof overlayAnimationDefinitions;
+/** Helper type to constrain calls to requestOverlayAnimation to animation names known to exist. */
+export type AvailableOverlayAnimationNames = keyof typeof overlayAnimationDefinitions;
 
 // Lazily just calling it here for now, we will want to be smart about it when we actually have dynamic resources.
 requestAssetPrefetch(Object.values(overlayAnimationDefinitions).map(a => a.src));

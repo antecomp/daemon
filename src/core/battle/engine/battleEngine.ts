@@ -184,6 +184,11 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     return {
-        executeRound, setupRound, forceBattleResolve
+        /** Execute a round of the battle, given the players move sequence. Expects setupRound to have been run first. */
+        executeRound, 
+        /** Generates a new sequence for the opponent, emits round start signals (which can be listened to for setting dependant state) */
+        setupRound, 
+        /** Prematurely end a round with a provided resolution. Should only ever be executed when *not* in the middle of an execution. */
+        forceBattleResolve
     }
 }

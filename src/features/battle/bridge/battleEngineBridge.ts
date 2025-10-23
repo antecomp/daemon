@@ -20,7 +20,7 @@ import { runClashReactionsByPlacement } from "../clash/clashReaction";
 import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/lexicon.types";
-import { OpponentDisplayBehavior, OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
+import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 import { Combatant } from "@/core/battle/model/combatant";
@@ -32,6 +32,7 @@ export enum BattleUIState {
 
 const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
 
+/** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
 
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
@@ -64,24 +65,21 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     }
 
     const opponentRanBehaviors = {
-        pre: new Set<string>(),
-        post: new Set<string>()
+        preRound: new Set<string>(),
+        postRound: new Set<string>()
     }
 
-    function handleOpponentBehaviors(
-            stage: 'pre' | 'post', 
-            behaviors: OpponentDisplayBehavior[] | undefined, 
-            predicateArgs: OpponentDisplayPredicateArgs, 
-            runnerDeps: OpponentDisplayBehaviorDeps
-    ) {
+    function handleOpponentBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
+        const behaviors = opponentProfile.display.behaviors?.[stage];
         if(!behaviors) return;
+
         behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
             if(behavior.once) {
                 if(opponentRanBehaviors[stage].has(behavior.key)) return;
                 opponentRanBehaviors[stage].add(behavior.key);
             }
             behavior.run(runnerDeps);
-        })
+        })     
     }
 
     const reactions: BattleReactions = {
@@ -96,7 +94,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
-            handleOpponentBehaviors('pre', opponentProfile.display.behaviors?.preRound, {combatants}, {appendActionMessage});
+            handleOpponentBehaviors('preRound', {combatants}, {appendActionMessage});
             refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
@@ -158,7 +156,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-            handleOpponentBehaviors('post', opponentProfile.display.behaviors?.postRound, {combatants}, {appendActionMessage});
+            handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage});
             refreshCombatantInfo(combatants);
             engine.setupRound();
         },
