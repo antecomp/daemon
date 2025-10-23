@@ -1,5 +1,5 @@
 import { Move, MoveType } from "../model/move";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "../utils/movebehavior.utils";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "./behaviors";
 import { NegatedByOverwhelm } from "./behaviors";
 import { OnlyDoDamageOnDefensive } from "./behaviors";
 import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./behaviors";

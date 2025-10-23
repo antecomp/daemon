@@ -5,7 +5,7 @@ import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMo
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
 import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battle/utils/movebehavior.utils";
+import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battle/moves/behaviors";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battle/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
 

@@ -1,7 +1,8 @@
-import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect } from "../model/move";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext } from "../model/move";
 import { PASSTHROUGH_MULTPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
-import { getBaseMultipliers } from "../utils/engine.utils";
+import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
+import { Status } from "../model/status";
 
 declare global {
     interface MoveSignalMap {
@@ -10,6 +11,38 @@ declare global {
         'mechanic:mania': {manic: boolean},
         'mechanic:focus': {lost: boolean}
     }
+}
+
+export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pipeline: ((ctx: T) => MoveSideEffectOutcome | void)[]): ((ctx: T) => MoveSideEffectOutcome | void) {
+    return (ctx) => {
+        let result: MoveSideEffectOutcome | undefined = undefined;
+        pipeline.forEach(effect => {
+            result = effect(ctx) ?? result; // Save latest defined outcome.
+        });
+        return result;
+    };
+}
+
+export function multiplierPipeline(...pipeline: DamageMultiplierFunction[]): DamageMultiplierFunction {
+    return (context) => {
+        return pipeline.reduce(
+            (currentMults, step) => combineMultiplierSets(currentMults, step(context)),
+            PASSTHROUGH_MULTPLIERS
+        );
+    };
+
+}
+
+export function extendStatusOf(who: 'them' | 'self', Stat: typeof Status, amount: number = 1): PostMoveSideEffect {
+    return (ctx) => {
+        ctx[who].extendStatus(new Stat, amount);
+    };
+}
+
+export function applyStatusTo<T extends PostMoveContext | PreMoveContext>(who: 'them' | 'self', Stat: typeof Status, duration: number = 1) {
+    return (ctx: T) => {
+        ctx[who].addStatus(new Stat, duration);
+    };
 }
 
 export const PreparedAttackBonus: DamageMultiplierFunction = ({self}) => {
