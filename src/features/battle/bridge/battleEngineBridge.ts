@@ -1,5 +1,5 @@
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
-import { BattleReactions } from "@/core/battle/events/battleEvent.types";
+import { BattleReactions } from "@/core/battle/model/battleReactions";
 import { BattleOutcome, DamageMultipliers } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";

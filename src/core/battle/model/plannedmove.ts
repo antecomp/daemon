@@ -1,16 +1,13 @@
-import { Move, MoveTags } from "./move";
-
+import { Move } from "./move";
 
 /**
  * A function type that validates a planned move within a list of planned moves.
  * Used to prevent illegal move plans (e.g using 'repeat' at the start of a sequence.)
  *
  * @param workingPlan - The array of current planned moves.
- * @param index - The index of the move to validate within the workingPlan array.
  * @returns `true` if the move at the specified index is valid, otherwise `false`.
  */
 export type MoveValidator = (workingPlan: PlannedMove[]) => boolean;
-
 
 /**
  * A function type that creates a `Move` instance based on the provided planning context.
@@ -22,7 +19,6 @@ export type PlannedMoveInstantiator = (
         index: number;
     }
 ) => Move;
-
 
 /**
  * Represents a move that is planned to be executed in the battle system.

@@ -1,7 +1,7 @@
 import { attack, defend, evade, heal, nothingMove, overwhelm, prepare } from "@/core/battle/moves/moves";
 import { mirrorPlan, planMove, repeatPlan } from "@/core/battle/moves/plannedMoves";
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
-import { BattleReactions } from "@/core/battle/events/battleEvent.types";
+import { BattleReactions } from "@/core/battle/model/battleReactions";
 import { PlannedSequence } from "@/core/battle/model/plannedmove";
 import { PlannedMove } from "@/core/battle/model/plannedmove";
 import { OpponentAI, OpponentStats } from "@/core/battle/ai/opponentAI.types";

@@ -17,7 +17,7 @@ export type OpponentAIBehaviorDeps = {combatants: Sides<Combatant>, engineDeps: 
  * 
  * Each behavior has a...
  * @property `key` - .Used for internal tracking, can be anything as long as it's unique per behavior.
- * @run `(deps: OpponentAIBehaviorDeps)` => void;` The actual behavior side-effect. Takes in dependencies (@ref OpponentAIBehaviorDeps) to perform needed actions.
+ * @property run `(deps: OpponentAIBehaviorDeps)` => void;` The actual behavior side-effect. Takes in dependencies (@ref OpponentAIBehaviorDeps) to perform needed actions.
  * And can optionally take...
  * @property `when (args: OpponentAIBehaviorPredicateArgs)` - A predicate for if the behavior should run at all. 
  *           Use this instead of conditionals inside `run`. Takes in context (@ref OpponentAIBehaviorPredicateArgs)

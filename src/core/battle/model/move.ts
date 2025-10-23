@@ -10,21 +10,32 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
-// Tag for logic to indicate if a move spawned as a result of mirroring/repeating or other fancy logic (for animations)
+/** Tags attached to a move when instantiated (formed from PlannedMove). Used to indicate additional context. For example if the move is the result of special plans such as "mirror" or "repeat" */
 export type MoveTags = ('mirrored' | 'repeated')[];
 
 // Declare global interface that we can extend from anywhere (allowing us to easily append new information as part of move effects)
 declare global {
+    /** 
+     * MoveSignalMap is a mapping of some named signal that a move can emit, and the expected payload for that signal. 
+     * This is the type used by the MoveEmission battle event (@ref battleReactions.ts). 
+     * Thus, these signals are captured and handled by the MoveEmission method in a battle reactions map.
+     * 
+     * It is declared in the global scope so this interface can be extended from other sources. To add additional signal types, do the following;
+     * @example
+     * ```typescript
+     * declare global {
+        interface MoveSignalMap {
+        'signalname': {something: number, somethingElse: boolean},
+        }
+    }
+    ```    
+     * */
     interface MoveSignalMap {
         'example': {x: number}
-    } // For Third-Party Extension.
+    }
 }
 
-// export type MoveSignal<K extends keyof MoveSignalMap = keyof MoveSignalMap> = {
-//     type: K,
-//     payload: MoveSignalMap[K]
-// }
-
+// Helper type, see below.
 export type MoveSignalOf<K extends keyof MoveSignalMap> = {
     type: K;
     payload: MoveSignalMap[K];
@@ -35,14 +46,18 @@ export type MoveSignal = {
     [K in keyof MoveSignalMap]: MoveSignalOf<K>
 }[keyof MoveSignalMap];
 
+/** Move side effects can emit an outcome as an indicator of their result (f.e if evade rolled successfully). 
+ * Passed as part of context to subsequent evaluation stages (multiplierPipeline, postEffect, move end emitter)
+ * 
+ * Feel free to extend this enum if additional outcome indicators are needed.  */
 export enum MoveSideEffectOutcome {
     Success, Failure,
-    /* Attempted */ // feel free to add more if needed.
 }
 
 export interface PreMoveContext {
     deps: BattleEngineDependencies;
     emit: (signal: MoveSignal) => void;
+
     self: Combatant;
     them: Combatant;
     moves: {
@@ -64,12 +79,11 @@ export interface ClashResult {
 
 export type PostMoveContext = DamageMultiplierContext & ClashResult;
 
-export type EndOfMoveContext = PostMoveContext & {postEffectOutcome: MoveSideEffectOutcome | undefined}
-
-export type PreMoveSideEffect = (context: PreMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
+export type PreMoveSideEffect = (context: PreMoveContext) => MoveSideEffectOutcome | void;
 export type DamageMultiplierFunction = (context: DamageMultiplierContext) => DamageMultipliers;
-export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void; // have these saved to context as seperate outcomes!
+export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void;
 
+// Wrapper methods for DamageMultiplierFunction and MoveSideEffect to add common conditionals.
 export type MoveMultiplierConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
 export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 

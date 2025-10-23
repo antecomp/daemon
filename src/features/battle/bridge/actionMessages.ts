@@ -4,7 +4,7 @@ import ai_focus_icon from '@/features/battle/assets/icons/battle-alerts/focus.pn
 import ai_mania_icon from '@/features/battle/assets/icons/battle-alerts/mania.png'
 import { Side, Sides } from '@/core/battle/utils/sides.utils'
 import { MoveLexicon } from '../lexicon/lexicon.types'
-import { BattleEventPayload } from '@/core/battle/events/battleEvent.types'
+import { BattleEventPayload } from '@/core/battle/model/battleReactions'
 import { OpponentProfile } from './battleProfiles'
 import { capitalizeFirstLetter, capitalizeWords } from '@/shared/utils/stringUtils'
 

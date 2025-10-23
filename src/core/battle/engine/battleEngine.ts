@@ -1,14 +1,14 @@
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
 import { BattleOutcome } from "../model/battle";
-import { BattleReactions } from "../events/battleEvent.types";
+import { BattleReactions } from "../model/battleReactions";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
 import { PlannedSequence } from "../model/plannedmove";
 import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
-import { BattleEvent, BattleEventPayload } from "../events/battleEvent.types";
+import { BattleEvent, BattleEventPayload } from "../model/battleReactions";
 
 /** Engine dependencies (swappable handlers)
  * (f.e logger uses console for testing, but UI version can have a dedicated display handler.) */

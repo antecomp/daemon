@@ -1,8 +1,8 @@
 import { Side, Sides } from "../utils/sides.utils";
-import { BattleOutcome, DamageMultipliers } from "../model/battle";
-import { Combatant } from "../model/combatant";
-import { MoveSideEffectOutcome, Move, MoveSignal } from "../model/move";
-import { PlannedSequence } from "../model/plannedmove";
+import { BattleOutcome, DamageMultipliers } from "./battle";
+import { Combatant } from "./combatant";
+import { MoveSideEffectOutcome, Move, MoveSignal } from "./move";
+import { PlannedSequence } from "./plannedmove";
 
 /** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
 export type BattleEvent =
