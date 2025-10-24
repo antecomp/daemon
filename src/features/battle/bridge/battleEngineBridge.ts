@@ -41,7 +41,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
 
-    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<AssetURL[]>>({player: [], opponent: []});
+    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<(AssetURL | undefined)[]>>({player: [], opponent: []});
 
     function refreshCombatantInfo(combatants: Sides<Combatant>) {
         setOpponentHealthPercentage(combatants.opponent.healthPercent);

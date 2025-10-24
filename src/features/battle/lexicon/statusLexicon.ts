@@ -18,5 +18,4 @@ export const STATUS_LEXICON = {
     mania: {
         icon: mania_icon
     }
-} as const satisfies Record<string, StatusDisplayEntry>
-
+} as Record<string, StatusDisplayEntry> // Do not narrow this type or suffer the consequences.

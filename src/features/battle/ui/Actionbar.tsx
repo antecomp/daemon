@@ -27,6 +27,7 @@ import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
 import { MoveLexemes, MoveLexicon } from '../lexicon/moveLexicon'
+import { AssetURL } from '@/shared/types/misc.types'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
@@ -52,7 +53,7 @@ interface ActionbarProps {
     executeRound: (playerPlan: PlannedSequence) => Promise<void>
     playerHealthPercentage: Accessor<number>,
     displayMults: Accessor<Sides<DamageMultipliers>>,
-    currentStatusIcons: Accessor<Sides<string[]>>
+    currentStatusIcons: Accessor<Sides<(AssetURL | undefined)[]>>
     forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
     lexicon: MoveLexicon,
     currentlyExecutingMoveIndex: Accessor<number | null>
@@ -169,12 +170,12 @@ export default function Actionbar(props: ActionbarProps) {
                     </div>
                     <div class="player-statuses">
                         <For each={props.currentStatusIcons().player}>
-                            {stat => <img class="status-icon" src={stat} />}
+                            {stat => stat && <img class="status-icon" src={stat} />}
                         </For>
                     </div>
                     <div class="opp-statuses">
                         <For each={props.currentStatusIcons().opponent}>
-                            {stat => <img class="status-icon" src={stat} />}
+                            {stat => stat && <img class="status-icon" src={stat} />}
                         </For>
                     </div>
                 </div>
