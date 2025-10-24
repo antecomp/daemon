@@ -79,6 +79,9 @@ export const BASE_MOVE_LEXICON = {
 // ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
 
 export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
+
+    ...BASE_MOVE_LEXICON,
+
     repeat: {
         label: "apprentice",
         icon: apprentice_icon,
@@ -133,11 +136,6 @@ export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
         icon: mage_icon,
         largeIcon: mage_icon_ex,
         lore: `Distorted truths cut like knives. \n \n Perform the same action as opponent.`
-    },
-
-    idle: {
-        label: "idle",
-        icon: stock_icon,
     },
 }
 

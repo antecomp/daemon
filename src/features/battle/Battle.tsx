@@ -42,6 +42,8 @@ export default function Battle(props: {
 
     const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
+    // Using two level merge allows opponents to change the label for moves without having to also redeclare stuff
+    // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific.
     const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
 
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
