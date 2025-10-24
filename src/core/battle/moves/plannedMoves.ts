@@ -1,6 +1,6 @@
 import { mapObject } from "@/shared/utils/mapObject";
 import { Move, MoveTags } from "../model/move";
-import { PlannedMove } from "../model/plannedmove";
+import { PlannedMove } from "../model/plannedMove";
 import { MOVEBANK, nothingMove } from "./moves";
 import { CannotBeFirst } from "./validators";
 

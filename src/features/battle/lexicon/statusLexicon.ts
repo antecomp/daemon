@@ -1,9 +1,12 @@
 import vuln_icon from "@/features/battle/assets/icons/statuses/vuln.png"
 import prep_icon from "@/features/battle/assets/icons/statuses/prep.png"
 import mania_icon from "@/features/battle/assets/icons/statuses/mania.png"
-import { StatusLexicon } from "./lexicon.types"
 
-export const STATUS_LEXICON: StatusLexicon = {
+import { AssetURL } from "@/shared/types/misc.types"
+
+export type StatusDisplayEntry = { icon?: AssetURL; }; // may add label/lore here also, for status tooltips/labels?
+
+export const STATUS_LEXICON = {
     prepared: {
         icon: prep_icon
     },
@@ -15,5 +18,5 @@ export const STATUS_LEXICON: StatusLexicon = {
     mania: {
         icon: mania_icon
     }
-}
+} as const satisfies Record<string, StatusDisplayEntry>
 

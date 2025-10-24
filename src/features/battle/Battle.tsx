@@ -8,7 +8,7 @@ import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
-import { BASE_MOVE_LEXICON, PLAYER_BASE_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
+import { BASE_MOVE_LEXICON, MoveLexicon, PLAYER_BASE_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
@@ -42,7 +42,7 @@ export default function Battle(props: {
 
     const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
-    const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON, props.opponentProfile.display.lexicon);
+    const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
 
     const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
 

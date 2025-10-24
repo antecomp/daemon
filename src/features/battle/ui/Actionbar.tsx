@@ -12,8 +12,7 @@ import ds_bar from '../assets/mult_ds.png'
 import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
 import { BattleUIState, useBattleUIState } from '../Battle'
-import { PlannedSequence } from '@/core/battle/model/plannedmove'
-import { KnownPlanName, MoveLexicon } from '@/features/battle/lexicon/lexicon.types'
+import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
 import { PlayerRuneName, playerRuneRegistry } from '@/core/battle/moves/runeRegistry'
@@ -27,16 +26,17 @@ import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
+import { MoveLexemes, MoveLexicon } from '../lexicon/moveLexicon'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
 function SelectedMove(props: {
     lexicon: MoveLexicon
-    moveName: string
+    moveName: MoveLexemes
     isExecuting: boolean
 }) {
 
-    const entry = props.lexicon[props.moveName as KnownPlanName];
+    const entry = props.lexicon[props.moveName];
 
     return (
         <span class="player-move" classList={{executing: props.isExecuting}}>

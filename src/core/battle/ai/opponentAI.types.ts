@@ -2,7 +2,7 @@
 
 import { BattleEngineDependencies } from "../engine/battleEngine";
 import { Combatant } from "../model/combatant";
-import { PlannedSequence } from "../model/plannedmove";
+import { PlannedSequence } from "../model/plannedMove";
 import { Sides } from "../utils/sides.utils";
 
 /** Required fields for an OpponentAI Behavior Predicate (when clause), for making contextual decision on if a behavior should be run. */

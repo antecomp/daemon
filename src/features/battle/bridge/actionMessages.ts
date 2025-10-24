@@ -8,6 +8,7 @@ import { BattleEventPayload } from '@/core/battle/model/battleReactions'
 import { OpponentProfile } from './battleProfiles'
 import { capitalizeFirstLetter, capitalizeWords } from '@/shared/utils/stringUtils'
 
+/** Mapping of a action message icon by name to it's AssetURL */
 export const actionIcons = {
     "default": ai_plain_icon,
     "heal": ai_heal_icon,
@@ -15,18 +16,26 @@ export const actionIcons = {
     "mania": ai_mania_icon
 }
 
+/**
+ * Narrowed set of icon identifiers that can be referenced by action messages.
+ */
 type AvailableActionIcons = keyof typeof actionIcons;
 
+/** A single "Action Message" (battle notification). Has some text and can be decorated with an icon (@ref AvailableActtionIcons) */
 export interface ActionMessage {
     iconName?: AvailableActionIcons
     text: string
 }
+
+/** Function signature for appending a new action message. Used as appendActionMessage is passed between many components. */
 export type ActionMessageAppender = (text: string, iconName?: AvailableActionIcons) => void;
 
+// Helper to resolve and format a display name of the opponent/player for action messages.
 function nameOfAffected(perspective: Side, profile: OpponentProfile) {
     return perspective == 'player' ? 'Arda' : capitalizeWords(profile.display.name);
 }
 
+/** Helper that maps some move emission to a related action message. Use this (in combination with new move emission declarations) to add new 'notifications' for certain move behaviors. */
 export function generateActionMessageFromMoveEmission(data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) {
     const {moveName, signal, perspective} = data;
 

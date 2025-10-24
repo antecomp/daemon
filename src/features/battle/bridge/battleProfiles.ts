@@ -11,7 +11,7 @@
 import { OpponentAI, OpponentStats } from '@/core/battle/ai/opponentAI.types';
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
-import { MoveLexicon } from '../lexicon/lexicon.types';
+import { MoveLexicon } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';

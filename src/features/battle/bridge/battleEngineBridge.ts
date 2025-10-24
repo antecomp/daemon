@@ -16,10 +16,10 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { runClashReactionsByPlacement } from "../clash/clashReaction";
-import { OPPONENT_CLASH_REACTIONS, PLAYER_CLASH_REACTIONS } from "../clash/clashReactionDefinitions";
+import { runMoveUISideEffectsByPlacement } from "../effects/moveUISideEffects";
+import { OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
-import { MoveLexicon } from "../lexicon/lexicon.types";
+import { MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
@@ -121,8 +121,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             await sleep(PRE_ANIMATION_DELAY);
 
-            // May have custom clash reactions per opponent later, but for now we can just use a constant one.
-            await runClashReactionsByPlacement(PLAYER_CLASH_REACTIONS[moveNames.player], OPPONENT_CLASH_REACTIONS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
+            // May have custom effects per opponent later, but for now we can just use a constant one.
+            await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
 
         },
 

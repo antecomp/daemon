@@ -1,7 +1,7 @@
 import { Combatant } from "@/core/battle/model/combatant";
 import { AssetURL } from "@/shared/types/misc.types";
 import { STATUS_LEXICON } from "../lexicon/statusLexicon";
-import { PlannedMove } from "@/core/battle/model/plannedmove";
+import { PlannedMove } from "@/core/battle/model/plannedMove";
 import { KnownStatusName } from "../lexicon/lexicon.types";
 
 const HINT_AMOUNT = 3;

@@ -1,6 +1,6 @@
 import pickRandom, { pickRandomWeighted } from "@/shared/utils/pickRandom";
 import { SEQUENCE_LENGTH } from "../config/battle.config";
-import { PlannedMove, PlannedSequence } from "../model/plannedmove";
+import { PlannedMove, PlannedSequence } from "../model/plannedMove";
 
 // Type exports just for the test suite to access.
 export type PlanMap = Record<string, PlannedMove>

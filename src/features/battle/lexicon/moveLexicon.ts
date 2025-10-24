@@ -1,4 +1,3 @@
-import { MoveLexicon } from "./lexicon.types"
 
 import apprentice_icon_ex from '../assets/icons/runes/apprentice_ex.png'
 import candle_icon_ex from '../assets/icons/runes/candle_ex.png'
@@ -18,9 +17,14 @@ import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
 import priestess_icon from '../assets/icons/runes/priestess.png'
 import trickster_icon from '../assets/icons/runes/trickster.png'
 import stock_icon from "../assets/icons/runes/candle.png"
+import { AssetURL } from "@/shared/types/misc.types"
+
+
+
+export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; };
 
 // map planned moves by ID to their associated UI fallback data.
-export const BASE_MOVE_LEXICON: MoveLexicon = {
+export const BASE_MOVE_LEXICON = {
     repeat: {
         label: "repeat",
         icon: apprentice_icon,
@@ -73,9 +77,10 @@ export const BASE_MOVE_LEXICON: MoveLexicon = {
         label: "idle",
         icon: stock_icon,
     },
-}
+} as const satisfies Record<string, MoveDisplayEntry>;
+// ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
 
-export const PLAYER_BASE_MOVE_LEXICON = {
+export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
     repeat: {
         label: "apprentice",
         icon: apprentice_icon,
@@ -137,3 +142,13 @@ export const PLAYER_BASE_MOVE_LEXICON = {
         icon: stock_icon,
     },
 }
+
+/** 
+ * Map of known move lexicon definitions (from BASE_MOVE_LEXICON) to MoveDisplayEntries.
+ */
+export type MoveLexicon = {
+    [moveName in keyof typeof BASE_MOVE_LEXICON]: MoveDisplayEntry
+}
+
+/** Known Move/Plan names that are defined in the BASE_MOVE_LEXICON */
+export type MoveLexemes = keyof (typeof BASE_MOVE_LEXICON);

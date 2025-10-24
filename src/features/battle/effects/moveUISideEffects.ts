@@ -1,12 +1,17 @@
+/**@fileoverview
+ * MoveUISideEffects UI-based side effects that are called when a certain move occurs.
+ * This is used to inject stuff like animations, sound effects, and other events for moves.
+ */
+
 import { DamageMultipliers } from "@/core/battle/model/battle";
 import { MoveSideEffectOutcome, MoveTags } from "@/core/battle/model/move";
 import { Sides } from "@/core/battle/utils/sides.utils";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { Combatant } from "@/core/battle/model/combatant";
-import { PlannedSequence } from "@/core/battle/model/plannedmove";
+import { PlannedSequence } from "@/core/battle/model/plannedMove";
 
-export type ClashReactionDeps = {requestOverlayAnimation: OverlayAnimationRequester}
-export type ClashReactionCTX = {
+export type MoveUISideEffectDeps = {requestOverlayAnimation: OverlayAnimationRequester}
+export type MoveUISideEffectCTX = {
         combatants: Sides<Combatant>,
         mults: Sides<DamageMultipliers>,
         outcomes: Sides<MoveSideEffectOutcome | undefined>,
@@ -16,22 +21,22 @@ export type ClashReactionCTX = {
         moveTags: Sides<MoveTags>
 }
 
-export type ClashReaction = (
-    deps: ClashReactionDeps,
-    ctx: ClashReactionCTX
+export type MoveUISideEffect = (
+    deps: MoveUISideEffectDeps,
+    ctx: MoveUISideEffectCTX
 ) => Promise<void>;
 
-export type ClashReactionEntry = {
-    perform: ClashReaction,
+export type MoveUISideEffectEntry = {
+    perform: MoveUISideEffect,
     place: number
 }
 
-export interface ClashReactionMap {
-    [moveName: string]: ClashReactionEntry
+export interface MoveUISideEffectMap {
+    [moveName: string]: MoveUISideEffectEntry
 }
 
 // Messy but good enough for now.
-export async function runClashReactionsByPlacement(player: ClashReactionEntry | undefined, opponent: ClashReactionEntry | undefined, deps: ClashReactionDeps, ctx: ClashReactionCTX) {
+export async function runMoveUISideEffectsByPlacement(player: MoveUISideEffectEntry | undefined, opponent: MoveUISideEffectEntry | undefined, deps: MoveUISideEffectDeps, ctx: MoveUISideEffectCTX) {
     if(!player) { return opponent?.perform(deps, ctx); }
     if(!opponent) {return player.perform(deps, ctx); }
 

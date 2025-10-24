@@ -4,7 +4,7 @@ import { BattleOutcome } from "../model/battle";
 import { BattleReactions } from "../model/battleReactions";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
-import { PlannedSequence } from "../model/plannedmove";
+import { PlannedSequence } from "../model/plannedMove";
 import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";

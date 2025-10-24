@@ -1,5 +1,5 @@
 import { playSound } from "@/shared/utils/playSound";
-import { ClashReactionMap } from "./clashReaction";
+import { MoveUISideEffectMap } from "./moveUISideEffects";
 
 import slash_sfx from '@/assets/sfx/battle/candle.wav';
 import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
@@ -10,7 +10,7 @@ import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/o
 // This could very easily change in the future (i.e needed slot changing based on what happened)
 // So this is by no regards a permenant solution, just a simple one to get started.
 
-export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
+export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
     attack: {
         place: 1,
         perform({requestOverlayAnimation}, {combatants, moveTags}) {
@@ -24,26 +24,13 @@ export const PLAYER_CLASH_REACTIONS: ClashReactionMap = {
                 return requestOverlayAnimation('slash_repeat');
             } else {
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
-                return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] as AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
+                return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
         } 
-    },
-
-    // Might have to do some exception/hack for repeat, I am unsure.
-    repeat: {
-        place: 1, // Can't easily emulate place of previous clash...
-        async perform({requestOverlayAnimation}, {plannedSequences, moveIndex}) {
-            // How should I do this? Maybe do a different animation?
-            // Could be based on mults, two different repeat animations, one for doing damage and one for passive stuff?
-            if(plannedSequences.player[moveIndex - 1].name == 'attack') {
-                playSound(slash_sfx);
-                await requestOverlayAnimation('slash_repeat')
-            }
-        }
     }
 }
 
-export const OPPONENT_CLASH_REACTIONS: ClashReactionMap = {
+export const OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
     defend: {
         place: 1,
         async perform({requestOverlayAnimation}, {mults}) {

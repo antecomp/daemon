@@ -1,7 +1,7 @@
 import { DamageMultipliers, PASSTHROUGH_MULTPLIERS } from "../model/battle";
 import { Combatant } from "../model/combatant";
 import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, MoveSideEffectOutcome } from "../model/move";
-import { PlannedSequence } from "../model/plannedmove";
+import { PlannedSequence } from "../model/plannedMove";
 import { Status } from "../model/status";
 import { Sides } from "./sides.utils";
 
