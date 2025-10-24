@@ -85,7 +85,7 @@ export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect>
         if(ctx.damageTaken <= 0) {
             return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
         } else {
-            //ctx.deps.logger('Focus Shattered! Cannot ' + ctx.moves.ours.name);
+	    // Emission grabbed by UI to send "Lost focus, unable to... message"
             ctx.emit({
                 type: 'mechanic:focus',
                 payload: {lost: true}

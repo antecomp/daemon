@@ -24,6 +24,45 @@
   .statbar {
     animation: opp-statbar-fill var(--dur-opp-bar);
   }
+
+
+    #opp-icon {
+      opacity: 0;
+      animation: fade-in var(--dur-fade) var(--t-rb-cascade) forwards;
+    }
+
+    .nametag {
+      opacity: 0;
+      animation: fade-in var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;      
+    }
+
+    #opp-hint-container {
+      .opp-hint:nth-child(1) {
+        filter: opacity(0);
+        animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;
+      }
+      
+      .opp-hint:nth-child(2) {
+        filter: opacity(0);
+        animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 5 * var(--rb-step)) forwards;
+      }
+
+      .opp-hint:nth-child(3) {
+        filter: opacity(0);
+        animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 7 * var(--rb-step)) forwards;
+      }
+      
+      .opp-hint:nth-child(4) {
+        filter: opacity(0);
+        animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 9 * var(--rb-step)) forwards;
+      }
+      
+      .opp-hint:nth-child(5) {
+        filter: opacity(0);
+        animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 11 * var(--rb-step)) forwards;
+      }
+
+    }
 }
 
 #battle-actionbar .right {
@@ -142,14 +181,20 @@
 }
 
 @keyframes opp-statbar-fill {
-  0%   { background-position: 100%; }
-  70%  { background-position: 100%; } /* acts like a built-in delay fraction - tweak to get proportionally correct */
-  100% { background-position: 0%; }
+  0%   { opacity: 0; background-position: 100%; }
+  65%  { opacity: 0; background-position: 100%; } /* acts like a built-in delay fraction - tweak to get proportionally correct */
+  75%  {opacity: 1; background-position: 100% ;}
+  100% { opacity: 1; background-position: 0%; }
 }
 
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes fade-in-with-filter {
+  from {filter: opacity(0);}
+  to {filter: opacity(1);}
 }
 
 @keyframes brightness-fade-in {

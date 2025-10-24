@@ -13,6 +13,11 @@ const plyr: PlayerProfile = {
     }
 }
 
+/**
+ * Initializes a new battle and adds it as a UI layer.
+ * @param opponentProfile - OpponentProfile representing the opponent for this battle.
+ * @returns a promise of the battle result (to properly await and respond to battle completion)
+ */
 export async function startBattle(opponentProfile: OpponentProfile) {
 
     const {promise: transitionPromise, resolve: endTransition} = Promise.withResolvers<void>();
