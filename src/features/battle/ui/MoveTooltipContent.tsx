@@ -1,6 +1,6 @@
 import './move-tooltip-content.css'
 import { PlayerRuneName } from "@/core/battle/moves/runeRegistry"
-import { MoveLexicon } from "@/features/battle/lexicon/lexicon.types"
+import { MoveLexicon } from '../lexicon/moveLexicon'
 
 import br from '@/assets/ui/corners/s4/tl.png'
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect'

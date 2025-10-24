@@ -6,8 +6,8 @@ import { render } from "solid-js/web";
 
 
 
-import { OPPONENT_SERPENT } from "@/data/battles/serpent";
-import { OPPONENT_ANGEL } from '@/data/battles/angel';
+// import { OPPONENT_SERPENT } from "@/data/battles/serpent";
+// import { OPPONENT_ANGEL } from '@/data/battles/angel';
 import { OPPONENT_MIMICRY } from '@/data/battles/mimic';
 
 const plyr: PlayerProfile = {

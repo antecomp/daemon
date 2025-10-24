@@ -4,8 +4,9 @@ import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
 import { Accessor, For } from 'solid-js';
-import { KnownPlanName, MoveLexicon } from '@/features/battle/lexicon/lexicon.types';
+import { MoveLexicon } from '../lexicon/moveLexicon';
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry';
+import { keyInObject } from '@/shared/utils/keyInObject';
 
 interface OpponentStatusBarProps {
     name: string;
@@ -45,7 +46,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
             </div>
             <div id="opp-hint-container" ref={sequenceViewOpponentRef}>
                 <For each={props.planPreview}>
-                    {(plannedMove, idx) => <OppPlanEntry isExecuting={idx() == props.currentlyExecutingMoveIndex()} {...(plannedMove ? props.lexicon[plannedMove as KnownPlanName] : {label: '???'})}/>}
+                    {(plannedMove, idx) => <OppPlanEntry isExecuting={idx() == props.currentlyExecutingMoveIndex()} {...(plannedMove && keyInObject(props.lexicon, plannedMove) ? props.lexicon[plannedMove] : {label: '???'})}/>}
                 </For>
             </div>
         </div>
