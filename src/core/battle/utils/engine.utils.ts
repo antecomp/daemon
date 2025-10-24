@@ -89,6 +89,6 @@ export function runMovePostEffect(move: Move, context: PostMoveContext): MoveSid
 }
 
 export function initializePlannedMoves(myPlan: PlannedSequence, theirPlan: PlannedSequence) {
-    if(myPlan.some((plannedMove) => !(plannedMove.canPerform?.(myPlan) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan);
+    if(myPlan.some((plannedMove) => !(plannedMove.canPerform?.(myPlan) ?? true))) throw new Error("Plan contains illegal move by canPerform ruleset " + myPlan.map(p => p.name).toString());
     return myPlan.map((plannedMove, index) => plannedMove.instantiate({ myPlan, theirPlan, index }));
 }

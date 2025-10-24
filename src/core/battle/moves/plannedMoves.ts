@@ -26,6 +26,19 @@ export const repeatPlan: PlannedMove = {
             return MOVEBANK.nothingMove;
         }
 
+        /* TODO/WARNING
+            ctx unchanged (we don't also decrement the ctx index) to 
+            have expected behavior for mirror -> repeat, where the repeated mirror
+            uses the index of the *repeat* not the index of its earlier use.
+            HOWEVER! This does mean that repeat -> repeat will infinitely recurse!
+            If (for some reason) you want multiple repeats, you will need to address this.
+
+            Good fix is a simple loop of "is previous move repeat, if so, go further back" and use that to
+            define "prevMove". Still instantiate it with *this* index though so
+            mirror -> repeat -> repeat works as you would expect!
+
+            When you do this. Make sure to add tests!
+        */
         return tagMove(prevMove.instantiate(ctx), 'repeated');
     },
     canPerform: CannotBeFirst
