@@ -1,7 +1,7 @@
 import { mapObject } from "@/shared/utils/mapObject";
 import { Move, MoveTags } from "../model/move";
 import { PlannedMove } from "../model/plannedMove";
-import { MOVEBANK, nothingMove } from "./moves";
+import * as MOVEBANK from '@/core/battle/moves/moves'
 import { CannotBeFirst } from "./validators";
 
 const tagMove = (move: Move, tag: MoveTags[number]): Move => {
@@ -23,7 +23,7 @@ export const repeatPlan: PlannedMove = {
         const prevMove = ctx.myPlan[ctx.index - 1];
         if(!prevMove) {
             console.error("Repeat unable to acquire previous move!")
-            return nothingMove;
+            return MOVEBANK.nothingMove;
         }
 
         return tagMove(prevMove.instantiate(ctx), 'repeated');
@@ -36,7 +36,7 @@ export const mirrorPlan: PlannedMove = {
     instantiate(ctx) {
         const oppPlan = ctx.theirPlan[ctx.index];
 
-        if(oppPlan.name == 'mirror') return nothingMove;
+        if(oppPlan.name == 'mirror') return MOVEBANK.nothingMove;
 
         // Swap context as we want moves like repeat to be
         // in regards to the opponents sequence, not our own.
@@ -50,8 +50,8 @@ export const mirrorPlan: PlannedMove = {
     }
 }
 
-// Move this?
-export const STOCK_PLANBANK: Record<string, PlannedMove> = {
+// Rename this?
+export const STOCK_PLANBANK = {
     repeat: repeatPlan,
     mirror: mirrorPlan,
 

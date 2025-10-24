@@ -15,7 +15,7 @@ import { BattleUIState, useBattleUIState } from '../Battle'
 import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
-import { PlayerRuneName, playerRuneRegistry } from '@/core/battle/moves/runeRegistry'
+import { PlayerRuneName, PLAYER_RUNE_REGISTRY } from '@/core/battle/moves/runeRegistry'
 
 import rb1 from '@/assets/sfx/battle/rb/1.wav'
 import rb2 from '@/assets/sfx/battle/rb/2.wav'
@@ -71,7 +71,7 @@ function mapMultiplier(multiplier: number): number {
 
 }
 
-const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => playerRuneRegistry[movename]);
+const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => PLAYER_RUNE_REGISTRY[movename]);
 
 export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
@@ -92,7 +92,7 @@ export default function Actionbar(props: ActionbarProps) {
             if(prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full
             if (prev.some(item => item == toAdd)) return prev;
 
-            const canPerform = playerRuneRegistry[toAdd].canPerform
+            const canPerform = PLAYER_RUNE_REGISTRY[toAdd].canPerform
             if (canPerform && !canPerform(actualizePlan(prev))) {
                 playSound(rb_fail, 0.5);
                 return prev

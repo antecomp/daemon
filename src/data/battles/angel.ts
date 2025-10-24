@@ -7,7 +7,6 @@ import testShader from "@/assets/background-shaders/test.glsl";
 import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
-import { OpponentAIBehaviorDeps } from '@/core/battle/ai/opponentAI.types';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),

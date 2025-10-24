@@ -1,4 +1,4 @@
-import { MoveLexicon } from "@/features/battle/lexicon/lexicon.types";
+import { MoveLexicon } from "../lexicon/moveLexicon";
 import { BattleUIState, useBattleUIState } from "../Battle";
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
