@@ -37,6 +37,12 @@
     }
 
     #opp-hint-container {
+      filter: opacity(0);
+      animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;      
+    }
+
+    /* Triggers when the sequence regenerates :( */
+    /* #opp-hint-container {
       .opp-hint:nth-child(1) {
         filter: opacity(0);
         animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;
@@ -61,8 +67,7 @@
         filter: opacity(0);
         animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 11 * var(--rb-step)) forwards;
       }
-
-    }
+    } */
 }
 
 #battle-actionbar .right {

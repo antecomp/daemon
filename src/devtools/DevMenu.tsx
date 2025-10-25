@@ -29,6 +29,11 @@ const dmnintro: TextOverlaySequence = [
     {segments: [{text: 'they will not approach you.'}]},
 ]
 
+import tut1 from '@/assets/placeholders/tut_1.png'
+import tut2 from '@/assets/placeholders/tut_2.png'
+import tut3 from '@/assets/placeholders/tut_3.png'
+import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
+
 export default function DebugMenu() {
 
     return (
@@ -56,6 +61,8 @@ export default function DebugMenu() {
             <button onclick={() => playTextOverlay(openingTextScene)}>sfdkjjsdfk</button>
             <h3>DIALOGUES</h3>
             <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
+            <h3>Tutorials</h3>
+            <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
         </div>
     )
 }
