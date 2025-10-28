@@ -14,7 +14,6 @@ import './battle-test.css';
 import cr from '../../assets/ui/corners/s3/tl.png';
 import CornerRect from "@/shared/ui/primitives/corner-rect/CornerRect";
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
-import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import { startBattle } from "@/features/battle/startBattle";
 
 
