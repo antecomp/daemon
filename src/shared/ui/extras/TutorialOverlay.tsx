@@ -16,7 +16,7 @@ export default function TutorialOverlay(props: {seq: AssetURL[], onComplete: () 
     }
 
     return (
-        <div class="tutorial-overlay">
+        <div class="tutorial-overlay" style={{cursor: 'var(--cursor_pointer)'}}>
             <img style={{width: '100%', height: '100%'}} src={props.seq[currentIndex()]} onClick={nextImage} />
         </div>
     )
