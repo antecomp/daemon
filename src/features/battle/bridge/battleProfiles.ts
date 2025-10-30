@@ -15,6 +15,7 @@ import { MoveLexicon } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
+import { BattleEventPayload } from '@/core/battle/model/battleReactions';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -82,6 +83,8 @@ export interface OpponentProfile {
         behaviors?: {
             preRound?: OpponentDisplayBehavior[]
             postRound?: OpponentDisplayBehavior[]
+            // Opponent has their own reaction to move emissions (custom notifications). Returns true if it handled an emission and wants to skips default handler.
+            moveEmissionHandler?: (data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) => boolean;
         }
     };
 

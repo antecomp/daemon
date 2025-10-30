@@ -39,6 +39,12 @@ function nameOfAffected(perspective: Side, profile: OpponentProfile) {
 export function generateActionMessageFromMoveEmission(data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) {
     const {moveName, signal, perspective} = data;
 
+    // Opponent has their own handler for a move emission. Will return true if they want to skip the default handler.
+    const opponentMoveEmissionHandler = opponentProfile.display.behaviors?.moveEmissionHandler;
+    if(opponentMoveEmissionHandler) {
+        if(opponentMoveEmissionHandler(data, opponentProfile, lexicons, appendActionMessage)) return;
+    }
+
     switch(signal.type) {
         case 'effect:heal':
             const {amount, capped} = signal.payload

@@ -24,6 +24,7 @@ import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProf
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 import { Combatant } from "@/core/battle/model/combatant";
+import attachToConsole from "@/devtools/attachToConsole";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -193,6 +194,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
 
     const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, {logger(m) {appendActionMessage(m, 'default')}});
+
+    attachToConsole(engine, 'DG_BATTLE_ENGINE');
 
     return {
         displayMults,
