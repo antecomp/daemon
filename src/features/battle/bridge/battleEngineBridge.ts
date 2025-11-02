@@ -16,8 +16,8 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { runMoveUISideEffectsByPlacement } from "../effects/moveUISideEffects";
-import { OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
+import { runMoveUISideEffects } from "../effects/moveUISideEffects";
+import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
@@ -123,8 +123,19 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             await sleep(PRE_ANIMATION_DELAY);
 
             // May have custom effects per opponent later, but for now we can just use a constant one.
-            await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
+            // await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
 
+            // TODO: Replace this with some method to compile an overrider from opponent profile;
+            const opponentMoveSEs = DEFAULT_OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent] ?? [];
+            // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
+            const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? []; 
+            const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
+
+            await runMoveUISideEffects(
+                mergedSEs, 
+                {appendActionMessage, requestOverlayAnimation},
+                {combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags}
+            )
         },
 
         async DamagesApplied({combatants, damagesDealt}) {

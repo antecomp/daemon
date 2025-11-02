@@ -41,9 +41,7 @@ export function generateActionMessageFromMoveEmission(data: BattleEventPayload['
 
     // Opponent has their own handler for a move emission. Will return true if they want to skip the default handler.
     const opponentMoveEmissionHandler = opponentProfile.display.behaviors?.moveEmissionHandler;
-    if(opponentMoveEmissionHandler) {
-        if(opponentMoveEmissionHandler(data, opponentProfile, lexicons, appendActionMessage)) return;
-    }
+    if(opponentMoveEmissionHandler && opponentMoveEmissionHandler(data, opponentProfile, lexicons, appendActionMessage)) return;
 
     switch(signal.type) {
         case 'effect:heal':

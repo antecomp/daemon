@@ -11,9 +11,9 @@ import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/o
 // So this is by no regards a permenant solution, just a simple one to get started.
 
 export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
-    attack: {
+    attack: [{
         place: 1,
-        perform({requestOverlayAnimation}, {combatants, moveTags}) {
+        run({requestOverlayAnimation}, {combatants, moveTags}) {
             // Forward up promise from this instead of making a new one with await.
 
             playSound(slash_sfx);
@@ -27,23 +27,35 @@ export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
                 return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
         } 
-    }
+    }]
 }
 
-export const OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
-    defend: {
+export const DEFAULT_OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
+    defend: [{
         place: 1,
-        async perform({requestOverlayAnimation}, {mults}) {
-            if(mults.player.outgoing == 0) return; // noop
+        // Only show animation when we're deflecting some damage;
+        when: ({damageMultipliers}) => damageMultipliers.player.outgoing > 0,
+        async run({requestOverlayAnimation}) {
             await requestOverlayAnimation('shield');
         }
-    },
-    mirror: {
-        place: 1,
-        async perform({requestOverlayAnimation}, {mults}) {
-            if(mults.opponent.outgoing == 0) return;
-            sleep(500).then(() => playSound(deflect_noise))
-            await requestOverlayAnimation('mirror');
+    }],
+    mirror: [
+        {
+            place: 1,
+            // Only show animation when we're deflecting some damage;
+            when: ({damageMultipliers}) => damageMultipliers.player.outgoing > 0,            
+            async run({requestOverlayAnimation}) {
+                sleep(500).then(() => playSound(deflect_noise))
+                await requestOverlayAnimation('mirror');
+            }
+        },
+        {
+            place: 0,
+            run({appendActionMessage}) {appendActionMessage("This will run b4 mirror")}
+        },
+        {
+            place: 2,
+            run({appendActionMessage}) {appendActionMessage("This will run after mirror")}
         }
-    }
+    ]
 }
