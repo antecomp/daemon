@@ -53,8 +53,7 @@ export const OPPONENT_ANGEL: OpponentProfile = {
         },
         moveUISideEffectOverrides: {
             'defend': {
-                replace: true,
-                entries: [{
+                replace: [{
                     place: 0,
                     run({appendActionMessage}) {
                         appendActionMessage("THIS WILL RUN INSTEAD OF SHIELD ANIMATION!!!")

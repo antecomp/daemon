@@ -75,7 +75,7 @@ export async function runMoveUISideEffects(
 }
 
 export type MoveUISideEffectOverride = 
-    | {replace: true; entries: MoveUISideEffectEntry[] }    // full replacement
+    | {replace: MoveUISideEffectEntry[] }    // full replacement
     | {add: MoveUISideEffectEntry[]};                       // append/merge
 
 
@@ -91,10 +91,9 @@ export function applyMoveUISEOverrides(
   for (const [move, ov] of Object.entries(opponent.display.moveUISideEffectOverrides)) {
     const baseEntries = result[move] ?? [];
 
-    if ('replace' in ov && ov.replace) {
-      result[move] = [...ov.entries];
+    if ('replace' in ov) {
+      result[move] = [...ov.replace];
     } else if ('add' in ov) {
-      // add: concat and (optionally) let later sort handle order by "place"
       result[move] = [...baseEntries, ...ov.add];
     }
   }

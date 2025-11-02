@@ -62,7 +62,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text, iconName) => {
         setActionMessages(prev => [...prev, { text, iconName}]);
-        setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
+        // TODO: Add some sort of stagger (based on length) to this - if a bunch of notifs are added at once, don't clear them all together, add some delay between.
+        setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN);
     }
 
     const opponentRanBehaviors = {
@@ -122,15 +123,14 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             await sleep(PRE_ANIMATION_DELAY);
 
-            // May have custom effects per opponent later, but for now we can just use a constant one.
-            // await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
-
             const opponentMoveSEs = applyMoveUISEOverrides(
                 DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
                 opponentProfile
             )[moveNames.opponent] ?? [];
+
             // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
             const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? []; 
+
             const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
 
             await runMoveUISideEffects(
