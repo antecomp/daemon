@@ -1,0 +1,51 @@
+import bridge from './assets/bridge_bake_att2X.fbx'
+import { Scene } from "lume";
+import {onMount} from "solid-js";
+// import PlayerCam from "@/components/lume/playerCam/PlayerCam";
+import applyDGShader from "@/3d/pipeline/dgRender";
+import Freecam from "@/3d/camera/Freecam";
+
+export default function Sponza() {
+    let sceneRef: Scene | undefined;
+    
+    onMount(() => {
+        if (sceneRef) {
+            requestAnimationFrame(() => {
+                applyDGShader(sceneRef);
+            });
+        }
+    })
+
+    return(
+        <lume-scene 
+            webgl
+            ref={sceneRef} 
+            shadow-mode="basic" 
+            id='SCENE'
+            physically-correct-lights 
+            perspective="800"
+        >
+
+        {/* <PlayerCam basePos={[-5, -52, 4]} baseOri={{pitch: 0, yaw: 73}} sceneRef={sceneRef!} maxPitch={25} maxYaw={25}/> */}
+        <Freecam sceneRef={sceneRef!}/>
+
+            <lume-ambient-light intensity={20} />
+
+            {/* <lume-directional-light
+                intensity="12" 
+                align-point="0.5 0.5" 
+                mount-point="0.5 0.5" 
+                position="100 -256 100" 
+                color="white"
+                cast-shadow="true"
+            /> */}
+
+            <lume-fbx-model
+                align-point="0.5 0.5"
+                scale="10 10 10"
+                src={bridge}
+            ></lume-fbx-model>
+
+        </lume-scene>
+    )
+}
