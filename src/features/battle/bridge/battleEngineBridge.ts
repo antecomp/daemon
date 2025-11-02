@@ -16,8 +16,8 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { runMoveUISideEffectsByPlacement } from "../effects/moveUISideEffects";
-import { OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
+import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
+import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
@@ -62,7 +62,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text, iconName) => {
         setActionMessages(prev => [...prev, { text, iconName}]);
-        setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN)
+        // TODO: Add some sort of stagger (based on length) to this - if a bunch of notifs are added at once, don't clear them all together, add some delay between.
+        setTimeout(() => setActionMessages(prev => prev.slice(1)), NOTIFICATION_LIFESPAN);
     }
 
     const opponentRanBehaviors = {
@@ -122,9 +123,21 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             await sleep(PRE_ANIMATION_DELAY);
 
-            // May have custom effects per opponent later, but for now we can just use a constant one.
-            await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
+            const opponentMoveSEs = applyMoveUISEOverrides(
+                DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
+                opponentProfile
+            )[moveNames.opponent] ?? [];
 
+            // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
+            const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? []; 
+
+            const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
+
+            await runMoveUISideEffects(
+                mergedSEs, 
+                {appendActionMessage, requestOverlayAnimation},
+                {combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags}
+            )
         },
 
         async DamagesApplied({combatants, damagesDealt}) {
@@ -145,7 +158,6 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         PostEffectResolved({combatants}) {
             refreshCombatantInfo(combatants)
-            // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
         async MoveEnd({combatants}) {
@@ -188,6 +200,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         MoveEmission: (data) => {
+            // TODO:  Also add animation handler here? Can be simpler than the main clash ones, just simple indicators of emissions (i.e heal)
             generateActionMessageFromMoveEmission(data, opponentProfile, lexicons, appendActionMessage);
         }
     };
