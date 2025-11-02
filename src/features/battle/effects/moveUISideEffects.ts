@@ -10,6 +10,7 @@ import { OverlayAnimationRequester } from "../animation/overlayAnimations/overla
 import { Combatant } from "@/core/battle/model/combatant";
 import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { ActionMessageAppender } from "../bridge/actionMessages";
+import { OpponentProfile } from "../bridge/battleProfiles";
 
 export type MoveUISideEffectDeps = {
     requestOverlayAnimation: OverlayAnimationRequester,
@@ -38,25 +39,6 @@ export type MoveUISideEffectEntry = {
 }
 
 export type MoveUISideEffectMap = Record<string, MoveUISideEffectEntry[]>
-
-// Messy but good enough for now.
-// export async function runMoveUISideEffectsByPlacement(player: MoveUISideEffectEntry | undefined, opponent: MoveUISideEffectEntry | undefined, deps: MoveUISideEffectDeps, ctx: MoveUISideEffectCTX) {
-//     if(!player) { return opponent?.run(deps, ctx); }
-//     if(!opponent) {return player.run(deps, ctx); }
-
-//     if(player.place == opponent.place) {
-//         // Should run simultaneously.
-//         const p1 = player.run(deps, ctx);
-//         const p2 = opponent.run(deps,ctx)
-//         await Promise.all([p1, p2]);
-//         return;
-//     }
-
-//     const [first, second] = player.place < opponent.place ? [player, opponent] : [opponent, player];
-
-//     await first.run(deps, ctx);
-//     await second.run(deps, ctx);
-// }
 
 export async function runMoveUISideEffects(
     entries: MoveUISideEffectEntry[],
@@ -90,4 +72,31 @@ export async function runMoveUISideEffects(
             })
         );
     }
+}
+
+export type MoveUISideEffectOverride = 
+    | {replace: true; entries: MoveUISideEffectEntry[] }    // full replacement
+    | {add: MoveUISideEffectEntry[]};                       // append/merge
+
+
+export type OpponentMoveOverrides = Record<string, MoveUISideEffectOverride>;
+
+export function applyMoveUISEOverrides(
+  base: MoveUISideEffectMap,
+  opponent: OpponentProfile
+): MoveUISideEffectMap {
+  if (!opponent.display.moveUISideEffectOverrides) return base;
+
+  const result: MoveUISideEffectMap = { ...base };
+  for (const [move, ov] of Object.entries(opponent.display.moveUISideEffectOverrides)) {
+    const baseEntries = result[move] ?? [];
+
+    if ('replace' in ov && ov.replace) {
+      result[move] = [...ov.entries];
+    } else if ('add' in ov) {
+      // add: concat and (optionally) let later sort handle order by "place"
+      result[move] = [...baseEntries, ...ov.add];
+    }
+  }
+  return result;
 }

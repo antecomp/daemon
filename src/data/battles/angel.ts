@@ -50,6 +50,25 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                     when() { return false }
                 }
             ],
+        },
+        moveUISideEffectOverrides: {
+            'defend': {
+                replace: true,
+                entries: [{
+                    place: 0,
+                    run({appendActionMessage}) {
+                        appendActionMessage("THIS WILL RUN INSTEAD OF SHIELD ANIMATION!!!")
+                    }
+                }]
+            },
+            'mirror': {
+                add: [{
+                    place: 1,
+                    run({appendActionMessage}) {
+                        appendActionMessage("THIS WILL ALSO RUN WITH MIRROR - ADDITION BY ANGEL!!!");
+                    }
+                }]
+            }
         }
     },
 

@@ -16,7 +16,7 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { runMoveUISideEffects } from "../effects/moveUISideEffects";
+import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/moveLexicon";
@@ -125,8 +125,10 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             // May have custom effects per opponent later, but for now we can just use a constant one.
             // await runMoveUISideEffectsByPlacement(PLAYER_MOVE_UI_EFFECTS[moveNames.player], OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent], {requestOverlayAnimation}, {mults: damageMultipliers, outcomes: preEffectOutcomes, plannedMoveNames: moveNames, combatants, plannedSequences, moveIndex, moveTags})
 
-            // TODO: Replace this with some method to compile an overrider from opponent profile;
-            const opponentMoveSEs = DEFAULT_OPPONENT_MOVE_UI_EFFECTS[moveNames.opponent] ?? [];
+            const opponentMoveSEs = applyMoveUISEOverrides(
+                DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
+                opponentProfile
+            )[moveNames.opponent] ?? [];
             // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
             const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? []; 
             const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
@@ -156,7 +158,6 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         PostEffectResolved({combatants}) {
             refreshCombatantInfo(combatants)
-            // Old code also had an animation resolver here. But I am not sure if I ever used it.
         },
 
         async MoveEnd({combatants}) {
@@ -199,6 +200,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         MoveEmission: (data) => {
+            // TODO:  Also add animation handler here? Can be simpler than the main clash ones, just simple indicators of emissions (i.e heal)
             generateActionMessageFromMoveEmission(data, opponentProfile, lexicons, appendActionMessage);
         }
     };

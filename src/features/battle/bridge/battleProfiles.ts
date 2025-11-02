@@ -16,6 +16,7 @@ import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
 import { BattleEventPayload } from '@/core/battle/model/battleReactions';
+import { OpponentMoveOverrides } from '../effects/moveUISideEffects';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -65,8 +66,8 @@ export interface OpponentProfile {
      * @property {Point} [spriteOffset] - Optional sprite offset in scene coordinates.
      * @property {string} backgroundShader - Background shader to run behind opponent (fragment shader string, typically imported from some .glsl file)
      * @property {AssetURL} [backgroundShaderTexture] - Optional texture to send to the background shader.
-     * @property {{ preRound?: OpponentDisplayBehavior[]; postRound?: OpponentDisplayBehavior[] }} [behaviors]
-     * Contextual UI behaviors grouped by timing (pre/post round).
+     * 
+     * @property {behaviors} - TODO DOCUMENT LOL
      */
     display: {
         name: string;
@@ -86,6 +87,8 @@ export interface OpponentProfile {
             // Opponent has their own reaction to move emissions (custom notifications). Returns true if it handled an emission and wants to skips default handler.
             moveEmissionHandler?: (data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) => boolean;
         }
+
+        moveUISideEffectOverrides?: OpponentMoveOverrides;
     };
 
     /**
