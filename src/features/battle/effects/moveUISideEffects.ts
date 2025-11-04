@@ -11,6 +11,7 @@ import { Combatant } from "@/core/battle/model/combatant";
 import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { ActionMessageAppender } from "../bridge/actionMessages";
 import { OpponentProfile } from "../bridge/battleProfiles";
+import { SparseRecord } from "@/shared/types/misc.types";
 
 export type MoveUISideEffectDeps = {
     requestOverlayAnimation: OverlayAnimationRequester,
@@ -38,7 +39,7 @@ export type MoveUISideEffectEntry = {
     when?: (ctx: MoveUISideEffectCTX) => boolean,
 }
 
-export type MoveUISideEffectMap = Record<string, MoveUISideEffectEntry[]>
+export type MoveUISideEffectMap = SparseRecord<string, MoveUISideEffectEntry[]>
 
 export async function runMoveUISideEffects(
     entries: MoveUISideEffectEntry[],

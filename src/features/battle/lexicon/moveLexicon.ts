@@ -17,6 +17,8 @@ import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
 import priestess_icon from '../assets/icons/runes/priestess.png'
 import trickster_icon from '../assets/icons/runes/trickster.png'
 import stock_icon from "../assets/icons/runes/candle.png"
+import lantern_icon from '@/features/battle/assets/icons/runes/lantern.png';
+
 import { AssetURL } from "@/shared/types/misc.types"
 
 export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; };
@@ -75,6 +77,11 @@ export const BASE_MOVE_LEXICON = {
         label: "idle",
         icon: stock_icon,
     },
+
+    'observe': {
+        label: 'observe',
+        icon: lantern_icon
+    }
 } as const satisfies Record<string, MoveDisplayEntry>;
 // ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
 

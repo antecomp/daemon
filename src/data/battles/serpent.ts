@@ -8,7 +8,7 @@ import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
 const SERPENT_PLANBANK = {
-    ...pick(STOCK_PLANBANK, ['attack', 'idle', 'prepare', 'defend']),
+    ...pick(STOCK_PLANBANK, ['attack', 'prepare', 'defend', 'observe']),
     attack1: planMove(attack), attack2: planMove(attack)
 }
 
@@ -31,10 +31,11 @@ export const OPPONENT_SERPENT: OpponentProfile = {
                 // Weights indicating likelyhood that some move will succeed another... 
                 // f.e let's make him very aggressive. If he attacks once, he'll likely attack again!
                 return buildSequenceFromWeightMap(SERPENT_PLANBANK, {
-                    attack: {attack1: 3, attack2: 3},
+                    attack:  {attack1: 3, attack2: 3},
                     attack1: {attack: 3, attack2: 3},
                     attack2: {attack: 3, attack1: 3},
-                    prepare: {attack: 3, attack1: 3, attack2: 3, defend: 3}
+                    prepare: {attack: 3, attack1: 3, attack2: 3, defend: 3, observe: 4},
+                    observe: {attack: 3, attack1: 3, attack2: 3}
                 })
             }
         },

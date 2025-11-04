@@ -20,6 +20,7 @@ export const attack: Move = {
     }
 }
 
+// TODO: WRITE UNIT TESTS TO MAKE SURE LOGIC IS SOUND HERE!
 export const observe: Move = {
     name: 'observe',
     type: MoveType.Passive,
@@ -27,7 +28,8 @@ export const observe: Move = {
         postEffect: effectPipeline(
             // extend before apply.
             extendStatusOf('them', VulnerableStatus),
-            applyStatusTo('them', VulnerableStatus)
+            //applyStatusTo('them', VulnerableStatus)
+            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)}
         )
     }
 }
@@ -74,6 +76,8 @@ export const defend: Move = {
     }
 }
 
+// Seperate from NothingMove. This is an intended absent move, for use with lexicons, 
+// nothingMove is reserved for some sort of fallback/error.
 export const idle: Move = {
     name: 'idle',
     type: MoveType.Passive,
