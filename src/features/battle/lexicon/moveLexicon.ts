@@ -20,69 +20,85 @@ import stock_icon from "../assets/icons/runes/candle.png"
 import lantern_icon from '@/features/battle/assets/icons/runes/lantern.png';
 
 import { AssetURL } from "@/shared/types/misc.types"
+import { STOCK_PLANBANK } from '@/core/battle/moves/plannedMoves'
 
-export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; };
+export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; description?: string };
 
 // map planned moves by ID to their associated UI fallback data.
 export const BASE_MOVE_LEXICON = {
     repeat: {
         label: "repeat",
         icon: apprentice_icon,
-        largeIcon: apprentice_icon_ex
+        largeIcon: apprentice_icon_ex,
+        description: 'Repeat previous rune. Cannot be used first.'
     },
 
     evade: {
         label: "evade",
         icon: trickster_icon,
-        largeIcon: trickster_icon_ex
+        largeIcon: trickster_icon_ex,
+        description: 'Chance to negate all incoming damage. When successful, a followup attack will do extra damage.'
     },
 
     heal: {
         label: "heal",
         icon: priestess_icon,
-        largeIcon: priestess_icon_ex
+        largeIcon: priestess_icon_ex,
+        description: 'When not attacked, restore health.'
     },
 
     prepare: {
         label: "prepare",
         icon: hourglass_icon,
-        largeIcon: hourglass_icon_ex
+        largeIcon: hourglass_icon_ex,
+        description: 'If not attacked, increase effectiveness of subsequent rune.'
     },
 
     defend: {
         label: "defend",
         icon: prae_icon,
-        largeIcon: prae_icon_ex
+        largeIcon: prae_icon_ex,
+        description: 'Reduce incoming damage.'
     },
 
     attack: {
         label: "attack",
         icon: candle_icon,
-        largeIcon: candle_icon_ex
+        largeIcon: candle_icon_ex,
+        description: 'Deal damage.'
     },
 
     overwhelm: {
         label: "overwhelm",
         icon: chain_icon,
-        largeIcon: chain_icon_ex
+        largeIcon: chain_icon_ex,
+        description: 'Only does damage to Defensive/Evasive moves (negating their reduction). Makes user vulnerable on use.'
     },
 
     mirror: {
         label: "mirror",
         icon: mage_icon,
-        largeIcon: mage_icon_ex
+        largeIcon: mage_icon_ex,
+        description: 'Perform same action as opponent.'
     },
 
     idle: {
         label: "idle",
         icon: stock_icon,
+        description: 'Do nothing.'
     },
 
-    'observe': {
+    nothingMove: {
+        label: "YOU SHOULD NOT SEE THIS LOL!!!!",
+        icon: stock_icon
+    },
+
+    observe: {
         label: 'observe',
-        icon: lantern_icon
+        icon: lantern_icon,
+        description: 'Makes opponent vulnerable.'
     }
-} as const satisfies Record<string, MoveDisplayEntry>;
+} as const satisfies Record<keyof typeof STOCK_PLANBANK, MoveDisplayEntry>;
 // ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
 
 export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
@@ -93,56 +109,64 @@ export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
         label: "apprentice",
         icon: apprentice_icon,
         largeIcon: apprentice_icon_ex,
-        lore: `Like the flowers, knowledge comes from the rotting ones. \n \n Maintain momentum. Repeats previous rune. \n Cannot be used first.`,        
+        lore: `Like the flowers, knowledge comes from the rotting ones.`,
+        description: 'Repeat previous rune. Cannot be used first.'
     },
 
     evade: {
         label: "trickster",
         icon: trickster_icon,
         largeIcon: trickster_icon_ex,
-        lore: `Our first understanding of self comes from a two-faced fox. \n\n Localized distortion of existence, chance to completely negate damage of incoming attacks.`
+        lore: `Our first understanding of self comes from a two-faced fox.`,
+        description: 'Chance to negate all incoming damage. When successful, a followup attack will do extra damage.'
     },
 
     heal: {
         label: "priestess",
         icon: priestess_icon,
         largeIcon: priestess_icon_ex,
-        lore: `We only stay for the pretty music. \n\n Focus on restoring a sense of reality. If not attacked, heal.`
+        lore: `We only stay for the pretty music.`,
+        description: 'When not attacked, restore health.'
     },
 
     prepare: {
         label: "hourglass",
         icon: hourglass_icon,
         largeIcon: hourglass_icon_ex,
-        lore: `The sand is nauseous from your constant turmoil. \n\n Carefully calculate strategy. Increases effectiveness of subsequent rune.`
+        lore: `The sand is nauseous from your constant turmoil.`,
+        description: 'If not attacked, increase effectiveness of subsequent rune.'
     },
 
     defend: {
         label: "praetorian",
         icon: prae_icon,
         largeIcon: prae_icon_ex,
-        lore: `The bravest coward you'll ever meet. \n\n Cling to personal illusion. Reduce damage of incoming attacks.`
+        lore: `The bravest coward you'll ever meet.`,
+        description: 'Reduce incoming damage.'
     },
 
     attack: {
         label: "candlelight",
         icon: candle_icon,
         largeIcon: candle_icon_ex,
-        lore: `If moonlight heals, what does candlelight do? \n \n Directly challenge opponents' sense of reality. Deals damage.`
+        lore: `If moonlight heals, what does candlelight do?`,
+        description: 'Deal damage.'
     },
 
     overwhelm: {
         label: "overwhelm",
         icon: chain_icon,
         largeIcon: chain_icon_ex,
-        lore: `We are still ultimately animals. \n\n Anticipate opponent will cling to reality. Deals damage only on defensive moves.`
+        lore: `We are still ultimately animals.`,
+        description: 'Only does damage to Defensive/Evasive moves (negating their reduction). Makes user vulnerable on use.'
     },
 
     mirror: {
         label: "mirror",
         icon: mage_icon,
         largeIcon: mage_icon_ex,
-        lore: `Distorted truths cut like knives. \n \n Perform the same action as opponent.`
+        lore: `Distorted truths cut like knives.`,
+        description: 'Perform same action as opponent.'
     },
 }
 
