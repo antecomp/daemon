@@ -10,17 +10,20 @@ export enum MoveType {
     Aggressive, Passive, Defensive, Overwhelming
 }
 
-/** Tags attached to a move when instantiated (formed from PlannedMove). Used to indicate additional context. For example if the move is the result of special plans such as "mirror" or "repeat" */
+/** Tags attached to a move when instantiated (formed from PlannedMove). Used to indicate additional context. 
+ * For example if the move is the result of special plans such as "mirror" or "repeat" */
 export type MoveTags = ('mirrored' | 'repeated')[];
 
-// Declare global interface that we can extend from anywhere (allowing us to easily append new information as part of move effects)
+// Declare global interface that we can extend from anywhere 
+// (allowing us to easily append new information as part of move effects)
 declare global {
     /** 
      * MoveSignalMap is a mapping of some named signal that a move can emit, and the expected payload for that signal. 
      * This is the type used by the MoveEmission battle event (@ref battleReactions.ts). 
      * Thus, these signals are captured and handled by the MoveEmission method in a battle reactions map.
      * 
-     * It is declared in the global scope so this interface can be extended from other sources. To add additional signal types, do the following;
+     * It is declared in the global scope so this interface can be extended from other sources. 
+     * To add additional signal types, do the following;
      * @example
      * ```typescript
      * declare global {

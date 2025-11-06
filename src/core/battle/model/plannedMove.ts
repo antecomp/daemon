@@ -1,4 +1,4 @@
-import { Move } from "./move";
+import { Move } from "./move.types";
 
 /**
  * A function type that validates a planned move within a list of planned moves.

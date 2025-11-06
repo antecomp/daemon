@@ -1,4 +1,4 @@
-import { Move, MoveType } from "../model/move";
+import { Move, MoveType } from "../model/move.types";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "./behaviors";
 import { NegatedByOverwhelm } from "./behaviors";
 import { OnlyDoDamageOnDefensive } from "./behaviors";

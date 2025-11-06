@@ -1,7 +1,7 @@
 import { idle as idleMove, nothingMove } from "@/core/battle/moves/moves";
 import { DamageMultipliers } from "@/core/battle/model/battle";
 import { Combatant } from "@/core/battle/model/combatant";
-import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal } from "@/core/battle/model/move";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal } from "@/core/battle/model/move.types";
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
 import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";

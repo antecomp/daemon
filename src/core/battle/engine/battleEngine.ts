@@ -3,7 +3,7 @@ import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
 import { BattleOutcome } from "../model/battle";
 import { BattleReactions } from "../model/battleReactions";
 import { Combatant } from "../model/combatant";
-import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move";
+import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move.types";
 import { PlannedSequence } from "../model/plannedMove";
 import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";

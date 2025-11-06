@@ -1,5 +1,5 @@
 import { mapObject } from "@/shared/utils/mapObject";
-import { Move, MoveTags } from "../model/move";
+import { Move, MoveTags } from "../model/move.types";
 import { PlannedMove } from "../model/plannedMove";
 import * as MOVEBANK from '@/core/battle/moves/moves'
 import { CannotBeFirst } from "./validators";
