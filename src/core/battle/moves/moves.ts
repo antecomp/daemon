@@ -29,7 +29,8 @@ export const observe: Move = {
             // extend before apply.
             extendStatusOf('them', VulnerableStatus),
             //applyStatusTo('them', VulnerableStatus)
-            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)}
+            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)},
+            (ctx) => {ctx.emit({type: 'mechanic:observe', payload: {}})} 
         )
     }
 }

@@ -9,7 +9,8 @@ declare global {
         'effect:heal': {amount: number, capped: boolean},
         'status:prepare': {level: number}
         'mechanic:mania': {manic: boolean},
-        'mechanic:focus': {lost: boolean}
+        'mechanic:focus': {lost: boolean},
+        'mechanic:observe': {}
     }
 }
 
