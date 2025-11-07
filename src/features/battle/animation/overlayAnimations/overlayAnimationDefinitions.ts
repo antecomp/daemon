@@ -5,7 +5,10 @@ import slash_elag from '@/assets/artwork/battle_overlay_animations/slash/slash_e
 import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash_repeat.webm'
 import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
+import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe.webm';
+
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
+import { OverlayAnimData } from './overlayAnimations.types'
 
 /** Named overlay animations for battle that contain the `src` of the video, and a `width` and `height` for properly scaling the video element. */
 export const overlayAnimationDefinitions = {
@@ -48,9 +51,16 @@ export const overlayAnimationDefinitions = {
     "mirror": {
         src: mirror,
         width: 500,
-        height: 500
+        height: 500,
+    },
+
+    "observe": {
+        src: observe,
+        width: 618,
+        height: 312,
+        blendMode: 'normal'
     }
-}
+} as const satisfies Record<string, OverlayAnimData>
 
 /** Helper type to constrain calls to requestOverlayAnimation to animation names known to exist. */
 export type AvailableOverlayAnimationNames = keyof typeof overlayAnimationDefinitions;

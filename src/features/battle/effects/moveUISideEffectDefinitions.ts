@@ -57,5 +57,14 @@ export const DEFAULT_OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
             place: 2,
             run({appendActionMessage}) {appendActionMessage("This will run after mirror")}
         }
+    ],
+    observe: [
+        {
+            place: 0,
+            async run({requestOverlayAnimation, appendActionMessage}) {
+                await requestOverlayAnimation('observe');
+                appendActionMessage('You feel watched.');
+            }
+        }
     ]
 }

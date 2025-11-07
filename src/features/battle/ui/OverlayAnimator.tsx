@@ -1,7 +1,7 @@
 // Just doing a very lazy port for now, we can always redesign this component later!
 
 import { Accessor, createEffect } from "solid-js";
-import { OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
+import { OverlayAnimData, OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
 import { overlayAnimationDefinitions } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
 import './overlay-animator.css';
@@ -20,7 +20,7 @@ export default function OverlayAnimator(props: {
                 if(processedAnimationRequests.has(id)) return; 
                 processedAnimationRequests.add(id);
                 
-                const config = overlayAnimationDefinitions[name];
+                const config = overlayAnimationDefinitions[name] as OverlayAnimData;
                 if (!config) {
                     console.error(`Animation "${name}" not found`);
                     return;
@@ -36,6 +36,7 @@ export default function OverlayAnimator(props: {
                 video.className = "overlay-animation"
                 video.width = width; video.height = height;
                 video.style.translate = `${position[0]}px ${position[1]}px`;
+                video.style.mixBlendMode = config.blendMode ?? 'difference';
 
                 video.onended = () => {
                     //console.log("overlay animation done playing");

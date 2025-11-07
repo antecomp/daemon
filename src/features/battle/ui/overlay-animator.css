@@ -1,6 +1,6 @@
 .overlay-animation {
     position: absolute;
-    mix-blend-mode: difference;
+    /* mix-blend-mode: difference; */
     pointer-events: none;
     will-change: transform;
     transform: translateZ(0);
