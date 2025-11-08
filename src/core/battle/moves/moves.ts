@@ -7,7 +7,7 @@ import { PreparedStatus } from "../statuses/statuses";
 import { VulnerableStatus } from "../statuses/statuses";
 
 export const nothingMove: Move = {
-    name: 'idle',
+    name: 'nothingMove',
     type: MoveType.Passive,
     behaviors: {}
 }

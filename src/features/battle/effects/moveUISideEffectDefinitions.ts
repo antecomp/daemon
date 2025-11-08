@@ -23,7 +23,14 @@ export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
                 return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
         } 
-    }]
+    }],
+
+    // nothingMove: [{
+    //     place: 0,
+    //     run() {
+    //         return sleep(10000000); // force a longass block.
+    //     }
+    // }]
 }
 
 export const DEFAULT_OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {

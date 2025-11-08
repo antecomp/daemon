@@ -7,6 +7,7 @@ import mage_icon_ex from '../assets/icons/runes/mage_ex.png'
 import prae_icon_ex from '../assets/icons/runes/prae_ex.png'
 import priestess_icon_ex from '../assets/icons/runes/priestess_ex.png'
 import trickster_icon_ex from '../assets/icons/runes/trickster_ex.png'
+import nothing_ex from '@/features/battle/assets/icons/runes/nothing_ex.png';
 
 import candle_icon from '../assets/icons/runes/candle.png'
 import apprentice_icon from '../assets/icons/runes/apprentice.png'
@@ -90,7 +91,8 @@ export const BASE_MOVE_LEXICON = {
 
     nothingMove: {
         label: "YOU SHOULD NOT SEE THIS LOL!!!!",
-        icon: stock_icon
+        icon: stock_icon,
+        largeIcon: nothing_ex
     },
 
     observe: {

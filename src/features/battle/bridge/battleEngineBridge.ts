@@ -28,6 +28,7 @@ import attachToConsole from "@/devtools/attachToConsole";
 import { DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, runEmissionSE } from "../effects/moveEmissionResponses";
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
+import { MoveTags } from "@/core/battle/model/move.types";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -58,7 +59,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
 
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
-    const [currentClash, setCurrentClash] = createSignal<Sides<MoveLexeme> | undefined>();
+    const [currentMoveClash, setCurrentMoveClash] = createSignal<Sides<{moveName: MoveLexeme, tags: MoveTags | undefined}> | undefined>();
 
     const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
 
@@ -108,10 +109,10 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        async MoveStart({moveIndex, plans}){
+        async MoveStart({moveIndex, sequences}){
             setCurrentlyExecutingMoveIndex(moveIndex);
 
-            setCurrentClash(mapSides(plans, (ps) => ps[moveIndex].name as MoveLexeme));
+            setCurrentMoveClash(mapSides(sequences, (s) => ({moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags})));
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
@@ -178,7 +179,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             setCurrentlyExecutingMoveIndex(null);
             handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage});
             refreshCombatantInfo(combatants);
-            setCurrentClash(undefined);
+            setCurrentMoveClash(undefined);
             engine.setupRound();
         },
 
@@ -235,7 +236,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         battleUIState, setBattleUIState,
         playerHealthPercentage, opponentHealthPercentage, 
         opponentPlanPreview, 
-        currentlyExecutingMoveIndex, currentClash,
+        currentlyExecutingMoveIndex, currentClash: currentMoveClash,
         attachToRegistry,
         currentStatusIcons,
         engine,
