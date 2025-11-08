@@ -11,20 +11,23 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { makeSidesMap, mapSides, Sides } from "@/core/battle/utils/sides.utils";
+import { makeSidesMap, mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
-import { ActionMessage, ActionMessageAppender, generateActionMessageFromMoveEmission } from "./actionMessages";
+import { ActionMessage, ActionMessageAppender } from "./actionMessages";
 import { MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
+import { DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, runEmissionSE } from "../effects/moveEmissionResponses";
+import { MAIN_CHARACTER_NAME } from "@/config/init.config";
+import { capitalizeWords } from "@/shared/utils/stringUtils";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
@@ -200,8 +203,20 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         MoveEmission: (data) => {
-            // TODO:  Also add animation handler here? Can be simpler than the main clash ones, just simple indicators of emissions (i.e heal)
-            generateActionMessageFromMoveEmission(data, opponentProfile, lexicons, appendActionMessage);
+            runEmissionSE(
+                DEFAULT_MOVE_EMISSION_SIDE_EFFECTS,
+                data.signal,
+                {appendActionMessage, requestOverlayAnimation},
+                {
+                    perspective: data.perspective,
+                    moveName: data.moveName,
+                    lexicons,
+                    nameOfAffected: (flip: true | undefined) => {
+                        const p = flip ? oppositeSide(data.perspective) : data.perspective;
+                        return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
+                    }
+                }
+            )
         }
     };
 

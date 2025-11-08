@@ -6,10 +6,6 @@ import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
 import sleep from "@/shared/utils/sleep";
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
-// For now I am just assuming every move has a single animation at a single slot.
-// This could very easily change in the future (i.e needed slot changing based on what happened)
-// So this is by no regards a permenant solution, just a simple one to get started.
-
 export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
     attack: [{
         place: 1,
@@ -48,14 +44,6 @@ export const DEFAULT_OPPONENT_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
                 sleep(500).then(() => playSound(deflect_noise))
                 await requestOverlayAnimation('mirror');
             }
-        },
-        {
-            place: 0,
-            run({appendActionMessage}) {appendActionMessage("This will run b4 mirror")}
-        },
-        {
-            place: 2,
-            run({appendActionMessage}) {appendActionMessage("This will run after mirror")}
         }
     ],
     observe: [
