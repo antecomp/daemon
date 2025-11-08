@@ -18,6 +18,12 @@ export type EmissionSECTX = {
             // opponentProfile?
 }
 
+/** A record that maps different potential move emisissions to a method for running various UI-based side effects.
+ * Each method takes
+ * - `payload` : payload associated with that emission (ref: moves.types.ts)
+ * - `deps` : Dependencies for running UI side effects (action messages and animation requester)
+ * - `ctx` : Additional context for side effect logic.
+ */
 export type EmissionSEMap<T extends keyof MoveSignalMap = keyof MoveSignalMap> = Partial<{
     [K in T]: (
         payload: MoveSignalOf<K>['payload'], 
@@ -26,6 +32,23 @@ export type EmissionSEMap<T extends keyof MoveSignalMap = keyof MoveSignalMap> =
     ) => void;
 }>;
 
+
+/**
+ * A read-only map of side-effect handlers keyed by emission identifiers. Each
+ * handler is invoked when the corresponding emission is produced by a move
+ * and is responsible for appending action messages and/or triggering minor
+ * presentation-related side effects.
+ *
+ * General handler signature:
+ * (payload, helpers, meta)
+ * - payload: emission-specific data (shape varies per emission key).
+ * - helpers: runtime utilities, e.g. `appendActionMessage(message: string, tag?: string)`.
+ * - meta: contextual information about the move and affected entity, e.g.
+ *   `nameOfAffected(): string`, `moveName`, `lexicons`, `perspective`.
+ * Notes:
+ * - Messages are created using the provided `nameOfAffected()` callback to ensure
+ *   correct, lazily-evaluated entity naming and perspective handling.
+ */
 export const DEFAULT_MOVE_EMISSION_SIDE_EFFECTS = {
     'effect:heal'({amount, capped}, {appendActionMessage}, {nameOfAffected}) {
         if(capped) {
@@ -59,8 +82,9 @@ export const DEFAULT_MOVE_EMISSION_SIDE_EFFECTS = {
 } as const satisfies EmissionSEMap
 
 
-// fucked up evil helper to get the types to be compat.
-// I have no idea why this works.
+/** Need this evil helper because Typescript type narrowing is evil & broken sometimes.
+ * Maps a Move Emission signal to it's associated side effect method and runs it.
+ */
 export function runEmissionSE<S extends MoveSignal>(
     map: EmissionSEMap,
     signal: S,
