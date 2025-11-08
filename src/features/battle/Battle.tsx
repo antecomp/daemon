@@ -18,6 +18,7 @@ import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
+import CurrentClash from './ui/CurrentClash';
 
 export enum BattleUIState {WAITING, READY, EXECUTING, END};
 
@@ -84,6 +85,7 @@ export default function Battle(props: {
                         forceBattleResolve={engine.forceBattleResolve}
                         {...bridge}
                     />
+                    <CurrentClash moves={bridge.currentClash()} lexicons={{player: playerLexicon, opponent: opponentLexicon}}/>
                 </div>
             </BattleUIStateContext.Provider>
         </BattleRefRegistryCTX.Provider>

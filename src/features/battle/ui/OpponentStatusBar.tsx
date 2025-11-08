@@ -4,7 +4,7 @@ import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
 import { Accessor, For, JSX } from 'solid-js';
-import { MoveLexemes, MoveLexicon } from '../lexicon/moveLexicon';
+import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon';
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry';
 import { keyInObject } from '@/shared/utils/keyInObject';
 import { createTooltip } from '@/shared/hooks/createTooltip';
@@ -40,7 +40,7 @@ function OppPlanEntry(props: {
     return (
         <span class="opp-hint" classList={{executing: props.isExecuting}}>
             <div
-                onMouseEnter={() => props.showTooltip(() => <MoveTooltipContent runeName={props.moveName as MoveLexemes} lexicon={props.lexicon}/>)}
+                onMouseEnter={() => props.showTooltip(() => <MoveTooltipContent runeName={props.moveName as MoveLexeme} lexicon={props.lexicon}/>)}
                 onMouseOut={() => props.hideTooltip()}
             >
                 <img src={entry.icon}/>

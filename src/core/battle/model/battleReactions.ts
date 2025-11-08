@@ -33,6 +33,7 @@ export type BattleEventPayload = {
     MoveStart: {
         moveIndex: number,
         sequences: Sides<Move[]>,
+        plans: Sides<PlannedSequence>,
         moves: Sides<Move>
     };
     PreEffectResolved: {

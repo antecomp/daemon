@@ -178,4 +178,4 @@ export type MoveLexicon = {
 }
 
 /** Known Move/Plan names that are defined in the BASE_MOVE_LEXICON */
-export type MoveLexemes = keyof (typeof BASE_MOVE_LEXICON);
+export type MoveLexeme = keyof (typeof BASE_MOVE_LEXICON);

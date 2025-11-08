@@ -19,7 +19,7 @@ import { OverlayAnimationRequester } from "../animation/overlayAnimations/overla
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { ActionMessage, ActionMessageAppender } from "./actionMessages";
-import { MoveLexicon } from "../lexicon/moveLexicon";
+import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
@@ -56,7 +56,9 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     }
 
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
+
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
+    const [currentClash, setCurrentClash] = createSignal<Sides<MoveLexeme> | undefined>();
 
     const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
 
@@ -106,8 +108,10 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             await fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        async MoveStart({moveIndex}){
+        async MoveStart({moveIndex, plans}){
             setCurrentlyExecutingMoveIndex(moveIndex);
+
+            setCurrentClash(mapSides(plans, (ps) => ps[moveIndex].name as MoveLexeme));
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
@@ -174,6 +178,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             setCurrentlyExecutingMoveIndex(null);
             handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage});
             refreshCombatantInfo(combatants);
+            setCurrentClash(undefined);
             engine.setupRound();
         },
 
@@ -230,7 +235,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         battleUIState, setBattleUIState,
         playerHealthPercentage, opponentHealthPercentage, 
         opponentPlanPreview, 
-        currentlyExecutingMoveIndex,
+        currentlyExecutingMoveIndex, currentClash,
         attachToRegistry,
         currentStatusIcons,
         engine,

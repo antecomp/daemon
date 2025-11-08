@@ -1,11 +1,11 @@
 import './move-tooltip-content.css'
-import { MoveLexemes, MoveLexicon } from '../lexicon/moveLexicon'
+import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 
 import br from '@/assets/ui/corners/s4/tl.png'
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect'
 
 interface MoveTooltipContentProps {
-    runeName: MoveLexemes
+    runeName: MoveLexeme
     lexicon: MoveLexicon
 }
 

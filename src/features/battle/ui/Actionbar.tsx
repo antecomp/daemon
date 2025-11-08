@@ -26,14 +26,14 @@ import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
-import { MoveLexemes, MoveLexicon } from '../lexicon/moveLexicon'
+import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 import { AssetURL } from '@/shared/types/misc.types'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
 function SelectedMove(props: {
     lexicon: MoveLexicon
-    moveName: MoveLexemes
+    moveName: MoveLexeme
     isExecuting: boolean
 }) {
 

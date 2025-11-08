@@ -1,7 +1,7 @@
 import { MoveSignal, MoveSignalOf } from "@/core/battle/model/move.types"
 import { ActionMessageAppender } from "../bridge/actionMessages";
 import { Side, Sides } from "@/core/battle/utils/sides.utils";
-import { MoveLexemes, MoveLexicon } from "../lexicon/moveLexicon";
+import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { capitalizeFirstLetter } from "@/shared/utils/stringUtils";
 
@@ -62,7 +62,7 @@ export const DEFAULT_MOVE_EMISSION_SIDE_EFFECTS = {
         if(lost) {
             appendActionMessage(
                 `${nameOfAffected()} lost focus and was unable to use ` +
-                capitalizeFirstLetter(lexicons[perspective][moveName as MoveLexemes].label)
+                capitalizeFirstLetter(lexicons[perspective][moveName as MoveLexeme].label)
             )
         }
     },
