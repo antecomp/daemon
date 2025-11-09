@@ -39,6 +39,7 @@ export type MoveUISideEffectEntry = {
     when?: (ctx: MoveUISideEffectCTX) => boolean,
 }
 
+// divine punishment for those who dare try to makes this based on MoveLexemes
 export type MoveUISideEffectMap = SparseRecord<string, MoveUISideEffectEntry[]>
 
 export async function runMoveUISideEffects(

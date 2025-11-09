@@ -25,7 +25,7 @@ export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
         } 
     }],
 
-    // nothingMove: [{
+    // defend: [{
     //     place: 0,
     //     run() {
     //         return sleep(10000000); // force a longass block.
