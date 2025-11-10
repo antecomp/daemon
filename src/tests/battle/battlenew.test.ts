@@ -142,6 +142,29 @@ describe("Sequence Eval basics", () => {
     });
 })
 
+describe("Repeat chaining behavior", () => {
+    test("repeat skips prior repeats to find latest non-repeat move", () => {
+        const myPlan: PlannedSequence = [planMove(attack), repeatPlan, repeatPlan, PlanForNothing, PlanForNothing];
+        const ctx = { myPlan, theirPlan: myPlan, index: 2 };
+
+        const move = myPlan[2].instantiate(ctx);
+
+        expect(move.name).toBe(attack.name);
+        expect(move.tags).toEqual(['repeated']);
+    });
+
+    test("mirror followed by multiple repeats mirrors the current opponent move", () => {
+        const theirPlan: PlannedSequence = [PlanForAttack, planMove(defend), planMove(prepare), PlanForNothing, PlanForNothing];
+        const myPlan: PlannedSequence = [mirrorPlan, repeatPlan, repeatPlan, PlanForNothing, PlanForNothing];
+        const ctx = { myPlan, theirPlan, index: 2 };
+
+        const move = myPlan[2].instantiate(ctx);
+
+        expect(move.name).toBe(prepare.name);
+        expect(move.tags).toEqual(['mirrored', 'repeated']);
+    });
+});
+
 describe("Overwhelm interactions", () => {
 
     test("Overwhelm lands on defensive and evade", async () => {
