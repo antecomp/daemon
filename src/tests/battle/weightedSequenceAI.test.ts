@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { buildSequenceFromWeightMap, PlanMap, PlanWeightMap } from "../core/battle/ai/weightedSequenceAI";
+import { buildSequenceFromWeightMap, PlanMap, PlanWeightMap } from "../../core/battle/ai/weightedSequenceAI";
 import { SEQUENCE_LENGTH } from "@/core/battle/config/battle.config";
 
 // Mock pickRandom and pickRandomWeighted

@@ -20,7 +20,6 @@ export const attack: Move = {
     }
 }
 
-// TODO: WRITE UNIT TESTS TO MAKE SURE LOGIC IS SOUND HERE!
 export const observe: Move = {
     name: 'observe',
     type: MoveType.Passive,
