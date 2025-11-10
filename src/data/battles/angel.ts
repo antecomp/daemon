@@ -9,7 +9,7 @@ import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
 const mimicry_planbank = {
-    ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
+    ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
@@ -50,6 +50,18 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                     when() { return false }
                 }
             ],
+            moveEmissionHandlers: {
+                add: {
+                    'status:prepare'(_, {appendActionMessage}, {perspective}) {
+                        if(perspective == 'opponent') appendActionMessage("Angel added this prepare notification!");
+                    }
+                },
+                replace: {
+                    'mechanic:focus'(_, {appendActionMessage}) {
+                        appendActionMessage('Debug Angel Completely Overrode This Focus Lost Notif');
+                    }
+                }
+            }
         },
         moveUISideEffectOverrides: {
             'defend': {

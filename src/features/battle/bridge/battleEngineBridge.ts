@@ -103,7 +103,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
-            handleOpponentBehaviors('preRound', {combatants}, {appendActionMessage});
+            handleOpponentBehaviors('preRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
@@ -178,7 +178,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-            handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage});
+            handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             refreshCombatantInfo(combatants);
             setCurrentMoveClash(undefined);
             engine.setupRound();
@@ -210,8 +210,10 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         MoveEmission: (data) => {
+
+
             runEmissionSE(
-                DEFAULT_MOVE_EMISSION_SIDE_EFFECTS,
+                {...DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, ...opponentProfile.display.behaviors?.moveEmissionHandlers?.replace},
                 data.signal,
                 {appendActionMessage, requestOverlayAnimation},
                 {
@@ -223,7 +225,26 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
                         return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
                     }
                 }
-            )
+            );
+
+            // TODO: Add a way to pass a "default" function as part of the deps for replace.
+            // e.g to do: if perspect == opponent -> do default action, otherwise do some other logic.
+            if(opponentProfile.display.behaviors?.moveEmissionHandlers?.add) {
+                runEmissionSE(
+                    opponentProfile.display.behaviors?.moveEmissionHandlers?.add,
+                    data.signal,
+                    {appendActionMessage, requestOverlayAnimation},
+                    {
+                        perspective: data.perspective,
+                        moveName: data.moveName,
+                        lexicons,
+                        nameOfAffected: (flip: true | undefined) => {
+                            const p = flip ? oppositeSide(data.perspective) : data.perspective;
+                            return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
+                        }
+                    }                
+                )
+            }
         }
     };
 

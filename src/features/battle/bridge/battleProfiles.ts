@@ -15,8 +15,9 @@ import { MoveLexicon } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from './actionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
-import { BattleEventPayload } from '@/core/battle/model/battleReactions';
 import { OpponentMoveOverrides } from '../effects/moveUISideEffects';
+import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
+import { EmissionSEMap } from '../effects/moveEmissionResponses';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -33,7 +34,7 @@ export type OpponentDisplayPredicateArgs = { combatants: Sides<Combatant> } // O
  * @property {ActionMessageAppender} appendActionMessage - Appends a message to the battle action log/UI. 
  * Feel free to extend this object with other dependencies as needed.
  */
-export type OpponentDisplayBehaviorDeps = { appendActionMessage: ActionMessageAppender }
+export type OpponentDisplayBehaviorDeps = { appendActionMessage: ActionMessageAppender, requestOverlayAnimation: OverlayAnimationRequester }
 
 /**
  * A UI-focused, contextual behavior that an opponent can perform.
@@ -67,7 +68,10 @@ export interface OpponentProfile {
      * @property {string} backgroundShader - Background shader to run behind opponent (fragment shader string, typically imported from some .glsl file)
      * @property {AssetURL} [backgroundShaderTexture] - Optional texture to send to the background shader.
      * 
-     * @property {behaviors} - TODO DOCUMENT LOL
+     * @property {behaviors} - UI-based behaviors (side effects) to run for the opponent.
+     * - `preRound` - side effects that run before each round
+     * - `postRound` - side effects that run after each round
+     * - `moveEmissionHandler` - A method that captures move emissions and runs some side effect.
      */
     display: {
         name: string;
@@ -83,9 +87,11 @@ export interface OpponentProfile {
         // UI-Based Contextual Behaviors.
         behaviors?: {
             preRound?: OpponentDisplayBehavior[]
-            postRound?: OpponentDisplayBehavior[]
-            // Opponent has their own reaction to move emissions (custom notifications). Returns true if it handled an emission and wants to skips default handler.
-            moveEmissionHandler?: (data: BattleEventPayload['MoveEmission'], opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, appendActionMessage: ActionMessageAppender) => boolean;
+            postRound?: OpponentDisplayBehavior[],
+            moveEmissionHandlers?: {
+                replace?: EmissionSEMap, // overrides defaults (warning: this effects what shows for player)
+                add?: EmissionSEMap // runs in addition to the defaults.
+            }
         }
 
         moveUISideEffectOverrides?: OpponentMoveOverrides;
