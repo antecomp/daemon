@@ -26,6 +26,7 @@ export type OpponentAIBehaviorDeps = {combatants: Sides<Combatant>, engineDeps: 
 export interface OpponentAIBehavior {
     key: string;
     when?: (args: OpponentAIBehaviorPredicateArgs) => boolean;
+    // TODO: Make this async (blocking)
     run: (deps: OpponentAIBehaviorDeps) => void;
     once?: boolean
 }

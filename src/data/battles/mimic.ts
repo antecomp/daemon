@@ -39,14 +39,7 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                     },
                     once: true
                 }
-            ],
-            moveEmissionHandler(data, _, __, appendAM) {
-                if(data.signal.type == 'mechanic:mania') {
-                    appendAM('The Mimicry moved like a ghost!');
-                    return true;
-                }
-                return false;
-            }
+            ]
         }
     },
 

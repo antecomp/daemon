@@ -20,7 +20,17 @@ import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
 
-export enum BattleUIState {WAITING, READY, EXECUTING, END};
+/** UI States for various stages in battle execution, used to conditionally lock some components. */
+export enum BattleUIState {
+    /** Waiting for user input (building sequence) */
+    WAITING, 
+    /** User input of correct size, waiting for "execute" */
+    READY, 
+    /** Running the clashes, animations and whatnot, (round execute) */
+    EXECUTING, 
+    /** Battle end state, (temporary lock while closing animation plays) */
+    END
+};
 
 interface BattleUIStateMachine {
     battleUIState: Accessor<BattleUIState>,
@@ -29,6 +39,11 @@ interface BattleUIStateMachine {
 
 export const BattleUIStateContext = createContext<BattleUIStateMachine>();
 
+/**
+ * Hook that wraps useContext(BattleUIStateContext) to subscribe to current BattleUIState.
+ * 
+ * Throws error if context cannot be obtained.
+ */
 export const useBattleUIState = () => {
     const context = useContext(BattleUIStateContext);
     if (!context) throw new Error("useBattleUIState must be within BattleUIState provider (Battle Component)");
