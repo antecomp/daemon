@@ -10,5 +10,6 @@ export const PRE_ANIMATION_DELAY = 1000;
 export const MOVE_INIT_DELAY = 1000;
 
 export const NOTIFICATION_LIFESPAN = 3500;
+export const NOTIFICATION_CLEAR_STAGGER = 1000;
 
 export const BATTLE_END_SLEEP_TIME = 3000;
