@@ -57,8 +57,9 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                     }
                 },
                 replace: {
-                    'mechanic:focus'(_, {appendActionMessage}) {
+                    'mechanic:focus'(_, {appendActionMessage, defaultSE}) {
                         appendActionMessage('Debug Angel Completely Overrode This Focus Lost Notif');
+                        defaultSE?.();
                     }
                 }
             }

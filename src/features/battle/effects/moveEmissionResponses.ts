@@ -7,7 +7,11 @@ import { capitalizeFirstLetter } from "@/shared/utils/stringUtils";
 
 export type EmissionSEDeps = {
     appendActionMessage: ActionMessageAppender,
-    requestOverlayAnimation: OverlayAnimationRequester
+    requestOverlayAnimation: OverlayAnimationRequester,
+    /** Optional hook that replays the default emission behavior for the signal currently being handled.
+     * Namely used for opponentProfiles override with moveEmissionHandlers. Can be used to conditionally override (fallback to default).
+     */
+    defaultSE?: () => void
 }
 
 export type EmissionSECTX = {

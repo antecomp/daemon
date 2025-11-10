@@ -77,6 +77,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         preRound: new Set<string>(),
         postRound: new Set<string>()
     }
+    const moveEmissionHandlers = opponentProfile.display.behaviors?.moveEmissionHandlers;
 
     function handleOpponentBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
         const behaviors = opponentProfile.display.behaviors?.[stage];
@@ -210,40 +211,38 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         MoveEmission: (data) => {
+            const emissionCtx = {
+                perspective: data.perspective,
+                moveName: data.moveName,
+                lexicons,
+                nameOfAffected: (flip: true | undefined) => {
+                    const p = flip ? oppositeSide(data.perspective) : data.perspective;
+                    return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
+                }
+            };
 
+            const baseDeps = {appendActionMessage, requestOverlayAnimation};
+            const defaultHandlerExists = Boolean(
+                DEFAULT_MOVE_EMISSION_SIDE_EFFECTS[data.signal.type as keyof typeof DEFAULT_MOVE_EMISSION_SIDE_EFFECTS]
+            );
+            const emissionDeps = defaultHandlerExists
+                ? {...baseDeps, defaultSE: () => runEmissionSE(DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, data.signal, baseDeps, emissionCtx)}
+                : baseDeps;
 
             runEmissionSE(
-                {...DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, ...opponentProfile.display.behaviors?.moveEmissionHandlers?.replace},
+                {...DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, ...moveEmissionHandlers?.replace},
                 data.signal,
-                {appendActionMessage, requestOverlayAnimation},
-                {
-                    perspective: data.perspective,
-                    moveName: data.moveName,
-                    lexicons,
-                    nameOfAffected: (flip: true | undefined) => {
-                        const p = flip ? oppositeSide(data.perspective) : data.perspective;
-                        return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
-                    }
-                }
+                emissionDeps,
+                emissionCtx
             );
 
-            // TODO: Add a way to pass a "default" function as part of the deps for replace.
-            // e.g to do: if perspect == opponent -> do default action, otherwise do some other logic.
-            if(opponentProfile.display.behaviors?.moveEmissionHandlers?.add) {
+            if(moveEmissionHandlers?.add) {
                 runEmissionSE(
-                    opponentProfile.display.behaviors?.moveEmissionHandlers?.add,
+                    moveEmissionHandlers.add,
                     data.signal,
-                    {appendActionMessage, requestOverlayAnimation},
-                    {
-                        perspective: data.perspective,
-                        moveName: data.moveName,
-                        lexicons,
-                        nameOfAffected: (flip: true | undefined) => {
-                            const p = flip ? oppositeSide(data.perspective) : data.perspective;
-                            return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
-                        }
-                    }                
-                )
+                    emissionDeps,
+                    emissionCtx
+                );
             }
         }
     };
