@@ -76,6 +76,7 @@ export type BattleEventPayload = {
     }
 }
 
+/** TODO: Document */
 type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;
 
 /** BattleReactions is a map of named battle lifecycle stages (f.e `RoundStart`, or `DamagesApplied`) to a (optionally async blocking) callback

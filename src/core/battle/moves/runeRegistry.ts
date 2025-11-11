@@ -2,6 +2,7 @@ import { attack, defend, evade, heal, overwhelm, prepare } from "./moves";
 import { mirrorPlan, planMove, repeatPlan } from "./plannedMoves";
 
 // This will eventually be in some global store of equipted moves or similar.
+// TODO : Just pick from STOCK_PLANBANK?
 export const PLAYER_RUNE_REGISTRY = {
     repeat: repeatPlan,
     evade: planMove(evade),
