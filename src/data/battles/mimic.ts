@@ -6,7 +6,15 @@ import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from '@/core/battle/statuses/statuses';
-import sleep from '@/shared/utils/sleep';
+import { createDialogueNode } from '@/core/dialogue/dialogueNode';
+import { DialogueService } from '@/core/dialogue/dialogueService';
+
+const mimicry_midround_dialogue_root = createDialogueNode("This is dialogue that triggers mid-round!", "Mimicry");
+mimicry_midround_dialogue_root.addMessageChain([
+    "I will say a few things before the battle continues",
+    "The player has to advance through all this first.",
+    "Okay I'm done."
+]);
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
@@ -29,6 +37,19 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
         backgroundShader: distortedGridShader,
         spriteOffset: {x: -14, y: 15},
         behaviors: {
+            preRound: [
+                {
+                    // Play some dialogue before executing the round if the opponent is at half health.
+                    key: 'midround-dialogue',
+                    when({combatants: {opponent}}) {
+                        return opponent.healthPercent <= 50
+                    },
+                    async run() {
+                        await DialogueService.startDialogue(mimicry_midround_dialogue_root, {blockBehind: true})
+                    },
+                    once: true
+                }
+            ],
             postRound: [
                 {
                     key: 'desperation',
@@ -41,10 +62,6 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                     once: true
                 },
             ],
-            preRound: [{
-                key: 'test',
-                run: () => sleep(10000)
-            }]
         }
     },
 
@@ -89,13 +106,7 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                             opponent.addStatus(new ManiaStatus, 999);
                         },
                         once: true
-                    },
-                    // {
-                    //     key: 'test',
-                    //     async run() {
-                    //         await sleep(10000);
-                    //     }
-                    // }
+                    }
                 ],
             }
         },

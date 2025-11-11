@@ -83,6 +83,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         const behaviors = opponentProfile.display.behaviors?.[stage];
         if(!behaviors) return;    
 
+        // This is going to fire every SE at once, which is probably what you want but be aware that your 
+        // array order will have no meaning on execution order.
         await Promise.all(
             behaviors
                 .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
