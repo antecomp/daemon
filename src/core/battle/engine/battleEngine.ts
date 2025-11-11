@@ -45,6 +45,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await reactions[event]?.(payload);
     }
 
+    // TODO: I still think this function looks gross.
     function handleDeathIfNeeded(): boolean {
         let outcome: BattleOutcome | null = null;
 
@@ -75,26 +76,32 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await emitBattleEvent('BattleEnd', {outcome, combatants});
     };
 
-
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
         postRound: new Set<string>()        
     }
 
-    function handleOpponentBehaviors(
+    async function handleOpponentBehaviors(
         stage: 'preRound' | 'postRound', 
         predicateArgs: OpponentAIBehaviorPredicateArgs, 
         runnerDeps: OpponentAIBehaviorDeps
     ) {
         const behaviors = opponentAI.behaviors?.[stage];
         if(!behaviors) return;
-        behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
-            if(behavior.once) {
-                if(opponentRanBehaviors[stage].has(behavior.key)) return;
-                opponentRanBehaviors[stage].add(behavior.key);
-            }
-            behavior.run(runnerDeps);
-        })
+        
+        // This is going to fire every SE at once, which is probably what you want but be aware that your 
+        // array order will have no meaning on execution order.
+        await Promise.all(
+            behaviors
+                .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
+                .map(async behavior => {
+                    if(behavior.once) {
+                        if(opponentRanBehaviors[stage].has(behavior.key)) return;
+                        opponentRanBehaviors[stage].add(behavior.key);
+                    }
+                    await behavior.run(runnerDeps);
+                })
+        );
     }
 
     async function setupRound() {
@@ -106,7 +113,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
         const plans = makeSidesMap(playerPlan, opponentPlan);
 
-        handleOpponentBehaviors('preRound', {combatants}, {combatants, engineDeps: deps});
+        // Consider *not* having an await here, things like the UIState rely on RoundStart running immediately on execute.
+        await handleOpponentBehaviors('preRound', {combatants}, {combatants, engineDeps: deps});
         
         await emitBattleEvent('RoundStart', {plans, combatants});
 
@@ -177,7 +185,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             await emitBattleEvent('MoveEnd', {combatants});
         }
 
-        handleOpponentBehaviors('postRound', {combatants}, {combatants, engineDeps: deps});
+        await handleOpponentBehaviors('postRound', {combatants}, {combatants, engineDeps: deps});
 
         await emitBattleEvent('RoundEnd', {combatants});
 

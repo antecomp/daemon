@@ -30,7 +30,7 @@ const SAMPLE_OPPONENT_STATS: OpponentStats = {maxHealth: 100}
 
 describe("battleEngine init", () => {
 
-    test("prepare, exec triggers", () => {
+    test("prepare, exec triggers", async () => {
 
 
         const prepareReaction = vi.fn();
@@ -46,7 +46,7 @@ describe("battleEngine init", () => {
         engine.setupRound();
         expect(prepareReaction).toHaveBeenCalled();
 
-        engine.executeRound([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing])
+        await engine.executeRound([PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing, PlanForNothing])
         expect(execReaction).toHaveBeenCalled();
     })
 })

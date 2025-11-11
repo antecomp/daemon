@@ -6,6 +6,7 @@ import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from '@/core/battle/statuses/statuses';
+import sleep from '@/shared/utils/sleep';
 
 const mimicry_planbank = {
     ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
@@ -38,8 +39,12 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                         appendActionMessage('The Mimicry appears desperate!');
                     },
                     once: true
-                }
-            ]
+                },
+            ],
+            preRound: [{
+                key: 'test',
+                run: () => sleep(10000)
+            }]
         }
     },
 
@@ -74,16 +79,24 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
                 )
             },
             behaviors: {
-                postRound: [{
-                    key: 'desperation',
-                    when({combatants: {opponent}}) {
-                        return opponent.health < DESPERATION_HEALTH
+                postRound: [
+                    {
+                        key: 'desperation',
+                        when({combatants: {opponent}}) {
+                            return opponent.health < DESPERATION_HEALTH
+                        },
+                        run({combatants: {opponent}}) {
+                            opponent.addStatus(new ManiaStatus, 999);
+                        },
+                        once: true
                     },
-                    run({combatants: {opponent}}) {
-                        opponent.addStatus(new ManiaStatus, 999);
-                    },
-                    once: true
-                }],
+                    // {
+                    //     key: 'test',
+                    //     async run() {
+                    //         await sleep(10000);
+                    //     }
+                    // }
+                ],
             }
         },
         

@@ -50,7 +50,7 @@ export interface OpponentDisplayBehavior {
     key: string;
     when?: (args: OpponentDisplayPredicateArgs) => boolean;
     // TODO: Make this async (blocking)
-    run: (deps: OpponentDisplayBehaviorDeps) => void;
+    run: (deps: OpponentDisplayBehaviorDeps) => void | Promise<void>;
     once?: boolean
 }
 

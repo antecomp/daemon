@@ -79,17 +79,21 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     }
     const moveEmissionHandlers = opponentProfile.display.behaviors?.moveEmissionHandlers;
 
-    function handleOpponentBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
+    async function handleOpponentUIBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
         const behaviors = opponentProfile.display.behaviors?.[stage];
-        if(!behaviors) return;
+        if(!behaviors) return;    
 
-        behaviors.filter(behavior => (behavior.when === undefined) || behavior.when(predicateArgs)).forEach(behavior => {
-            if(behavior.once) {
-                if(opponentRanBehaviors[stage].has(behavior.key)) return;
-                opponentRanBehaviors[stage].add(behavior.key);
-            }
-            behavior.run(runnerDeps);
-        })     
+        await Promise.all(
+            behaviors
+                .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
+                .map(async behavior => {
+                    if(behavior.once) {
+                        if(opponentRanBehaviors[stage].has(behavior.key)) return;
+                        opponentRanBehaviors[stage].add(behavior.key);
+                    }
+                    await behavior.run(runnerDeps);
+                })
+        );
     }
 
     const reactions: BattleReactions = {
@@ -104,7 +108,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async RoundStart({plans, combatants}) {
             setBattleUIState(BattleUIState.EXECUTING);
-            handleOpponentBehaviors('preRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
+            await handleOpponentUIBehaviors('preRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
             await fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
@@ -176,12 +180,12 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             await sleep(MOVE_DELAY);
         },
 
-        RoundEnd({combatants}) {
+        async RoundEnd({combatants}) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
-            handleOpponentBehaviors('postRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             refreshCombatantInfo(combatants);
             setCurrentMoveClash(undefined);
+            await handleOpponentUIBehaviors('postRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             engine.setupRound();
         },
 
