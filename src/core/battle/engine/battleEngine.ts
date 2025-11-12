@@ -31,7 +31,7 @@ const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
  * @returns An object containing methods and properties to control the battle flow:
  *   - `executeRound(playerPlan: PlannedSequence): Promise<void>`: Executes a round using the player's planned sequence of moves.
  *   - `setupRound(): Promise<void>`: Prepares the next round, generating the opponent's plan and emitting relevant events.
- *   - `forceBattleResolve(): void`: Forces a battle end state with a given outcome (namely used for "Eject")
+ *   - `handleBattleEnd(): void`: Forces a battle end state with a given outcome (namely used for "Eject")
  *
  * @remarks
  * The engine manages combatants, move execution, event emission, and battle resolution. Consumers should call `setupRound` before each round and `executeRound` with the player's moves. The engine emits events at key points for UI updates or logging.
@@ -45,36 +45,21 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await reactions[event]?.(payload);
     }
 
-    // TODO: I still think this function looks gross.
     function handleDeathIfNeeded(): boolean {
-        let outcome: BattleOutcome | null = null;
+        const playerDead = combatants.player.isDead;
+        const opponentDead = combatants.opponent.isDead;
+        if (!playerDead && !opponentDead) return false;
 
-        const deathStatuses = mapSides(combatants, x => x.isDead);
-        switch (true) {
-            case deathStatuses.player && deathStatuses.opponent:
-                outcome = BattleOutcome.Draw;
-                break;
-            case deathStatuses.player:
-                outcome = BattleOutcome.OpponentVictory;
-                break;
-            case deathStatuses.opponent:
-                outcome = BattleOutcome.PlayerVictory;
-                break;
-        }
-
-        if (outcome == null) return false;
-
+        const outcome = playerDead
+            ? (opponentDead ? BattleOutcome.Draw : BattleOutcome.OpponentVictory)
+            : BattleOutcome.PlayerVictory;
         handleBattleEnd(outcome); 
-        return true; // bool check used to breask loop in executeRound.
+        return true; // bool check used to break loop in executeRound.
     }
 
     async function handleBattleEnd(outcome: BattleOutcome) {
         await emitBattleEvent('BattleEnd', {outcome, combatants});
     }
-
-    async function forceBattleResolve(outcome: BattleOutcome){
-        await emitBattleEvent('BattleEnd', {outcome, combatants});
-    };
 
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
@@ -197,6 +182,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         /** Generates a new sequence for the opponent, emits round start signals (which can be listened to for setting dependant state) */
         setupRound, 
         /** Prematurely end a round with a provided resolution. Should only ever be executed when *not* in the middle of an execution. */
-        forceBattleResolve
+        handleBattleEnd
     }
 }

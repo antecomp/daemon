@@ -98,7 +98,7 @@ export default function Battle(props: {
                     <Actionbar
                         lexicon={playerLexicon}
                         executeRound={engine.executeRound} 
-                        forceBattleResolve={engine.forceBattleResolve}
+                        forceBattleEnd={engine.handleBattleEnd}
                         {...bridge}
                     />
                     <CurrentClash moves={bridge.currentClash()} lexicons={{player: playerLexicon, opponent: opponentLexicon}}/>

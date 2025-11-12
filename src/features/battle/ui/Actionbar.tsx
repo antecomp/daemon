@@ -54,7 +54,7 @@ interface ActionbarProps {
     playerHealthPercentage: Accessor<number>,
     displayMults: Accessor<Sides<DamageMultipliers>>,
     currentStatusIcons: Accessor<Sides<(AssetURL | undefined)[]>>
-    forceBattleResolve: (outcome: BattleOutcome) => Promise<void>
+    forceBattleEnd: (outcome: BattleOutcome) => Promise<void>
     lexicon: MoveLexicon,
     currentlyExecutingMoveIndex: Accessor<number | null>
 }
@@ -79,7 +79,7 @@ export default function Actionbar(props: ActionbarProps) {
 
     const handleEject = () => {
         if(battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
-            props.forceBattleResolve(BattleOutcome.PlayerEject);
+            props.forceBattleEnd(BattleOutcome.PlayerEject);
         }
     }
 
