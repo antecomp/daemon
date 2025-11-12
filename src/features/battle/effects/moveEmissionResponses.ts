@@ -1,5 +1,5 @@
 import { MoveSignal, MoveSignalOf } from "@/core/battle/model/move.types"
-import { ActionMessageAppender } from "../bridge/actionMessages";
+import { ActionMessageAppender } from "../ui/ActionMessages";
 import { Side, Sides } from "@/core/battle/utils/sides.utils";
 import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";

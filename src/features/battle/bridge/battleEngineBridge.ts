@@ -18,7 +18,6 @@ import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_CLEAR_
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
-import { ActionMessage, ActionMessageAppender } from "./actionMessages";
 import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
@@ -29,6 +28,7 @@ import { DEFAULT_MOVE_EMISSION_RESPONSES, runEmissionSE } from "../effects/moveE
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
+import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
 
 export enum BattleUIState {
     WAITING, READY, EXECUTING, 
