@@ -1,4 +1,4 @@
-import './opp-statusbar.css'
+import './styles/opp-statusbar.css'
 import name_postcut from '../assets/name-postcut.png'
 import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'

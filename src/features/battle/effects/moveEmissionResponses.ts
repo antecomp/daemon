@@ -53,7 +53,7 @@ export type EmissionSEMap<T extends keyof MoveSignalMap = keyof MoveSignalMap> =
  * - Messages are created using the provided `nameOfAffected()` callback to ensure
  *   correct, lazily-evaluated entity naming and perspective handling.
  */
-export const DEFAULT_MOVE_EMISSION_SIDE_EFFECTS = {
+export const DEFAULT_MOVE_EMISSION_RESPONSES = {
     'effect:heal'({amount, capped}, {appendActionMessage}, {nameOfAffected}) {
         if(capped) {
             appendActionMessage(`${nameOfAffected()}'s health is maxxed out!`, 'heal');

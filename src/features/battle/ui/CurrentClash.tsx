@@ -1,4 +1,4 @@
-import './current-clash.css';
+import './styles/current-clash.css';
 import { Sides } from "@/core/battle/utils/sides.utils";
 import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { Show } from 'solid-js';

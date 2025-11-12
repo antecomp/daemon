@@ -1,5 +1,5 @@
 
-import './actionbar.css'
+import './styles/actionbar.css'
 import eject_button from '../assets/eject-button.png'
 import reset_button from '../assets/reset-button.png'
 import exec_button from '../assets/exec-button.png'

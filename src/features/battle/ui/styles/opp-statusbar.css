@@ -128,11 +128,11 @@
     }
 
     .opp-hint::before {
-        content: url('../assets/opp-hint-l.png');
+        content: url('../../assets/opp-hint-l.png');
     }
 
     .opp-hint::after {
-        content: url('../assets/opp-hint-r.png');
+        content: url('../../assets/opp-hint-r.png');
     }
 }
 

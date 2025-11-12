@@ -25,7 +25,7 @@ import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProf
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
-import { DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, runEmissionSE } from "../effects/moveEmissionResponses";
+import { DEFAULT_MOVE_EMISSION_RESPONSES, runEmissionSE } from "../effects/moveEmissionResponses";
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
@@ -229,14 +229,14 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             const baseDeps = {appendActionMessage, requestOverlayAnimation};
             const defaultHandlerExists = Boolean(
-                DEFAULT_MOVE_EMISSION_SIDE_EFFECTS[data.signal.type as keyof typeof DEFAULT_MOVE_EMISSION_SIDE_EFFECTS]
+                DEFAULT_MOVE_EMISSION_RESPONSES[data.signal.type as keyof typeof DEFAULT_MOVE_EMISSION_RESPONSES]
             );
             const emissionDeps = defaultHandlerExists
-                ? {...baseDeps, defaultSE: () => runEmissionSE(DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, data.signal, baseDeps, emissionCtx)}
+                ? {...baseDeps, defaultSE: () => runEmissionSE(DEFAULT_MOVE_EMISSION_RESPONSES, data.signal, baseDeps, emissionCtx)}
                 : baseDeps;
 
             runEmissionSE(
-                {...DEFAULT_MOVE_EMISSION_SIDE_EFFECTS, ...moveEmissionHandlers?.replace},
+                {...DEFAULT_MOVE_EMISSION_RESPONSES, ...moveEmissionHandlers?.replace},
                 data.signal,
                 emissionDeps,
                 emissionCtx

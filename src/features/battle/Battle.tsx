@@ -1,5 +1,5 @@
-import './ui/battle.css';
-import './ui/battle-opening-animation.css'
+import './ui/styles/battle.css';
+import './ui/styles/battle-opening-animation.css'
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';

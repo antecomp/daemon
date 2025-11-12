@@ -1,4 +1,4 @@
-import './move-tooltip-content.css'
+import './styles/move-tooltip-content.css'
 import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 
 import br from '@/assets/ui/corners/s4/tl.png'

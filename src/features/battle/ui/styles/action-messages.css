@@ -23,7 +23,7 @@
     }
 
     .action-message::before {
-      content: url('../assets/notif_end.png');
+      content: url('../../assets/notif_end.png');
       position: absolute;
       right: 100%;
       top: -2px;

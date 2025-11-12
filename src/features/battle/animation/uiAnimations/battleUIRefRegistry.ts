@@ -12,6 +12,7 @@ interface BattleRefRegistry {
 
 export const BattleRefRegistryCTX = createContext<BattleRefRegistry>();
 
+/** TODO: Document */
 export function createBattleRefAttacher(as: BattleRefNames[number]) {
     const {attachToRegistry} = useContext(BattleRefRegistryCTX)!;
     return (ref: HTMLElement) => attachToRegistry(as, ref);

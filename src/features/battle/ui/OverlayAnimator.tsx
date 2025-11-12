@@ -1,10 +1,8 @@
-// Just doing a very lazy port for now, we can always redesign this component later!
+import './styles/overlay-animator.css';
 
 import { Accessor, createEffect } from "solid-js";
 import { OverlayAnimData, OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
 import { overlayAnimationDefinitions } from "../animation/overlayAnimations/overlayAnimationDefinitions";
-
-import './overlay-animator.css';
 
 export default function OverlayAnimator(props: {
     overlayAnimationRequests: Accessor<OverlayAnimReq[]>

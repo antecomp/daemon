@@ -1,6 +1,7 @@
+import './styles/action-messages.css'
+
 import { Accessor, For } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
-import './action-messages.css'
 import { ActionMessage } from "../bridge/actionMessages";
 import { actionIcons } from "../bridge/actionMessages";
 
