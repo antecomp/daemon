@@ -49,7 +49,6 @@ export type OpponentDisplayBehaviorDeps = { appendActionMessage: ActionMessageAp
 export interface OpponentDisplayBehavior {
     key: string;
     when?: (args: OpponentDisplayPredicateArgs) => boolean;
-    // TODO: Make this async (blocking)
     run: (deps: OpponentDisplayBehaviorDeps) => void | Promise<void>;
     once?: boolean
 }

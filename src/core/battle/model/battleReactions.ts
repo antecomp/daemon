@@ -76,7 +76,7 @@ export type BattleEventPayload = {
     }
 }
 
-/** TODO: Document */
+/** Callback signature executed when a specific battle event fires. */
 type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) => void | Promise<void>;
 
 /** BattleReactions is a map of named battle lifecycle stages (f.e `RoundStart`, or `DamagesApplied`) to a (optionally async blocking) callback
@@ -86,4 +86,3 @@ type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) =>
  * This is namely used by battleEngineBridge to update the UI, run animations, etc (blocking engine where necessary).
   */
 export type BattleReactions = Partial<{[K in BattleEvent]: BattleReaction<K>}>;
-

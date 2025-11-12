@@ -12,7 +12,16 @@ interface BattleRefRegistry {
 
 export const BattleRefRegistryCTX = createContext<BattleRefRegistry>();
 
-/** TODO: Document */
+/**
+ * Creates a ref attacher function for battle UI elements.
+ * 
+ * @param as - The name identifier for the battle ref to be registered
+ * @returns A ref callback function that attaches the HTML element to the battle ref registry
+ * 
+ * @example
+ * const refAttacher = createBattleRefAttacher('opponentSprite');
+ * <div ref={opponentSprite} />
+ */
 export function createBattleRefAttacher(as: BattleRefNames[number]) {
     const {attachToRegistry} = useContext(BattleRefRegistryCTX)!;
     return (ref: HTMLElement) => attachToRegistry(as, ref);
