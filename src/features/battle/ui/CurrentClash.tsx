@@ -17,7 +17,6 @@ export default function CurrentClash(props: {moves: Sides<{moveName: MoveLexeme,
         <div class="current-move-clash">
             <img src={ct_t} style={{'position': 'absolute', 'top': '-50px'}}/>
             <div class="opponent-side-of-clash">
-                {/* Lazy and hard-coded, but good enough for now. */}
                 <img src={props.lexicons.opponent[props.moves!.opponent.moveName].largeIcon}/>
                 <div>
                     <Show when={props.moves?.opponent.tags?.includes('repeated')}>

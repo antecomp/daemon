@@ -14,7 +14,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { makeSidesMap, mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_CLEAR_STAGGER, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "./timings.config";
+import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_CLEAR_STAGGER, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "../config/timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";

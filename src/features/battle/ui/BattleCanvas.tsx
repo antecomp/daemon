@@ -1,14 +1,15 @@
-import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { Point } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { createProgram, createTexture } from "@/shared/utils/webgl.utils";
 import { onMount } from "solid-js";
 import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
+import { SCENE_DIMENSIONS, SIDEBAR_WIDTH } from "@/config/ui.config";
+
 const BATTLE_CANVAS_DIMENSIONS = {
-    width: SCENE_DIMENSIONS.width + 45,
+    width: SCENE_DIMENSIONS.width + SIDEBAR_WIDTH,
     height: SCENE_DIMENSIONS.height
-}
+};
 
 export default function BattleCanvas(props: {
     sprite: AssetURL,

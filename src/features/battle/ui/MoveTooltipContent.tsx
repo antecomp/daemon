@@ -9,12 +9,14 @@ interface MoveTooltipContentProps {
     lexicon: MoveLexicon
 }
 
+const MOVE_TOOLTIP_SIZE = 225;
+
 export const MoveTooltipContent = (props: MoveTooltipContentProps) => {
 
     const entry = props.lexicon[props.runeName]
 
     return (
-        <CornerRect width='225px' class='move-tooltip-content' borderSize={1} borderType='solid white' corners={[undefined, undefined, undefined, br]}>
+        <CornerRect width={`${MOVE_TOOLTIP_SIZE}px`} class='move-tooltip-content' borderSize={1} borderType='solid white' corners={[undefined, undefined, undefined, br]}>
             <div class="header">
                 <p>{entry.label}</p>
                 <img src={entry.icon}/>
