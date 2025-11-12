@@ -59,9 +59,9 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
     return (
         <>
         <TooltipComponent/>
-        <div id="opp-statusbar-container">
-            <img src={props.icon} id="opp-icon"/>
-            <div id="opp-bar">
+        <div class="opp-statusbar-container">
+            <img src={props.icon} class="opp-icon"/>
+            <div class="opp-bar">
                 <div class="nametag">
                     <span>{props.name.toUpperCase()}</span>
                     <img src={name_postcut} />
@@ -72,7 +72,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
                     <img src={sbb_right}/>
                 </div>
             </div>
-            <div id="opp-hint-container" ref={sequenceViewOpponentRef}>
+            <div class="opp-hint-container" ref={sequenceViewOpponentRef}>
                 <For each={props.planPreview}>
                     {(plannedMove, idx) => <OppPlanEntry lexicon={props.lexicon} isExecuting={idx() === props.currentlyExecutingMoveIndex()} moveName={plannedMove} {...{showTooltip, hideTooltip}}/>}
                 </For>

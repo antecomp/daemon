@@ -127,9 +127,9 @@ export default function Actionbar(props: ActionbarProps) {
     const playerSequenceConRef = createBattleRefAttacher('sequenceViewPlayer');
 
     return (
-        <div id="battle-actionbar">
+        <div class="battle-actionbar">
             <div class="left">
-                <img src={eject_button} id="eject-button"
+                <img src={eject_button} class="eject-button"
                     onClick={handleEject}
                 />
             <Runebuilder
@@ -137,15 +137,15 @@ export default function Actionbar(props: ActionbarProps) {
                 appendToPlan={appendToPlan}
                 planBuffer={planBuffer()}
             />
-            <div id="rb-buttons">
+            <div class="rb-buttons">
                 <img
-                    id='reset-button'
+                    class='reset-button'
                     src={reset_button}
                     onClick={resetPlan} 
                     classList={{usable: planBuffer().length > 0}}
                 />
                 <img
-                    id='exec-button'
+                    class='exec-button'
                     src={exec_button}
                     classList={{ usable: (battleUIState() == BattleUIState.READY) }}
                     onClick={handleExecClick}
@@ -158,8 +158,8 @@ export default function Actionbar(props: ActionbarProps) {
                         {(m, idx) => <SelectedMove moveName={m} lexicon={props.lexicon} isExecuting={idx() == props.currentlyExecutingMoveIndex()}/>}
                     </For>
                 </div>
-                <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />
-                <div id="multbars">
+                <img src={fch_bar} class="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />
+                <div class="multbars">
                     <div class="userbars">
                         <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.displayMults().player.incoming)}%`} />
                         <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.displayMults().player.outgoing)}%`} />

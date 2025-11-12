@@ -16,7 +16,7 @@
   --rb-step: 0.15s;
 }
 /* Opponent status bar */
-#opp-statusbar-container {
+.opp-statusbar-container {
   opacity: 0;
   z-index: 1;
   animation: fade-in var(--dur-fade) var(--t-core) forwards;
@@ -26,7 +26,7 @@
   }
 
 
-    #opp-icon {
+    .opp-icon {
       opacity: 0;
       animation: fade-in var(--dur-fade) var(--t-rb-cascade) forwards;
     }
@@ -36,13 +36,13 @@
       animation: fade-in var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;      
     }
 
-    #opp-hint-container {
+    .opp-hint-container {
       filter: opacity(0);
       animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;      
     }
 
     /* Triggers when the sequence regenerates :( */
-    /* #opp-hint-container {
+    /* .opp-hint-container {
       .opp-hint:nth-child(1) {
         filter: opacity(0);
         animation: fade-in-with-filter var(--dur-fade) calc(var(--t-rb-cascade) + 3 * var(--rb-step)) forwards;
@@ -70,30 +70,30 @@
     } */
 }
 
-#battle-actionbar .right {
+.battle-actionbar .right {
   filter: brightness(0);
   animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards;
 
-  #fch-bar {
+  .fch-bar {
     animation: fch-appear var(--dur-fch);
   }
 
-  #multbars {
+  .multbars {
     opacity: 0;
     animation: fade-in var(--dur-fade) var(--t-fill) forwards;
   }
 }
 
-#battle-actionbar .left {
+.battle-actionbar .left {
   filter: brightness(0);
   animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards;
 
-  #eject-button, #rb-buttons {
+  .eject-button, .rb-buttons {
     opacity: 0;
     animation: fade-in var(--dur-fade) var(--t-late-controls) forwards;
   }
 
-  #runebuilder {
+  .runebuilder {
     /* filter: brightness(0); */
     /* animation: brightness-fade-in var(--dur-fade) var(--t-core) forwards; */
 
@@ -148,7 +148,7 @@
   }
 }
 
-#battle-view {
+.battle-view {
   animation: fade-border-in var(--dur-border) forwards;
   border-bottom: none;
 
@@ -157,7 +157,7 @@
     animation: fade-border-corners-in var(--dur-fade) var(--t-core) forwards;
   }
 
-  #battle-bg {
+  .battle-bg {
     opacity: 0;
     animation: fade-in var(--dur-fade) var(--t-background) forwards;
   }

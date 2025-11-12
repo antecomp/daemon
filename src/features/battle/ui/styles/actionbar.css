@@ -1,9 +1,10 @@
-#battle-actionbar {
+.battle-actionbar {
     display: grid;
     position: absolute; /* don't consume dom space (causes overflow) */
-    grid-template-columns: 320px 669px; /* TODO: REMOVE THESE MAGIC NUMBERS */
+    /* COOL MAGIC NUMBERS BASED ON THE IMAGES I MADE. TOO LAZY TO FIX LOL. */
+    grid-template-columns: 320px 669px;
     height: 113px;
-    translate: 0px -36px; /* TODO: REMOVE THESE MAGIC NUMBERS */
+    translate: 0px -36px;
 
     .left {
         position: relative;
@@ -11,7 +12,7 @@
         background: url('../../assets/actionbar-left-base.png');
         background-repeat: no-repeat;
 
-        #runebuilder {
+        .runebuilder {
             position: absolute;
             /* top: calc(-100% - 18px); */
             bottom: 0px;
@@ -20,19 +21,19 @@
             pointer-events: none;
         }
 
-        #runebuilder circle {
+        .runebuilder circle {
             pointer-events: auto;
             transition: stroke linear 0.25s; /* fade effect for when we change the stroke colour */
         }
 
-        #runebuilder line {
+        .runebuilder line {
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
             animation: drawLine 0.5s ease-in forwards;
             pointer-events: none;
         }
 
-        #rb-buttons {
+        .rb-buttons {
             z-index: 1;
             display: flex;
             flex-direction: column;
@@ -44,37 +45,37 @@
             margin-top: 6px;
             margin-left: 128px;
 
-            #reset-button {
+            .reset-button {
                 clip-path: polygon(73% 0, 103% 105%, 0 100%, 0 0);
             }
 
-            #exec-button {
+            .exec-button {
                 clip-path: polygon(100% 0, 100% 71%, 90% 100%, 0 100%, 0 0);
             }
 
-            #reset-button.usable, #exec-button.usable {
+            .reset-button.usable, .exec-button.usable {
                 filter: brightness(3);
             }
 
             /* change to require some sort of "active" class*/
-            #reset-button:active {
+            .reset-button:active {
                 translate: 2px 0px;
             }
 
-            #exec-button:active {
+            .exec-button:active {
                 translate: 2px 0px;
             }
 
         }
 
-        #eject-button {
+        .eject-button {
             z-index: 3;
             position: absolute;
             bottom: 0.5px; /* idk */
             left: 0;
         }
 
-        #eject-button:active {
+        .eject-button:active {
             translate: 2px -1px;            
         }
     }
@@ -87,7 +88,7 @@
         grid-template-columns: auto;
         grid-template-rows: 30px 50px;
 
-        #fch-bar {
+        .fch-bar {
             --level: 25%;
             --offset: calc(100% - var(--level));
             margin-top: 6px;
@@ -99,7 +100,7 @@
             transition: background-position 0.5s linear;
         }
 
-        #multbars {
+        .multbars {
             display: flex;
             position: relative;
             justify-content: center;
@@ -207,7 +208,7 @@
     }
 }
 
-#multbars img {
+.multbars img {
     transition: background-position 0.5s linear;
 }
 

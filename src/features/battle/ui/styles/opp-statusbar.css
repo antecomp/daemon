@@ -1,4 +1,4 @@
-#opp-statusbar-container {
+.opp-statusbar-container {
     display: grid;
     width: 100%;
     grid-template-columns: 56px 1fr;
@@ -12,11 +12,11 @@
 
 }
 
-#opp-icon {
+.opp-icon {
     grid-area: 1 / 1 / 3 / 2;
 }
 
-#opp-bar {
+.opp-bar {
     grid-area: 1 / 2 / 2 / 3;
     display: grid;
     grid-template-columns: min-content auto;
@@ -36,7 +36,7 @@
         }
 
         & span {
-            background: #ffffff;
+            background: white;
             display: flex;
             height: 100%;
             align-items: center;
@@ -73,7 +73,7 @@
 
 
 
-#opp-hint-container {
+.opp-hint-container {
     grid-area: 2 / 2 / 3 / 3;
 
     display: flex;

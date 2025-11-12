@@ -101,13 +101,13 @@ export default function BattleCanvas(props: {
         <>
             <canvas
                 ref={(el) => {canvasRef = el}}
-                id="battle-bg"
+                class="battle-bg"
                 {...BATTLE_CANVAS_DIMENSIONS}
             />
             <img
                 ref={opponentSpriteRef}
                 src={props.sprite}
-                id="battle-sprite"
+                class="battle-sprite"
                 style={{
                     translate: props.spriteOffset ? `${props.spriteOffset.x}px ${props.spriteOffset.y}px` : "none",
                 }}

@@ -37,7 +37,7 @@ interface ActionMessagesProps {
 /** Component to actually render out the battle action messages. */
 export default function ActionMessages(props: ActionMessagesProps) {
     return (
-        <div id="action-messages">
+        <div class="action-messages">
             <TransitionGroup
                 enterClass="fade-enter"
                 enterToClass="fade-entered"
