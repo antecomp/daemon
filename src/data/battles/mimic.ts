@@ -2,7 +2,7 @@ import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import distortedGridShader from '@/assets/background-shaders/disgrid.glsl'
-import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
+import { mirrorPlan, PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from '@/core/battle/statuses/statuses';
@@ -17,7 +17,7 @@ mimicry_midround_dialogue_root.addMessageChain([
 ]);
 
 const mimicry_planbank = {
-    ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
+    ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
@@ -70,9 +70,9 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {
-                        ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'attack']),
-                        attack2: STOCK_PLANBANK.attack,
-                        attack3: STOCK_PLANBANK.attack
+                        ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'attack']),
+                        attack2: PLANNED_MOVE_REGISTRY.attack,
+                        attack3: PLANNED_MOVE_REGISTRY.attack
                     }
 
                     return buildSequenceFromWeightMap(

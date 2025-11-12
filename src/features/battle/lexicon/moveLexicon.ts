@@ -21,7 +21,7 @@ import stock_icon from "../assets/icons/runes/candle.png"
 import lantern_icon from '@/features/battle/assets/icons/runes/lantern.png';
 
 import { AssetURL } from "@/shared/types/misc.types"
-import { STOCK_PLANBANK } from '@/core/battle/moves/plannedMoves'
+import { PLANNED_MOVE_REGISTRY } from '@/core/battle/moves/plannedMoves'
 
 export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; description?: string };
 
@@ -100,7 +100,7 @@ export const BASE_MOVE_LEXICON = {
         icon: lantern_icon,
         description: 'Makes opponent vulnerable.'
     }
-} as const satisfies Record<keyof typeof STOCK_PLANBANK, MoveDisplayEntry>;
+} as const satisfies Record<keyof typeof PLANNED_MOVE_REGISTRY, MoveDisplayEntry>;
 // ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
 
 export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {

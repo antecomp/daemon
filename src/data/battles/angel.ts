@@ -4,12 +4,12 @@ import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
 import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
 import basic_grid_bg from '@/assets/artwork/battle_bgs/debug_angel_bg.png';
 import testShader from "@/assets/background-shaders/test.glsl";
-import { mirrorPlan, STOCK_PLANBANK } from "@/core/battle/moves/plannedMoves";
+import { mirrorPlan, PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
 const mimicry_planbank = {
-    ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
+    ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
@@ -89,9 +89,9 @@ export const OPPONENT_ANGEL: OpponentProfile = {
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {
-                        ...pick(STOCK_PLANBANK, ['evade', 'defend', 'repeat', 'attack']),
-                        attack2: STOCK_PLANBANK.attack,
-                        attack3: STOCK_PLANBANK.attack
+                        ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'attack']),
+                        attack2: PLANNED_MOVE_REGISTRY.attack,
+                        attack3: PLANNED_MOVE_REGISTRY.attack
                     }
 
                     return buildSequenceFromWeightMap(

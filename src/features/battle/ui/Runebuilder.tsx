@@ -3,7 +3,7 @@ import { BattleUIState, useBattleUIState } from "../Battle";
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
-import { PlayerRuneName, playerRuneNames } from "@/core/battle/moves/runeRegistry";
+import { PlayerRuneName, playerRuneNames } from "@/core/battle/moves/playerMoveRegistry";
 import { MoveTooltipContent } from "./MoveTooltipContent";
 
 const RUNEBUILDER_RADIUS = 89;

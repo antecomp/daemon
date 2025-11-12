@@ -62,8 +62,7 @@ export const mirrorPlan: PlannedMove = {
     }
 }
 
-// TODO: Rename this?
-export const STOCK_PLANBANK = {
+export const PLANNED_MOVE_REGISTRY = {
     repeat: repeatPlan,
     mirror: mirrorPlan,
 
