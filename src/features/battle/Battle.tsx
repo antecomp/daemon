@@ -4,8 +4,8 @@ import './ui/styles/battle-opening-animation.css'
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
-import { Accessor, createContext, onMount, useContext } from 'solid-js';
-import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
+import { onMount } from 'solid-js';
+import { BattleUIState, BattleUIStateContext, createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
@@ -20,36 +20,6 @@ import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-
-/** UI States for various stages in battle execution, used to conditionally lock some components. */
-export enum BattleUIState {
-    /** Waiting for user input (building sequence) */
-    WAITING, 
-    /** User input of correct size, waiting for "execute" */
-    READY, 
-    /** Running the clashes, animations and whatnot, (round execute) */
-    EXECUTING, 
-    /** Battle end state, (temporary lock while closing animation plays) */
-    END
-};
-
-interface BattleUIStateMachine {
-    battleUIState: Accessor<BattleUIState>,
-    setBattleUIState: (newState: BattleUIState) => void;
-}
-
-export const BattleUIStateContext = createContext<BattleUIStateMachine>();
-
-/**
- * Hook that wraps useContext(BattleUIStateContext) to subscribe to current BattleUIState.
- * 
- * Throws error if context cannot be obtained.
- */
-export const useBattleUIState = () => {
-    const context = useContext(BattleUIStateContext);
-    if (!context) throw new Error("useBattleUIState must be within BattleUIState provider (Battle Component)");
-    return context;    
-}
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -81,7 +51,7 @@ export default function Battle(props: {
                     classList={{"battle-end": bridge.battleUIState() === BattleUIState.END}}
                 >
                     <ActionMessages messages={bridge.actionMessages}/>
-                    <CornerRect class="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]} style={{'border-bottom': 'none'}}>
+                    <CornerRect ref={(r: HTMLElement) => bridge.attachToRegistry('battleView', r)} class="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]} style={{'border-bottom': 'none'}}>
                         <OpponentStatusBar
                             name={props.opponentProfile.display.name}
                             icon={props.opponentProfile.display.icon}

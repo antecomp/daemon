@@ -53,13 +53,14 @@ function OppPlanEntry(props: {
 export default function OpponentStatusBar(props: OpponentStatusBarProps) {
 
     const sequenceViewOpponentRef = createBattleRefAttacher('sequenceViewOpponent');
-
     const {showTooltip, hideTooltip, TooltipComponent } = createTooltip();
+
+    const opponentStatusBarRef = createBattleRefAttacher('opponentSprite');
 
     return (
         <>
         <TooltipComponent/>
-        <div class="opp-statusbar-container">
+        <div class="opp-statusbar-container" ref={opponentStatusBarRef}>
             <img src={props.icon} class="opp-icon"/>
             <div class="opp-bar">
                 <div class="nametag">

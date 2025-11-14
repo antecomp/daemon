@@ -14,6 +14,7 @@ interface CornerRecProps {
     class?: string
     style?: JSX.CSSProperties
     id?: string
+    ref?: HTMLDivElement | ((el: HTMLDivElement) => void) | undefined
     // Soley used for SceneContainer, feel free to add support for other event listeners l8r tho.
     onContextMenu?: () => void;
 }
@@ -42,6 +43,7 @@ export default function CornerRect(props: CornerRecProps) {
                 ...props.style
             } as JSX.CSSProperties}
             onContextMenu={props.onContextMenu}
+            ref={props.ref}
         >
             {props.children}
             {props.corners[0] && <img src={props.corners[0]} class="tl" alt="" />} {props.corners[1] && <img src={props.corners[1]} alt="" class="tr" />}

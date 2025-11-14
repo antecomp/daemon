@@ -1,10 +1,11 @@
 import { MoveLexicon } from "../lexicon/moveLexicon";
-import { BattleUIState, useBattleUIState } from "../Battle";
+import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge';
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
 import { PlayerRuneName, playerRuneNames } from "@/core/battle/moves/playerMoveRegistry";
 import { MoveTooltipContent } from "./MoveTooltipContent";
+import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
@@ -25,10 +26,12 @@ export default function Runebuilder(props: {
 
     const runePositions = new Map<string, Point>();
 
+    const runeBuilderRef = createBattleRefAttacher('runeBuilder');
+
     return (
         <>
             <TooltipComponent/>
-            <svg width={SVG_DIM} height={SVG_DIM} class="runebuilder">
+            <svg width={SVG_DIM} height={SVG_DIM} class="runebuilder" ref={runeBuilderRef as any}>
                 {/* Main container circle */}
                 <circle
                     cx={CENTER} cy={CENTER}

@@ -1,8 +1,8 @@
 import { Point } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { createProgram, createTexture } from "@/shared/utils/webgl.utils";
-import { onMount } from "solid-js";
-import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
+import { onMount, useContext } from "solid-js";
+import { BattleRefRegistryCTX, createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
 import { SCENE_DIMENSIONS, SIDEBAR_WIDTH } from "@/config/ui.config";
 
@@ -19,6 +19,8 @@ export default function BattleCanvas(props: {
 }) {
 
     let canvasRef!: HTMLCanvasElement;
+
+    const {attachToRegistry} = useContext(BattleRefRegistryCTX)!;
 
     onMount(() => {
         async function init() {
@@ -100,7 +102,7 @@ export default function BattleCanvas(props: {
     return (
         <>
             <canvas
-                ref={(el) => {canvasRef = el}}
+                ref={(el) => {canvasRef = el; attachToRegistry('battleBG', el)}}
                 class="battle-bg"
                 {...BATTLE_CANVAS_DIMENSIONS}
             />

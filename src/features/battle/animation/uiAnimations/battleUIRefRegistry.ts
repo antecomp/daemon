@@ -4,7 +4,20 @@
 import { RegistryAttacher } from "@/shared/utils/refRegistry";
 import { createContext, useContext } from "solid-js";
 
-export type BattleRefNames = ["sequenceViewPlayer", "sequenceViewOpponent", "opponentSprite"];
+export type BattleRefNames = [
+    "sequenceViewPlayer", 
+    "sequenceViewOpponent", 
+    "opponentSprite",
+
+    // For opening animation
+    "opponentStatusbar",
+    "actionBar",
+    "actionBarRight",
+    "actionBarLeft",
+    "runeBuilder",
+    "battleView",
+    "battleBG"
+];
 
 interface BattleRefRegistry {
     attachToRegistry: RegistryAttacher<BattleRefNames>

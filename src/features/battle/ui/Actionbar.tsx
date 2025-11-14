@@ -18,7 +18,7 @@ import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 
 import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
-import { BattleUIState, useBattleUIState } from '../Battle'
+import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge'
 import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
@@ -64,12 +64,9 @@ interface ActionbarProps {
 function mapMultiplier(multiplier: number): number {
     const oldMin = 1 / 5, oldMax = 5;
     const newMin = 0, newMax = 100;
-
     // Clamp x within the valid range
     multiplier = Math.max(oldMin, Math.min(multiplier, oldMax));
-
     return ((multiplier - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
-
 }
 
 const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => PLAYER_RUNE_REGISTRY[movename]);
@@ -82,6 +79,10 @@ export default function Actionbar(props: ActionbarProps) {
             props.forceBattleEnd(BattleOutcome.PlayerEject);
         }
     }
+
+    const actionBarRef = createBattleRefAttacher('actionBar');
+    const actionBarRightRef = createBattleRefAttacher('actionBarRight');
+    const actionBarLeftRef = createBattleRefAttacher('actionBarLeft');
 
     // Just buffer the plans by name, then we will map to the actual logical object from some bank
     const [planBuffer, setPlanBuffer] = createSignal<PlayerRuneName[]>([]);
@@ -127,8 +128,8 @@ export default function Actionbar(props: ActionbarProps) {
     const playerSequenceConRef = createBattleRefAttacher('sequenceViewPlayer');
 
     return (
-        <div class="battle-actionbar">
-            <div class="left">
+        <div class="battle-actionbar" ref={actionBarRef}>
+            <div class="left" ref={actionBarLeftRef}>
                 <img src={eject_button} class="eject-button"
                     onClick={handleEject}
                 />
@@ -152,7 +153,7 @@ export default function Actionbar(props: ActionbarProps) {
                 />
             </div>
             </div>
-            <div class="right">
+            <div class="right" ref={actionBarRightRef}>
                 <div class="moves" ref={playerSequenceConRef}>
                     <For each={planBuffer()}>
                         {(m, idx) => <SelectedMove moveName={m} lexicon={props.lexicon} isExecuting={idx() == props.currentlyExecutingMoveIndex()}/>}

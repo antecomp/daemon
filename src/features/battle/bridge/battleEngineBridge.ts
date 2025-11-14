@@ -1,9 +1,9 @@
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { BattleReactions } from "@/core/battle/model/battleReactions";
-import { BattleOutcome, DamageMultipliers } from "@/core/battle/model/battle";
+import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
-import { createSignal } from "solid-js";
+import { Accessor, createContext, createSignal, useContext } from "solid-js";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
@@ -11,7 +11,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { makeSidesMap, mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
+import { mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_CLEAR_STAGGER, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "../config/timings.config";
@@ -30,12 +30,35 @@ import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
 
+/** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
-    WAITING, READY, EXECUTING, 
-    END // Temporary state when animating the UI closing on battle end.    
+    /** Waiting for user input (building sequence) */
+    WAITING,
+    /** User input of correct size, waiting for "execute" */
+    READY,
+    /** Running the clashes, animations and whatnot, (round execute) */
+    EXECUTING,
+    /** Battle end state, (temporary lock while closing animation plays) */
+    END
 }
 
-const emptyMults = makeSidesMap({incoming: 0, outgoing: 0}, {incoming: 0, outgoing: 0});
+interface BattleUIStateMachine {
+    battleUIState: Accessor<BattleUIState>;
+    setBattleUIState: (newState: BattleUIState) => void;
+}
+
+export const BattleUIStateContext = createContext<BattleUIStateMachine>();
+
+/**
+ * Hook that wraps useContext(BattleUIStateContext) to subscribe to current BattleUIState.
+ *
+ * Throws error if context cannot be obtained.
+ */
+export const useBattleUIState = () => {
+    const context = useContext(BattleUIStateContext);
+    if (!context) throw new Error("useBattleUIState must be within BattleUIState provider (Battle Component)");
+    return context;
+};
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
@@ -61,9 +84,10 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
     const [currentMoveClash, setCurrentMoveClash] = createSignal<Sides<{moveName: MoveLexeme, tags: MoveTags | undefined}> | undefined>();
 
-    const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(emptyMults);
+    const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(ZERO_MULTIPLIERS);
 
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
+    attachToConsole(refRegistry, "BATTLE_REF_REGISTRY");
 
     const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
     const appendActionMessage: ActionMessageAppender = (text, iconName) => {
@@ -177,7 +201,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         async MoveEnd({combatants}) {
-            setDisplayMults(emptyMults)
+            setDisplayMults(ZERO_MULTIPLIERS)
             refreshCombatantInfo(combatants);
             await sleep(MOVE_DELAY);
         },
@@ -193,7 +217,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
-            setDisplayMults(emptyMults);
+            setDisplayMults(ZERO_MULTIPLIERS);
             refreshCombatantInfo(combatants);
             
             switch(outcome) {
