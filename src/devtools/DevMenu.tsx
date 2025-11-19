@@ -41,6 +41,7 @@ import bt4 from '@/assets/placeholders/battletut/tut4.png'
 import bt5 from '@/assets/placeholders/battletut/tut5.png'
 import bt6 from '@/assets/placeholders/battletut/tut6.png'
 import sleep from "@/shared/utils/sleep";
+import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 
 export default function DebugMenu() {
 
@@ -54,7 +55,7 @@ export default function DebugMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
