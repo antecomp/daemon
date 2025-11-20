@@ -9,7 +9,9 @@ export type DialogueNode = {
         // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
     options: DialogueOption[]
     next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
+
     sideEffect?: (ctx?: DialogueContext) => void,
+    waitFor?: (ctx?: DialogueContext) => Promise<void>
 }
 
 export type RenderOrNode = DialogueRender | DialogueNode
@@ -43,7 +45,7 @@ export class DialogueNodeBuilder {
     constructor(public readonly node: DialogueNode) {};
 
     /* Attach a linear successor to node & return builder for it. */
-    n(
+    next(
         renderOrNode: RenderOrNode, 
         name?: string
     ): DialogueNodeBuilder {
@@ -57,7 +59,11 @@ export class DialogueNodeBuilder {
         return new DialogueNodeBuilder(child);
     }
 
-    chain(messages: RenderOrNode[]): DialogueNodeBuilder {
+    n( renderOrNode: RenderOrNode, name?: string) {
+        return this.next(renderOrNode, name);
+    }
+
+    chain(...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach(message => {
             cur = cur.n(message);
@@ -65,7 +71,7 @@ export class DialogueNodeBuilder {
         return cur;
     }
 
-    chainAlt(first: string, second: string, messages: RenderOrNode[]): DialogueNodeBuilder {
+    chainAlt(first: string, second: string, ...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach((m, i) => {
             cur = cur.n(m, i % 2 === 0 ? first : second);
@@ -73,14 +79,18 @@ export class DialogueNodeBuilder {
         return cur;
     }
 
-    // option
-    o(
-        summaryText: string,
-        fullText: string,
+    option(
+        optionText: [string, string] | string,
         renderOrNode?: RenderOrNode,
         name?: string,
         optionConfig?: DialogueOptionConfig
     ): DialogueNodeBuilder {
+        const summaryText = typeof optionText == 'string'
+            ? optionText
+            : optionText[0]
+        const fullText = typeof optionText == 'string'
+            ? optionText
+            : optionText[1]
         // Existing Node.
         if(renderOrNode && isNode(renderOrNode)) {
             this.node.options.push({summaryText, fullText, next: renderOrNode, ...optionConfig});;
@@ -121,6 +131,11 @@ export class DialogueNodeBuilder {
         return this;
     }
 
+    makeNodeWaitFor(wf: (ctx?: DialogueContext) => Promise<void>): DialogueNodeBuilder {
+        this.node.waitFor = wf;
+        return this;
+    }
+
     unwrap(): DialogueNode {
         return this.node;
     }
@@ -134,13 +149,11 @@ export class DialogueNodeBuilder {
     }
 
     addBranch(
-        summary: string,
-        full: string,
-        // TODO change to also just take string
+        optionText: [string, string] | string,
         root: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
         // Anticipating that this returns the tail. r => r.n("nklsfd").n("sdfjsdfkj")
         // the result of this is attached to _caseTails.
-        subtreeBuilder: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
+        subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
         optionConfig?: DialogueOptionConfig
     ) {
         this.initializeBranches();
@@ -149,9 +162,11 @@ export class DialogueNodeBuilder {
             ? root
             : makeDialogueNode(root[0], root[1]);
         
-        const rootBuilder = this.o(summary, full, rootNode, undefined, optionConfig);
+        const rootBuilder = this.option(optionText, rootNode, undefined, optionConfig);
 
-        const tailNode = subtreeBuilder(rootBuilder).node;
+        const tailNode = subtreeBuilder
+            ? subtreeBuilder(rootBuilder).node
+            : rootNode
 
         this._branchTails?.push(tailNode);
         
@@ -161,8 +176,8 @@ export class DialogueNodeBuilder {
     addCarBranch(
         summaryText: string,
         callText: string,
-        response: DialogueNode | [DialogueRender, string] | DialogueRender, // TODO change to also just take string
-        subtreeBuilder: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
+        response: DialogueNode | [DialogueRender, string] | DialogueRender,
+        subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
         optionConfig?: DialogueOptionConfig
     ) {
         this.initializeBranches();
@@ -176,7 +191,9 @@ export class DialogueNodeBuilder {
 
         const responseBuilder = this.car(summaryText, callText, responseNode, undefined, optionConfig);
 
-        const tailNode = subtreeBuilder(responseBuilder).node;
+        const tailNode = subtreeBuilder
+            ? subtreeBuilder(responseBuilder).node
+            : responseNode
 
         this._branchTails?.push(tailNode);
 
@@ -206,7 +223,6 @@ export class DialogueNodeBuilder {
         fn(this);
         return this;
     }
-
 
 }
 
