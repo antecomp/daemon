@@ -39,7 +39,7 @@ export default function BarScene() {
 
     function spawnBattleTutorial() {
         startBattle(OPPONENT_SERPENT);
-        sleep(7500).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
+        sleep(3250).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
     }
 
     return (
@@ -63,9 +63,6 @@ export default function BarScene() {
             shadow-mode="pcf" 
             perspective="800"
             shadowmap-type="pcf"
-            // fog-mode="linear"
-            // fog-color="#000000"
-            // fog-near="0" fog-far="1050"
         >
 
             <PlayerCam
@@ -78,29 +75,6 @@ export default function BarScene() {
 
             <lume-ambient-light intensity={1}/>
             <lume-point-light position="-500 -180" intensity={1250} cast-shadow="true"/>
-            {/* <lume-point-light position="0 -100 0" intensity={200} cast-shadow="true"/> */}
-            {/* <lume-directional-light position="201 -447 229" intensity={5} cast-shadow="true" /> */}
-
-            {/* <lume-collada-model
-                id="scenebase"
-                src={barscene_model}
-                scale="50 50 50"
-                recieve-shadow="true"
-                cast-shadow="true"
-                align-point="0.5 0.5"
-                mount-point="0.5 0.5"
-            /> */}
-
-            {/* <lume-gltf-model
-                id="scenebase"
-                ref={slopRef}
-                src={barscene_glb}
-                scale="5 5 5"
-                // recieve-shadow="true"
-                // cast-shadow="true"
-                align-point="0.5 0.5"
-                mount-point="0.5 0.5"
-            /> */}
 
             <lume-obj-model
                 ref={aaa}

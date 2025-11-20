@@ -1,6 +1,7 @@
 import './ui/styles/battle.css';
 
-import './ui/styles/battle-opening-animation.css'
+// TODO: Convert this opening animation to be fully scripted so we can properly await/time it.
+//import './ui/styles/battle-opening-animation.css'
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
