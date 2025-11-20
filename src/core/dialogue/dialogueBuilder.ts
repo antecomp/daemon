@@ -1,0 +1,237 @@
+import { MAIN_CHARACTER_NAME } from "@/config/init.config";
+import { DialogueContext, DialogueOptionConfig, DialogueRender } from "./dialogueNode.types";
+
+// Overriding the type for now.
+export type DialogueNode = {
+    id: string;
+    name: string
+    render: DialogueRender
+        // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
+    options: DialogueOption[]
+    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
+    sideEffect?: (ctx?: DialogueContext) => void,
+}
+
+export type RenderOrNode = DialogueRender | DialogueNode
+
+export interface DialogueOption extends DialogueOptionConfig {
+    summaryText: string
+    fullText: string
+    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
+}
+
+export const EMPTY_RENDER = "";
+export const VISUALIZER = "VISUALIZER";
+
+function isNode(x: any): x is DialogueNode {
+    return typeof x === 'object' && 'id' in x;
+}
+
+let nodeCounter = 0;
+
+function makeDialogueNode(render: DialogueRender, name: string): DialogueNode {
+    const id = `node-${nodeCounter++}`;
+    return {
+        id,
+        name,
+        render,
+        options: []
+    }
+}
+
+export class DialogueNodeBuilder {
+    constructor(public readonly node: DialogueNode) {};
+
+    /* Attach a linear successor to node & return builder for it. */
+    n(
+        renderOrNode: RenderOrNode, 
+        name?: string
+    ): DialogueNodeBuilder {
+        if(isNode(renderOrNode)) {
+            this.node.next = renderOrNode;
+            return new DialogueNodeBuilder(renderOrNode);
+        }
+
+        const child = makeDialogueNode(renderOrNode, name ?? this.node.name);
+        this.node.next = child;
+        return new DialogueNodeBuilder(child);
+    }
+
+    chain(messages: RenderOrNode[]): DialogueNodeBuilder {
+        let cur: DialogueNodeBuilder = this;
+        messages.forEach(message => {
+            cur = cur.n(message);
+        });
+        return cur;
+    }
+
+    chainAlt(first: string, second: string, messages: RenderOrNode[]): DialogueNodeBuilder {
+        let cur: DialogueNodeBuilder = this;
+        messages.forEach((m, i) => {
+            cur = cur.n(m, i % 2 === 0 ? first : second);
+        });
+        return cur;
+    }
+
+    // option
+    o(
+        summaryText: string,
+        fullText: string,
+        renderOrNode?: RenderOrNode,
+        name?: string,
+        optionConfig?: DialogueOptionConfig
+    ): DialogueNodeBuilder {
+        // Existing Node.
+        if(renderOrNode && isNode(renderOrNode)) {
+            this.node.options.push({summaryText, fullText, next: renderOrNode, ...optionConfig});;
+            return new DialogueNodeBuilder(renderOrNode);
+        }
+        if(renderOrNode) {
+            const child = makeDialogueNode(renderOrNode, name ?? MAIN_CHARACTER_NAME);
+            this.node.options.push({summaryText, fullText, next: child, ...optionConfig});
+            return new DialogueNodeBuilder(child);
+        }
+        // termination option
+        this.node.options.push({summaryText, fullText, ...optionConfig});
+        return this; // stay at current node, nothing was attached.
+    }
+
+    // option that returns "this" instead, with anticipation of chaining.
+    oc(
+        summaryText: string,
+        fullText: string,
+        renderOrNode: RenderOrNode,
+        name?: string,
+        optionConfig?: DialogueOptionConfig
+    ): DialogueNodeBuilder {
+        this.o(summaryText, fullText, renderOrNode, name, optionConfig);
+        return this;
+    }
+
+    car(
+        summaryText: string,
+        callText: string,
+        response: RenderOrNode,
+        responderName?: string,
+        optionConfig?: DialogueOptionConfig
+    ): DialogueNodeBuilder {
+        const callNode = makeDialogueNode(callText, MAIN_CHARACTER_NAME);
+        this.node.options.push({summaryText, fullText: callText, next: callNode, ...optionConfig});
+
+        if(isNode(response)) {
+            callNode.next = response;
+            return new DialogueNodeBuilder(response);
+        }
+
+        const respNode = makeDialogueNode(response, responderName ?? this.node.name);
+        callNode.next = respNode;
+        return new DialogueNodeBuilder(respNode);
+    }
+
+    // should also make a car that returns "this" instead.
+    ccar(
+        summaryText: string,
+        callText: string,
+        response: RenderOrNode,
+        responderName?: string,
+        optionConfig?: DialogueOptionConfig        
+    ) {
+        this.car(summaryText, callText, response, responderName, optionConfig);
+        return this;
+    }
+
+    attachSideEffect(ef: ((ctx?: DialogueContext | undefined) => void)) {
+        this.node.sideEffect = ef;
+        return this;
+    }
+
+    unwrap(): DialogueNode {
+        return this.node;
+    }
+
+
+    // EXPERIMENTING TO GET RID OF THAT GOD-FORSAKEN COLLAPSE POINT STUFF.
+    private _branchTails?: DialogueNode[];
+
+    private initializeBranches() {
+        if(!this._branchTails) this._branchTails = [];
+    }
+
+    addBranch(
+        summary: string,
+        full: string,
+        // TODO change to also just take string
+        root: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
+        // Anticipating that this returns the tail. r => r.n("nklsfd").n("sdfjsdfkj")
+        // the result of this is attached to _caseTails.
+        subtreeBuilder: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
+        optionConfig?: DialogueOptionConfig
+    ) {
+        this.initializeBranches();
+
+        const rootNode = isNode(root)
+            ? root
+            : makeDialogueNode(root[0], root[1]);
+        
+        const rootBuilder = this.o(summary, full, rootNode, undefined, optionConfig);
+
+        const tailNode = subtreeBuilder(rootBuilder).node;
+
+        this._branchTails?.push(tailNode);
+        
+        return this;
+    }
+
+    addCarBranch(
+        summaryText: string,
+        callText: string,
+        response: DialogueNode | [DialogueRender, string] | DialogueRender, // TODO change to also just take string
+        subtreeBuilder: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
+        optionConfig?: DialogueOptionConfig
+    ) {
+        this.initializeBranches();
+
+        // why.
+        const responseNode = isNode(response)
+            ? response
+            : typeof response == 'string' || typeof response == 'function'
+                ? makeDialogueNode(response, this.node.name)
+                : makeDialogueNode(response[0], response[1])
+
+        const responseBuilder = this.car(summaryText, callText, responseNode, undefined, optionConfig);
+
+        const tailNode = subtreeBuilder(responseBuilder).node;
+
+        this._branchTails?.push(tailNode);
+
+        return this;
+    }
+
+    // Join all branches to a single collapse node, allowing us to continue off it.
+    joinBranches(
+        joinPoint: RenderOrNode,
+        name?: string
+    ) {
+        if (!this._branchTails) throw new Error("Cannot join Dialogue Branches as none are defined off this node.");
+        const tails = this._branchTails;
+        const joinNode = isNode(joinPoint)
+            ? joinPoint
+            : makeDialogueNode(joinPoint, name ?? this.node.name);
+        for (const t of tails) t.next = joinNode;
+        this._branchTails = undefined; // clear.
+        return new DialogueNodeBuilder(joinNode);
+    }
+
+
+}
+
+export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNodeBuilder) => void): DialogueNode {
+    const root = makeDialogueNode(render, name);
+    const rb = new DialogueNodeBuilder(root);
+    fn(rb); // build subtree here.
+    return root; // but return the root to be attached.
+}
+
+export function createDialogueBuilder(render: DialogueRender, name: string = MAIN_CHARACTER_NAME): DialogueNodeBuilder {
+    return new DialogueNodeBuilder(makeDialogueNode(render, name));
+}
