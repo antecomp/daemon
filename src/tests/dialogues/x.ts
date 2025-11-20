@@ -1,4 +1,5 @@
-import { createDialogueBuilder, VISUALIZER } from "@/core/dialogue/dialogueBuilder";
+import { createDialogueBuilder, inline, VISUALIZER } from "@/core/dialogue/dialogueBuilder";
+import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 
 const ARDA = "Arda";
 const MAN = "The Man";
@@ -35,22 +36,23 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
 .addCarBranch(
     "Yes", "Yeah, of course.",
     "Plus, I have your VLID, and you're the only client I've had in the past 3 weeks",
-    r => r.chain(
-        "I'll know it's you if ASCM comes knocking on my door.",
-        "My team works on homebrewed DVs daily, we can just as easily bypass an existing one."
-    )
-    .chainAlt(
-        ARDA, MAN,
-        "Are you done threatening me so we can get on with it?",
-        "I'm not threatening you, just some... terms and conditions.",
-        "Right. Moving on."
-    )
-    .next("He smirks, though it's hard to tell if it's out of amusement or annoyance", VISUALIZER)
-    .next("Moving on...", MAN)
-    .chain(
-        "What you're getting isn't a patch or plug-in, it's a permanent bypass.",
-        "Burn once. Firmware update, you know how it goes."
-    )
+    r => r
+        .chain(
+            "I'll know it's you if ASCM comes knocking on my door.",
+            "My team works on homebrewed DVs daily, we can just as easily bypass an existing one."
+        )
+        .chainAlt(
+            ARDA, MAN,
+            "Are you done threatening me so we can get on with it?",
+            "I'm not threatening you, just some... terms and conditions.",
+            "Right. Moving on."
+        )
+        .next("He smirks, though it's hard to tell if it's out of amusement or annoyance", VISUALIZER)
+        .next("Moving on...", MAN)
+        .chain(
+            "What you're getting isn't a patch or plug-in, it's a permanent bypass.",
+            "Burn once. Firmware update, you know how it goes."
+        )
 )
 .addCarBranch(
     "Questions", "Can I ask some questions first?",
@@ -79,10 +81,6 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
         .next("Burn once. Only way to get it to work.")
 )
 .joinBranches("So... when you slot it, you're exposed. That clear?")
-
-
-// This next part is going to be difficult because we have two different merge points!!!
-
 .addCarBranch(
     'Ask a technical question', 'Is it disabling my DV entirely? SOunds suicidal.',
     ["He raises an eyebrow, slightly, a hint that you've said something outside his usual script", VISUALIZER],
@@ -105,7 +103,25 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
     "I would envy your confidence if I didn't know it will get you killed.",
     r => r.n("Remember, your DV will have to be manually controlled. Don't get too comfortable.")
 )
-.addCarBranch(
+.mergeBranches( // Combine the first two branches onto a subtree we quickly build. This subtree will become a new merged branch tail.
+    [EMPTY_RENDER, EMPTY_RENDER], // Hinge point to force player to pick a single available text option.
+    x => x
+        .option(
+            ['Guide', "There's no documentation for manual mode..."],
+            "No documentation for manual mode, at least anything public."
+        )
+        .next("This mod come with a guide?")
+        .next("He snorts", VISUALIZER)
+        .next("You have to learn how to select sigils, and thread runes, on your own.", MAN)
+        .next("If you aren't quick on the pickup, you aren't meant for the Fringe.")
+        .next("His tone shifts.", VISUALIZER)
+        .next("Daemons don't exactly make sigils, but whatever they send at you will be rendered as such.", MAN)
+        .chain("Try to build something that counteracts it.", "Closest thing I got to a guide.")
+        .next("Right. Any other protocol besides \"don't die?\"", ARDA)
+        .next("He exhales slowly, as if the question is an inconvenience.", VISUALIZER)
+        .next("Yeah, one more thing...", MAN)
+)
+.addCarBranch( // Add another branch that skips over the above subtree.
     'No', 'No really.',
     "Look, if you don't know what the hell the mod is doing, I can't help you.",
     nb => nb
@@ -115,7 +131,32 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
             "In any case, you'll have to prove your worth to some degree to get the mod working anyway."
         )
         .n("What does that mean?", ARDA)
+) // Subtree (merged first two branches) and the above branch all funnel into this single point...
+.joinBranches("The cache is sealed. Encrypted, obfuscated - whatever term makes you feel smart.", MAN)
+.chain(
+    "The point is, we don't open it. Keeps the chain clean.",
+    "You need to crack it yourself. That's part of the entry.",
+    "You solve it, mod works. You don't solve it: deadlock, your fault."
 )
+.addCarBranch(
+    'Insurance', "For the amount I paid, I would hope there'd be some insurance.",
+    ['He lets out a dry, mirthless chuckle', VISUALIZER],
+    i => i
+        .next("Fringe net doesn't come with insurance.", MAN)
+        .next("ASCM doesn't even bail out their own - company policy, or so I've heard.")
+)
+.addBranch(
+    ['Say Nothing', '...'],
+    ["You'll figure it out, kid.", MAN]
+)
+.joinBranches("He slides a small diskette across the table", VISUALIZER)
+// Initialization of dialogue defines these methods and saves them in CTX.
+.attachSideEffect(ctx => ctx?.actions?.cacheHandoverAnimation())
+.next("Enjoy your contraband. Next point of contact is on the diskette.", MAN)
+.attachSideEffect(ctx => ctx?.actions?.returnCamera())
+.next("Before you say anything more, the man abruptly rises out of his chair and departs.")
+.attachSideEffect(ctx => ctx?.actions?.departTheMan())
+// Dialogue Naturally Ends here.
 
 
 

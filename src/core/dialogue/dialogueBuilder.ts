@@ -214,6 +214,31 @@ export class DialogueNodeBuilder {
         this._branchTails = undefined; // clear.
         return new DialogueNodeBuilder(joinNode);
     }
+    
+    // Merge branches into a single branch, combinining subtrees, but without advancing to the join node.
+    mergeBranches(
+        joinPoint: DialogueNode | [DialogueRender, string],
+        subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder // Build a subtree here so we can get its tail!
+    ) {
+        if(!this._branchTails) throw new Error("Cannot merge dialogue branches as none are defined off this node.");
+        const tails = this._branchTails;
+
+        const joinNode = isNode(joinPoint)
+            ? joinPoint
+            : makeDialogueNode(joinPoint[0], joinPoint[1]);
+
+        for (const t of tails) t.next = joinNode;
+
+        const joinBuilder = new DialogueNodeBuilder(joinNode);
+
+        const mergedTail = subtreeBuilder
+            ? subtreeBuilder(joinBuilder).node
+            : joinNode
+
+        this._branchTails = [mergedTail];
+
+        return this;
+    }
 
 
     // VERY BASIC HELPER THAT LETS YOU DO A LOT OF COOL STUFF EASILY LOL.
