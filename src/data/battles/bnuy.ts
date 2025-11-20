@@ -13,7 +13,7 @@ const BNUY_PLANBANK = {
 
 export const OPPONENT_BNUY: OpponentProfile = {
     display: {
-        name: "Bnuy",
+        name: "Actionable Threat",
         icon: bnuy_icon,
         sprite: bnuy_sprite,
         lexicon: {
@@ -24,7 +24,7 @@ export const OPPONENT_BNUY: OpponentProfile = {
                 label: 'frolic'
             },
         },
-        spriteOffset: {x: -30, y: 0},
+        spriteOffset: {x: -18, y: 22},
         backgroundShader: fractal_shader
     },
 
