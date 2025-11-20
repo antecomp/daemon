@@ -1,16 +1,16 @@
 import { MusicManager } from "@/core/audio/musicManager";
-import { startBattle } from "@/core/battle/startBattle";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import { OPPONENT_ANTHOUSAI } from "@/data/battles/anthousai";
-import { OPPONENT_DEBUG_ANGEL } from "@/data/battles/debugangel";
-import { OPPONENT_MIMICRY } from "@/data/battles/mimicry";
-import { OPPONENT_NEWPORTS } from "@/data/battles/newports";
-import { OPPONENT_PANOPTES } from "@/data/battles/panoptes";
 import { playTextOverlay, TextOverlaySequence } from "@/features/text-overlay/TextOverlay";
 import openingTextScene from "@/scenes/Elevator/data/opening_textscene";
 import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { For } from "solid-js";
+
+import { OPPONENT_MIMICRY as OPPONENT_MIMICRY_NEW } from "@/data/battles/mimic";
+import { OPPONENT_ANGEL } from "@/data/battles/angel";
+
+import { startBattle as startNewBattle } from "@/features/battle/startBattle";
+import { OPPONENT_SERPENT } from "@/data/battles/serpent";
 
 const eggggg: TextOverlaySequence = [
     {segments: [{text: "This is the first line, one color", color: "red"}], sideEffect: () => console.log("side effect triggered")}, 
@@ -29,6 +29,20 @@ const dmnintro: TextOverlaySequence = [
     {segments: [{text: 'they will not approach you.'}]},
 ]
 
+import tut1 from '@/assets/placeholders/tut_1.png'
+import tut2 from '@/assets/placeholders/tut_2.png'
+import tut3 from '@/assets/placeholders/tut_3.png'
+import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
+
+import bt1 from '@/assets/placeholders/battletut/tut1.png'
+import bt2 from '@/assets/placeholders/battletut/tut2.png'
+import bt3 from '@/assets/placeholders/battletut/tut3.png'
+import bt4 from '@/assets/placeholders/battletut/tut4.png'
+import bt5 from '@/assets/placeholders/battletut/tut5.png'
+import bt6 from '@/assets/placeholders/battletut/tut6.png'
+import sleep from "@/shared/utils/sleep";
+import { OPPONENT_BNUY } from "@/data/battles/bnuy";
+
 export default function DebugMenu() {
 
     return (
@@ -41,9 +55,9 @@ export default function DebugMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_DEBUG_ANGEL, OPPONENT_NEWPORTS, OPPONENT_PANOPTES, OPPONENT_MIMICRY, OPPONENT_ANTHOUSAI
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY
             ]}>
-                {opp => <button onClick={() => startBattle(opp)}>{opp.name}</button>}
+                {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
             <h2>MUSIC STACK</h2>
             <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-496757.wav"})}>SONG 1</button>
@@ -56,6 +70,13 @@ export default function DebugMenu() {
             <button onclick={() => playTextOverlay(openingTextScene)}>sfdkjjsdfk</button>
             <h3>DIALOGUES</h3>
             <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
+            <h3>Tutorials</h3>
+            <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
+
+            <button onClick={() => {
+                startNewBattle(OPPONENT_SERPENT);
+                sleep(9000).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
+            }}>Battle With Tutorial</button>
         </div>
     )
 }

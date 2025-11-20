@@ -1,58 +1,55 @@
-import { overlayAnimations } from "@/core/battle/animation/overlayAnimsRegistry";
-import { overlayAnimRequests } from "@/core/battle/animation/requestOverlayAnim";
-import { createEffect } from "solid-js";
+import './styles/overlay-animator.css';
 
-export default function OverlayAnimator() {
-    let overlayConRef: HTMLDivElement | undefined;
+import { Accessor, createEffect } from "solid-js";
+import { OverlayAnimData, OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
+import { overlayAnimationDefinitions } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
-    const processedAnimations = new Set(); // Track animations already processed. Reference comment below.
-    
+export default function OverlayAnimator(props: {
+    overlayAnimationRequests: Accessor<OverlayAnimReq[]>
+}) {
+    let overlayContainerRef!: HTMLDivElement;
+
+    const processedAnimationRequests = new Set();
+
     createEffect(() => {
-        overlayAnimRequests().forEach(({name, position, id, onFinish}) => {
+            props.overlayAnimationRequests().forEach(({name, position, id, onFinish}) => {
 
-            // Prevent duplicates, since signal change will append all animations again, INCLUDING ALREADY PLAYING ONES,
-            // we have to make sure to skip those.
-            if (processedAnimations.has(id)) return;
-            processedAnimations.add(id); // Mark animation as processed
+                // Skip animations we've already triggered.
+                if(processedAnimationRequests.has(id)) return; 
+                processedAnimationRequests.add(id);
+                
+                const config = overlayAnimationDefinitions[name] as OverlayAnimData;
+                if (!config) {
+                    console.error(`Animation "${name}" not found`);
+                    return;
+                }
 
-            const config = overlayAnimations[name];
-            if (!config) {
-                console.error(`Animation "${name}" not found`);
-                return;
-            }
+                const {src, width, height} = config;
 
-            const { src, width, height } = config;
+                const video = document.createElement('video');
+                video.src = src;
+                video.autoplay = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.className = "overlay-animation"
+                video.width = width; video.height = height;
+                video.style.translate = `${position[0]}px ${position[1]}px`;
+                video.style.mixBlendMode = config.blendMode ?? 'difference';
 
-            const video = document.createElement("video");
-            video.src = src;
-            video.autoplay = true;
-            video.muted = true;
-            video.playsInline = true;
+                video.onended = () => {
+                    //console.log("overlay animation done playing");
+                    processedAnimationRequests.delete(id);
+                    video.remove();
+                    onFinish();
+                }
 
-            Object.assign(video.style, {
-                position: "absolute",
-                translate: `${position[0]}px ${position[1]}px`,
-                width: width,
-                height: height,
-                mixBlendMode: "difference",
-                pointerEvents: "none",
-                willChange: "transform",
-                transform: "translateZ(0)"
-            });
+                overlayContainerRef.appendChild(video);
+                video.play();
+            })
+    });
 
-            video.onended = () => {
-                console.log("done playing!");
-                processedAnimations.delete(id);
-                video.remove();
-                onFinish();
-            };
-
-            overlayConRef?.appendChild(video);
-            video.play();
-
-        })
-    })
-
-
-    return <div id="overlay-animation-container" ref={overlayConRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", "pointer-events": "none" }} />;
+    return (<div 
+        class="overlay-animation-container"
+        ref={overlayContainerRef}
+    />)
 }

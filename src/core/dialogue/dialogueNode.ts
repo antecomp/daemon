@@ -1,5 +1,5 @@
 import { DialogueContext, DialogueNode, DialogueRender } from "./dialogueNode.types";
-import { DEFAULT_DIALOGUE_SENDER } from "../../config/init.config";
+import { MAIN_CHARACTER_NAME } from "../../config/init.config";
 
 let nodeCounter = 0;
 
@@ -48,7 +48,7 @@ export function createDialogueNode(render: DialogueRender, name: string): Dialog
             }
 
             // Generate New If Only Given A Render Param
-            const child = createDialogueNode(renderOrNode, name ?? DEFAULT_DIALOGUE_SENDER);
+            const child = createDialogueNode(renderOrNode, name ?? MAIN_CHARACTER_NAME);
             this.options.push({
                 summaryText,
                 fullText,
@@ -59,7 +59,7 @@ export function createDialogueNode(render: DialogueRender, name: string): Dialog
 
 
         addCAROptionChild(summaryText, fullText, response, senderName, responderName, config) {
-            const callNode = createDialogueNode(fullText, senderName ?? DEFAULT_DIALOGUE_SENDER);
+            const callNode = createDialogueNode(fullText, senderName ?? MAIN_CHARACTER_NAME);
             this.options.push({
                 summaryText, fullText, next: callNode, ...config
             })

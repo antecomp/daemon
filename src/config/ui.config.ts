@@ -4,6 +4,11 @@ export const SCENE_DIMENSIONS = {
     height: 600
 };
 
+/** Width of the UI sidebar in pixels.
+* Warning: Not actually enforced as a property of sidebar. Need to update. 
+* */
+export const SIDEBAR_WIDTH = 45;
+
 /** Inset of the scene context menu (from cursor position) */
 export const SCENE_MENU_OFFSET = 26;
 

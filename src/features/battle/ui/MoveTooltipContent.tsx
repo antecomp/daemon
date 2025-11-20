@@ -1,21 +1,29 @@
-import { AssetURL } from "@/shared/types/misc.types"
-import './move-tooltip-content.css'
+import './styles/move-tooltip-content.css'
+import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
+
+import br from '@/assets/ui/corners/s4/tl.png'
+import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect'
 
 interface MoveTooltipContentProps {
-    icon: AssetURL
-    displayName: string
-    description: string
-    rb?: true
+    runeName: MoveLexeme
+    lexicon: MoveLexicon
 }
 
+const MOVE_TOOLTIP_SIZE = 225;
+
 export const MoveTooltipContent = (props: MoveTooltipContentProps) => {
+
+    const entry = props.lexicon[props.runeName]
+
     return (
-        <div class='move-tooltip-content'>
+        <CornerRect width={`${MOVE_TOOLTIP_SIZE}px`} class='move-tooltip-content' borderSize={1} borderType='solid white' corners={[undefined, undefined, undefined, br]}>
             <div class="header">
-                <p>{props.displayName}</p>
-                <img src={props.icon}/>
+                <p>{entry.label}</p>
+                <img src={entry.icon}/>
             </div>
-            <p>{props.description}</p>
-        </div>
+            <p>{entry.description}</p>
+            <br />
+            <p style={{color: 'gray'}}>{entry.lore}</p>
+        </CornerRect>
     )
 }

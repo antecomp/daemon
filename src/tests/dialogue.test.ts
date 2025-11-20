@@ -9,7 +9,7 @@ import {
   VISUALIZER,
 } from "@/core/dialogue/dialogueNode";
 import { DialogueContext, DialogueNode } from "@/core/dialogue/dialogueNode.types";
-import { DEFAULT_DIALOGUE_SENDER } from "@/config/init.config";
+import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 
 describe("DialogueNode helpers", () => {
   it("createDialogueNode basics and id uniqueness", () => {
@@ -43,7 +43,7 @@ describe("DialogueNode helpers", () => {
     expect(root.options.length).toBe(1);
     const opt = root.options[0];
     expect((opt.next as DialogueNode).render).toBe("opt-child");
-    expect((opt.next as DialogueNode).name).toBe(DEFAULT_DIALOGUE_SENDER);
+    expect((opt.next as DialogueNode).name).toBe(MAIN_CHARACTER_NAME);
     expect(child).toBe(opt.next);
   });
 

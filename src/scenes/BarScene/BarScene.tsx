@@ -7,6 +7,27 @@ import applyShadows from "@/3d/pipeline/applyShadows";
 import starfield from "@/assets/3d/textures/starfield.png"
 import PlayerCam from "@/3d/camera/PlayerCam";
 
+import mimicry_icon from '../../assets/artwork/dæmons/mimicry_icon.png';
+import serpent_icon from '../../assets/artwork/dæmons/snaek_icon.png';
+import './battle-test.css';
+
+import cr from '../../assets/ui/corners/s3/tl.png';
+import CornerRect from "@/shared/ui/primitives/corner-rect/CornerRect";
+import { OPPONENT_SERPENT } from "@/data/battles/serpent";
+import { startBattle } from "@/features/battle/startBattle";
+
+
+import bt1 from '@/assets/placeholders/battletut/tut1.png'
+import bt2 from '@/assets/placeholders/battletut/tut2.png'
+import bt3 from '@/assets/placeholders/battletut/tut3.png'
+import bt4 from '@/assets/placeholders/battletut/tut4.png'
+import bt5 from '@/assets/placeholders/battletut/tut5.png'
+import bt6 from '@/assets/placeholders/battletut/tut6.png'
+import sleep from "@/shared/utils/sleep";
+import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
+
+
 export default function BarScene() {
     let sceneRef!: Scene;
     let aaa!: ObjModel;
@@ -16,7 +37,25 @@ export default function BarScene() {
         aaa && applyShadows(aaa);
     });
 
+    function spawnBattleTutorial() {
+        startBattle(OPPONENT_SERPENT);
+        sleep(3250).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
+    }
+
     return (
+        <>
+        <CornerRect width="500px" height="111px" borderSize={1} borderType="solid white" corners={[cr, undefined, undefined, cr]} class='battle-playtest-container'>
+            <div class='battle-playtest-menu'>
+                <div class="battle-playtest-option" onClick={spawnBattleTutorial}>
+                    <img src={serpent_icon}/>
+                    Battle the Panoptesian Serpent (Tutorial)
+                </div>
+                <div class='battle-playtest-option' onClick={() => startBattle(OPPONENT_MIMICRY)}>
+                   <img src={mimicry_icon}/> 
+                    Battle the Mimicry (More Difficult)
+                </div>
+            </div>
+        </CornerRect>
         <lume-scene
             webgl
             ref={sceneRef}
@@ -24,44 +63,18 @@ export default function BarScene() {
             shadow-mode="pcf" 
             perspective="800"
             shadowmap-type="pcf"
-            // fog-mode="linear"
-            // fog-color="#000000"
-            // fog-near="0" fog-far="1050"
         >
 
             <PlayerCam
                 sceneRef={sceneRef}
                 basePos={[-719, -327, 151]}
                 baseOri={{yaw: 50, pitch: 0}}
-                maxPitch={20}
-                maxYaw={50}
+                maxPitch={15}
+                maxYaw={40}
             />
 
             <lume-ambient-light intensity={1}/>
             <lume-point-light position="-500 -180" intensity={1250} cast-shadow="true"/>
-            {/* <lume-point-light position="0 -100 0" intensity={200} cast-shadow="true"/> */}
-            {/* <lume-directional-light position="201 -447 229" intensity={5} cast-shadow="true" /> */}
-
-            {/* <lume-collada-model
-                id="scenebase"
-                src={barscene_model}
-                scale="50 50 50"
-                recieve-shadow="true"
-                cast-shadow="true"
-                align-point="0.5 0.5"
-                mount-point="0.5 0.5"
-            /> */}
-
-            {/* <lume-gltf-model
-                id="scenebase"
-                ref={slopRef}
-                src={barscene_glb}
-                scale="5 5 5"
-                // recieve-shadow="true"
-                // cast-shadow="true"
-                align-point="0.5 0.5"
-                mount-point="0.5 0.5"
-            /> */}
 
             <lume-obj-model
                 ref={aaa}
@@ -86,5 +99,6 @@ export default function BarScene() {
 
 
         </lume-scene>
+        </>
     )
 }

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Test</title>
+    <style>
+
+        /* body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        } */
+
+#modal-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    .tooltip {
+        pointer-events: auto;
+        position: absolute;
+        z-index: 9999;
+    }
+
+main {
+        position: relative;
+    display: grid
+;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto 81px;
+    gap: 2px 0px;
+}
+}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/devtools/testBattle.tsx"></script>
+</body>
+</html>

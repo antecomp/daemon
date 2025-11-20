@@ -28,7 +28,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),      // Main game
-        dialogue: path.resolve(__dirname, 'dialogue.html') // Dialogue visualizer (for development)
+        dialogue: path.resolve(__dirname, 'dialogue.html'), // Dialogue visualizer (for development)
+        battle: path.resolve(__dirname, 'battle.html')
       }
     },
   }

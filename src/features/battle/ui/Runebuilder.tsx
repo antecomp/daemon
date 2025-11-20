@@ -1,9 +1,11 @@
-import { BattleUIState, useBattleUIState } from "@/core/battle/engine/battle.context";
-import { PlayerMoveMeta } from "@/core/battle/moves/moves.types";
+import { MoveLexicon } from "../lexicon/moveLexicon";
+import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge';
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";
+import { PlayerRuneName, playerRuneNames } from "@/core/battle/moves/playerMoveRegistry";
 import { MoveTooltipContent } from "./MoveTooltipContent";
+import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
 
 const RUNEBUILDER_RADIUS = 89;
 const SVG_DIM = RUNEBUILDER_RADIUS * 2.7;
@@ -11,54 +13,52 @@ const CENTER = SVG_DIM / 2;
 const RB_INACTIVE_COLOUR = "#999";
 const RB_ACTIVE_COLOUR = "white";
 
-interface RunebuilderProps {
-    availRunes: PlayerMoveMeta[],
-    addRune: (toAdd: PlayerMoveMeta) => void,
-    sequenceBuffer: PlayerMoveMeta[]
-}
+const LARGE_ICON_SIZE = 32;
 
-export default function Runebuilder(props: RunebuilderProps) {
-
-    const { battleUIState } = useBattleUIState();
+export default function Runebuilder(props: {
+    lexicon: MoveLexicon,
+    appendToPlan: (toAdd: PlayerRuneName) => void;
+    planBuffer: string[] 
+}) {
+    const {battleUIState} = useBattleUIState();
 
     const { showTooltip, hideTooltip, TooltipComponent } = createTooltip();
 
-    const runePositions = new Map<PlayerMoveMeta, Point>();
+    const runePositions = new Map<string, Point>();
+
+    const runeBuilderRef = createBattleRefAttacher('runeBuilder');
 
     return (
         <>
             <TooltipComponent/>
-            <svg width={SVG_DIM} height={SVG_DIM} id="runebuilder">
-
-                {/* Main Circle */}
+            <svg width={SVG_DIM} height={SVG_DIM} class="runebuilder" ref={runeBuilderRef as any}>
+                {/* Main container circle */}
                 <circle
                     cx={CENTER} cy={CENTER}
                     r={RUNEBUILDER_RADIUS}
                     stroke={(battleUIState() != BattleUIState.WAITING) ? "white" : "#aaa"}
                     stroke-width="2"
                     fill="black"
-                ></circle>
+                    class="main-rb-circle"
+                />
 
                 {/* Rune Lines */}
                 <g>
-                    <For each={props.sequenceBuffer.slice(1)}>
-                        {(rune, index) => {
-
-                            const prev = props.sequenceBuffer[index()];
+                    <For each={props.planBuffer.slice(1)}>
+                        {(runename, index) => {
+                            const prev = props.planBuffer[index()];
                             const prevPos = runePositions.get(prev);
-                            const currRune = runePositions.get(rune);
+                            const currRune = runePositions.get(runename);
 
                             if (!currRune || !prevPos) return null;
 
                             return (
-                                <>
-                                    <line
-                                        x1={prevPos.x} y1={prevPos.y}
-                                        x2={currRune.x} y2={currRune.y}
-                                        stroke="white"
-                                        stroke-width="2"
-                                    />
-                                </>
+                                <line
+                                    x1={prevPos.x} y1={prevPos.y}
+                                    x2={currRune.x} y2={currRune.y}
+                                    stroke="white"
+                                    stroke-width="2"
+                                />                                
                             )
                         }}
                     </For>
@@ -66,33 +66,29 @@ export default function Runebuilder(props: RunebuilderProps) {
 
                 {/* Rune Button Circles */}
                 <g>
-                    <For
-                        each={props.availRunes}
-                    >
-                        {(rune, index) => {
-                            const angle = (Math.PI * 2 * index()) / props.availRunes.length
+                    <For each={playerRuneNames}>
+                        {(runename, index) => {
+                            const angle = (Math.PI * 2 * index()) / playerRuneNames.length
                             const x = CENTER + RUNEBUILDER_RADIUS * Math.cos(angle);
                             const y = CENTER + RUNEBUILDER_RADIUS * Math.sin(angle);
 
-                            runePositions.set(rune, { x, y });
+                            runePositions.set(runename, {x,y});
 
                             return (
                                 <>
                                     <circle
                                         cx={x} cy={y}
                                         r={RUNEBUILDER_RADIUS / 4}
-                                        stroke={props.sequenceBuffer.includes(rune) ? RB_ACTIVE_COLOUR : RB_INACTIVE_COLOUR}
+                                        stroke={props.planBuffer.includes(runename) ? RB_ACTIVE_COLOUR : RB_INACTIVE_COLOUR}
                                         fill="black"
-                                        onClick={() => {
-                                            props.addRune(rune);
-                                        }}
-                                        onMouseEnter={() => showTooltip(() => <MoveTooltipContent {...rune}/>)}
+                                        onClick={() => props.appendToPlan(runename)}
+                                        onMouseEnter={() => showTooltip(() => <MoveTooltipContent runeName={runename} lexicon={props.lexicon}/>)}
                                         onMouseOut={() => hideTooltip()}
                                     ></circle>
                                     <image
-                                        href={rune.rbIcon}
-                                        x={x - 16}
-                                        y={y - 16}
+                                        href={props.lexicon[runename].largeIcon}
+                                        x={x - LARGE_ICON_SIZE / 2}
+                                        y={y - LARGE_ICON_SIZE / 2}
                                         preserveAspectRatio="xMidYMid meet"
                                     />
                                 </>

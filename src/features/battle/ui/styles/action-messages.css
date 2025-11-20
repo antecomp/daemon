@@ -1,0 +1,52 @@
+.action-messages {
+    width: 250px;
+    position: absolute;
+    top: 10%;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .action-message {
+        padding-left: 5px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: solid white 2px;
+        border-left: none;
+        border-right: none;
+        background: black;
+        transition: opacity 1s;
+        position: relative;
+    }
+
+    .action-message::before {
+      content: url('../../assets/notif_end.png');
+      position: absolute;
+      right: 100%;
+      top: -2px;
+    }
+
+    /* Names here determined/appended by TransitionGroup */
+    .fade-enter {
+      opacity: 0;
+      transition: opacity 1s;
+    }
+  
+    .fade-entered {
+      opacity: 1;
+      transition: opacity 1s;
+    }
+  
+    .fade-exit {
+      opacity: 1;
+    }
+    .fade-exited {
+      opacity: 0;
+      margin-bottom: -65px;
+      transition: opacity 1s, margin-bottom 1s;
+    }
+}
+

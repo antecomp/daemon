@@ -11,6 +11,8 @@ function getElementScale(el: HTMLElement) {
   return rect.width / ow;
 }
 
+
+/** TODO DOCUMENT!!! */
 export function createTooltip() {
   const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
   const [position, setPosition] = createSignal({ x: 0, y: 0 });

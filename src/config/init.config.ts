@@ -1,3 +1,3 @@
-export const INITIAL_SCENE = "Bridge";
-export const LOGIN_MESSAGE = "INSTANCE INIT | [ DAEMON-GARDEN v.0.400 ]"
-export const DEFAULT_DIALOGUE_SENDER = "Arda";
+export const INITIAL_SCENE = "BarScene";
+export const LOGIN_MESSAGE = "INSTANCE INIT | [ DAEMON-GARDEN v.0.600 ]"
+export const MAIN_CHARACTER_NAME = "Arda";

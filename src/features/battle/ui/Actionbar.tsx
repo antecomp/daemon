@@ -1,15 +1,5 @@
-import { Accessor, createSignal, For, onMount } from 'solid-js'
-import { BattleEngine, BattleOutcome, MultiplierSet } from '@/core/battle/engine/battle.types'
-import { PlayerMoveMeta } from '@/core/battle/moves/moves.types'
-import { BattleUIState, useBattleUIState } from '@/core/battle/engine/battle.context'
-    const {READY, WAITING} = BattleUIState;
-import { playerMoves } from '@/core/battle/moves/metas/player'
-import { registerBattleUIRef } from './refRegistry'
-import { animatePlayerSequenceFadeOut } from '@/core/battle/animation/uiAnimations'
-import { SEQUENCE_LENGTH } from '@/core/battle/engine/battle.config'
-import Runebuilder from './Runebuilder'
+import './styles/actionbar.css'
 
-import './actionbar.css'
 import eject_button from '../assets/eject-button.png'
 import reset_button from '../assets/reset-button.png'
 import exec_button from '../assets/exec-button.png'
@@ -19,148 +9,174 @@ import us_bar from '../assets/mult_us.png'
 import dr_bar from '../assets/mult_dr.png'
 import ds_bar from '../assets/mult_ds.png'
 
-interface SelectedMoveProps {
-    icon?: string // img url
-    displayName: string
-}
+import rb1 from '@/assets/sfx/battle/rb/1.wav'
+import rb2 from '@/assets/sfx/battle/rb/2.wav'
+import rb3 from '@/assets/sfx/battle/rb/3.wav'
+import rb4 from '@/assets/sfx/battle/rb/4.wav'
+import rb5 from '@/assets/sfx/battle/rb/5.wav'
+import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 
-function SelectedMove(props: SelectedMoveProps) {
+import { Accessor, createSignal, For } from 'solid-js'
+import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
+import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge'
+import { PlannedSequence } from '@/core/battle/model/plannedMove'
+import Runebuilder from './Runebuilder'
+import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
+import { PlayerRuneName, PLAYER_RUNE_REGISTRY } from '@/core/battle/moves/playerMoveRegistry'
+import { playSound } from '@/shared/utils/playSound'
+import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
+import { Sides } from '@/core/battle/utils/sides.utils'
+import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
+import { AssetURL } from '@/shared/types/misc.types'
+
+const rbSounds = [rb1, rb2, rb3, rb4, rb5];
+
+function SelectedMove(props: {
+    lexicon: MoveLexicon
+    moveName: MoveLexeme
+    isExecuting: boolean
+}) {
+
+    const entry = props.lexicon[props.moveName];
+
     return (
-        <span class="player-move">
+        <span class="player-move" classList={{executing: props.isExecuting}}>
             <div>
-                <img src={props.icon}/>
-                {props.displayName}
+                <img src={entry.icon}/>
+                {entry.label}
             </div>
         </span>
     )
 }
 
 interface ActionbarProps {
-    execSequence: (userSelectedSequence: PlayerMoveMeta[]) => Promise<void>
-    playerHealth: number
-    playerMults: Accessor<MultiplierSet>
-    opponentMults: Accessor<MultiplierSet>
-    currentStatuses: Accessor<{player: string[], opp: string[]}>
-    forceBattleResolve: BattleEngine['forceBattleResolve']
+    executeRound: (playerPlan: PlannedSequence) => Promise<void>
+    playerHealthPercentage: Accessor<number>,
+    displayMults: Accessor<Sides<DamageMultipliers>>,
+    currentStatusIcons: Accessor<Sides<(AssetURL | undefined)[]>>
+    forceBattleEnd: (outcome: BattleOutcome) => Promise<void>
+    lexicon: MoveLexicon,
+    currentlyExecutingMoveIndex: Accessor<number | null>
 }
 
 // Scaling from a multiplier range of 1/5 to 5 to a nice percentage amount for visualization
 // Clamps <1/5 to 0% and >5 to 100%
-function mapMultiplier(x: number): number {
+function mapMultiplier(multiplier: number): number {
     const oldMin = 1 / 5, oldMax = 5;
     const newMin = 0, newMax = 100;
-
     // Clamp x within the valid range
-    x = Math.max(oldMin, Math.min(x, oldMax));
-
-    return ((x - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
-
+    multiplier = Math.max(oldMin, Math.min(multiplier, oldMax));
+    return ((multiplier - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
 }
 
-export default function Actionbar(props: ActionbarProps) {
+const actualizePlan = (moveNames: PlayerRuneName[]) => moveNames.map(movename => PLAYER_RUNE_REGISTRY[movename]);
 
+export default function Actionbar(props: ActionbarProps) {
     const {battleUIState, setBattleUIState} = useBattleUIState();
 
-    let sequenceVisConRef: HTMLDivElement | undefined = undefined;
+    const handleEject = () => {
+        if(battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
+            props.forceBattleEnd(BattleOutcome.PlayerEject);
+        }
+    }
 
-    // Will be gathered from game store later...
-    const playerMoveBin: PlayerMoveMeta[] = Object.values(playerMoves);
+    const actionBarRef = createBattleRefAttacher('actionBar');
+    const actionBarRightRef = createBattleRefAttacher('actionBarRight');
+    const actionBarLeftRef = createBattleRefAttacher('actionBarLeft');
 
-    const [sequenceBuffer, setSequenceBuffer] = createSignal<PlayerMoveMeta[]>([]);
+    // Just buffer the plans by name, then we will map to the actual logical object from some bank
+    const [planBuffer, setPlanBuffer] = createSignal<PlayerRuneName[]>([]);
+    const appendToPlan = (toAdd: PlayerRuneName) => {
+        if(battleUIState() != BattleUIState.WAITING) return;
 
-    const addRune = (toAdd: PlayerMoveMeta) => {
-        if(battleUIState() != WAITING) return;
+        setPlanBuffer(prev => {
+            // Validate Before Adding
+            if(prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full
+            if (prev.some(item => item == toAdd)) return prev;
 
-        setSequenceBuffer(prev => {
-            // Validate Rune Before Adding...
-            if (prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full.
-            if (prev.some(item => item == toAdd)) return prev; // Enforce Unique.
-            if (toAdd.canPerform && !toAdd.canPerform(prev)) return prev; // Check if rune has perform condition, and it's eval.
+            const canPerform = PLAYER_RUNE_REGISTRY[toAdd].canPerform
+            if (canPerform && !canPerform(actualizePlan(prev))) {
+                playSound(rb_fail, 0.5);
+                return prev
+            };
 
-            // TODO: Add visual indication of rune selection rejection (when any of the above returns occur).
-
+            // Add (Return Updated)
+            playSound(rbSounds[prev.length], 0.5);
             const rtn = [...prev, toAdd];
+            // Run state update side effect if appropriate (sequence ready)
             if(rtn.length == 5) {
-                setBattleUIState(READY)
-                console.log(battleUIState());
+                setBattleUIState(BattleUIState.READY);
             }
+
             return rtn;
-        });
+        })
     }
 
     const handleExecClick = async () => {
-        if(battleUIState() != READY) return;
-        await props.execSequence(sequenceBuffer()); // wow most of the battle logic is secretely right here :)
-        await animatePlayerSequenceFadeOut();
-        setSequenceBuffer([]); // Reset for next round.
+        if(battleUIState() != BattleUIState.READY) return;
+        await props.executeRound(actualizePlan(planBuffer()));
+        setPlanBuffer([]);
     }
 
-    const resetRunes = () => {
-        if (battleUIState() == READY || battleUIState() == WAITING) {
-            setBattleUIState(WAITING);
-            setSequenceBuffer([]);
+    const resetPlan = () => {
+        if(battleUIState() == BattleUIState.READY || battleUIState() == BattleUIState.WAITING) {
+            setBattleUIState(BattleUIState.WAITING);
+            setPlanBuffer([]);
         }
     }
 
-    const handleEject = async () => {
-        if(battleUIState() == READY || battleUIState() == WAITING /* Likely will want some battle property to explicitely allow eject. */) {
-            // Eject Animation Can Go Here
-            props.forceBattleResolve(BattleOutcome.Eject);
-        }
-    }
-
-    onMount(() => {
-        registerBattleUIRef("sequenceViewPlayer", sequenceVisConRef);
-    });
-
+    const playerSequenceConRef = createBattleRefAttacher('sequenceViewPlayer');
 
     return (
-        <div id="battle-actionbar"
-        >
-            <div class="left">
-                <img src={eject_button} id='eject-button' 
+        <div class="battle-actionbar" ref={actionBarRef}>
+            <div class="left" ref={actionBarLeftRef}>
+                <img src={eject_button} class="eject-button"
                     onClick={handleEject}
                 />
-                <Runebuilder availRunes={playerMoveBin} addRune={addRune} sequenceBuffer={sequenceBuffer()}/>
-                <div id="rb-buttons">
-                    <img 
-                        id='reset-button' 
-                        src={reset_button} 
-                        onClick={resetRunes} 
-                        classList={{usable: sequenceBuffer().length > 0}}
-                    />
-                    <img
-                        id='exec-button'
-                        src={exec_button}
-                        onClick={handleExecClick}
-                        classList={{usable: (battleUIState() == READY)}}
-                    />
-                </div>
+            <Runebuilder
+                lexicon={props.lexicon}
+                appendToPlan={appendToPlan}
+                planBuffer={planBuffer()}
+            />
+            <div class="rb-buttons">
+                <img
+                    class='reset-button'
+                    src={reset_button}
+                    onClick={resetPlan} 
+                    classList={{usable: planBuffer().length > 0}}
+                />
+                <img
+                    class='exec-button'
+                    src={exec_button}
+                    classList={{ usable: (battleUIState() == BattleUIState.READY) }}
+                    onClick={handleExecClick}
+                />
             </div>
-            <div class="right">
-                <div class="moves" ref={sequenceVisConRef}>
-                    <For each={sequenceBuffer()}>
-                        {(x) => <SelectedMove {...x}/>}
+            </div>
+            <div class="right" ref={actionBarRightRef}>
+                <div class="moves" ref={playerSequenceConRef}>
+                    <For each={planBuffer()}>
+                        {(m, idx) => <SelectedMove moveName={m} lexicon={props.lexicon} isExecuting={idx() == props.currentlyExecutingMoveIndex()}/>}
                     </For>
                 </div>
-                <img src={fch_bar} id="fch-bar" style={`--level: ${props.playerHealth}%`} />
-                <div id="multbars">
+                <img src={fch_bar} class="fch-bar" style={`--level: ${props.playerHealthPercentage()}%`} />
+                <div class="multbars">
                     <div class="userbars">
-                        <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.playerMults().incoming)}%`}/>
-                        <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.playerMults().outgoing)}%`}/>
+                        <img src={ur_bar} class="ur-bar" style={`--level: ${mapMultiplier(props.displayMults().player.incoming)}%`} />
+                        <img src={us_bar} class="us-bar" style={`--level: ${mapMultiplier(props.displayMults().player.outgoing)}%`} />
                     </div>
                     <div class="dbars">
-                        <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.opponentMults().outgoing)}%`}/>
-                        <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.opponentMults().incoming)}%`}/>
+                        <img src={ds_bar} class="ds-bar" style={`--level: ${mapMultiplier(props.displayMults().opponent.outgoing)}%`} />
+                        <img src={dr_bar} class="dr-bar" style={`--level: ${mapMultiplier(props.displayMults().opponent.incoming)}%`} />
                     </div>
                     <div class="player-statuses">
-                        <For each={props.currentStatuses().player}>
-                            {stat => <img class="status-icon" src={stat} />}
+                        <For each={props.currentStatusIcons().player}>
+                            {stat => stat && <img class="status-icon" src={stat} />}
                         </For>
                     </div>
                     <div class="opp-statuses">
-                        <For each={props.currentStatuses().opp}>
-                            {stat => <img class="status-icon" src={stat}/>}
+                        <For each={props.currentStatusIcons().opponent}>
+                            {stat => stat && <img class="status-icon" src={stat} />}
                         </For>
                     </div>
                 </div>

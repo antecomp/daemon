@@ -1,0 +1,33 @@
+.move-tooltip-content {
+    padding: 5px;
+    width: 200px;
+    height: auto;
+    background-color: black;
+    border: solid 1px white;
+    /* outline: solid black 4px; */
+
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+
+    & p {
+        white-space: pre-line;
+    }
+
+    .header {        
+        display: grid;
+        grid-template-columns: auto min-content;
+        border-bottom: solid 1px white;
+        padding-bottom: 3px;
+
+        & p {
+            text-transform: uppercase;
+            color: yellow;
+        }
+    }
+
+    & img {
+        align-self: center;
+        height: fit-content;
+    }
+}

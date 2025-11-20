@@ -1,0 +1,37 @@
+.battle-playtest-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    z-index: 1;
+    width: 500px;
+    padding: 100px;
+    pointer-events: none;
+}
+
+.battle-playtest-menu {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 50px;
+}
+
+.battle-playtest-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    cursor: var(--cursor_pointer);
+    pointer-events: all;
+}
+
+.battle-playtest-option:hover {
+    outline: dashed 1px white;
+    outline-offset: 5px;
+}
+
+.battle-playtest-option:active {
+    outline: solid 1px white;
+}
