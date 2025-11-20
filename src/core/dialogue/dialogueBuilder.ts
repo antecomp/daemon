@@ -96,18 +96,6 @@ export class DialogueNodeBuilder {
         return this; // stay at current node, nothing was attached.
     }
 
-    // option that returns "this" instead, with anticipation of chaining.
-    oc(
-        summaryText: string,
-        fullText: string,
-        renderOrNode: RenderOrNode,
-        name?: string,
-        optionConfig?: DialogueOptionConfig
-    ): DialogueNodeBuilder {
-        this.o(summaryText, fullText, renderOrNode, name, optionConfig);
-        return this;
-    }
-
     car(
         summaryText: string,
         callText: string,
@@ -126,18 +114,6 @@ export class DialogueNodeBuilder {
         const respNode = makeDialogueNode(response, responderName ?? this.node.name);
         callNode.next = respNode;
         return new DialogueNodeBuilder(respNode);
-    }
-
-    // should also make a car that returns "this" instead.
-    ccar(
-        summaryText: string,
-        callText: string,
-        response: RenderOrNode,
-        responderName?: string,
-        optionConfig?: DialogueOptionConfig        
-    ) {
-        this.car(summaryText, callText, response, responderName, optionConfig);
-        return this;
     }
 
     attachSideEffect(ef: ((ctx?: DialogueContext | undefined) => void)) {
@@ -220,6 +196,15 @@ export class DialogueNodeBuilder {
         for (const t of tails) t.next = joinNode;
         this._branchTails = undefined; // clear.
         return new DialogueNodeBuilder(joinNode);
+    }
+
+
+    // VERY BASIC HELPER THAT LETS YOU DO A LOT OF COOL STUFF EASILY LOL.
+    // CAN BE USED FOR INLINE TREES, ATTACHING SHIT, WHATEVER, ELIMINATING NEED FOR VARIANTS!!!
+    // Performs whatever tasks you want on the node, but then returns it as-is (instead of handing back children or whatever.)
+    do(fn: (b: DialogueNodeBuilder) => void) {
+        fn(this);
+        return this;
     }
 
 

@@ -30,7 +30,13 @@ root.chainAlt(MAN, ARDA, [
     .joinBranches( // All branches will now point back to this point, nice linear flow.
         "Here's the deal. This isn't a tour...", MAN
     ) // join branches returns the join point, we can continue as normal!
-    .n("... more text from the guy...") 
+    .n("... more text from the guy...")
+    // easily do multiple tasks with "do"
+    .do(r => {
+        r.o("x", "y", "sfjd", "aaaaaa");
+        r.o("a", "b", "fdjkf", "eeeee");
+        r.attachSideEffect(() => console.log("hey"));
+    })
 
 
 export default root.unwrap();
