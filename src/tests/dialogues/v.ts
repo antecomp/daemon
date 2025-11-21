@@ -26,7 +26,7 @@ questionLoopback
 const root = createDialogueBuilder("Hey, welcome to daemon.garden", VIYA);    
 root
     .makeNodeWaitFor(_ => sleep(1000)) // Enforce a delay with auto-advance, instead of user input.
-    .next("I imagine you have a lot of questions right now.")
+    .then("I imagine you have a lot of questions right now.")
     .addCar( "Yes", questionsRoot.node)
     .addOption( ["No [END Conversation]", "Nah, not really"])
     .addCar(
@@ -42,7 +42,7 @@ root
                         case(BattleOutcome.OpponentVictory): return makeDialogueNode("Damn you suck at this. How are you going to survive the fringenet?", VIYA);
                         case(BattleOutcome.Draw): return makeDialogueNode("Close call! Things will only get harder from here...", VIYA);
                         case(BattleOutcome.PlayerEject): return inline("Coward", VIYA, cow => cow
-                            .next("If you're not going to fight, do you at least have some questions?")
+                            .then("If you're not going to fight, do you at least have some questions?")
                             .addCar(["Yes", "Sure."], questionsRoot.node)
                             .addOption(['No [END]', "No fuck off"])
                         );
@@ -66,17 +66,17 @@ questionsRoot
                     .addCar(
                         ['VI-LINK?', 'What is a VI-LINK?'],
                         "The VI-LINK is a neural-interface that allows users to connect to NULLSPACE",
-                        r => r.next(questionLoopback.node)
+                        r => r.then(questionLoopback.node)
                     )
                     .addCar(
                         "Cool.",
                         'Yeah :)',
-                        r => r.next(questionLoopback.node)
+                        r => r.then(questionLoopback.node)
                     )
                     .addCar(
                         ["Lame", "Sounds boring and LARP-ey"],
                         "Okay buddy",
-                        r => r.next(questionLoopback.node)
+                        r => r.then(questionLoopback.node)
                     )
             )
             .addCar(
@@ -92,7 +92,7 @@ questionsRoot
                         "The dialogue system we're using right now is called Hermes",
                         d => d
                             .chain("It was made in-house by omni.", "it uses some really evil reference and callback magic to work.", "I am not sure if I like it.")
-                            .next(questionLoopback.node)
+                            .then(questionLoopback.node)
                     )
             )
     )
@@ -103,7 +103,7 @@ questionsRoot
             .addCar(
                 ['Game style', "Why does the game look like this?"],
                 'Because it looks cool. What kind of question is that?',
-                r => r.next(questionLoopback.node)
+                r => r.then(questionLoopback.node)
             )
     );
 

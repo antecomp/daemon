@@ -53,7 +53,7 @@ export class DialogueNodeBuilder {
     constructor(public readonly node: DialogueNode) {};
 
     /* Attach a linear successor to node & return builder for it. */
-    next(
+    then(
         next: RenderOrNode, 
         name?: string
     ): DialogueNodeBuilder {
@@ -70,7 +70,7 @@ export class DialogueNodeBuilder {
     chain(...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach(message => {
-            cur = cur.next(message);
+            cur = cur.then(message);
         });
         return cur;
     }
@@ -78,7 +78,7 @@ export class DialogueNodeBuilder {
     chainAlt(first: string, second: string, ...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach((m, i) => {
-            cur = cur.next(m, i % 2 === 0 ? first : second);
+            cur = cur.then(m, i % 2 === 0 ? first : second);
         });
         return cur;
     }
@@ -206,15 +206,15 @@ export class DialogueNodeBuilder {
         return this;
     }
 
-    // TODO: Change this signature to match cars.
     addCarBranch(
-        summaryText: string,
-        callText: string,
+        call: [string, string] | string,
         response: DialogueNode | [DialogueRender, string] | DialogueRender,
         subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
         optionConfig?: DialogueOptionConfig
     ) {
         this.initializeBranches();
+
+        const { summaryText, fullText: callText } = normalizeOptionText(call);
 
         // why.
         const responseNode = isNode(response)
@@ -285,8 +285,8 @@ export class DialogueNodeBuilder {
 
 
     // Aliases --------------------------------------------------------------------
-    n( renderOrNode: RenderOrNode, name?: string) {
-        return this.next(renderOrNode, name);
+    t( renderOrNode: RenderOrNode, name?: string) {
+        return this.then(renderOrNode, name);
     }
 
 }
