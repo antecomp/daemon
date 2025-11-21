@@ -21,7 +21,13 @@ import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 
 import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
-import viya_root from "./dialogues/viya_dialogue"
+
+//import viya_root from "./dialogues/viya_dialogue"
+
+import {default as fuck} from '@/tests/dialogues/v';
+import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
+const viya_root = fuck as DialogueNode;
+
 
 export default function Porch() {
     let sceneRef!: Scene;

@@ -108,7 +108,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
     x => x
         .option(
             ['Guide', "There's no documentation for manual mode..."],
-            "No documentation for manual mode, at least anything public."
+            ["No documentation for manual mode, at least anything public.", ARDA],
         )
         .next("This mod come with a guide?")
         .next("He snorts", VISUALIZER)

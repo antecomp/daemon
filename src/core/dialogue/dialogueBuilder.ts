@@ -31,7 +31,7 @@ function isNode(x: any): x is DialogueNode {
 
 let nodeCounter = 0;
 
-function makeDialogueNode(render: DialogueRender, name: string): DialogueNode {
+export function makeDialogueNode(render: DialogueRender, name: string): DialogueNode {
     const id = `node-${nodeCounter++}`;
     return {
         id,
@@ -41,20 +41,28 @@ function makeDialogueNode(render: DialogueRender, name: string): DialogueNode {
     }
 }
 
+function normalizeOptionText(optionText: [string, string] | string) {
+  return typeof optionText === "string"
+    ? { summaryText: optionText, fullText: optionText }
+    : { summaryText: optionText[0], fullText: optionText[1] };
+}
+
+type DialogueSubtreeBuilder = (root: DialogueNodeBuilder) => DialogueNodeBuilder;
+
 export class DialogueNodeBuilder {
     constructor(public readonly node: DialogueNode) {};
 
     /* Attach a linear successor to node & return builder for it. */
     next(
-        renderOrNode: RenderOrNode, 
+        next: RenderOrNode, 
         name?: string
     ): DialogueNodeBuilder {
-        if(isNode(renderOrNode)) {
-            this.node.next = renderOrNode;
-            return new DialogueNodeBuilder(renderOrNode);
+        if(isNode(next)) {
+            this.node.next = next;
+            return new DialogueNodeBuilder(next);
         }
 
-        const child = makeDialogueNode(renderOrNode, name ?? this.node.name);
+        const child = makeDialogueNode(next, name ?? this.node.name);
         this.node.next = child;
         return new DialogueNodeBuilder(child);
     }
@@ -75,51 +83,79 @@ export class DialogueNodeBuilder {
         return cur;
     }
 
+    // ENTER THE OPTION SUBTREE.
     option(
         optionText: [string, string] | string,
-        renderOrNode?: RenderOrNode,
-        name?: string,
+        entry?: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
+        subtreeBuilder?: DialogueSubtreeBuilder,
+        optionConfig?: DialogueOptionConfig
+    ) {
+        const { summaryText, fullText } = normalizeOptionText(optionText);
+
+        if(!entry) { // Termination option - cannot build subtree off of nothing.
+            this.node.options.push({summaryText, fullText, ...optionConfig});
+            return this;
+        }
+
+        const rootNode = isNode(entry)
+            ? entry
+            : makeDialogueNode(entry[0], entry[1]);
+
+        const rootBuilder = new DialogueNodeBuilder(rootNode);
+
+        this.node.options.push({summaryText, fullText, next: rootNode, ...optionConfig});
+
+        // User of option is expected to handle making and setting up the subtree.
+        // For more handy branching that converges, use the branch system instead.
+        return subtreeBuilder?.(rootBuilder) ?? rootBuilder;
+    }
+
+    // ADD OPTION BUT STAY AT PARENT.
+    addOption(
+        optionText: [string, string] | string,
+        entry?: DialogueNode | [DialogueRender, string],
+        subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
     ): DialogueNodeBuilder {
-        const summaryText = typeof optionText == 'string'
-            ? optionText
-            : optionText[0]
-        const fullText = typeof optionText == 'string'
-            ? optionText
-            : optionText[1]
-        // Existing Node.
-        if(renderOrNode && isNode(renderOrNode)) {
-            this.node.options.push({summaryText, fullText, next: renderOrNode, ...optionConfig});;
-            return new DialogueNodeBuilder(renderOrNode);
-        }
-        if(renderOrNode) {
-            const child = makeDialogueNode(renderOrNode, name ?? MAIN_CHARACTER_NAME);
-            this.node.options.push({summaryText, fullText, next: child, ...optionConfig});
-            return new DialogueNodeBuilder(child);
-        }
-        // termination option
-        this.node.options.push({summaryText, fullText, ...optionConfig});
-        return this; // stay at current node, nothing was attached.
+        // Reuse option(...) for attachment, but ignore its return value
+        this.option(optionText, entry, subtreeBuilder, optionConfig);
+        return this;
     }
 
     car(
-        summaryText: string,
-        callText: string,
-        response: RenderOrNode,
-        responderName?: string,
+        call: [string, string] | string,
+        response: DialogueNode | [DialogueRender, string] | DialogueRender,
+        subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
-    ): DialogueNodeBuilder {
-        const callNode = makeDialogueNode(callText, MAIN_CHARACTER_NAME);
-        this.node.options.push({summaryText, fullText: callText, next: callNode, ...optionConfig});
+    ) {
+        const { summaryText, fullText } = normalizeOptionText(call);
 
-        if(isNode(response)) {
-            callNode.next = response;
-            return new DialogueNodeBuilder(response);
-        }
+        const callNode = makeDialogueNode(fullText, MAIN_CHARACTER_NAME);
+        this.node.options.push({summaryText, fullText, next: callNode, ...optionConfig});
 
-        const respNode = makeDialogueNode(response, responderName ?? this.node.name);
-        callNode.next = respNode;
-        return new DialogueNodeBuilder(respNode);
+        const responseNode = isNode(response)
+            ? response
+            : typeof response === 'string' || typeof response === 'function'
+            ? makeDialogueNode(response, this.node.name)
+            : makeDialogueNode(response[0], response[1])
+
+        callNode.next = responseNode;
+
+        const responseBuilder = new DialogueNodeBuilder(responseNode);
+
+        return subtreeBuilder?.(responseBuilder) ?? responseBuilder;
+    }
+
+    // STAY IN PLACE
+    addCar(
+        call: [string, string] | string,
+        response: DialogueNode | [DialogueRender, string] | DialogueRender,
+        subtreeBuilder?: DialogueSubtreeBuilder,
+        optionConfig?: DialogueOptionConfig        
+    ) {
+        // Reuse car(...) for attachment, but ignore its return value
+        this.car(call, response, subtreeBuilder, optionConfig);
+        return this;
     }
 
     attachSideEffect(ef: ((ctx?: DialogueContext | undefined) => void)) {
@@ -137,7 +173,6 @@ export class DialogueNodeBuilder {
     }
 
 
-    // EXPERIMENTING TO GET RID OF THAT GOD-FORSAKEN COLLAPSE POINT STUFF.
     private _branchTails?: DialogueNode[];
 
     private initializeBranches() {
@@ -157,8 +192,10 @@ export class DialogueNodeBuilder {
         const rootNode = isNode(root)
             ? root
             : makeDialogueNode(root[0], root[1]);
-        
-        const rootBuilder = this.option(optionText, rootNode, undefined, optionConfig);
+
+        this.option(optionText, rootNode, undefined, optionConfig);
+
+        const rootBuilder = new DialogueNodeBuilder(rootNode);
 
         const tailNode = subtreeBuilder
             ? subtreeBuilder(rootBuilder).node
@@ -169,6 +206,7 @@ export class DialogueNodeBuilder {
         return this;
     }
 
+    // TODO: Change this signature to match cars.
     addCarBranch(
         summaryText: string,
         callText: string,
@@ -185,7 +223,7 @@ export class DialogueNodeBuilder {
                 ? makeDialogueNode(response, this.node.name)
                 : makeDialogueNode(response[0], response[1])
 
-        const responseBuilder = this.car(summaryText, callText, responseNode, undefined, optionConfig);
+        const responseBuilder = this.car([summaryText, callText], response, undefined, optionConfig);
 
         const tailNode = subtreeBuilder
             ? subtreeBuilder(responseBuilder).node
