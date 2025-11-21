@@ -4,13 +4,13 @@ import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 const ARDA = "Arda";
 const MAN = "The Man";
 
-const root = createDialogueBuilder("His eyes dart and glimmer breifly behind his sunglasses - likely verifying my VLID.", VISUALIZER)
+const root = createDialogueBuilder("His eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.", VISUALIZER)
 
-root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins, and alternates who's speaking.
+root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings, and alternates who's speaking.
     MAN, ARDA,
     "What model VI-LINK do you have?",
     "Why does it matter?",
-    "Could be the difference between you rbrain melting and not.",
+    "Could be the difference between your brain melting and not.",
     "XA-3.",
     "Damn. Fancy for someone like you. Doing this to rebel against your rich daddy?"
 )
@@ -66,7 +66,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
             caught => caught.chain(
                 "ASCM has an agreement with every country they serve.",
                 "Unauthorized VI-LINK modification is usually a federal offense and Fringe trespass is an aggravating circumstance.",
-                "Don't ask me smething so dumb."
+                "Don't ask me something so dumb."
             )
             .then(
                 "He looks frustrated, almost to the point of suspicion; that'd you'd come in and ask him to explain the risks.", 
@@ -81,7 +81,9 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
         .then("He pauses.", VISUALIZER)
         .then("The only other warning I got for you is that this is a permanent bypass.", MAN)
         .then("Burn once. Only way to get it to work.")
-)
+);
+
+root
 .joinBranches("So... when you slot it, you're exposed. That clear?")
 .addCarBranch(
     ['Ask a technical question', 'Is it disabling my DV entirely? SOunds suicidal.'],
@@ -94,9 +96,9 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
         .chain(
             "The safety net's still there, but it's last-ditch stuff.",
             "There's some basic automation here and there- but if you depend on it, high odds it will get you killed.",
-            "You'll feel and see things alsmost as they are. Take care not to get too attached."
+            "You'll feel and see things almost as they are. Take care not to get too attached."
         )
-        .t("Vehind his sunglasses, the glint suggest he is speaking from experience.", VISUALIZER)
+        .t("Behind his sunglasses, the glint suggest he is speaking from experience.", VISUALIZER)
         .t("But hey - your F-CH hits critical, it'll still yank you.", MAN)
         .t("Just... no promises it'll be clean, or leave you whole.")
 )

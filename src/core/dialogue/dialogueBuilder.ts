@@ -275,6 +275,71 @@ export class DialogueNodeBuilder {
     }
 
 
+    questionLoop(
+        // Not doing nodes for these first two as we don't want to accidentally modify an existing node. Always make something new.
+        // initialPrompt not needed - we just attach to the initial prompt when we call this.
+        loopbackPrompt: DialogueRender | [DialogueRender, string],
+        exhausted: DialogueRender | [DialogueRender, string],
+        exitOption: [string, string] | string | undefined, // undef for only allow exit on exhaustion.
+        questions: {
+            id: string,
+            option: [string, string] | string,
+            answer: DialogueRender,
+            answerName?: string,
+            builder?: DialogueSubtreeBuilder // anticipate tail for attaching loopback/exhaustion automatically.
+        }[],
+    ) {
+
+        const loopbackNode = typeof loopbackPrompt == 'string' || typeof loopbackPrompt == 'function'
+            ? makeDialogueNode(loopbackPrompt, this.node.name)
+            : makeDialogueNode(loopbackPrompt[0], loopbackPrompt[1])
+
+        const exthaustedNode = typeof exhausted == 'string' || typeof exhausted == 'function'
+            ? makeDialogueNode(exhausted, this.node.name)
+            : makeDialogueNode(exhausted[0], exhausted[1])
+
+        // Maybe there's a better way of doing this, but this is good enough for now.
+        const exitNode = makeDialogueNode(EMPTY_RENDER, this.node.name);
+
+        const consumedQuestions = new Set<string>();
+
+        const allQuestionsExhausted = () => questions.map(q => q.id).every(q => consumedQuestions.has(q));
+
+        for(const question of questions) {
+
+            //  - Need head to attach to question
+            //  - Need tail to attach connection to loopback/exhuastion.
+            const headNode = makeDialogueNode(question.answer, question.answerName ?? this.node.name);
+            const head = new DialogueNodeBuilder(headNode);
+
+            const tail = question.builder
+                ? question.builder(head)
+                : head;
+
+            tail.node.next = () => allQuestionsExhausted()
+                ? exthaustedNode
+                : loopbackNode
+
+            const qop: DialogueOption = {
+                ...normalizeOptionText(question.option),
+                onlyShowWhen() {return !consumedQuestions.has(question.id)},
+                sideEffect() {consumedQuestions.add(question.id)},
+                next: headNode
+            }
+
+            this.node.options.push(qop);
+            loopbackNode.options.push(qop);
+
+            if(exitOption) {
+                this.node.options.push({...normalizeOptionText(exitOption), next: exitNode})
+                loopbackNode.options.push({...normalizeOptionText(exitOption), next: exitNode});
+            }
+        }
+
+        return new DialogueNodeBuilder(exitNode); // We then build off the unified exit node.
+    }
+
+
     // VERY BASIC HELPER THAT LETS YOU DO A LOT OF COOL STUFF EASILY LOL.
     // CAN BE USED FOR INLINE TREES, ATTACHING SHIT, WHATEVER, ELIMINATING NEED FOR VARIANTS!!!
     // Performs whatever tasks you want on the node, but then returns it as-is (instead of handing back children or whatever.)
