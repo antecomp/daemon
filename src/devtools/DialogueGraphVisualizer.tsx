@@ -5,7 +5,7 @@ import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.
 import './dialogue-visualizer.css'
 //import root from "@/tests/dialogues/intro_dia"; // Swap this out to test different dialogue components.
 
-import {default as root} from "@/tests/dialogues/x";
+import {default as root} from "@/tests/dialogues/v";
 
 function evalNodeNext(node: DialogueNode | (() => DialogueNode)) {
     if (typeof node == "function") {
@@ -54,7 +54,7 @@ function renderDialogueTree(node: DialogueNode, visited = new Set<string>(), dep
                             {node.options.map((opt: DialogueOption) => (
                                 <div>
                                     <strong>→ {opt.summaryText}</strong> ({opt.fullText}) {opt.onlyShowWhen && (<span style="color: purple">[Conditionally Rendered]</span>)}
-                                    <div style={{"padding-left": `${20 * (depth + 1)}px`}}>
+                                    <div style={{"padding-left": `${10 * (depth + 1)}px`}}>
                                         {opt.next ? renderDialogueTree(evalNodeNext(opt.next), visited, depth + 1) : "🍂"}
                                     </div>
                                 </div>

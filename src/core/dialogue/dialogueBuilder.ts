@@ -59,14 +59,10 @@ export class DialogueNodeBuilder {
         return new DialogueNodeBuilder(child);
     }
 
-    n( renderOrNode: RenderOrNode, name?: string) {
-        return this.next(renderOrNode, name);
-    }
-
     chain(...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach(message => {
-            cur = cur.n(message);
+            cur = cur.next(message);
         });
         return cur;
     }
@@ -74,7 +70,7 @@ export class DialogueNodeBuilder {
     chainAlt(first: string, second: string, ...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach((m, i) => {
-            cur = cur.n(m, i % 2 === 0 ? first : second);
+            cur = cur.next(m, i % 2 === 0 ? first : second);
         });
         return cur;
     }
@@ -249,6 +245,12 @@ export class DialogueNodeBuilder {
         return this;
     }
 
+
+    // Aliases --------------------------------------------------------------------
+    n( renderOrNode: RenderOrNode, name?: string) {
+        return this.next(renderOrNode, name);
+    }
+
 }
 
 export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNodeBuilder) => void): DialogueNode {
@@ -258,6 +260,6 @@ export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNo
     return root; // but return the root to be attached.
 }
 
-export function createDialogueBuilder(render: DialogueRender, name: string = MAIN_CHARACTER_NAME): DialogueNodeBuilder {
+export function createDialogueBuilder(render: DialogueRender, name: string): DialogueNodeBuilder {
     return new DialogueNodeBuilder(makeDialogueNode(render, name));
 }

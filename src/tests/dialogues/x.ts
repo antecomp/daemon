@@ -1,4 +1,4 @@
-import { createDialogueBuilder, inline, VISUALIZER } from "@/core/dialogue/dialogueBuilder";
+import { createDialogueBuilder, VISUALIZER } from "@/core/dialogue/dialogueBuilder";
 import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 
 const ARDA = "Arda";
@@ -14,7 +14,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
     "XA-3.",
     "Damn. Fancy for someone like you. Doing this to rebel against your rich daddy?"
 )
-.addCarBranch(
+.addCarBranch( // "Call and response" branch - player says something and we get a response.
     // Summary Text, Text That Is Sent In Dialogue.
     "Say Nothing", "...",
     // Response
@@ -29,7 +29,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
         "Hold on to that angst kid, it'll keep you going."
     )
 )
-.joinBranches( // Collapse all current branches to a single node.
+.joinBranches( // Collapse all current branches to a single node. (tail of each branch will point back here)
     "Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers"
 )
 .next("I hand off the mod, then you're on your own. Understand?")
@@ -158,13 +158,4 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strins,
 .attachSideEffect(ctx => ctx?.actions?.departTheMan())
 // Dialogue Naturally Ends here.
 
-
-
 export default root.unwrap();
-    
-// I have to declare the start of it here...
-//const the_deal = createDialogueBuilder("Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers.")
-
-// Then attach (or build out the entire dialogue and essentially attach going backwards!)
-
-
