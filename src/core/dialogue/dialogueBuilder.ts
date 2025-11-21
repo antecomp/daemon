@@ -309,12 +309,17 @@ export class DialogueNodeBuilder {
 
             //  - Need head to attach to question
             //  - Need tail to attach connection to loopback/exhuastion.
-            const headNode = makeDialogueNode(question.answer, question.answerName ?? this.node.name);
+            //const headNode = makeDialogueNode(question.answer, question.answerName ?? this.node.name);
+            const headNode = typeof question.option == 'string'
+                ? makeDialogueNode(question.option, MAIN_CHARACTER_NAME)
+                : makeDialogueNode(question.option[1], MAIN_CHARACTER_NAME)
             const head = new DialogueNodeBuilder(headNode);
 
+            const answerRoot = head.then(question.answer, question.answerName ?? this.node.name);
+
             const tail = question.builder
-                ? question.builder(head)
-                : head;
+                ? question.builder(answerRoot)
+                : answerRoot;
 
             tail.node.next = () => allQuestionsExhausted()
                 ? exthaustedNode
@@ -329,11 +334,11 @@ export class DialogueNodeBuilder {
 
             this.node.options.push(qop);
             loopbackNode.options.push(qop);
+        }
 
-            if(exitOption) {
+        if(exitOption) {
                 this.node.options.push({...normalizeOptionText(exitOption), next: exitNode})
                 loopbackNode.options.push({...normalizeOptionText(exitOption), next: exitNode});
-            }
         }
 
         return new DialogueNodeBuilder(exitNode); // We then build off the unified exit node.
