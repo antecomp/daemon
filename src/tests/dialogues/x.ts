@@ -54,37 +54,47 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
             "Burn once. Firmware update, you know how it goes."
         )
 )
-// TODO: Change this to a loopback so you can ask multiple questions.
-// Experiment with how it would look to filter out options as you ask them.
 .addCarBranch(
     ["Questions", "Can I ask some questions first?"],
     "If it's anything technical, no, I don't make the mods.",
-    r => r
-        .addCarBranch(
-           ["Caught", "What if I get caught with this thing?"],
-            "You never check the feeds, kid? Or is this your idea of a joke?",
-            caught => caught.chain(
-                "ASCM has an agreement with every country they serve.",
-                "Unauthorized VI-LINK modification is usually a federal offense and Fringe trespass is an aggravating circumstance.",
-                "Don't ask me something so dumb."
-            )
-            .then(
-                "He looks frustrated, almost to the point of suspicion; that'd you'd come in and ask him to explain the risks.", 
-                VISUALIZER
-            )
+    r => r 
+        .questionLoop(
+            'Any other questions?',
+            'Alright, enough questions, I have other things to do today kid.',
+            ['No more questions', 'No more questions'],
+            [
+                {
+                    id: "caught",
+                    option: ['Caught', "What if I get caught with this thing?"],
+                    answer: "You never check the feeds kid? Or is this your idea of a joke?",
+                    builder: r => r
+                        .chain(
+                            "ASCM has an agreement with every country they serve.",
+                            "Unauthorized VI-LINK modification is usually a federal offense and Fringe trespass is an aggravating circumstance.",
+                            "Don't ask me something so dumb."
+                        )
+                        .then(
+                            "He looks frustrated, almost to the point of suspicion; that'd you'd come in and ask him to explain the risks.",
+                            VISUALIZER
+                        )
+                },
+                {
+                    id: "x",
+                    option: 'Another question',
+                    answer: "Answer to another question"
+                },
+                {
+                    id: "y",
+                    option: 'Third question',
+                    answer: 'Answer to the 3rd question.'
+                }
+            ]
         )
-        .addCarBranch(
-            ["Other Question", "I have some other question"],
-            "Looks like somebody only wrote one question in the document, this is just an example."
-        )
-        .joinBranches("Alright, enough questions, I have other things to do today kid.")
-        .then("He pauses.", VISUALIZER)
-        .then("The only other warning I got for you is that this is a permanent bypass.", MAN)
-        .then("Burn once. Only way to get it to work.")
-);
-
-root
-.joinBranches("So... when you slot it, you're exposed. That clear?")
+    // This ending falls out of the dialogue instead of being attached as a branch tail... :(
+)
+.joinBranches("He pauses.", VISUALIZER)
+.then("The only other warning I got for you is that this is a permanent bypass.", MAN)
+.chain("Burn once. Only way to get it to work.", "So... when you slot it, you're exposed. That clear?")
 .addCarBranch(
     ['Ask a technical question', 'Is it disabling my DV entirely? SOunds suicidal.'],
     ["He raises an eyebrow, slightly, a hint that you've said something outside his usual script", VISUALIZER],

@@ -300,6 +300,8 @@ export class DialogueNodeBuilder {
 
         // Maybe there's a better way of doing this, but this is good enough for now.
         const exitNode = makeDialogueNode(EMPTY_RENDER, this.node.name);
+        
+        exthaustedNode.next = exitNode;
 
         const consumedQuestions = new Set<string>();
 
