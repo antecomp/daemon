@@ -223,7 +223,7 @@ export class DialogueNodeBuilder {
                 ? makeDialogueNode(response, this.node.name)
                 : makeDialogueNode(response[0], response[1])
 
-        const responseBuilder = this.car([summaryText, callText], response, undefined, optionConfig);
+        const responseBuilder = this.car([summaryText, callText], responseNode, undefined, optionConfig);
 
         const tailNode = subtreeBuilder
             ? subtreeBuilder(responseBuilder).node

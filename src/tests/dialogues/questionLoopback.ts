@@ -40,9 +40,6 @@ root
                     .addCarBranch(
                         "Followup A",
                         "Nice followup, where did you get it? The followup store?",
-                        // Without this we fall out of the dialogue tree.
-                        // But if we add this stupid x=>x then it works...???
-                        //x => x
                     )
                     .addCarBranch(
                         "Followup B",
