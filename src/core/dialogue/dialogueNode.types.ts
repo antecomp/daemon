@@ -45,6 +45,7 @@ export type RenderOrNode = DialogueRender | DialogueNode
  * @property options - an array of "options" ({summaryText, fullText, next}), these are the players response-points, forks in the dialogue tree.
  * @property next - pointer to the subsequent node, typically a child DialogueNode, but this can also loop/point to other parts of the Dialogue Graph.
  * @property sideEffect - method that runs whenever a dialogue node renders, allows you to update game state based on dialogue events.
+ * @property waitFor - blocking async side effect that is used for advancement instead of use interaction.
  */
 export type DialogueNode = {
     id: string;

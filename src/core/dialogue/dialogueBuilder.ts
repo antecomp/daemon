@@ -237,7 +237,7 @@ export class DialogueNodeBuilder {
      * @param head - Top of the branch to create (Existing node or a tuple of a dialogue render and name)
      * @param subtreeBuilder - Callback that takes the head node and extends it into a subtree. Expected to return tail of created subtree.
      * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
-     * @returns 
+     * @returns `this` (for chaining)
      */
     addBranch(
         optionText: OptionConstructorText,
@@ -277,7 +277,7 @@ export class DialogueNodeBuilder {
      * @param response - The response node, also serves as the head of the subtree.
      * @param subtreeBuilder - Callback that takes the response node and extends it into a subtree. Expected to return tail of created subtree.
      * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
-     * @returns 
+     * @returns `this` (for chaining)
      */
     addCarBranch(
         call: OptionConstructorText,
