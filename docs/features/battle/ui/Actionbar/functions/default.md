@@ -6,7 +6,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/features/battle/ui/Actionbar.tsx:60](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/features/battle/ui/Actionbar.tsx#L60)
+Defined in: [src/features/battle/ui/Actionbar.tsx:74](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/features/battle/ui/Actionbar.tsx#L74)
 
 ## Parameters
 

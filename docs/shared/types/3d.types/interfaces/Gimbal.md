@@ -4,7 +4,7 @@
 
 # Interface: Gimbal
 
-Defined in: [src/shared/types/3d.types.ts:19](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/types/3d.types.ts#L19)
+Defined in: [src/shared/types/3d.types.ts:19](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/types/3d.types.ts#L19)
 
 ## Properties
 
@@ -12,7 +12,7 @@ Defined in: [src/shared/types/3d.types.ts:19](https://github.com/antecomp/daemon
 
 > **pitch**: `number`
 
-Defined in: [src/shared/types/3d.types.ts:20](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/types/3d.types.ts#L20)
+Defined in: [src/shared/types/3d.types.ts:20](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/types/3d.types.ts#L20)
 
 ***
 
@@ -20,7 +20,7 @@ Defined in: [src/shared/types/3d.types.ts:20](https://github.com/antecomp/daemon
 
 > **roll**: `number`
 
-Defined in: [src/shared/types/3d.types.ts:21](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/types/3d.types.ts#L21)
+Defined in: [src/shared/types/3d.types.ts:21](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/types/3d.types.ts#L21)
 
 ***
 
@@ -28,4 +28,4 @@ Defined in: [src/shared/types/3d.types.ts:21](https://github.com/antecomp/daemon
 
 > **yaw**: `number`
 
-Defined in: [src/shared/types/3d.types.ts:22](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/types/3d.types.ts#L22)
+Defined in: [src/shared/types/3d.types.ts:22](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/types/3d.types.ts#L22)

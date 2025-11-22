@@ -8,3 +8,4 @@
 
 - [createProgram](functions/createProgram.md)
 - [createShader](functions/createShader.md)
+- [createTexture](functions/createTexture.md)

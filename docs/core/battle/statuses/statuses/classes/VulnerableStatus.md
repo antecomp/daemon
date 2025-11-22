@@ -4,116 +4,58 @@
 
 # Class: VulnerableStatus
 
-Defined in: [src/core/battle/statuses/statuses.ts:7](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/statuses.ts#L7)
+Defined in: [src/core/battle/statuses/statuses.ts:20](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/battle/statuses/statuses.ts#L20)
 
-Represents an abstract status effect in the battle engine.
+Represents a status effect that can be applied to a combatant.
 
-A `Status` defines a type of effect that can be applied to an actor in the game,
-with a specific duration and optional icon.
-- Statuses can change the damage multipliers for an actor (as provided by their getStatusMultipliers method)
-- Statuses can also perform a (post damage eval) side effect callback, defined by their applyPostEffect method.
+This base class provides a default implementation for status effects,
+including a unique name used for identification and a method for
+retrieving damage multipliers based on the status level.
+
+To create a new status effect, extend this class and override the `name`
+property with a unique identifier and, if necessary, override the
+`getStatusMultipliers` method to provide custom multiplier logic.
 
 ## Extends
 
-- [`Status`](../../status.types/classes/Status.md)
+- [`Status`](../../../model/status/classes/Status.md)
 
 ## Constructors
 
 ### Constructor
 
-> **new VulnerableStatus**(`duration`): `VulnerableStatus`
-
-Defined in: [src/core/battle/statuses/statuses.ts:8](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/statuses.ts#L8)
-
-#### Parameters
-
-##### duration
-
-`number` = `1`
+> **new VulnerableStatus**(): `VulnerableStatus`
 
 #### Returns
 
 `VulnerableStatus`
 
-#### Overrides
+#### Inherited from
 
-[`Status`](../../status.types/classes/Status.md).[`constructor`](../../status.types/classes/Status.md#constructor)
+[`Status`](../../../model/status/classes/Status.md).[`constructor`](../../../model/status/classes/Status.md#constructor)
 
 ## Properties
 
-### applyPostEffect()?
+### name
 
-> `optional` **applyPostEffect**: (`self`, `opponent`, `level`) => `void`
+> **name**: `string` = `'vulnerable'`
 
-Defined in: [src/core/battle/statuses/status.types.ts:27](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/status.types.ts#L27)
+Defined in: [src/core/battle/statuses/statuses.ts:21](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/battle/statuses/statuses.ts#L21)
 
-#### Parameters
+Class Field Declaration Of Status Name -- Used for keying statuses in Combatant by name and other checks. 
+All new statuses must override this with their own unique name!
 
-##### self
+#### Overrides
 
-[`Actor`](../../../engine/actor/classes/Actor.md)
-
-##### opponent
-
-[`Actor`](../../../engine/actor/classes/Actor.md)
-
-##### level
-
-`number`
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-[`Status`](../../status.types/classes/Status.md).[`applyPostEffect`](../../status.types/classes/Status.md#applyposteffect)
-
-***
-
-### duration
-
-> **duration**: `number`
-
-Defined in: [src/core/battle/statuses/status.types.ts:16](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/status.types.ts#L16)
-
-#### Inherited from
-
-[`Status`](../../status.types/classes/Status.md).[`duration`](../../status.types/classes/Status.md#duration)
-
-***
-
-### icon?
-
-> `optional` **icon**: `string`
-
-Defined in: [src/core/battle/statuses/status.types.ts:15](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/status.types.ts#L15)
-
-#### Inherited from
-
-[`Status`](../../status.types/classes/Status.md).[`icon`](../../status.types/classes/Status.md#icon)
-
-***
-
-### type
-
-> **type**: `string`
-
-Defined in: [src/core/battle/statuses/status.types.ts:14](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/status.types.ts#L14)
-
-#### Inherited from
-
-[`Status`](../../status.types/classes/Status.md).[`type`](../../status.types/classes/Status.md#type)
+[`Status`](../../../model/status/classes/Status.md).[`name`](../../../model/status/classes/Status.md#name)
 
 ## Methods
 
 ### getStatusMultipliers()
 
-> **getStatusMultipliers**(`level`): [`MultiplierSet`](../../../engine/battle.types/type-aliases/MultiplierSet.md)
+> **getStatusMultipliers**(`level`): [`DamageMultipliers`](../../../model/battle/type-aliases/DamageMultipliers.md)
 
-Defined in: [src/core/battle/statuses/statuses.ts:12](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/statuses.ts#L12)
-
-Applies effect multipliers based on level, where level = stack depth (amount of times effect applied)
+Defined in: [src/core/battle/statuses/statuses.ts:23](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/battle/statuses/statuses.ts#L23)
 
 #### Parameters
 
@@ -123,26 +65,8 @@ Applies effect multipliers based on level, where level = stack depth (amount of 
 
 #### Returns
 
-[`MultiplierSet`](../../../engine/battle.types/type-aliases/MultiplierSet.md)
+[`DamageMultipliers`](../../../model/battle/type-aliases/DamageMultipliers.md)
 
 #### Overrides
 
-[`Status`](../../status.types/classes/Status.md).[`getStatusMultipliers`](../../status.types/classes/Status.md#getstatusmultipliers)
-
-***
-
-### tick()
-
-> **tick**(): `boolean`
-
-Defined in: [src/core/battle/statuses/status.types.ts:32](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/statuses/status.types.ts#L32)
-
-Reduce duration
-
-#### Returns
-
-`boolean`
-
-#### Inherited from
-
-[`Status`](../../status.types/classes/Status.md).[`tick`](../../status.types/classes/Status.md#tick)
+[`Status`](../../../model/status/classes/Status.md).[`getStatusMultipliers`](../../../model/status/classes/Status.md#getstatusmultipliers)

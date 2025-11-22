@@ -6,7 +6,9 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/features/battle/ui/ActionMessages.tsx:11](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/features/battle/ui/ActionMessages.tsx#L11)
+Defined in: [src/features/battle/ui/ActionMessages.tsx:38](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/features/battle/ui/ActionMessages.tsx#L38)
+
+Component to actually render out the battle action messages.
 
 ## Parameters
 

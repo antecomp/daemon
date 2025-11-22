@@ -15,13 +15,17 @@ import d_overlay from "./assets/d_overlay.png";
 import cache_model from "./models/cache.fbx?url"
 
 import Billboard from "@/3d/components/Billboard";
-import dialogue_root from "@/tests/dialogues/intro_dia";
 import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import Interactable from "@/3d/components/Interactable";
 import sleep from "@/shared/utils/sleep";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
+
+//import dialogue_root from "@/tests/dialogues/intro_dia";
+
+import { default as dialogue_root } from '@/tests/dialogues/x'
+import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
@@ -59,7 +63,7 @@ export default function GemmaBar() {
     const manDialogue = createDialogueWithCamOvr(
         cameraController,  // pass camera controller so it can move the camera for dialogue
         {pos: [-470, -64, 483], ori: { yaw: 8, pitch: 8 }, anim: true}, // camera settings to move the camera to on dialogue, also saying we should animate to that position.
-        dialogue_root, // root node of the dialogue tree
+        dialogue_root as DialogueNode, // root node of the dialogue tree
         {overlay: d_overlay, ctx: {actions: manDialogueActions}} // additional config for the dialogue, ctx is an object that dialogue nodes can reference to call in-scene scripted methods.
     );
     

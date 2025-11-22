@@ -7,12 +7,14 @@
 ## Variables
 
 - [EMPTY\_RENDER](variables/EMPTY_RENDER.md)
+- [nodeCounter](variables/nodeCounter.md)
 - [VISUALIZER](variables/VISUALIZER.md)
 
 ## Functions
 
-- [createDialogueNode](functions/createDialogueNode.md)
 - [createEmptyDialogueNode](functions/createEmptyDialogueNode.md)
-- [createInlineDialogueTree](functions/createInlineDialogueTree.md)
 - [evalDialogueNodeNext](functions/evalDialogueNodeNext.md)
 - [isDialogueNodeEmpty](functions/isDialogueNodeEmpty.md)
+- [isNode](functions/isNode.md)
+- [makeDialogueNode](functions/makeDialogueNode.md)
+- [normalizeOptionText](functions/normalizeOptionText.md)

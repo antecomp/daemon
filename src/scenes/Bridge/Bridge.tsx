@@ -3,11 +3,11 @@ import { Scene } from "lume";
 import { onMount } from "solid-js";
 // import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
-import Freecam from "@/3d/camera/Freecam";
+//import Freecam from "@/3d/camera/Freecam";
 import createCameraController from '@/3d/camera/createCameraController';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import NavigationGraph from '@/3d/components/navigation/NavigationGraph';
-import NavigationPlane from '@/3d/components/navigation/NavigationPlane';
+//import NavigationPlane from '@/3d/components/navigation/NavigationPlane';
 
 export default function Sponza() {
     let sceneRef!: Scene;

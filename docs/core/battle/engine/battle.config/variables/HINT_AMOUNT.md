@@ -1,9 +1,0 @@
-[**daemon**](../../../../../README.md)
-
-***
-
-# Variable: HINT\_AMOUNT
-
-> `const` **HINT\_AMOUNT**: `3` = `3`
-
-Defined in: [src/core/battle/engine/battle.config.ts:31](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/battle/engine/battle.config.ts#L31)

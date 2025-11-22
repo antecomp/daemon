@@ -2,7 +2,6 @@ import { MusicManager } from "@/core/audio/musicManager";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { playTextOverlay, TextOverlaySequence } from "@/features/text-overlay/TextOverlay";
 import openingTextScene from "@/scenes/Elevator/data/opening_textscene";
-import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { For } from "solid-js";
 
@@ -17,6 +16,9 @@ const eggggg: TextOverlaySequence = [
     {segments: [{text: "This uses the default colour"}]},
     {segments: [{text: "Now we split into "}, {text: "Two colours", color: "red"}]}
 ]
+
+import {default as loopbacktest} from '@/tests/dialogues/questionLoopback';
+const loopBackRoot = loopbacktest as DialogueNode;
 
 const dmnintro: TextOverlaySequence = [
     {segments: [{text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {text: "THE DAEMONS", color: "red"}]},
@@ -42,6 +44,7 @@ import bt5 from '@/assets/placeholders/battletut/tut5.png'
 import bt6 from '@/assets/placeholders/battletut/tut6.png'
 import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
+import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 
 export default function DebugMenu() {
 
@@ -69,7 +72,7 @@ export default function DebugMenu() {
             <button onclick={() => playTextOverlay(dmnintro)}>intro</button>
             <button onclick={() => playTextOverlay(openingTextScene)}>sfdkjjsdfk</button>
             <h3>DIALOGUES</h3>
-            <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
+            <button onClick={() => DialogueService.startDialogue(loopBackRoot)}>Cool new question slop.</button>
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
 

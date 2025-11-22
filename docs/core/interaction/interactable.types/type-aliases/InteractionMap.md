@@ -6,7 +6,7 @@
 
 > **InteractionMap** = `{ [mode in InteractionMode]?: interactionCB }` \| \[[`interactionCB`](interactionCB.md)?, [`interactionCB`](interactionCB.md)?, [`interactionCB`](interactionCB.md)?\]
 
-Defined in: [src/core/interaction/interactable.types.ts:34](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/interaction/interactable.types.ts#L34)
+Defined in: [src/core/interaction/interactable.types.ts:34](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/interaction/interactable.types.ts#L34)
 
 Map of interaction modes to a CB to run for handling that interaction type.
 Used by YBillboard and Interactable

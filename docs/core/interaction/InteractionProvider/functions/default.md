@@ -6,7 +6,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/core/interaction/InteractionProvider.tsx:12](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/interaction/InteractionProvider.tsx#L12)
+Defined in: [src/core/interaction/InteractionProvider.tsx:12](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/interaction/InteractionProvider.tsx#L12)
 
 Provides interaction-mode state to the scene, exposing helpers for reading and mutating the active mode.
 Modes: `InteractionMode.Interact` (default click actions), `InteractionMode.Chat` (start dialogue), `InteractionMode.Observe` (inspect/look).

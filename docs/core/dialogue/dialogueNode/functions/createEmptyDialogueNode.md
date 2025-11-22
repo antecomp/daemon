@@ -6,7 +6,11 @@
 
 > **createEmptyDialogueNode**(): [`DialogueNode`](../../dialogueNode.types/type-aliases/DialogueNode.md)
 
-Defined in: [src/core/dialogue/dialogueNode.ts:208](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/dialogue/dialogueNode.ts#L208)
+Defined in: [src/core/dialogue/dialogueNode.ts:35](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/dialogue/dialogueNode.ts#L35)
+
+Generates a new dialogue node with empty renders. 
+This dialogue node is not rendered when parsed, and is used as a hinge point 
+for chaining options or other operations.
 
 ## Returns
 

@@ -6,7 +6,7 @@
 
 > **evalDialogueNodeNext**(`next`, `ctx?`): `undefined` \| [`DialogueNode`](../../dialogueNode.types/type-aliases/DialogueNode.md)
 
-Defined in: [src/core/dialogue/dialogueNode.ts:191](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/dialogue/dialogueNode.ts#L191)
+Defined in: [src/core/dialogue/dialogueNode.ts:24](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/dialogue/dialogueNode.ts#L24)
 
 Simple helper to collapse a dialogue nodes next (either a ref to another node, or a function that returns the ref) to just the ref
 

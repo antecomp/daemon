@@ -6,7 +6,7 @@
 
 > **createDialogueWithCamOvr**(`cameraController`, `ovr`, `dialogueRoot`, `dialogueOptions?`): `object`
 
-Defined in: [src/3d/camera/dialogueCamera.ts:20](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/dialogueCamera.ts#L20)
+Defined in: [src/3d/camera/dialogueCamera.ts:20](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/dialogueCamera.ts#L20)
 
 Prepares a dialogue sequence that uses a deferred camera override.
 

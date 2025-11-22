@@ -13,3 +13,4 @@
 - [AssetURL](type-aliases/AssetURL.md)
 - [CSSUnit](type-aliases/CSSUnit.md)
 - [Optional](type-aliases/Optional.md)
+- [SparseRecord](type-aliases/SparseRecord.md)

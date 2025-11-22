@@ -6,8 +6,8 @@
 
 ## Type Aliases
 
-- [MoveMap](type-aliases/MoveMap.md)
-- [MoveWeightMap](type-aliases/MoveWeightMap.md)
+- [PlanMap](type-aliases/PlanMap.md)
+- [PlanWeightMap](type-aliases/PlanWeightMap.md)
 
 ## Functions
 

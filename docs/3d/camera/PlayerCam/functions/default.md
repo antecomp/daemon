@@ -6,7 +6,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/3d/camera/PlayerCam.tsx:59](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/PlayerCam.tsx#L59)
+Defined in: [src/3d/camera/PlayerCam.tsx:59](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/PlayerCam.tsx#L59)
 
 The main camera system for the game. Has an initial "base" setting for the point-and-click player camera,
 which runs and performs all the raycast/interaction logic + head movement on mouse move. This camera can then 

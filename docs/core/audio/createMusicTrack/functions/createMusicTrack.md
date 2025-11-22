@@ -6,7 +6,7 @@
 
 > **createMusicTrack**(`entry`): [`MusicTrackEntry`](../../musicManager/type-aliases/MusicTrackEntry.md)
 
-Defined in: [src/core/audio/createMusicTrack.ts:17](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/audio/createMusicTrack.ts#L17)
+Defined in: [src/core/audio/createMusicTrack.ts:17](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/audio/createMusicTrack.ts#L17)
 
 Hook that creates a new music track and registers it with the MusicManager.
 Automatically cleans up the track by removing it when the associated

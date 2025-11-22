@@ -6,7 +6,7 @@
 
 > **MoveTooltipContent**(`props`): `Element`
 
-Defined in: [src/features/battle/ui/MoveTooltipContent.tsx:11](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/features/battle/ui/MoveTooltipContent.tsx#L11)
+Defined in: [src/features/battle/ui/MoveTooltipContent.tsx:14](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/features/battle/ui/MoveTooltipContent.tsx#L14)
 
 ## Parameters
 

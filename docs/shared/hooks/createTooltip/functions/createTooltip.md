@@ -6,7 +6,9 @@
 
 > **createTooltip**(): `object`
 
-Defined in: [src/shared/hooks/createTooltip.tsx:14](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/hooks/createTooltip.tsx#L14)
+Defined in: [src/shared/hooks/createTooltip.tsx:16](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/hooks/createTooltip.tsx#L16)
+
+TODO DOCUMENT!!!
 
 ## Returns
 

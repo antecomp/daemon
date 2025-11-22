@@ -14,4 +14,5 @@
 
 - [DialogueNode](type-aliases/DialogueNode.md)
 - [DialogueRender](type-aliases/DialogueRender.md)
+- [OptionConstructorText](type-aliases/OptionConstructorText.md)
 - [RenderOrNode](type-aliases/RenderOrNode.md)

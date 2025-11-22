@@ -6,7 +6,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/3d/components/navigation/NavigationGraph.tsx:22](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationGraph.tsx#L22)
+Defined in: [src/3d/components/navigation/NavigationGraph.tsx:23](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationGraph.tsx#L23)
 
 NavigationPlanes represent interactable areas that teleport the player by setting the camera base position.
 This component creates a connected graph of NavigationPlanes and conditionally shows only the planes

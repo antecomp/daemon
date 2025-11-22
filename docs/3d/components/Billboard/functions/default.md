@@ -6,7 +6,7 @@
 
 > **default**(`props`): `Element`
 
-Defined in: [src/3d/components/Billboard.tsx:75](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/Billboard.tsx#L75)
+Defined in: [src/3d/components/Billboard.tsx:75](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/Billboard.tsx#L75)
 
 Yaw Only billboard as a LUME plane.
 The billboard displays a texture (from input `texture` asseturl) at some `scale` (scale = width, height scaled automatically to retain aspect ratio), 
