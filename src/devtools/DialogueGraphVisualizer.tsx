@@ -5,7 +5,7 @@ import type { DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.
 import './dialogue-visualizer.css'
 //import root from "@/tests/dialogues/intro_dia"; // Swap this out to test different dialogue components.
 
-import {default as root} from "@/tests/dialogues/v";
+import {default as root} from "@/tests/dialogues/x";
 
 function evalNodeNext(node: DialogueNode | (() => DialogueNode)) {
     if (typeof node == "function") {
@@ -76,7 +76,7 @@ const DialogueVisualizer = () => {
     return (
         <div style={{ "font-family": "monospace", padding: "20px" }}>
             <h2>Dialogue Visualizer</h2>
-            {renderDialogueTree(dialogueRoot() as DialogueNode)}
+            {renderDialogueTree(dialogueRoot())}
         </div>
     );
 };
