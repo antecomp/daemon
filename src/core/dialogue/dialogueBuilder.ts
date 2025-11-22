@@ -230,16 +230,18 @@ export class DialogueNodeBuilder {
     }
 
     /**
-     * [TODO DOCUMENT]
-     * @param optionText 
-     * @param root 
-     * @param subtreeBuilder 
-     * @param optionConfig 
+     * Generates a new **branch** for the dialogue system. Branches are option-attached subtrees 
+     * in which the tail of is *cached* for the current builder. Allowing these tails to be unified later with merge or join branches.
+     * Works in a similar fashion to addOption, but anticipates a connecting node.
+     * @param optionText Tuple of [summaryText, fullText], or, if both are the same, just a string.
+     * @param head - Top of the branch to create (Existing node or a tuple of a dialogue render and name)
+     * @param subtreeBuilder - Callback that takes the head node and extends it into a subtree. Expected to return tail of created subtree.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
      * @returns 
      */
     addBranch(
         optionText: OptionConstructorText,
-        root: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
+        head: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
         // Anticipating that this returns the tail. r => r.n("nklsfd").n("sdfjsdfkj")
         // the result of this is attached to _caseTails.
         subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
@@ -247,9 +249,9 @@ export class DialogueNodeBuilder {
     ) {
         this.initializeBranches();
 
-        const rootNode = isNode(root)
-            ? root
-            : makeDialogueNode(root[0], root[1]);
+        const rootNode = isNode(head)
+            ? head
+            : makeDialogueNode(head[0], head[1]);
 
         this.option(optionText, rootNode, undefined, optionConfig);
 
@@ -263,13 +265,18 @@ export class DialogueNodeBuilder {
 
         return this;
     }
-
     /**
-     * [TODO DOCUMENT]
-     * @param call 
-     * @param response 
-     * @param subtreeBuilder 
-     * @param optionConfig 
+     * Car variant of addBranch. Car stands for "call and response" - makes the option fullText a message sent by the player, immediately followed by some 'response' node.
+     * @ref `.car` method of this class for more details.
+     * 
+     * Generates a new **branch** for the dialogue system. Branches are option-attached subtrees 
+     * in which the tail of is *cached* for the current builder. Allowing these tails to be unified later with merge or join branches.
+     * Works in a similar fashion to addOption, but anticipates a connecting node.
+     * @param call - The option text to use for making the call. Either a tuple [summaryText, fullText], or, if they are the same, just a string.
+     *      - the `fullText` will be used as the contents of the message sent by the player.
+     * @param response - The response node, also serves as the head of the subtree.
+     * @param subtreeBuilder - Callback that takes the response node and extends it into a subtree. Expected to return tail of created subtree.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
      * @returns 
      */
     addCarBranch(
@@ -300,12 +307,12 @@ export class DialogueNodeBuilder {
         return this;
     }
 
-    // Join all branches to a single collapse node, allowing us to continue off it.
     /**
-     * [ TODO DOCUMENT ]
-     * @param joinPoint 
-     * @param name 
-     * @returns 
+     * Joins all set branches to a single collapse node (as in, make the .next of each branches tail point to this node.)
+     * @param joinPoint - The node to join to (either an existing node or a render to use)
+     * @param name (optional) - Name used for the join node if creating a new one with a render. 
+     *              If none is provided, the name is inherited from the node this join is attaching to.
+     * @returns - The new join node (traverses into it)
      */
     joinBranches(
         joinPoint: RenderOrNode,
@@ -321,12 +328,12 @@ export class DialogueNodeBuilder {
         return new DialogueNodeBuilder(joinNode);
     }
 
-    // Merge branches into a single branch, combinining subtrees, but without advancing to the join node.
+
     /**
-     * [ TODO DOCUMENT ]
-     * @param joinPoint 
-     * @param subtreeBuilder 
-     * @returns 
+     * A variant of `.joinBranches` that instead merges the current branches into a *new* singular branch instead, allowing for early join points.
+     * @param joinPoint - The node to join to (either an existing node or a render to use)
+     * @param subtreeBuilder - A subtree builder that starts off of the join point. 
+     * @returns `this` (for chaining)
      */
     mergeBranches(
         joinPoint: DialogueNode | [DialogueRender, string],
