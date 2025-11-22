@@ -6,7 +6,7 @@ import { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import sleep from "@/shared/utils/sleep";
-import { evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode";
+import { evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode"
 
 import "./hermes.css";
 import topb from "./assets/topb.png";

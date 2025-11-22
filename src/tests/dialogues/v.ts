@@ -1,5 +1,6 @@
 import { BattleOutcome } from "@/core/battle/model/battle";
-import { createDialogueBuilder, DialogueNodeBuilder, inline, makeDialogueNode } from "@/core/dialogue/dialogueBuilder";
+import { createDialogueBuilder, DialogueNodeBuilder, inline } from "@/core/dialogue/dialogueBuilder";
+import { makeDialogueNode } from "@/core/dialogue/dialogueNode";
 import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { startBattle } from "@/features/battle/startBattle";

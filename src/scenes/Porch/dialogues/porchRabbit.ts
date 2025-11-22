@@ -1,43 +1,30 @@
-import { createDialogueNode, VISUALIZER } from "@/core/dialogue/dialogueNode"
+import { createDialogueBuilder } from "@/core/dialogue/dialogueBuilder"
+import { VISUALIZER } from "@/core/dialogue/dialogueNode";
 import { DialogueService } from "@/core/dialogue/dialogueService";
-import rabbit_overlay from "@/assets/artwork/dialogue_bgs/rabbit_overlay.png"
 
 const RABBIT = "The Rabbit"
 
-const root = createDialogueNode("Hello. Arda.", RABBIT);
+const root = createDialogueBuilder("Hello Arda.", RABBIT);
 
-const rabbitMonologue = createDialogueNode("I am a rabbit, one of many...", RABBIT)
-    .attachSideEffect(() => DialogueService.setCurrentDialogueOverlay(rabbit_overlay))
+root
+    .addCar(
+        "What are you?",
+        'I am a rabbit, one of many...',
+        monologue => monologue
+            .chain(
+                "We have roamed here for millennia,",
+                "before the corporeal thoughts.",
+                "We feasted upon the tears of angels.",
+                "And now we are starving.",
+            )
+            .then("The rabbit pauses.", VISUALIZER)
+            .then("We have taken an interest in your journey", RABBIT)
+            .then("Tread safely, Asuramancer.")
+            .then("The rabbit vanishes", VISUALIZER)
+            .attachSideEffect(ctx => {
+                DialogueService.setCurrentDialogueOverlay(null)
+                ctx?.actions?.hideRabbit();
+            })
+    );
 
-rabbitMonologue.addMessageChain([
-    "We have roamed here for millennia,",
-    "before the corporeal thoughts.",
-    "We feasted upon the tears of angels.",
-    "And now we are starving.",
-    {render: "The rabbit pauses.", name: VISUALIZER},
-    {render: "We have taken an interest in your journey", name: RABBIT},
-    "Tread safely, Asuramancer.",
-    {render: "The rabbit vanishes.", name: VISUALIZER},
-]).attachSideEffect(
-    (ctx) => {
-        DialogueService.setCurrentDialogueOverlay(null) // Remove overlay early...
-        ctx?.actions?.hideRabbit();
-    }
-)
-
-root.addCAROptions([
-    {
-        summaryText: "What are you?",
-        fullText: "What are you?",
-        response: rabbitMonologue
-    },
-    {
-        summaryText: "Hello",
-        fullText: "Hello Rabbit",
-        response: "Goodbye Asuramancer."
-    }
-])
-
-
-
-export default root;
+export default root.unwrap();

@@ -1,63 +1,29 @@
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
-import { DialogueContext, DialogueOptionConfig, DialogueRender } from "./dialogueNode.types";
-
-// Overriding the type for now.
-export type DialogueNode = {
-    id: string;
-    name: string
-    render: DialogueRender
-        // Side note: Empty strings are used by the parser to represent navigational nodes that will not be shown on screen. F.e if you want to chain options together without text in between.
-    options: DialogueOption[]
-    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
-
-    sideEffect?: (ctx?: DialogueContext) => void,
-    waitFor?: (ctx?: DialogueContext) => Promise<void>
-}
-
-export type RenderOrNode = DialogueRender | DialogueNode
-
-export interface DialogueOption extends DialogueOptionConfig {
-    summaryText: string
-    fullText: string
-    next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
-}
-
-export const EMPTY_RENDER = "";
-export const VISUALIZER = "VISUALIZER";
-
-function isNode(x: any): x is DialogueNode {
-    return typeof x === 'object' && 'id' in x;
-}
-
-let nodeCounter = 0;
-
-export function makeDialogueNode(render: DialogueRender, name: string): DialogueNode {
-    const id = `node-${nodeCounter++}`;
-    return {
-        id,
-        name,
-        render,
-        options: []
-    }
-}
-
-function normalizeOptionText(optionText: [string, string] | string) {
-  return typeof optionText === "string"
-    ? { summaryText: optionText, fullText: optionText }
-    : { summaryText: optionText[0], fullText: optionText[1] };
-}
+import { DialogueNode, DialogueContext, DialogueOptionConfig, DialogueRender, DialogueOption, RenderOrNode, OptionConstructorText } from "./dialogueNode.types";
+import { EMPTY_RENDER, isNode, makeDialogueNode, normalizeOptionText } from "./dialogueNode";
 
 type DialogueSubtreeBuilder = (root: DialogueNodeBuilder) => DialogueNodeBuilder;
 
+/**
+ * DialogueNodeBuilder is a wrapper class for DialogueNode that allows 
+ * for construction of dialogue trees using several utility functions.
+ * @remark - If you are trying to start a new dialogue tree with some render/name, use the factory function `createDialogueBuilder` instead.
+ */
 export class DialogueNodeBuilder {
-    constructor(public readonly node: DialogueNode) {};
+    constructor(public readonly node: DialogueNode) { };
 
-    /* Attach a linear successor to node & return builder for it. */
+    /**
+     * Creates a new, or attaches an existing, child dialogue node.
+     * @param next Either a render (for creating a new dialogue node) or an existing dialogue node.
+     * @param name (optional) A name to be used when creating a new dialogue node. 
+     *              If none is supplied, the name is inherited from the node this is being attached to.
+     * @returns The attached dialogue node (traverses into it).
+     */
     then(
-        next: RenderOrNode, 
+        next: RenderOrNode,
         name?: string
     ): DialogueNodeBuilder {
-        if(isNode(next)) {
+        if (isNode(next)) {
             this.node.next = next;
             return new DialogueNodeBuilder(next);
         }
@@ -67,6 +33,12 @@ export class DialogueNodeBuilder {
         return new DialogueNodeBuilder(child);
     }
 
+    /**
+     * Attach a sequence of dialogue nodes, created from any number of renders/nodes.
+     * @param messages Any number of dialogue renders to be attached in sequence.
+     * @remark - The nodes created by using chain inherit the name from the node they are being attached to.
+     * @returns The node at the end of the chain (traverses into it).
+     */
     chain(...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach(message => {
@@ -75,6 +47,13 @@ export class DialogueNodeBuilder {
         return cur;
     }
 
+    /**
+     * Attaches a sequence of dialogue nodes, where the speakers are alternated (for back and fourth dialogue)
+     * @param first - Name of the speaker who sends the first message.
+     * @param second - Name of the speaker who sends the second message.
+     * @param messages - Remaining arguments are dialogue nodes/renders used for the stream of messages.
+     * @returns 
+     */
     chainAlt(first: string, second: string, ...messages: RenderOrNode[]): DialogueNodeBuilder {
         let cur: DialogueNodeBuilder = this;
         messages.forEach((m, i) => {
@@ -83,17 +62,28 @@ export class DialogueNodeBuilder {
         return cur;
     }
 
-    // ENTER THE OPTION SUBTREE.
+    /**
+     * Attaches a new option to the node, along with generating an optional connected node & subtree for that option.
+     * @param optionText - Tuple of [summaryText, fullText], or, if both are the same, just a string.
+     * @param entry (optional) - An existing (or render to make new) node that the option should connect to.
+     * @param subtreeBuilder - A subtreebuilder, which is a callback that takes the entry node and can run builder methods on it to create a subtree.
+     *                         This method is expected to return the tail of the newely created subtree to function properly.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
+     * @returns
+     *  - When just a connected node (entry) is provided: This returns that node (traverses into it).
+     *  - When a subtreeBuilder is provided: This returns the tail of the generated subtree.
+     *  - When no connected node/subtree is provided; this is a **termination option** (alias for ending dialogue). Thus will return the current node.
+     */
     option(
-        optionText: [string, string] | string,
+        optionText: OptionConstructorText,
         entry?: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
         subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
     ) {
         const { summaryText, fullText } = normalizeOptionText(optionText);
 
-        if(!entry) { // Termination option - cannot build subtree off of nothing.
-            this.node.options.push({summaryText, fullText, ...optionConfig});
+        if (!entry) { // Termination option - cannot build subtree off of nothing.
+            this.node.options.push({ summaryText, fullText, ...optionConfig });
             return this;
         }
 
@@ -103,16 +93,26 @@ export class DialogueNodeBuilder {
 
         const rootBuilder = new DialogueNodeBuilder(rootNode);
 
-        this.node.options.push({summaryText, fullText, next: rootNode, ...optionConfig});
+        this.node.options.push({ summaryText, fullText, next: rootNode, ...optionConfig });
 
         // User of option is expected to handle making and setting up the subtree.
         // For more handy branching that converges, use the branch system instead.
         return subtreeBuilder?.(rootBuilder) ?? rootBuilder;
     }
 
-    // ADD OPTION BUT STAY AT PARENT.
+    /**
+     * Variant of `.option` that instead returns the current node (does not traverse into option tree). Used to chain option additions together.
+     * 
+     * Attaches a new option to the node, along with generating an optional connected node & subtree for that option.
+     * @param optionText - Tuple of [summaryText, fullText], or, if both are the same, just a string.
+     * @param entry (optional) - An existing (or render to make new) node that the option should connect to.
+     * @param subtreeBuilder - A subtreebuilder, which is a callback that takes the entry node and can run builder methods on it to create a subtree.
+     *                         This method is expected to return the tail of the newely created subtree to function properly.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
+     * @returns - `this`
+     */
     addOption(
-        optionText: [string, string] | string,
+        optionText: OptionConstructorText,
         entry?: DialogueNode | [DialogueRender, string],
         subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
@@ -122,8 +122,25 @@ export class DialogueNodeBuilder {
         return this;
     }
 
+    /**
+     * "car" represents a "call and response," a streamlined way to make an option also send as a dialogue node, sent from the player (the "call")
+     * and to automatically invoke some sort of connected "response" dialogue node connected to the call.
+     * Used for easy send message -> get response style chains.
+     * @param call - The option text to use for making the call. Either a tuple [summaryText, fullText], or, if they are the same, just a string.
+     *      - the `fullText` will be used as the contents of the message sent by the player.
+     * @param response - The node that will be attached to the "call" (player message) node. 
+     *  - Can be an existing dialogue node.
+     *  - Can be a tuple [DialogueRender, string] for a render and the name of the speaker (create a new dialogue node)
+     *  - Can also just be a DialogueRender, where the name will be inherited from the node this is being attached to.
+     * @param subtreeBuilder 
+     *  - A callback for generating a subtree off of the response node. This callback is expected to return the *tail* of the created subtree to function properly.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
+     * @returns 
+     * - When just using `response`: Returns the created response node (traverses into it).
+     * - When using a subtreeBuilder: Returns the tail of the created subtree.
+     */
     car(
-        call: [string, string] | string,
+        call: OptionConstructorText,
         response: DialogueNode | [DialogueRender, string] | DialogueRender,
         subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
@@ -131,13 +148,13 @@ export class DialogueNodeBuilder {
         const { summaryText, fullText } = normalizeOptionText(call);
 
         const callNode = makeDialogueNode(fullText, MAIN_CHARACTER_NAME);
-        this.node.options.push({summaryText, fullText, next: callNode, ...optionConfig});
+        this.node.options.push({ summaryText, fullText, next: callNode, ...optionConfig });
 
         const responseNode = isNode(response)
             ? response
             : typeof response === 'string' || typeof response === 'function'
-            ? makeDialogueNode(response, this.node.name)
-            : makeDialogueNode(response[0], response[1])
+                ? makeDialogueNode(response, this.node.name)
+                : makeDialogueNode(response[0], response[1])
 
         callNode.next = responseNode;
 
@@ -146,28 +163,61 @@ export class DialogueNodeBuilder {
         return subtreeBuilder?.(responseBuilder) ?? responseBuilder;
     }
 
-    // STAY IN PLACE
+    /**
+     * Variant of `.car` that instead returns the current node (does not traverse into response tree). Used to chain car additions together.
+     * 
+     * "car" represents a "call and response," a streamlined way to make an option also send as a dialogue node, sent from the player (the "call")
+     * and to automatically invoke some sort of connected "response" dialogue node connected to the call.
+     * Used for easy send message -> get response style chains.
+     * @param call - The option text to use for making the call. Either a tuple [summaryText, fullText], or, if they are the same, just a string.
+     *      - the `fullText` will be used as the contents of the message sent by the player.
+     * @param response - The node that will be attached to the "call" (player message) node. 
+     *  - Can be an existing dialogue node.
+     *  - Can be a tuple [DialogueRender, string] for a render and the name of the speaker (create a new dialogue node)
+     *  - Can also just be a DialogueRender, where the name will be inherited from the node this is being attached to.
+     * @param subtreeBuilder 
+     *  - A callback for generating a subtree off of the response node. This callback is expected to return the *tail* of the created subtree to function properly.
+     * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
+     * @returns 
+     * - When just using `response`: Returns the created response node (traverses into it).
+     * - When using a subtreeBuilder: Returns the tail of the created subtree.
+     */
     addCar(
-        call: [string, string] | string,
+        call: OptionConstructorText,
         response: DialogueNode | [DialogueRender, string] | DialogueRender,
         subtreeBuilder?: DialogueSubtreeBuilder,
-        optionConfig?: DialogueOptionConfig        
+        optionConfig?: DialogueOptionConfig
     ) {
         // Reuse car(...) for attachment, but ignore its return value
         this.car(call, response, subtreeBuilder, optionConfig);
         return this;
     }
 
+    /**
+     * Helper to attach a side effect to the current dialogue node.
+     * @param ef - The side effect to attach, takes DialogueContext as an argument.
+     * @returns - `this` (to chain)
+     */
     attachSideEffect(ef: ((ctx?: DialogueContext | undefined) => void)) {
         this.node.sideEffect = ef;
         return this;
     }
 
+    /**
+     * Helper to attach a `waitFor` to the current dialogue node.
+     * @param wf The async blocking method to attach, takes DialogueContext as an argument.
+     * @returns `this` (to chain)
+     */
     makeNodeWaitFor(wf: (ctx?: DialogueContext) => Promise<void>): DialogueNodeBuilder {
         this.node.waitFor = wf;
         return this;
     }
 
+    /**
+     * Extracts the DialogueNode instance contained within this wrapper class.
+     * This is what you need to actually send off to startDialogue.
+     * @returns The dialogue node associated with this builder.
+     */
     unwrap(): DialogueNode {
         return this.node;
     }
@@ -176,11 +226,19 @@ export class DialogueNodeBuilder {
     private _branchTails?: DialogueNode[];
 
     private initializeBranches() {
-        if(!this._branchTails) this._branchTails = [];
+        if (!this._branchTails) this._branchTails = [];
     }
 
+    /**
+     * [TODO DOCUMENT]
+     * @param optionText 
+     * @param root 
+     * @param subtreeBuilder 
+     * @param optionConfig 
+     * @returns 
+     */
     addBranch(
-        optionText: [string, string] | string,
+        optionText: OptionConstructorText,
         root: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
         // Anticipating that this returns the tail. r => r.n("nklsfd").n("sdfjsdfkj")
         // the result of this is attached to _caseTails.
@@ -202,12 +260,20 @@ export class DialogueNodeBuilder {
             : rootNode
 
         this._branchTails?.push(tailNode);
-        
+
         return this;
     }
 
+    /**
+     * [TODO DOCUMENT]
+     * @param call 
+     * @param response 
+     * @param subtreeBuilder 
+     * @param optionConfig 
+     * @returns 
+     */
     addCarBranch(
-        call: [string, string] | string,
+        call: OptionConstructorText,
         response: DialogueNode | [DialogueRender, string] | DialogueRender,
         subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder,
         optionConfig?: DialogueOptionConfig
@@ -235,6 +301,12 @@ export class DialogueNodeBuilder {
     }
 
     // Join all branches to a single collapse node, allowing us to continue off it.
+    /**
+     * [ TODO DOCUMENT ]
+     * @param joinPoint 
+     * @param name 
+     * @returns 
+     */
     joinBranches(
         joinPoint: RenderOrNode,
         name?: string
@@ -248,13 +320,19 @@ export class DialogueNodeBuilder {
         this._branchTails = undefined; // clear.
         return new DialogueNodeBuilder(joinNode);
     }
-    
+
     // Merge branches into a single branch, combinining subtrees, but without advancing to the join node.
+    /**
+     * [ TODO DOCUMENT ]
+     * @param joinPoint 
+     * @param subtreeBuilder 
+     * @returns 
+     */
     mergeBranches(
         joinPoint: DialogueNode | [DialogueRender, string],
         subtreeBuilder?: (r: DialogueNodeBuilder) => DialogueNodeBuilder // Build a subtree here so we can get its tail!
     ) {
-        if(!this._branchTails) throw new Error("Cannot merge dialogue branches as none are defined off this node.");
+        if (!this._branchTails) throw new Error("Cannot merge dialogue branches as none are defined off this node.");
         const tails = this._branchTails;
 
         const joinNode = isNode(joinPoint)
@@ -274,16 +352,23 @@ export class DialogueNodeBuilder {
         return this;
     }
 
-
+    /**
+     * [ TODO DOCUMENT ]
+     * @param loopbackPrompt 
+     * @param exhausted 
+     * @param exitOption 
+     * @param questions 
+     * @returns 
+     */
     questionLoop(
         // Not doing nodes for these first two as we don't want to accidentally modify an existing node. Always make something new.
         // initialPrompt not needed - we just attach to the initial prompt when we call this.
         loopbackPrompt: DialogueRender | [DialogueRender, string],
         exhausted: DialogueRender | [DialogueRender, string],
-        exitOption: [string, string] | string | undefined, // undef for only allow exit on exhaustion.
+        exitOption: OptionConstructorText | undefined, // undef for only allow exit on exhaustion.
         questions: {
             id: string,
-            option: [string, string] | string,
+            option: OptionConstructorText,
             answer: DialogueRender,
             answerName?: string,
             builder?: DialogueSubtreeBuilder // anticipate tail for attaching loopback/exhaustion automatically.
@@ -300,14 +385,14 @@ export class DialogueNodeBuilder {
 
         // Maybe there's a better way of doing this, but this is good enough for now.
         const exitNode = makeDialogueNode(EMPTY_RENDER, this.node.name);
-        
+
         exthaustedNode.next = exitNode;
 
         const consumedQuestions = new Set<string>();
 
         const allQuestionsExhausted = () => questions.map(q => q.id).every(q => consumedQuestions.has(q));
 
-        for(const question of questions) {
+        for (const question of questions) {
 
             //  - Need head to attach to question
             //  - Need tail to attach connection to loopback/exhuastion.
@@ -329,8 +414,8 @@ export class DialogueNodeBuilder {
 
             const qop: DialogueOption = {
                 ...normalizeOptionText(question.option),
-                onlyShowWhen() {return !consumedQuestions.has(question.id)},
-                sideEffect() {consumedQuestions.add(question.id)},
+                onlyShowWhen() { return !consumedQuestions.has(question.id) },
+                sideEffect() { consumedQuestions.add(question.id) },
                 next: headNode
             }
 
@@ -338,9 +423,9 @@ export class DialogueNodeBuilder {
             loopbackNode.options.push(qop);
         }
 
-        if(exitOption) {
-                this.node.options.push({...normalizeOptionText(exitOption), next: exitNode})
-                loopbackNode.options.push({...normalizeOptionText(exitOption), next: exitNode});
+        if (exitOption) {
+            this.node.options.push({ ...normalizeOptionText(exitOption), next: exitNode })
+            loopbackNode.options.push({ ...normalizeOptionText(exitOption), next: exitNode });
         }
 
         return new DialogueNodeBuilder(exitNode); // We then build off the unified exit node.
@@ -350,6 +435,11 @@ export class DialogueNodeBuilder {
     // VERY BASIC HELPER THAT LETS YOU DO A LOT OF COOL STUFF EASILY LOL.
     // CAN BE USED FOR INLINE TREES, ATTACHING SHIT, WHATEVER, ELIMINATING NEED FOR VARIANTS!!!
     // Performs whatever tasks you want on the node, but then returns it as-is (instead of handing back children or whatever.)
+    /**
+     * [TODO: Document]
+     * @param fn 
+     * @returns 
+     */
     do(fn: (b: DialogueNodeBuilder) => void) {
         fn(this);
         return this;
@@ -357,12 +447,19 @@ export class DialogueNodeBuilder {
 
 
     // Aliases --------------------------------------------------------------------
-    t( renderOrNode: RenderOrNode, name?: string) {
+    t(renderOrNode: RenderOrNode, name?: string) {
         return this.then(renderOrNode, name);
     }
 
 }
 
+/**
+ * [ TODO: DOCUMENT ]
+ * @param render 
+ * @param name 
+ * @param fn 
+ * @returns 
+ */
 export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNodeBuilder) => void): DialogueNode {
     const root = makeDialogueNode(render, name);
     const rb = new DialogueNodeBuilder(root);
@@ -370,6 +467,7 @@ export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNo
     return root; // but return the root to be attached.
 }
 
+/** Factory function to create a new DialogueNodeBuilder, given some render and name for the speaker. */
 export function createDialogueBuilder(render: DialogueRender, name: string): DialogueNodeBuilder {
     return new DialogueNodeBuilder(makeDialogueNode(render, name));
 }

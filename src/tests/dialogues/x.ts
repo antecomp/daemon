@@ -1,10 +1,13 @@
-import { createDialogueBuilder, VISUALIZER } from "@/core/dialogue/dialogueBuilder";
-import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
+import { createDialogueBuilder } from "@/core/dialogue/dialogueBuilder";
+import { VISUALIZER, EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 
 const ARDA = "Arda";
 const MAN = "The Man";
 
-const root = createDialogueBuilder("His eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.", VISUALIZER)
+const root = createDialogueBuilder(
+    "His eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.", 
+    VISUALIZER
+)
 
 root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings, and alternates who's speaking.
     MAN, ARDA,
@@ -93,10 +96,11 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
     // This ending falls out of the dialogue instead of being attached as a branch tail... :(
 )
 .joinBranches("He pauses.", VISUALIZER)
+// TODO: THIS IS PLACED IN THE WRONG SPOT AND WILL MAKE NO SENSE IN CONTEXT OF THE OTHER BRANCH!
 .then("The only other warning I got for you is that this is a permanent bypass.", MAN)
 .chain("Burn once. Only way to get it to work.", "So... when you slot it, you're exposed. That clear?")
 .addCarBranch(
-    ['Ask a technical question', 'Is it disabling my DV entirely? SOunds suicidal.'],
+    ['Ask a technical question', 'Is it disabling my DV entirely? Sounds suicidal.'],
     ["He raises an eyebrow, slightly, a hint that you've said something outside his usual script", VISUALIZER],
     disable => disable
         .t("No. Not entirely. We're not trying to kill you.", MAN)

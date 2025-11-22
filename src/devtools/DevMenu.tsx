@@ -2,7 +2,6 @@ import { MusicManager } from "@/core/audio/musicManager";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import { playTextOverlay, TextOverlaySequence } from "@/features/text-overlay/TextOverlay";
 import openingTextScene from "@/scenes/Elevator/data/opening_textscene";
-import root from "@/tests/dialogues/intro_dia";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { For } from "solid-js";
 
@@ -73,7 +72,6 @@ export default function DebugMenu() {
             <button onclick={() => playTextOverlay(dmnintro)}>intro</button>
             <button onclick={() => playTextOverlay(openingTextScene)}>sfdkjjsdfk</button>
             <h3>DIALOGUES</h3>
-            <button onClick={() => DialogueService.startDialogue(root)}>Intro</button>
             <button onClick={() => DialogueService.startDialogue(loopBackRoot)}>Cool new question slop.</button>
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
