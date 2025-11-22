@@ -65,7 +65,7 @@ export class DialogueNodeBuilder {
     /**
      * Attaches a new option to the node, along with generating an optional connected node & subtree for that option.
      * @param optionText - Tuple of [summaryText, fullText], or, if both are the same, just a string.
-     * @param entry (optional) - An existing (or render to make new) node that the option should connect to.
+     * @param connection (optional) - An existing (or render to make new) node that the option should connect to.
      * @param subtreeBuilder - A subtreebuilder, which is a callback that takes the entry node and can run builder methods on it to create a subtree.
      *                         This method is expected to return the tail of the newely created subtree to function properly.
      * @param optionConfig - Additional config for the option, current used to attach `sideEffect`s and `onlyShowWhen` conditions.
@@ -76,20 +76,20 @@ export class DialogueNodeBuilder {
      */
     option(
         optionText: OptionConstructorText,
-        entry?: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
+        connection?: DialogueNode | [DialogueRender, string], // Either a node or a render + name.
         subtreeBuilder?: DialogueSubtreeBuilder,
         optionConfig?: DialogueOptionConfig
     ) {
         const { summaryText, fullText } = normalizeOptionText(optionText);
 
-        if (!entry) { // Termination option - cannot build subtree off of nothing.
+        if (!connection) { // Termination option - cannot build subtree off of nothing.
             this.node.options.push({ summaryText, fullText, ...optionConfig });
             return this;
         }
 
-        const rootNode = isNode(entry)
-            ? entry
-            : makeDialogueNode(entry[0], entry[1]);
+        const rootNode = isNode(connection)
+            ? connection
+            : makeDialogueNode(connection[0], connection[1]);
 
         const rootBuilder = new DialogueNodeBuilder(rootNode);
 
@@ -441,7 +441,7 @@ export class DialogueNodeBuilder {
         }
 
         if (exitOption) {
-            if(earlyExitMessage) {
+            if (earlyExitMessage) {
                 const earlyExitNode = typeof earlyExitMessage == 'string' || typeof earlyExitMessage == 'function'
                     ? makeDialogueNode(earlyExitMessage, MAIN_CHARACTER_NAME)
                     : makeDialogueNode(earlyExitMessage[0], earlyExitMessage[1])

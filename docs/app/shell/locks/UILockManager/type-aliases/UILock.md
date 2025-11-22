@@ -6,7 +6,7 @@
 
 > **UILock** = `object`
 
-Defined in: [src/app/shell/locks/UILockManager.ts:5](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/locks/UILockManager.ts#L5)
+Defined in: [src/app/shell/locks/UILockManager.ts:5](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/locks/UILockManager.ts#L5)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/app/shell/locks/UILockManager.ts:5](https://github.com/antecomp
 
 > **acquire**: () => [`ReleaseFn`](ReleaseFn.md)
 
-Defined in: [src/app/shell/locks/UILockManager.ts:6](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/locks/UILockManager.ts#L6)
+Defined in: [src/app/shell/locks/UILockManager.ts:6](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/locks/UILockManager.ts#L6)
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: [src/app/shell/locks/UILockManager.ts:6](https://github.com/antecomp
 
 > **isLocked**: () => `boolean`
 
-Defined in: [src/app/shell/locks/UILockManager.ts:7](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/locks/UILockManager.ts#L7)
+Defined in: [src/app/shell/locks/UILockManager.ts:7](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/locks/UILockManager.ts#L7)
 
 #### Returns
 

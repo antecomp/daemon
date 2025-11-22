@@ -4,7 +4,7 @@
 
 # Interface: CameraController
 
-Defined in: [src/3d/camera/camera.types.ts:22](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L22)
+Defined in: [src/3d/camera/camera.types.ts:22](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L22)
 
 CameraController provides an API for imperatively managing a PlayerCams state (for easy programmatic movement).
 
@@ -14,7 +14,7 @@ CameraController provides an API for imperatively managing a PlayerCams state (f
 
 > **clearOverrides**: (`anim?`) => `void`
 
-Defined in: [src/3d/camera/camera.types.ts:49](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L49)
+Defined in: [src/3d/camera/camera.types.ts:49](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L49)
 
 Clears all overrides and optionally animates the transition back to the base state.
 
@@ -34,7 +34,7 @@ Clears all overrides and optionally animates the transition back to the base sta
 
 > **createOverride**: (`ovr`) => `object`
 
-Defined in: [src/3d/camera/camera.types.ts:36](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L36)
+Defined in: [src/3d/camera/camera.types.ts:36](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L36)
 
 Creates a deferred camera override handle.
 
@@ -96,7 +96,7 @@ Handle exposing the override `id` plus `commit`/`release` helpers for lifecycle 
 
 > **currentBase**: () => `object`
 
-Defined in: [src/3d/camera/camera.types.ts:65](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L65)
+Defined in: [src/3d/camera/camera.types.ts:65](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L65)
 
 Retrieves the current base position and orientation.
 
@@ -118,7 +118,7 @@ Retrieves the current base position and orientation.
 
 > **currentOverride**: () => `null` \| \{ `ori?`: [`Orientation`](../../../../shared/types/3d.types/type-aliases/Orientation.md); `pos?`: [`XYZ`](../../../../shared/types/3d.types/type-aliases/XYZ.md); \}
 
-Defined in: [src/3d/camera/camera.types.ts:72](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L72)
+Defined in: [src/3d/camera/camera.types.ts:72](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L72)
 
 Returns the active override pose or null when no overrides are applied.
 
@@ -132,7 +132,7 @@ Returns the active override pose or null when no overrides are applied.
 
 > **removeOverride**: (`id`) => [`CameraOverride`](../type-aliases/CameraOverride.md)[]
 
-Defined in: [src/3d/camera/camera.types.ts:45](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L45)
+Defined in: [src/3d/camera/camera.types.ts:45](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L45)
 
 Removes a specific override by identifier (`id`) and returns the remaining overrides in the stack.
 
@@ -152,7 +152,7 @@ Removes a specific override by identifier (`id`) and returns the remaining overr
 
 > **setBase**: (`settings`) => `void`
 
-Defined in: [src/3d/camera/camera.types.ts:53](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L53)
+Defined in: [src/3d/camera/camera.types.ts:53](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L53)
 
 Sets the base camera pose and optional tilt constraints, with an optional animation flag.
 
@@ -172,7 +172,7 @@ Sets the base camera pose and optional tilt constraints, with an optional animat
 
 > **setBaseOri**: `Setter`\<[`Orientation`](../../../../shared/types/3d.types/type-aliases/Orientation.md)\>
 
-Defined in: [src/3d/camera/camera.types.ts:61](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L61)
+Defined in: [src/3d/camera/camera.types.ts:61](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L61)
 
 Setter for the base orientation signal.
 
@@ -182,6 +182,6 @@ Setter for the base orientation signal.
 
 > **setBasePos**: `Setter`\<[`XYZ`](../../../../shared/types/3d.types/type-aliases/XYZ.md)\>
 
-Defined in: [src/3d/camera/camera.types.ts:57](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/camera/camera.types.ts#L57)
+Defined in: [src/3d/camera/camera.types.ts:57](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/camera/camera.types.ts#L57)
 
 Setter for the base position signal.

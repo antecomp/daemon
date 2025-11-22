@@ -6,7 +6,7 @@
 
 > **default**(`assetURLs`): `void`
 
-Defined in: [src/shared/utils/reqPrefetch.ts:6](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/utils/reqPrefetch.ts#L6)
+Defined in: [src/shared/utils/reqPrefetch.ts:6](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/utils/reqPrefetch.ts#L6)
 
 ## Parameters
 

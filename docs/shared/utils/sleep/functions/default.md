@@ -6,7 +6,7 @@
 
 > **default**(`ms`): `Promise`\<`void`\>
 
-Defined in: [src/shared/utils/sleep.ts:4](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/utils/sleep.ts#L4)
+Defined in: [src/shared/utils/sleep.ts:4](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/utils/sleep.ts#L4)
 
 Simple helper to force a sleep period in an async/await
 

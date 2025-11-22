@@ -4,15 +4,19 @@
 
 # Function: playSound()
 
-> **playSound**(`src`): `Promise`\<`void`\>
+> **playSound**(`src`, `volume?`): `Promise`\<`void`\>
 
-Defined in: [src/shared/utils/playSound.ts:1](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/utils/playSound.ts#L1)
+Defined in: [src/shared/utils/playSound.ts:3](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/utils/playSound.ts#L3)
 
 ## Parameters
 
 ### src
 
 `string`
+
+### volume?
+
+`number`
 
 ## Returns
 

@@ -6,7 +6,7 @@
 
 > **MenuOption** = `object`
 
-Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:1](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/scene-menu/scenemenu.types.ts#L1)
+Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:1](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/scene-menu/scenemenu.types.ts#L1)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:1](https://github.com/a
 
 > **label**: `string`
 
-Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:2](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/scene-menu/scenemenu.types.ts#L2)
+Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:2](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/scene-menu/scenemenu.types.ts#L2)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:2](https://github.com/a
 
 > `optional` **onSelect**: () => `void`
 
-Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:3](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/app/shell/scene-menu/scenemenu.types.ts#L3)
+Defined in: [src/app/shell/scene-menu/scenemenu.types.ts:3](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/app/shell/scene-menu/scenemenu.types.ts#L3)
 
 #### Returns
 

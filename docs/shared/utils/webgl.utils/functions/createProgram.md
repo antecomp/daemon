@@ -6,7 +6,7 @@
 
 > **createProgram**(`gl`, `vertexSource`, `fragmentSource`): `null` \| `WebGLProgram`
 
-Defined in: [src/shared/utils/webgl.utils.ts:13](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/shared/utils/webgl.utils.ts#L13)
+Defined in: [src/shared/utils/webgl.utils.ts:16](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/shared/utils/webgl.utils.ts#L16)
 
 ## Parameters
 

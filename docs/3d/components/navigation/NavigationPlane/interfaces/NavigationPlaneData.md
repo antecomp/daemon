@@ -4,7 +4,9 @@
 
 # Interface: NavigationPlaneData
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:9](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L9)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:10](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L10)
+
+TODO DOCUMENT
 
 ## Properties
 
@@ -12,7 +14,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:9](https://github.
 
 > `optional` **anim**: `boolean`
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:13](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L13)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:14](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L14)
 
 ***
 
@@ -20,7 +22,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:13](https://github
 
 > **cameraController**: [`CameraController`](../../../../camera/camera.types/interfaces/CameraController.md)
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:10](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L10)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:11](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L11)
 
 ***
 
@@ -28,7 +30,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:10](https://github
 
 > `optional` **newOri**: [`Orientation`](../../../../../shared/types/3d.types/type-aliases/Orientation.md)
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:12](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L12)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:13](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L13)
 
 ***
 
@@ -36,7 +38,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:12](https://github
 
 > `optional` **newPos**: [`XYZ`](../../../../../shared/types/3d.types/type-aliases/XYZ.md)
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:11](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L11)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:12](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L12)
 
 ***
 
@@ -44,7 +46,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:11](https://github
 
 > `optional` **onClick**: () => `void`
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:20](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L20)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:21](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L21)
 
 #### Returns
 
@@ -56,7 +58,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:20](https://github
 
 > **planePosition**: [`XYZ`](../../../../../shared/types/3d.types/type-aliases/XYZ.md)
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:14](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L14)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:15](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L15)
 
 ***
 
@@ -64,7 +66,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:14](https://github
 
 > `optional` **planeRotation**: [`Orientation`](../../../../../shared/types/3d.types/type-aliases/Orientation.md)
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:18](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L18)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:19](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L19)
 
 ***
 
@@ -72,7 +74,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:18](https://github
 
 > **planeSize**: `number` \| \[`number`, `number`\]
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:16](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L16)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:17](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L17)
 
 ***
 
@@ -80,7 +82,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:16](https://github
 
 > `optional` **show**: `boolean`
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:17](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L17)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:18](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L18)
 
 ***
 
@@ -88,7 +90,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:17](https://github
 
 > `optional` **sidedness**: `"double"` \| `"front"` \| `"back"`
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:19](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L19)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:20](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L20)
 
 ***
 
@@ -96,7 +98,7 @@ Defined in: [src/3d/components/navigation/NavigationPlane.tsx:19](https://github
 
 > `optional` **tilts**: `object`
 
-Defined in: [src/3d/components/navigation/NavigationPlane.tsx:15](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/3d/components/navigation/NavigationPlane.tsx#L15)
+Defined in: [src/3d/components/navigation/NavigationPlane.tsx:16](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/3d/components/navigation/NavigationPlane.tsx#L16)
 
 #### maxPitch
 

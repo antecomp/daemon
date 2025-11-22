@@ -4,7 +4,7 @@
 
 # Interface: InteractableObject3D
 
-Defined in: [src/core/interaction/interactable.types.ts:7](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/interaction/interactable.types.ts#L7)
+Defined in: [src/core/interaction/interactable.types.ts:7](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/interaction/interactable.types.ts#L7)
 
 ## Extends
 
@@ -574,7 +574,7 @@ DEFAULT\_UP \| Object3D.DEFAULT\_UP - that is `(0, 1, 0)`.
 
 > **userData**: `object`
 
-Defined in: [src/core/interaction/interactable.types.ts:8](https://github.com/antecomp/daemon/blob/2fc813cd9c751feb9d80fda2b87283821807ef97/src/core/interaction/interactable.types.ts#L8)
+Defined in: [src/core/interaction/interactable.types.ts:8](https://github.com/antecomp/daemon/blob/47daeacebcabea5a8994386f75146796a04a9331/src/core/interaction/interactable.types.ts#L8)
 
 An object that can be used to store custom data about the Object3D.
 
