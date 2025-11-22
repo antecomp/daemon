@@ -360,12 +360,21 @@ export class DialogueNodeBuilder {
     }
 
     /**
-     * [ TODO DOCUMENT ]
-     * @param loopbackPrompt 
-     * @param exhausted 
-     * @param exitOption 
-     * @param questions 
-     * @returns 
+     * questionLoop creates a self-contained looping subtree of "question" options in which...
+     *  - when the player asks a question, this question has some associated answer (and subtree) which loops back to some loopback prompt (e.g "any more questions?")
+     * -  when a question is answered, it is hidden as an option in subsequent loops.
+     * - When all questions are exhausted, an "exhausted" message can be displayed and the loop is exited
+     * - The question loop can be optionally allowed to exit early with some option (e.g "I am done asking questions").
+     * @param loopbackPrompt - The prompt node that is displayed when *looping back*. For example this is something like "any more questions?"
+     * @param exhausted - The node that is displayed when all questions have been exhausted.
+     * @param exitOption - (optional, can be `undefined`) An option to exit the questions early.
+     * @param questions - An array of questions that can be asked, where each question consists of...
+     *      - `id` - A unique id for the question (used to track what has been asked)
+     *      - `option` - The option info for the question. Either a [summary, fulltext] tuple, or, if they are the same, just a string.
+     *      - `answer` - Render for the answer node.
+     *      - `answerName` (optional) - Name to be associated with answer node. If none is provided, name in inherited from the node this question loop branches from.
+     * @param earlyExitMessage (optional) - Message to render if the player uses the exitOption, often used for MC to send a message like "I am done asking questions now..."
+     * @returns - An empty "exit node" from the loop, for traversing out of the question loop ending.
      */
     questionLoop(
         // Not doing nodes for these first two as we don't want to accidentally modify an existing node. Always make something new.
@@ -380,6 +389,9 @@ export class DialogueNodeBuilder {
             answerName?: string,
             builder?: DialogueSubtreeBuilder // anticipate tail for attaching loopback/exhaustion automatically.
         }[],
+        // Do we also make a 'response' node for the exitOption (right now this jumps directly into the exitNode)
+        // This can be separate (even if that requires rewriting some stuff)
+        earlyExitMessage?: DialogueRender | [DialogueRender, string]
     ) {
 
         const loopbackNode = typeof loopbackPrompt == 'string' || typeof loopbackPrompt == 'function'
@@ -400,10 +412,8 @@ export class DialogueNodeBuilder {
         const allQuestionsExhausted = () => questions.map(q => q.id).every(q => consumedQuestions.has(q));
 
         for (const question of questions) {
-
             //  - Need head to attach to question
             //  - Need tail to attach connection to loopback/exhuastion.
-            //const headNode = makeDialogueNode(question.answer, question.answerName ?? this.node.name);
             const headNode = typeof question.option == 'string'
                 ? makeDialogueNode(question.option, MAIN_CHARACTER_NAME)
                 : makeDialogueNode(question.option[1], MAIN_CHARACTER_NAME)
@@ -431,21 +441,27 @@ export class DialogueNodeBuilder {
         }
 
         if (exitOption) {
-            this.node.options.push({ ...normalizeOptionText(exitOption), next: exitNode })
-            loopbackNode.options.push({ ...normalizeOptionText(exitOption), next: exitNode });
+            if(earlyExitMessage) {
+                const earlyExitNode = typeof earlyExitMessage == 'string' || typeof earlyExitMessage == 'function'
+                    ? makeDialogueNode(earlyExitMessage, MAIN_CHARACTER_NAME)
+                    : makeDialogueNode(earlyExitMessage[0], earlyExitMessage[1])
+
+                earlyExitNode.next = exitNode;
+                this.node.options.push({ ...normalizeOptionText(exitOption), next: earlyExitNode })
+                loopbackNode.options.push({ ...normalizeOptionText(exitOption), next: earlyExitNode });
+            } else {
+                this.node.options.push({ ...normalizeOptionText(exitOption), next: exitNode })
+                loopbackNode.options.push({ ...normalizeOptionText(exitOption), next: exitNode });
+            }
         }
 
         return new DialogueNodeBuilder(exitNode); // We then build off the unified exit node.
     }
 
-
-    // VERY BASIC HELPER THAT LETS YOU DO A LOT OF COOL STUFF EASILY LOL.
-    // CAN BE USED FOR INLINE TREES, ATTACHING SHIT, WHATEVER, ELIMINATING NEED FOR VARIANTS!!!
-    // Performs whatever tasks you want on the node, but then returns it as-is (instead of handing back children or whatever.)
     /**
-     * [TODO: Document]
-     * @param fn 
-     * @returns 
+     * Helper to perform various tasks on the current dialogue node without traversal. (simply returns `this`)
+     * @param fn - Function that takes in the current node (to perform whatever actions)
+     * @returns - `this` (for chaining)
      */
     do(fn: (b: DialogueNodeBuilder) => void) {
         fn(this);
@@ -461,11 +477,11 @@ export class DialogueNodeBuilder {
 }
 
 /**
- * [ TODO: DOCUMENT ]
- * @param render 
- * @param name 
- * @param fn 
- * @returns 
+ * Way to create inline dialogue trees by configuring the root node (with a render and name), then running a builder callback on the root.
+ * @param render - DialogueRender for the root node.
+ * @param name - Name of the speaker for the root node.
+ * @param fn - Function that builds out the inline subtree (with its head being the root created above).
+ * @returns the root such that this inline tree can be attached to something else.
  */
 export function inline(render: DialogueRender, name: string, fn: (rb: DialogueNodeBuilder) => void): DialogueNode {
     const root = makeDialogueNode(render, name);

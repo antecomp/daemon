@@ -91,7 +91,8 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
                     option: 'Third question',
                     answer: 'Answer to the 3rd question.'
                 }
-            ]
+            ],
+            'No more questions.' // Send a message indicating that arda actually says this.
         )
         .then("The only other warning I got for you is that this is a permanent bypass.", MAN)
         .chain("Burn once. Only way to get it to work.",)
