@@ -3,7 +3,7 @@ import sidebar_button_active from "./assets/sidebar_button_active.png"
 import { createSignal, For, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
-import DebugMenu from "@/devtools/DevMenu";
+import DevMenu from "@/devtools/DevMenu";
 import './sidebar.css'
 import { sidebarLock } from "../locks/UILockManager";
 
@@ -30,9 +30,12 @@ export default function Sidebar() {
     const [openWindow, setOpenWindow] = createSignal<string | null>(null);
     const buttonRefs = new Map<string, HTMLElement>();
 
+
+    // Todo: Make an interface and better typed logic for all of this.
     const menuItems = [
         {
-            id: "inventory",
+            id: "example",
+            title: 'FILE EXPLORER',
             content: () => <div style={{height: '200px', width: '300px'}}>
                 <p style={{margin: "auto 0"}}>
                     This is a sidebar menu item. Eventually, this will be used to display things like player inventory and more.
@@ -40,8 +43,14 @@ export default function Sidebar() {
                 </div>,
         },
         {
-            id: "debug",
-            content: DebugMenu
+            id: "dev",
+            title: 'DEVELOPER MENU',
+            content: DevMenu
+        },
+        {
+            id: 'inventory',
+            title: 'FILE EXPLORER',
+            content: () => <div>hey.</div>
         }
     ];
 
@@ -49,6 +58,7 @@ export default function Sidebar() {
         setOpenWindow(prev => (prev === id ? null : id));
     };
 
+    // TODO: Configure this so that the buttons can have unique icons.
     return (
         <div id="sidebar">
             <For each={menuItems}>
@@ -66,16 +76,16 @@ export default function Sidebar() {
             <Show when={openWindow()}>
                 <Dynamic 
                     component={Swindow} 
-                    anchorRef={buttonRefs.get(openWindow()!)!}
                     children={menuItems.find(i => i.id == openWindow()!)?.content()} 
                     offset={
-                        getOffset(
+                        getOffset( // ???
                             menuItems.findIndex(item => item.id == openWindow()),
                             menuItems.length,
                             82,
                             -17
                         )
                     }
+                    title={menuItems.find(i => i.id == openWindow()!)?.title}
                     closeWindow={() => toggleMenu(openWindow())}
                 />
             </Show>

@@ -69,3 +69,11 @@
     right: 7px;
     top: 1px;
 }
+
+.swindow-title {
+    font-family: 'teeny';
+    font-size: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}

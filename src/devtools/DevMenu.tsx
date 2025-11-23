@@ -46,10 +46,10 @@ import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 
-export default function DebugMenu() {
+export default function DevMenu() {
 
     return (
-        <div id="debug-menu">
+        <div id="debug-menu" style={{width: '300px'}}>
             <h2>Scenes</h2>
             <For each={[
                 "Liminality", "Porch", "AnotherScene", "DefaultScene", "Sponza", "Doors", "BarScene", "Crumbling", "Elevator", "GemmaBar", "Bridge"
