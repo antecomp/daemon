@@ -1,0 +1,10 @@
+.inventory-viewer {
+    height: 200px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+
+    .inventory-viewer-items {
+        flex-grow: 1;
+    }
+}

@@ -13,7 +13,7 @@ export interface Item {
     action?: () => void;
 }
 
-export const ITEM_DB = {
+export const ITEM_REGISTRY = {
     test: {
         //key: 'test',
         category: 'misc',
@@ -36,4 +36,4 @@ export const ITEM_DB = {
     }
 } as const satisfies Record<string, Item>
 
-export type ItemKey = keyof typeof ITEM_DB;
+export type ItemKey = keyof typeof ITEM_REGISTRY;

@@ -2,6 +2,8 @@ import Inventory from "@/core/inventory/inventory";
 import { ItemCategory } from "@/core/inventory/Items";
 import { createSignal, For } from "solid-js";
 
+import './inventory-viewer.css'
+
 export default function InventoryViewer() {
     const [currentCategory, setCurrentCategory] = createSignal<ItemCategory>('misc');
 

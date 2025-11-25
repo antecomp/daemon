@@ -51,7 +51,8 @@ export default function Sidebar() {
         {
             id: 'inventory',
             title: 'FILE EXPLORER',
-            content: InventoryViewer
+            content: InventoryViewer,
+            hideBottom: true,
         }
     ];
 
@@ -86,6 +87,7 @@ export default function Sidebar() {
                             -17
                         )
                     }
+                    hideBottom={menuItems.find(i => i.id == openWindow()!)?.hideBottom}
                     title={menuItems.find(i => i.id == openWindow()!)?.title}
                     closeWindow={() => toggleMenu(openWindow())}
                 />
