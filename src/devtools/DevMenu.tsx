@@ -45,6 +45,7 @@ import bt6 from '@/assets/placeholders/battletut/tut6.png'
 import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
+import Inventory from "@/core/inventory/inventory";
 
 export default function DevMenu() {
 
@@ -75,11 +76,16 @@ export default function DevMenu() {
             <button onClick={() => DialogueService.startDialogue(loopBackRoot)}>Cool new question slop.</button>
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
-
             <button onClick={() => {
                 startNewBattle(OPPONENT_SERPENT);
                 sleep(9000).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
             }}>Battle With Tutorial</button>
+            <h3>Inventory</h3>
+            <button onClick={() => Inventory.addItem('test')}>Add test item</button>
+            <details>
+                <summary>Full Inventory Table</summary>
+                {JSON.stringify(Inventory.retrieveItems())}
+            </details>
         </div>
     )
 }
