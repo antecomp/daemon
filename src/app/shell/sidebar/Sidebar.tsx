@@ -6,6 +6,7 @@ import { Swindow } from "./SWindow";
 import DevMenu from "@/devtools/DevMenu";
 import './sidebar.css'
 import { sidebarLock } from "../locks/UILockManager";
+import InventoryViewer from "@/features/inventory/InventoryViewer";
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;
@@ -35,7 +36,7 @@ export default function Sidebar() {
     const menuItems = [
         {
             id: "example",
-            title: 'FILE EXPLORER',
+            title: 'EXAMPLE',
             content: () => <div style={{height: '200px', width: '300px'}}>
                 <p style={{margin: "auto 0"}}>
                     This is a sidebar menu item. Eventually, this will be used to display things like player inventory and more.
@@ -50,7 +51,7 @@ export default function Sidebar() {
         {
             id: 'inventory',
             title: 'FILE EXPLORER',
-            content: () => <div>hey.</div>
+            content: InventoryViewer
         }
     ];
 
