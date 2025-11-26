@@ -1,6 +1,6 @@
 import sidebar_button_placeholder from "./assets/sidebar_button.png";
 import sidebar_button_active from "./assets/sidebar_button_active.png"
-import { Component, createSignal, For, Show } from "solid-js";
+import { Component, createSignal, For, JSX, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DevMenu from "@/devtools/DevMenu";
@@ -17,6 +17,7 @@ interface SideBarItem {
     id: string,
     title: string,
     content: Component,
+    contentStyle?: JSX.CSSProperties
     hideBottom?: boolean,
     icon?: AssetURL
 }
@@ -67,13 +68,18 @@ export default function Sidebar() {
             title: 'FILE EXPLORER',
             content: InventoryViewer,
             hideBottom: true,
-            icon: inventory_icon
+            icon: inventory_icon,
+            contentStyle: {
+                'border-right': 'none',
+            }
         }
     ];
 
     const toggleMenu = (id: string | null) => {
         setOpenWindow(prev => (prev === id ? null : id));
     };
+
+    const openWindowInfo = () => menuItems.find(i => i.id == openWindow());
 
     // TODO: Configure this so that the buttons can have unique icons.
     // TODO: Make a derived signal for the current window instead of running filter everywhere.
@@ -96,7 +102,7 @@ export default function Sidebar() {
             <Show when={openWindow()}>
                 <Dynamic 
                     component={Swindow} 
-                    children={menuItems.find(i => i.id == openWindow()!)?.content({})} 
+                    children={openWindowInfo()?.content({})} 
                     offset={
                         getOffset( // ???
                             menuItems.findIndex(item => item.id == openWindow()),
@@ -105,9 +111,10 @@ export default function Sidebar() {
                             -17
                         )
                     }
-                    hideBottom={menuItems.find(i => i.id == openWindow()!)?.hideBottom}
-                    title={menuItems.find(i => i.id == openWindow()!)?.title}
+                    hideBottom={openWindowInfo()?.hideBottom}
+                    title={openWindowInfo()?.title}
                     closeWindow={() => toggleMenu(openWindow())}
+                    contentStyle={openWindowInfo()?.contentStyle}
                 />
             </Show>
         </div>

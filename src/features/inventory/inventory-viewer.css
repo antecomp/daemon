@@ -1,10 +1,115 @@
 .inventory-viewer {
     height: 200px;
-    width: 300px;
+    width: 275px;
     display: flex;
     flex-direction: column;
+    background-color: black;
 
     .inventory-viewer-items {
         flex-grow: 1;
+    }
+
+    .inventory-viewer-items {
+        border-right: solid white 1px;
+        display: flex;
+        padding: 5px;
+    }
+
+    .inventory-item {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 3px;
+        user-select: none;
+
+        p {
+            transform: perspective(0px);
+        }
+    }
+
+    .inventory-item:hover {
+        outline: dashed 1px white;
+    }
+
+    .inventory-item:active {
+        outline: solid 1px white;
+    }
+
+    &>span {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+    }
+
+    .inventory-viewer-tabs {
+        display: flex;
+
+        position: absolute;
+        bottom: -20px;
+        left: 0px;
+        width: calc(100% - 6px);
+
+        div {
+            width: 15px;
+            border-left: solid 1px white;
+            border-bottom: 1px solid white;
+            text-align: center;
+            flex-grow: 1;
+            background-color: black;
+        }
+
+        /* kms */
+
+        span {
+            display: flex;
+            align-items: center;
+            height: 20px;
+            padding-right: 19px;
+            margin-right: -19px;
+            cursor: var(--cursor_pointer);
+            user-select: none;
+
+            p {
+                border-top: solid white 1px;
+                align-self: stretch;
+                background-color: black;
+                border-bottom: solid white 1px;
+            }
+
+            img {
+                content: url('./assets/ledge.png');
+                border-top: solid 1px white;
+            }
+        }
+
+        span:first-of-type {
+            img {
+                border-top-color: black;
+            }
+        }
+
+        .inventory-viewer-tab-active {
+            p {
+                border-top-color: black;
+            }
+        }
+
+        .inventory-viewer-tab-active+span {
+            img {
+                border-top: solid 1px black;
+            }
+        }
+
+        .inventory-viewer-tab-active+img {
+            border-top-color: black;
+        }
+
+
+        img {
+            border-top: solid 1px white;
+        }
     }
 }

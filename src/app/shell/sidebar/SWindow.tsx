@@ -13,6 +13,7 @@ export function Swindow(props: {
     title?: string
     closeWindow: () => void;
     hideBottom?: boolean;
+    contentStyle?: JSX.CSSProperties
 }) {
     return (
         <div 
@@ -38,7 +39,7 @@ export function Swindow(props: {
                 <span/>
                 <img src={swindow_slopcorner}/>
             </div>
-            <div class="swindow-content">
+            <div class="swindow-content" style={props.contentStyle}>
                 {props.children}
             </div>
             <Show when={!props.hideBottom}>
