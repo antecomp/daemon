@@ -12,7 +12,8 @@ const ITEM_EXAMPLE: Item = {
             </div>
         );
     },
-    uploadable: false
+    uploadable: true,
+    // action: () => undefined,
 }
 
 export default ITEM_EXAMPLE;

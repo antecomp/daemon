@@ -10,6 +10,8 @@ import top_corner from './assets/preview-top-corner.png'
 import './item-preview.css'
 import buttons_divider from './assets/prev_buttons_divider.png';
 import { Show } from "solid-js";
+import upload_icon from './assets/upload_icon.png';
+import use_icon from './assets/use_icon.png';
 
 export default function ItemPreview(props: {
     item: Item
@@ -54,10 +56,16 @@ export default function ItemPreview(props: {
                             props.item.action!();
                             props.item.actionShouldCloseViewer && props.closeInventoryViewer();
                         }}
-                        >USE</p>
+                        >
+                            <img src={use_icon} />
+                            USE
+                        </p>
                     </Show>
                     <Show when={props.item.uploadable}>
-                        <p>UPLOAD</p>
+                        <p>
+                            <img src={upload_icon} />
+                            UPLOAD
+                        </p>
                     </Show>
                 </span>
             </footer>

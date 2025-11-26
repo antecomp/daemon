@@ -29,11 +29,21 @@
             display: flex;
             align-items: center;
             padding: 0px 2px;
+
+            img {
+                margin-bottom: 1px;
+                margin-right: 3px;
+            }
         }
 
         & p:first-of-type {
             border-left: none;
             position: relative;
+
+            img {
+                margin-left: -4px;
+                z-index: 2;
+            }
         }
 
         & p:first-of-type::before {
