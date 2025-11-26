@@ -162,3 +162,19 @@ button {
     }
 
 }
+
+::-webkit-scrollbar {
+	width: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}

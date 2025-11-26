@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
 import { ITEM_REGISTRY, ItemKey } from "./Items";
+import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 // Consider changing this to use a set or set-like methods, to prevent duplicate items.
 
@@ -7,7 +8,12 @@ const [itemsList, setItemsList] = createSignal<ItemKey[]>(['test', 'test2', 'tes
 
 const Inventory = {
     currentItemsList: () => itemsList(),
-    addItem: (item: ItemKey) => setItemsList(prev => [...prev, item]),
+    addItem: (item: ItemKey, silent?: boolean) => {
+        setItemsList(prev => [...prev, item])
+        if(!silent) {
+            addLogMessage(`${ITEM_REGISTRY[item].displayName} has been saved to /usr/arda/${ITEM_REGISTRY[item].category}/`)
+        }
+    },
     containsItem: (item: ItemKey) => itemsList().includes(item),
     removeItem: (item: ItemKey) => setItemsList(prev => prev.filter(i => i === item)),
     retrieveItems: () => itemsList().map(itemName => ITEM_REGISTRY[itemName])

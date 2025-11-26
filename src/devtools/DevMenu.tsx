@@ -82,10 +82,6 @@ export default function DevMenu() {
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
-            <details>
-                <summary>Full Inventory Table</summary>
-                {JSON.stringify(Inventory.retrieveItems())}
-            </details>
         </div>
     )
 }

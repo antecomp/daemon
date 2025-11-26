@@ -1,6 +1,6 @@
 .inventory-viewer {
-    height: 200px;
-    width: 275px;
+    height: 170px;
+    width: 270px;
     display: flex;
     flex-direction: column;
     background-color: black;
@@ -12,6 +12,8 @@
     .inventory-viewer-items {
         border-right: solid white 1px;
         display: flex;
+        flex-wrap: wrap;
+        overflow: auto;
         padding: 5px;
     }
 
@@ -42,13 +44,18 @@
         width: 100%;
         display: flex;
         justify-content: end;
+        position: absolute;
+        bottom: -4px;
+        left: 0px;
+
+        & span {background: black; flex-grow: 1; border-left: solid white 1px;}
     }
 
     .inventory-viewer-tabs {
         display: flex;
-
+        user-select: none;
         position: absolute;
-        bottom: -20px;
+        bottom: -23px;
         left: 0px;
         width: calc(100% - 6px);
 
@@ -61,55 +68,54 @@
             background-color: black;
         }
 
-        /* kms */
-
-        span {
-            display: flex;
-            align-items: center;
-            height: 20px;
-            padding-right: 19px;
-            margin-right: -19px;
+        .tab-divider {
+            height: 19px;
+            border-top: solid white 1px;
+            /* close enough. I am so tired. */
+            clip-path: polygon(100% 0, 100% 7%, 7% 100%, 0 100%, 0 0);
             cursor: var(--cursor_pointer);
-            user-select: none;
-
-            p {
-                border-top: solid white 1px;
-                align-self: stretch;
-                background-color: black;
-                border-bottom: solid white 1px;
-            }
-
-            img {
-                content: url('./assets/ledge.png');
-                border-top: solid 1px white;
-            }
         }
 
-        span:first-of-type {
-            img {
-                border-top-color: black;
+        .inventory-tabs-tail {
+            border-top: solid white 1px;
+            height: 19px;
+            cursor: var(--cursor_pointer);
+        }
+
+        .inventory-viewer-tab {
+            display: flex;
+            align-items: stretch;
+            background: black;
+            cursor: var(--cursor_pointer);
+
+            p {
+                border-bottom: white solid 1px;
+                border-top: white solid 1px;
+                padding-left: 19px;
+                margin-left: -18px;
+                background: black;
+                color: #aaa;
+            }
+
+            p:hover {
+                color: #ccc;
             }
         }
 
         .inventory-viewer-tab-active {
             p {
                 border-top-color: black;
+                color: white !important;
             }
         }
 
-        .inventory-viewer-tab-active+span {
-            img {
-                border-top: solid 1px black;
-            }
-        }
-
-        .inventory-viewer-tab-active+img {
+        .inventory-viewer-tab-active + img {
             border-top-color: black;
         }
 
-
-        img {
-            border-top: solid 1px white;
+        .tab-divider:first-of-type {
+            border-top-color: black;
+            cursor: inherit;
         }
     }
 }

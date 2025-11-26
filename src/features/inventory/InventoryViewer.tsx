@@ -1,14 +1,16 @@
 import Inventory from "@/core/inventory/inventory";
 import { ItemCategory } from "@/core/inventory/Items";
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import default_item_icon from '../../assets/ui/icons/items/default_icon.png';
 import './inventory-viewer.css'
 import stupid_corner from './assets/stupid_corner.png';
-import ledge from './assets/stupid_corner.png';
+import ledge from './assets/tail.png';
 import tail from './assets/tail.png';
 
 export default function InventoryViewer() {
     const [currentCategory, setCurrentCategory] = createSignal<ItemCategory>('misc');
+
+    const categories: ItemCategory[] = ['misc', 'data', 'caches'];
 
     return (
         <div class="inventory-viewer">
@@ -22,22 +24,27 @@ export default function InventoryViewer() {
                     }
                 </For>
             </div>
-            <span><img src={stupid_corner}/></span>
+            <span><span></span><img src={stupid_corner}/></span>
             <div class="inventory-viewer-tabs">
                 <div>/usr/arda/</div>
-                <For each={['misc', 'data', 'caches'] satisfies ItemCategory[]}>
-                    {(category) => 
+                <img src={ledge} class="tab-divider" />
+                <For each={categories}>
+                    {(category, index) => 
+                    <>
                         <span 
                             class="inventory-viewer-tab" 
                             classList={{'inventory-viewer-tab-active': currentCategory() == category}}
                             onClick={() => setCurrentCategory(category)}
                         >
-                           <img src={ledge} onClick={() => setCurrentCategory(category)}/>
-                           <p onClick={() => setCurrentCategory(category)}>{category}</p>
+                            <p>{category}</p>
                         </span>
+                        <Show when={index() !== categories.length - 1}>
+                            <img src={ledge} class="tab-divider" onClick={() => setCurrentCategory(category)}/>
+                        </Show>
+                    </>
                     }
                 </For>
-                <img src={tail}/>
+                <img class="inventory-tabs-tail" src={tail} onClick={() => setCurrentCategory(categories[categories.length-1])}/>
             </div>
         </div>
     )

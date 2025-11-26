@@ -1,6 +1,6 @@
 import sidebar_button_placeholder from "./assets/sidebar_button.png";
 import sidebar_button_active from "./assets/sidebar_button_active.png"
-import { Component, createSignal, For, JSX, Show } from "solid-js";
+import { Component, createEffect, createSignal, For, JSX, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DevMenu from "@/devtools/DevMenu";
@@ -48,22 +48,6 @@ export default function Sidebar() {
     // Todo: Make an interface and better typed logic for all of this.
     const menuItems: SideBarItem[] = [
         {
-            id: "example",
-            title: 'EXAMPLE',
-            content: () => <div style={{height: '200px', width: '300px'}}>
-                <p style={{margin: "auto 0"}}>
-                    This is a sidebar menu item. Eventually, this will be used to display things like player inventory and more.
-                </p>
-                </div>,
-            icon: ex_icon
-        },
-        {
-            id: "dev",
-            title: 'DEVELOPER MENU',
-            icon: debug_icon,
-            content: DevMenu
-        },
-        {
             id: 'inventory',
             title: 'FILE EXPLORER',
             content: InventoryViewer,
@@ -72,6 +56,12 @@ export default function Sidebar() {
             contentStyle: {
                 'border-right': 'none',
             }
+        },
+        {
+            id: "dev",
+            title: 'DEVELOPER MENU',
+            icon: debug_icon,
+            content: DevMenu
         }
     ];
 
@@ -79,9 +69,15 @@ export default function Sidebar() {
         setOpenWindow(prev => (prev === id ? null : id));
     };
 
+    // Close any open windows when the lock is active.
+    createEffect(() => {
+        if(sidebarLock.isLocked()) {
+            setOpenWindow(null);
+        }
+    })
+
     const openWindowInfo = () => menuItems.find(i => i.id == openWindow());
 
-    // TODO: Configure this so that the buttons can have unique icons.
     // TODO: Make a derived signal for the current window instead of running filter everywhere.
     return (
         <div id="sidebar">
