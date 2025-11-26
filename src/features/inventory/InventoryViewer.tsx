@@ -1,6 +1,6 @@
 import Inventory from "@/core/inventory/inventory";
 import { Item, ItemCategory } from "@/core/inventory/Items";
-import { createEffect, createSignal, For, on, Show } from "solid-js";
+import { createEffect, createSignal, For, on, onCleanup, Show } from "solid-js";
 import default_item_icon from '../../assets/ui/icons/items/default_icon.png';
 import './inventory-viewer.css'
 import stupid_corner from './assets/stupid_corner.png';
@@ -23,17 +23,21 @@ export default function InventoryViewer() {
         popUILayer('item-preview'); // Remove current preview if needed.
         const root = gameRoot();
         if (!root) return;
-        // const pos = getRelativeMousePosition(evt, root);
         const pos = getRelativeOffset(trgt, root);
+        pos.x += 40;
+        pos.y += 40;
         pushUILayer({
             id: 'item-preview',
-            component: () => ItemPreview({item, pos})
+            component: () => ItemPreview({item, pos, closeWindow: () => popUILayer('item-preview')})
         })
     }
 
     // Close preview if category changes.
     createEffect(on(currentCategory, () => popUILayer('item-preview')));
+    // or if we close the file browser...
+    onCleanup(() => popUILayer('item-preview'));
 
+    // Used for getting position of the clicked item icon (to show preview)
     const itemRefs = new Map<number, HTMLElement>();
 
     return (

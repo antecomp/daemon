@@ -43,7 +43,7 @@ function updateOutlineUniforms(pass: OutlinePass) {
     pass.selectedObjects = hoveredItem() ? [hoveredItem()!] : [];
 }
 
-export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable") {
+export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable", dimensionOverride?: {width: number, height: number}) {
     if(!scene.glRenderer) {
         console.warn('[applyDGShader] Scene GL instance not ready yet.');
         throw new Error("[applyDGShader] Scene GL instance not ready yet. scene.glRenderer could not be found.");
@@ -53,7 +53,7 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
     const composer = new EffectComposer(scene.glRenderer);
 
     // Constant render dimensions regardless of scale.
-    const {width: WIDTH, height: HEIGHT} = SCENE_DIMENSIONS;
+    const {width: WIDTH, height: HEIGHT} = dimensionOverride ?? SCENE_DIMENSIONS;
 
     // composer 1 + window.devicePixelRatio on glRenderer seems to be the combination needed to make this work
     // well on both HiDPI and normal displays.
@@ -112,14 +112,14 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 	};
 }
 
-export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized') => {
+export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized', dimensionOverride?: {width: number, height: number}) => {
 
     const x = () => {
         // console.log('attempting'); // seems to only play onceundefined
         requestAnimationFrame(() => {
             const s = getScene();
             if (!s) sleep(10).then(x) // retry
-            else applyDGShader(s, mode);
+            else applyDGShader(s, mode, dimensionOverride);
         })
     }
 

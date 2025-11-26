@@ -1,3 +1,4 @@
+import ITEM_DV_MOD from "@/data/items/ITEM_DV_MOD";
 import { Component } from "solid-js"
 
 export type ItemCategory = "data" | "caches" | "misc"
@@ -17,7 +18,7 @@ export const ITEM_REGISTRY = {
         //key: 'test',
         category: 'misc',
         displayName: 'test1',
-        previewComponent: () => <p>test</p>,
+        previewComponent: () => <p style={{width: '300px'}}>some item component</p>,
         uploadable: false
     },
     test2: {
@@ -32,7 +33,8 @@ export const ITEM_REGISTRY = {
         category: 'caches',
         previewComponent: () => <p>test</p>,
         uploadable: false,
-    }
+    },
+    dv_mod: ITEM_DV_MOD
 } as const satisfies Record<string, Item>
 
 export type ItemKey = keyof typeof ITEM_REGISTRY;
