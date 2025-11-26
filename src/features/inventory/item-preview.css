@@ -1,6 +1,6 @@
 .item-preview-window footer {
     display: flex;
-    transform: perspective(0px);
+    transform: translateY(0px); /* whatever man - makes top border actually show for some reason */
     border-left: solid white 1px;
     /* height: 16px; */
     height: 21px;
@@ -32,6 +32,14 @@
 
         & p:first-of-type {
             border-left: none;
+            position: relative;
+        }
+
+        & p:first-of-type::before {
+            content: url('./assets/prev-buttons-first-head.png');
+            position: absolute;
+            left: -18px;
+            top: -1px;
         }
 
         & p:last-of-type {
