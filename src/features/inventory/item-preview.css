@@ -1,13 +1,46 @@
 .item-preview-window footer {
     display: flex;
-    translate: 0px -1px;
-    filter: drop-shadow(1px 1px 0px black);
+    transform: perspective(0px);
+    border-left: solid white 1px;
+    /* height: 16px; */
+    height: 21px;
 
-    & span {
+    .itemprev-item-name {
         flex-grow: 1;
-        background: black;
-        border-left: solid white 1px;
         border-bottom: solid white 1px;
+        /* border-left: solid white 1px; */
+        background-color: black;
+    }
+
+    .itemprev-buttons {
+        border-top: solid white 1px;
+        display: flex;
+
+        & p {
+            height: 19px;
+            align-self: end;
+            border: solid white 1px;
+            margin-right: 1px;
+            margin-top: 1px;
+            background-color: black;
+            /* padding: 1px;
+            padding-top: 0px; */
+            display: flex;
+            align-items: center;
+            padding: 0px 2px;
+        }
+
+        & p:first-of-type {
+            border-left: none;
+        }
+
+        & p:last-of-type {
+            margin-right: 0;
+        }
+
+        & p:active {
+            transform: translateY(-2px);
+        }
     }
 
 }

@@ -48,6 +48,7 @@ body {
   align-items: center;
   height: 100vh;
   font-family: 'main';
+  user-select: none;
 
   /* dont ask - makes pixel aligned */
   /* margin-left: 1px;

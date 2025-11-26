@@ -8,6 +8,7 @@ import swindow_bot_corner from "@/app/shell/sidebar/assets/swindow_bot_corner.pn
 import top_corner from './assets/preview-top-corner.png'
 
 import './item-preview.css'
+import buttons_divider from './assets/prev_buttons_divider.png';
 
 export default function ItemPreview(props: {
     item: Item
@@ -39,11 +40,14 @@ export default function ItemPreview(props: {
             </div>
             <div class="itemprev-content">
                 {props.item.previewComponent({})}
-                BUTTONS TO DO STUFF GO HERE LATER :D
             </div>
             <footer>
-                <span />
-                <img src={swindow_bot_corner} />
+                <span class="itemprev-item-name">{props.item.displayName}</span>
+                <img src={buttons_divider} class='btns-divider'/>
+                <span class="itemprev-buttons">
+                    <p>ACTION</p>
+                    <p>UPLOAD</p>
+                </span>
             </footer>
         </div>
     )
