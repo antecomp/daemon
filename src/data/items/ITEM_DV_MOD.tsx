@@ -1,4 +1,5 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
+import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { Item } from "@/core/inventory/Items";
 import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
 import { Scene } from "lume";
@@ -7,12 +8,15 @@ import { Scene } from "lume";
 const ITEM_DV_MOD: Item = {
     category: 'caches',
     displayName: 'dv_mod',
+    previewName: 'Daemonveil safegaurd mod',
     uploadable: false,
+    action(){setCurrentScene('Bridge')},
+    actionShouldCloseViewer: true,
     previewComponent() {
         let sceneRef!: Scene;
-        useDGShader(() => sceneRef, 'stable', {width: 300, height: 250});
+        useDGShader(() => sceneRef, 'stable', {width: 290, height: 240});
         return (
-            <div style={{ width: '300px', height: '250px' }}>
+            <div style={{ width: '300px', height: '250px', padding: '5px' }}>
                 <div
 
                 ></div>
@@ -28,7 +32,8 @@ const ITEM_DV_MOD: Item = {
                 >
                     <lume-camera-rig 
                         align-point="0.5 0.5" 
-                        distance="225"
+                        distance="175"
+                        dolly-speed='0.1'
                     >
                     </lume-camera-rig>
                     <lume-ambient-light intensity='100' />

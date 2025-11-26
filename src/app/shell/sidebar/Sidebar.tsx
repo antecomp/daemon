@@ -50,7 +50,7 @@ export default function Sidebar() {
         {
             id: 'inventory',
             title: 'FILE EXPLORER',
-            content: InventoryViewer,
+            content: () => InventoryViewer({closeInventoryViewer() {toggleMenu('inventory')}}),
             hideBottom: true,
             icon: inventory_icon,
             contentStyle: {

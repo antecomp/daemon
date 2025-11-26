@@ -10,6 +10,7 @@
         border-bottom: solid white 1px;
         /* border-left: solid white 1px; */
         background-color: black;
+        padding-left: 4px;
     }
 
     .itemprev-buttons {
@@ -85,7 +86,6 @@
     border-top: none;
     border-bottom: none;
     background: black;
-    padding-left: 8px;
 }
 
 .itemprev-button {

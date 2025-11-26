@@ -10,7 +10,7 @@ import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import ItemPreview from "./ItemPreview";
 import { getRelativeOffset } from "@/shared/utils/documentPositionUtils";
 
-export default function InventoryViewer() {
+export default function InventoryViewer(props: {closeInventoryViewer: () => void}) {
     const [currentCategory, setCurrentCategory] = createSignal<ItemCategory>('misc');
 
     const categories: ItemCategory[] = ['misc', 'data', 'caches'];
@@ -28,7 +28,7 @@ export default function InventoryViewer() {
         pos.y += 40;
         pushUILayer({
             id: 'item-preview',
-            component: () => ItemPreview({item, pos, closeWindow: () => popUILayer('item-preview')})
+            component: () => ItemPreview({item, pos, closeWindow: () => popUILayer('item-preview'), closeInventoryViewer: props.closeInventoryViewer})
         })
     }
 

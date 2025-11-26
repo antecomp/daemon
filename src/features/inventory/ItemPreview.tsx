@@ -9,11 +9,13 @@ import top_corner from './assets/preview-top-corner.png'
 
 import './item-preview.css'
 import buttons_divider from './assets/prev_buttons_divider.png';
+import { Show } from "solid-js";
 
 export default function ItemPreview(props: {
     item: Item
     pos: Point
     closeWindow: () => void;
+    closeInventoryViewer: () => void;
 }) {
     return (
         <div
@@ -42,11 +44,21 @@ export default function ItemPreview(props: {
                 {props.item.previewComponent({})}
             </div>
             <footer>
-                <span class="itemprev-item-name">{props.item.displayName}</span>
-                <img src={buttons_divider} class='btns-divider'/>
+                <span class="itemprev-item-name">
+                    {props.item.previewName ?? props.item.displayName}
+                </span>
+                <img src={buttons_divider} class='btns-divider' />
                 <span class="itemprev-buttons">
-                    <p>ACTION</p>
-                    <p>UPLOAD</p>
+                    <Show when={props.item.action != undefined}>
+                        <p onClick={() => {
+                            props.item.action!();
+                            props.item.actionShouldCloseViewer && props.closeInventoryViewer();
+                        }}
+                        >USE</p>
+                    </Show>
+                    <Show when={props.item.uploadable}>
+                        <p>UPLOAD</p>
+                    </Show>
                 </span>
             </footer>
         </div>
