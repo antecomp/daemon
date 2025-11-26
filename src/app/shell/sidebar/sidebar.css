@@ -13,11 +13,20 @@
         margin-bottom: -17px;
         clip-path: polygon(0% 30%, 105% -3%, 100% 70%, -1% 105%);
         transition: filter 0.5s;
+        height: 116px;
+        position: relative;
     }
 
-    .sidebar-button:hover {
+    .sidebar-button:hover,  .sidebar-button-active {
         filter: brightness(1.5);
         cursor: var(--cursor_pointer);
+    }
+
+    .sidebar-item-icon {
+        position: absolute;
+        top: 39px;
+        left: 1px;
+        pointer-events: none;
     }
 }
 
