@@ -7,6 +7,7 @@ import { Scene } from "lume";
 
 const ITEM_DV_MOD: Item = {
     category: 'caches',
+    icon: 'default',
     displayName: 'dv_mod',
     previewName: 'Daemonveil safegaurd mod',
     uploadable: false,

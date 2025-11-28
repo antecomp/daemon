@@ -3,6 +3,7 @@ import ksngr from '@/assets/artwork/dæmons/kissinger.png';
 
 const ITEM_EXAMPLE: Item = {
     category: 'misc',
+    icon: 'default',
     displayName: 'ksngr',
     previewName: 'Kissinger',
     previewComponent() {
@@ -13,7 +14,6 @@ const ITEM_EXAMPLE: Item = {
         );
     },
     uploadable: true,
-    // action: () => undefined,
 }
 
 export default ITEM_EXAMPLE;
