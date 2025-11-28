@@ -10,6 +10,19 @@ export const ITEM_ICONS = {
 
 export type ItemCategory = "data" | "caches" | "misc"
 
+/**
+ * Describes a single inventory item and how it should be presented and interacted with in the UI.
+ *
+ * @property displayName - Required human-readable name shown in inventory viewer.
+ * @property previewName - Optional alternate name to display inside previewer UI (when different from displayName). Used for expanded names.
+ * @property icon - Key of ITEM_ICONS that identifies the icon to render for this item.
+ * @property category - Classification of the item used for grouping/filtering (type: ItemCategory).
+ * @property previewComponent - A UI component used to render a preview of the item inside a viewer.
+ * @property uploadable - (TO IMPLEMENT): If the item can be "uploaded" (used upon scene objects)
+ * @property action (optional) - callback to run when the item is used.
+ * @property actionShouldCloseViewer - When true and an action is invoked from within a previewer/viewer,
+ *                                     the viewer should be closed when the action starts.
+ */
 export interface Item {
     // key: string, // is this needed?
     displayName: string,
@@ -22,6 +35,10 @@ export interface Item {
     actionShouldCloseViewer?: boolean
 }
 
+/**
+ * Registry of all game items. New items should be registered here.
+ * Is a simple record of an item key to an Item instance.
+ */
 export const ITEM_REGISTRY = {
     test: {
         category: 'misc',

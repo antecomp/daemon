@@ -4,7 +4,6 @@ import { Point } from "@/shared/types/3d.types";
 import swindow_button_frame from "@/app/shell/sidebar/assets/swindow_button_frame.png"
 import swindow_slopcorner from "@/app/shell/sidebar/assets/swindow-slopborder.png"
 import swindow_button from "@/app/shell/sidebar/assets/swindow_button.png"
-import swindow_bot_corner from "@/app/shell/sidebar/assets/swindow_bot_corner.png"
 import top_corner from './assets/preview-top-corner.png'
 
 import './item-preview.css'
@@ -13,6 +12,9 @@ import { Show } from "solid-js";
 import upload_icon from './assets/upload_icon.png';
 import use_icon from './assets/use_icon.png';
 
+/**
+ * Popup preview window for items.
+ */
 export default function ItemPreview(props: {
     item: Item
     pos: Point

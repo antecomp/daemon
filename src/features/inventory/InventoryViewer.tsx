@@ -9,6 +9,9 @@ import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import ItemPreview from "./ItemPreview";
 import { getRelativeOffset } from "@/shared/utils/documentPositionUtils";
 
+/**
+ * Sidebar Window - The Inventory Viewer.
+ */
 export default function InventoryViewer(props: {closeInventoryViewer: () => void}) {
     const [currentCategory, setCurrentCategory] = createSignal<ItemCategory>('misc');
 
