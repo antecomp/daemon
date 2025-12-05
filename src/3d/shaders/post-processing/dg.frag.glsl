@@ -1,15 +1,43 @@
 precision highp float;
 
 uniform sampler2D tDiffuse;
-uniform float lumaCutoff; // Threshold at which to clamp to black.
+uniform float lumaCutoff;  // cutoff in a perceptual sense
 uniform vec2 screensize;
-uniform float gamma;      // Use 2.2 to match sRGB-ish Hard Mix.
 uniform int offsetX;
 uniform int offsetY;
 varying vec2 vUv;
 
+// --- sRGB helpers (Khronos / IEC spec style) ---
+
+// vec3 linearToSRGB(vec3 c) {
+//     vec3 cutoff = vec3(0.0031308);
+//     vec3 low  = c * 12.92;
+//     vec3 high = 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055;
+//     return mix(high, low, lessThanEqual(c, cutoff));
+// }
+
+// vec3 sRGBToLinear(vec3 c) {
+//     vec3 cutoff = vec3(0.04045);
+//     vec3 low  = c / 12.92;
+//     vec3 high = pow((c + 0.055) / 1.055, vec3(2.4));
+//     return mix(high, low, lessThanEqual(c, cutoff));
+// }
+
+    // Linear to sRGB
+    vec3 linearToSRGB(vec3 color) {
+        vec3 srgb = pow(color, vec3(1.0/2.25));
+        return mix(1.055 * srgb - 0.055, 12.92 * color, lessThan(color, vec3(0.0031308)));
+    }
+
+    // sRGB to Linear
+    vec3 sRGBToLinear(vec3 color) {
+        vec3 linear = pow(color, vec3(2.25));
+        return mix(color / 12.92, (color + 0.055) / 1.055, greaterThan(color, vec3(0.04045)));
+    }
+
+
 // 4x4 Bayer pattern in [0,1]
-float getDitherPattern(vec2 coord) {
+float getBayerPattern(vec2 coord) {
     coord = floor(mod(coord, 4.0)); // 0..3 wraparound
     int index = int(coord.x) + int(coord.y) * 4;
 
@@ -19,40 +47,35 @@ float getDitherPattern(vec2 coord) {
     m[8]  = 3.0;  m[9]  = 11.0; m[10] = 1.0;  m[11] = 9.0;
     m[12] = 15.0; m[13] = 7.0;  m[14] = 13.0; m[15] = 5.0;
 
-    // 0..1. You can tweak this to match your Bayer PNG if needed.
-    return (m[index] + 0.5) / 16.0;
-}
-
-// Optional helper if you still want gamma-based luma for cutoff
-float gammaEncode(float linear, float gamma) {
-    return pow(linear, 1.0 / gamma);
+    // Adjust this if your Bayer PNG uses a different normalization.
+    // This is often closer to a 0..255 Bayer ramp.
+    return m[index] / 15.0; // 0..1
 }
 
 void main() {
-    // 1. Sample scene color in linear space (Three.js post-process default).
+    // 1. Sample scene color in linear space (Three.js post-process)
     vec3 colorLinear = texture2D(tDiffuse, vUv).rgb;
 
-    // 2. Compute brightness for cutoff. We can approximate sRGB luma by
-    //    encoding to gamma first, then dot with luma weights.
-    vec3 colorGamma = pow(colorLinear, vec3(1.0 / gamma));
-    float brightness = dot(colorGamma, vec3(0.299, 0.587, 0.114));
+    // 2. Convert to true sRGB for Photoshop-style operations
+    vec3 colorSRGB = linearToSRGB(colorLinear);
 
-    // Clamp shades below some threshold to black (in a "perceptual" sense).
+    // 3. Luma for cutoff in sRGB space (matches perceptual brightness better)
+    float brightness = dot(colorSRGB, vec3(0.299, 0.587, 0.114));
     if (brightness <= lumaCutoff) {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
     }
 
-    // 3. Screen-space Bayer pattern
+    // 4. Screen-space Bayer pattern
     vec2 pixelCoord = vUv * screensize + vec2(float(offsetX), float(offsetY));
-    float pattern = getDitherPattern(pixelCoord); // 0..1
+    float pattern = getBayerPattern(pixelCoord);
 
-    // 4. Compute linear-space threshold equivalent to:
-    //    Hard Mix in gamma space: pow(colorLinear, 1/gamma) + pattern >= 1
-    float thresholdLinear = pow(max(0.0, 1.0 - pattern), gamma);
+    // 5. Hard Mix in sRGB:
+    //    out = 1 if base + pattern >= 1 else 0
+    vec3 outSRGB = step(vec3(1.0), colorSRGB + vec3(pattern));
 
-    // 5. Per-channel comparison in linear space
-    vec3 outLinear = step(vec3(thresholdLinear), colorLinear);
+    // 6. Convert back to linear so renderer outputColorSpace can do its job
+    vec3 outLinear = sRGBToLinear(outSRGB);
 
-    gl_FragColor = vec4(outLinear, 1.0);
+    gl_FragColor = vec4(outSRGB, 1.0);
 }
