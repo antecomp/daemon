@@ -171,7 +171,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
 .attachSideEffect(ctx => ctx?.actions?.cacheHandoverAnimation())
 .then("Enjoy your contraband. Next point of contact is on the diskette.", MAN)
 .attachSideEffect(ctx => ctx?.actions?.returnCamera())
-.then("Before you say anything more, the man abruptly rises out of his chair and departs.")
+.then("Before you say anything more, the man abruptly rises out of his chair and departs.", VISUALIZER)
 .attachSideEffect(ctx => ctx?.actions?.departTheMan())
 // Dialogue Naturally Ends here.
 

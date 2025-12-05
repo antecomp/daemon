@@ -26,6 +26,7 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 import { default as dialogue_root } from '@/tests/dialogues/x'
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
+import Inventory from "@/core/inventory/inventory";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
@@ -142,7 +143,8 @@ export default function GemmaBar() {
                                         label: "Yes",
                                         onSelect() {
                                             setShowCache(false);
-                                            sleep(1000).then(() => SceneFadeManager.fadeSceneOut())
+                                            Inventory.addItem('dv_mod');
+                                            //sleep(1000).then(() => SceneFadeManager.fadeSceneOut())
                                         },
                                     },
                                     {label: "No"}

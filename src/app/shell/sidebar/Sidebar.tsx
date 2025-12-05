@@ -1,11 +1,26 @@
 import sidebar_button_placeholder from "./assets/sidebar_button.png";
 import sidebar_button_active from "./assets/sidebar_button_active.png"
-import { createSignal, For, Show } from "solid-js";
+import { Component, createEffect, createSignal, For, JSX, Show } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import { Swindow } from "./SWindow";
 import DevMenu from "@/devtools/DevMenu";
 import './sidebar.css'
 import { sidebarLock } from "../locks/UILockManager";
+import InventoryViewer from "@/features/inventory/InventoryViewer";
+import { AssetURL } from "@/shared/types/misc.types";
+
+import debug_icon from './assets/swindow-icons/debug.png';
+import inventory_icon from './assets/swindow-icons/inventory.png';
+import ex_icon from './assets/swindow-icons/ex.png';
+
+interface SideBarItem {
+    id: string,
+    title: string,
+    content: Component,
+    contentStyle?: JSX.CSSProperties
+    hideBottom?: boolean,
+    icon?: AssetURL
+}
 
 function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffset: number) {
     const even = totalBoxes % 2 === 0;
@@ -28,29 +43,25 @@ function getOffset(index: number, totalBoxes: number, HEIGHT: number, staticOffs
 export default function Sidebar() {
 
     const [openWindow, setOpenWindow] = createSignal<string | null>(null);
-    const buttonRefs = new Map<string, HTMLElement>();
 
 
     // Todo: Make an interface and better typed logic for all of this.
-    const menuItems = [
+    const menuItems: SideBarItem[] = [
         {
-            id: "example",
+            id: 'inventory',
             title: 'FILE EXPLORER',
-            content: () => <div style={{height: '200px', width: '300px'}}>
-                <p style={{margin: "auto 0"}}>
-                    This is a sidebar menu item. Eventually, this will be used to display things like player inventory and more.
-                </p>
-                </div>,
+            content: () => InventoryViewer({closeInventoryViewer() {toggleMenu('inventory')}}),
+            hideBottom: true,
+            icon: inventory_icon,
+            contentStyle: {
+                'border-right': 'none',
+            }
         },
         {
             id: "dev",
             title: 'DEVELOPER MENU',
+            icon: debug_icon,
             content: DevMenu
-        },
-        {
-            id: 'inventory',
-            title: 'FILE EXPLORER',
-            content: () => <div>hey.</div>
         }
     ];
 
@@ -58,25 +69,36 @@ export default function Sidebar() {
         setOpenWindow(prev => (prev === id ? null : id));
     };
 
-    // TODO: Configure this so that the buttons can have unique icons.
+    // Close any open windows when the lock is active.
+    createEffect(() => {
+        if(sidebarLock.isLocked()) {
+            setOpenWindow(null);
+        }
+    })
+
+    const openWindowInfo = () => menuItems.find(i => i.id == openWindow());
+
+    // TODO: Make a derived signal for the current window instead of running filter everywhere.
     return (
         <div id="sidebar">
             <For each={menuItems}>
                 {item => (
+                    <div class="sidebar-button" classList={{'sidebar-button-active': openWindow() === item.id}}>
                     <img 
                         src={openWindow() == item.id ? sidebar_button_active : sidebar_button_placeholder}
-                        ref={el => buttonRefs.set(item.id, el)}
-                        class="sidebar-button" 
                         id={item.id}
+                        //  class="sidebar-button"
                         onClick={() => !sidebarLock.isLocked() && toggleMenu(item.id)}
                     />
+                    <img src={item.icon} class="sidebar-item-icon"/>
+                    </div>
                 )}
             </For>
 
             <Show when={openWindow()}>
                 <Dynamic 
                     component={Swindow} 
-                    children={menuItems.find(i => i.id == openWindow()!)?.content()} 
+                    children={openWindowInfo()?.content({})} 
                     offset={
                         getOffset( // ???
                             menuItems.findIndex(item => item.id == openWindow()),
@@ -85,8 +107,10 @@ export default function Sidebar() {
                             -17
                         )
                     }
-                    title={menuItems.find(i => i.id == openWindow()!)?.title}
+                    hideBottom={openWindowInfo()?.hideBottom}
+                    title={openWindowInfo()?.title}
                     closeWindow={() => toggleMenu(openWindow())}
+                    contentStyle={openWindowInfo()?.contentStyle}
                 />
             </Show>
         </div>

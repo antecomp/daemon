@@ -1,0 +1,118 @@
+.item-preview-window footer {
+    display: flex;
+    transform: translateY(0px); /* whatever man - makes top border actually show for some reason */
+    border-left: solid white 1px;
+    /* height: 16px; */
+    height: 21px;
+
+    .itemprev-item-name {
+        flex-grow: 1;
+        border-bottom: solid white 1px;
+        /* border-left: solid white 1px; */
+        background-color: black;
+        padding-left: 4px;
+    }
+
+    .itemprev-buttons {
+        border-top: solid white 1px;
+        display: flex;
+
+        & p {
+            height: 19px;
+            align-self: end;
+            border: solid white 1px;
+            margin-right: 1px;
+            margin-top: 1px;
+            background-color: black;
+            /* padding: 1px;
+            padding-top: 0px; */
+            display: flex;
+            align-items: center;
+            padding: 0px 2px;
+
+            img {
+                margin-bottom: 1px;
+                margin-right: 3px;
+            }
+        }
+
+        & p:first-of-type {
+            border-left: none;
+            position: relative;
+
+            img {
+                margin-left: -4px;
+                z-index: 2;
+            }
+        }
+
+        & p:first-of-type::before {
+            content: url('./assets/prev-buttons-first-head.png');
+            position: absolute;
+            left: -18px;
+            top: -1px;
+        }
+
+        & p:last-of-type {
+            margin-right: 0;
+        }
+
+        & p:active {
+            transform: translateY(-2px);
+        }
+    }
+
+}
+
+.itemprev-hb {
+    display: flex;
+    flex-direction: row;
+
+    & span {
+        flex-grow: 1;
+        border-top: solid 1px white;
+        background: black;
+    }
+}
+
+.itemprev-hm {
+    display: flex;
+
+    & span {
+        border-left: solid 1px white;
+        flex-grow: 1;
+        z-index: 1;
+        background: black;
+    }
+
+    & img {
+        z-index: 1;
+    }
+}
+
+.itemprev-content {
+    border: solid white 1px;
+    outline: solid black 1px;
+    border-top: none;
+    border-bottom: none;
+    background: black;
+}
+
+.itemprev-button {
+    position: absolute;
+    right: 6px;
+    top: 0;
+}
+
+.itemprev-button:active {
+    right: 7px;
+    top: 1px;
+}
+
+.itemprev-title {
+    font-family: 'teeny';
+    font-size: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}

@@ -1,0 +1,121 @@
+.inventory-viewer {
+    height: 170px;
+    width: 270px;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+
+    .inventory-viewer-items {
+        flex-grow: 1;
+    }
+
+    .inventory-viewer-items {
+        border-right: solid white 1px;
+        display: flex;
+        flex-wrap: wrap;
+        overflow: auto;
+        padding: 5px;
+    }
+
+    .inventory-item {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 3px;
+        user-select: none;
+
+        p {
+            transform: perspective(0px);
+        }
+    }
+
+    .inventory-item:hover {
+        outline: dashed 1px white;
+    }
+
+    .inventory-item:active {
+        outline: solid 1px white;
+    }
+
+    &>span {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+        position: absolute;
+        bottom: -4px;
+        left: 0px;
+
+        & span {background: black; flex-grow: 1; border-left: solid white 1px;}
+    }
+
+    .inventory-viewer-tabs {
+        display: flex;
+        user-select: none;
+        position: absolute;
+        bottom: -23px;
+        left: 0px;
+        width: calc(100% - 6px);
+
+        div {
+            width: 15px;
+            border-left: solid 1px white;
+            border-bottom: 1px solid white;
+            text-align: center;
+            flex-grow: 1;
+            background-color: black;
+        }
+
+        .tab-divider {
+            height: 19px;
+            border-top: solid white 1px;
+            /* close enough. I am so tired. */
+            clip-path: polygon(100% 0, 100% 7%, 7% 100%, 0 100%, 0 0);
+            cursor: var(--cursor_pointer);
+        }
+
+        .inventory-tabs-tail {
+            border-top: solid white 1px;
+            height: 19px;
+            cursor: var(--cursor_pointer);
+        }
+
+        .inventory-viewer-tab {
+            display: flex;
+            align-items: stretch;
+            background: black;
+            cursor: var(--cursor_pointer);
+
+            p {
+                border-bottom: white solid 1px;
+                border-top: white solid 1px;
+                padding-left: 19px;
+                margin-left: -18px;
+                background: black;
+                color: #aaa;
+            }
+
+            p:hover {
+                color: #ccc;
+            }
+        }
+
+        .inventory-viewer-tab-active {
+            p {
+                border-top-color: black;
+                color: white !important;
+            }
+        }
+
+        .inventory-viewer-tab-active + img {
+            border-top-color: black;
+        }
+
+        .tab-divider:first-of-type {
+            border-top-color: black;
+            cursor: inherit;
+        }
+    }
+}

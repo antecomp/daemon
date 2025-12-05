@@ -48,6 +48,7 @@ body {
   align-items: center;
   height: 100vh;
   font-family: 'main';
+  user-select: none;
 
   /* dont ask - makes pixel aligned */
   /* margin-left: 1px;
@@ -161,4 +162,20 @@ button {
       cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
     }
 
+}
+
+::-webkit-scrollbar {
+	width: 2px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+}
+
+::-webkit-scrollbar-button {
+  display: none;
 }

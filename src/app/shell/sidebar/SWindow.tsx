@@ -1,4 +1,4 @@
-import { JSX } from "solid-js";
+import { JSX, Show } from "solid-js";
 import "./s-window.css"
 import top_corner from "./assets/swindow-top.png";
 import swindow_button_frame from "./assets/swindow_button_frame.png"
@@ -12,6 +12,8 @@ export function Swindow(props: {
     offset: number;
     title?: string
     closeWindow: () => void;
+    hideBottom?: boolean;
+    contentStyle?: JSX.CSSProperties
 }) {
     return (
         <div 
@@ -37,13 +39,15 @@ export function Swindow(props: {
                 <span/>
                 <img src={swindow_slopcorner}/>
             </div>
-            <div class="swindow-content">
+            <div class="swindow-content" style={props.contentStyle}>
                 {props.children}
             </div>
-            <footer>
-                <span/>
-                <img src={swindow_bot_corner}/>
-            </footer>
+            <Show when={!props.hideBottom}>
+                <footer>
+                    <span/>
+                    <img src={swindow_bot_corner}/>
+                </footer>
+            </Show>
         </div>
     )
 }

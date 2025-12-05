@@ -21,10 +21,16 @@ export type MetaLayer = 'bottom' | 'middle' | 'top';
  * @property style - (Optional) Custom CSS properties for the UI layer (containing div).
  */
 export type UILayer = {
+    /** id - A unique identifier for the UI layer. */
     id: string;
+    /**  component - A function that returns the JSX element for the UI layer. */
     component: () => JSX.Element;
+    /** metaLayer - (Optional) The meta layer of the UI layer, determining its stacking order. */
     metaLayer?: MetaLayer;
+    /** lock - (Optional) The lock state associated with the UI layer. */
     lock?: 'sidebar' | 'scene' | 'all';
+    /** (Optional) Whether interactions with layers behind this one are blocked. */
     blockBehind?: boolean;
+    /** style - (Optional) Custom CSS properties for the UI layer (containing div). */
     style?: JSX.CSSProperties;
 }
