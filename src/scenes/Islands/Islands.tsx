@@ -15,10 +15,21 @@ export default function Islands()  {
         <lume-scene webgl perspective="800" ref={sceneRef}
         >
           {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
-          {/* <Freecam
+          
+           {/* <Freecam
             sceneRef={sceneRef}
-          /> */}
+          />  */}
 
+          <PlayerCam
+                basePos={[2059, -957, -353]}
+                baseOri={{ yaw: -143, pitch: 10 }}
+                maxYaw={30}
+                maxPitch={20}
+                animate={false}
+                sceneRef={sceneRef!}
+            />
+
+{/*           
           <PlayerCam
                 basePos={[-1477, -165, 378]}
                 baseOri={{ yaw: -810, pitch: -10 }}
@@ -27,12 +38,21 @@ export default function Islands()  {
                 animate={false}
                 sceneRef={sceneRef!}
             />
+            */}
+
+           {/* <PlayerCam
+                basePos={[1424, -603, -50]}
+                baseOri={{ yaw: -126, pitch: 2 }}
+                maxYaw={30}
+                maxPitch={20}
+                animate={false}
+                sceneRef={sceneRef!}
+            /> */}
         
         
 
-          <lume-ambient-light intensity="7"/>
+          <lume-ambient-light intensity="6.75"/>
           {/* <lume-directional-light intensity="2" position="0 10 0" align-point="0.5 0.5"/> */}
-          {/* <lume-directional-light intensity="2" position="-5 -10 0" align-point="0.5 0.5"/> */}
           <lume-gltf-model 
             src={islands_glb}
             align-point='0.5 0.5'
