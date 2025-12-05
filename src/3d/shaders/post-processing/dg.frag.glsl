@@ -9,31 +9,31 @@ varying vec2 vUv;
 
 // --- sRGB helpers (Khronos / IEC spec style) ---
 
-// vec3 linearToSRGB(vec3 c) {
-//     vec3 cutoff = vec3(0.0031308);
-//     vec3 low  = c * 12.92;
-//     vec3 high = 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055;
-//     return mix(high, low, lessThanEqual(c, cutoff));
-// }
+vec3 linearToSRGB(vec3 c) {
+    vec3 cutoff = vec3(0.0031308);
+    vec3 low  = c * 12.92;
+    vec3 high = 1.055 * pow(c, vec3(1.0 / 2.4)) - 0.055;
+    return mix(high, low, lessThanEqual(c, cutoff));
+}
 
-// vec3 sRGBToLinear(vec3 c) {
-//     vec3 cutoff = vec3(0.04045);
-//     vec3 low  = c / 12.92;
-//     vec3 high = pow((c + 0.055) / 1.055, vec3(2.4));
-//     return mix(high, low, lessThanEqual(c, cutoff));
-// }
+vec3 sRGBToLinear(vec3 c) {
+    vec3 cutoff = vec3(0.04045);
+    vec3 low  = c / 12.92;
+    vec3 high = pow((c + 0.055) / 1.055, vec3(2.4));
+    return mix(high, low, lessThanEqual(c, cutoff));
+}
 
 // Linear to sRGB
-vec3 linearToSRGB(vec3 color) {
-    vec3 srgb = pow(color, vec3(1.0/2.25));
-    return mix(1.055 * srgb - 0.055, 12.92 * color, lessThan(color, vec3(0.0031308)));
-}
+// vec3 linearToSRGB(vec3 color) {
+//     vec3 srgb = pow(color, vec3(1.0/2.25));
+//     return mix(1.055 * srgb - 0.055, 12.92 * color, lessThan(color, vec3(0.0031308)));
+// }
 
 // sRGB to Linear
-vec3 sRGBToLinear(vec3 color) {
-    vec3 linear = pow(color, vec3(2.25));
-    return mix(color / 12.92, (color + 0.055) / 1.055, greaterThan(color, vec3(0.04045)));
-}
+// vec3 sRGBToLinear(vec3 color) {
+//     vec3 linear = pow(color, vec3(2.25));
+//     return mix(color / 12.92, (color + 0.055) / 1.055, greaterThan(color, vec3(0.04045)));
+// }
 
 
 // 4x4 Bayer pattern in [0,1]
