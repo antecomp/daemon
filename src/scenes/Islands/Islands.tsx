@@ -1,0 +1,44 @@
+import applyDGShader, { useDGShader } from "@/3d/pipeline/dgRender";
+import { Element3D, GltfModel, onMount, Scene } from "lume";
+
+import islands_glb from './assets/DG_ISLANDS_B3.glb?url';
+import Freecam from "@/3d/camera/Freecam";
+import PlayerCam from "@/3d/camera/PlayerCam";
+
+export default function Islands()  {
+    let islands_ref!: GltfModel;
+    let sceneRef!: Scene;
+    useDGShader(() => sceneRef);
+
+
+    return (
+        <lume-scene webgl perspective="800" ref={sceneRef}
+        >
+          {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
+          {/* <Freecam
+            sceneRef={sceneRef}
+          /> */}
+
+          <PlayerCam
+                basePos={[-1477, -165, 378]}
+                baseOri={{ yaw: -810, pitch: -10 }}
+                maxYaw={30}
+                maxPitch={10}
+                animate={false}
+                sceneRef={sceneRef!}
+            />
+        
+        
+
+          <lume-ambient-light intensity="7"/>
+          {/* <lume-directional-light intensity="2" position="0 10 0" align-point="0.5 0.5"/> */}
+          {/* <lume-directional-light intensity="2" position="-5 -10 0" align-point="0.5 0.5"/> */}
+          <lume-gltf-model 
+            src={islands_glb}
+            align-point='0.5 0.5'
+            scale="50 50 50"
+            ref={islands_ref}
+          />
+        </lume-scene>
+    )
+}
