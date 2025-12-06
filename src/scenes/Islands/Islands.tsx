@@ -16,18 +16,18 @@ export default function Islands()  {
         >
           {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
           
-           {/* <Freecam
+           <Freecam
             sceneRef={sceneRef}
-          />  */}
+          /> 
 
-          <PlayerCam
+          {/* <PlayerCam
                 basePos={[2059, -957, -353]}
                 baseOri={{ yaw: -143, pitch: 10 }}
                 maxYaw={30}
                 maxPitch={20}
                 animate={false}
                 sceneRef={sceneRef!}
-            />
+            /> */}
 
 {/*           
           <PlayerCam

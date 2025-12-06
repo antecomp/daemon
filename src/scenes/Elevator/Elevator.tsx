@@ -124,7 +124,7 @@ export default function Elevator() {
                 ]}
 
                 size="5 25 25"
-                color="gray"
+                color="#3f3f3f"
 
                 has="basic-material"
             />
