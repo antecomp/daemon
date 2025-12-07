@@ -15,10 +15,21 @@ export default function Islands()  {
         <lume-scene webgl perspective="800" ref={sceneRef}
         >
           {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
-          
+         
+          {/* 
            <Freecam
             sceneRef={sceneRef}
           /> 
+          */}
+
+          <PlayerCam
+                basePos={[-1614, -159, 514]}
+                baseOri={{ yaw: 281, pitch: -2 }}
+                maxYaw={30}
+                maxPitch={20}
+                animate={false}
+                sceneRef={sceneRef!}
+            />
 
           {/* <PlayerCam
                 basePos={[2059, -957, -353]}
