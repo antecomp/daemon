@@ -1,5 +1,5 @@
 import { Scene } from "lume";
-import bar_model from './assets/bar.glb?url'
+import bar_model from './assets/mad.glb?url'
 import PlayerCam from "@/3d/camera/PlayerCam";
 import Freecam from "@/3d/camera/Freecam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
@@ -18,7 +18,7 @@ export default function TheGem() {
             perspective="800"
             shadowmap-type="pcfsoft"
         >
-            <lume-ambient-light id="ambientLight" intensity={12}/>
+            <lume-ambient-light id="ambientLight" intensity={2}/>
             <lume-gltf-model
                 src={bar_model}
                 id="bar"
