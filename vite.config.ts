@@ -16,7 +16,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  assetsInclude: ['**/*.mtl', '**/*.obj', '**/*.fbx'],
+  assetsInclude: ['**/*.mtl', '**/*.obj', '**/*.fbx', '**/*.glb'],
   build: {
     // Vite inlines .mtl files incorrectly, opt those out!
     // ref: https://vite.dev/config/build-options#build-assetsinlinelimit

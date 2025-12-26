@@ -81,7 +81,7 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
         fragmentShader: pp_fragshader,
         uniforms: {
             tDiffuse: { value: null },
-            lumaCutoff: { value : 0.01 },
+            lumaCutoff: { value : 0.0 },
             screensize: {value : new Vector2(WIDTH, HEIGHT)},
             gamma: {value : 0.95},
             offsetX: {value: 0},

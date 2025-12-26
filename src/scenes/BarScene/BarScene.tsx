@@ -73,7 +73,7 @@ export default function BarScene() {
                 maxYaw={40}
             />
 
-            <lume-ambient-light intensity={1}/>
+            <lume-ambient-light intensity={0.5}/>
             <lume-point-light position="-500 -180" intensity={1250} cast-shadow="true"/>
 
             <lume-obj-model
