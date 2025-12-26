@@ -18,7 +18,6 @@ import Billboard from "@/3d/components/Billboard";
 import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import Interactable from "@/3d/components/Interactable";
-import sleep from "@/shared/utils/sleep";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 

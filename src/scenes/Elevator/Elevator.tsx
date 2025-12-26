@@ -46,7 +46,7 @@ export default function Elevator() {
                             sleep(3000).then(() => setIsDoorOpen(true)).then(async () => {
                                 await sleep(5000);
                                 await SceneFadeManager.fadeSceneOut();
-                                setCurrentScene("GemmaBar");
+                                setCurrentScene("TheGem");
                                 await playTextOverlay(opening_textscene);
                                 SceneFadeManager.fadeSceneIn();
                             })
