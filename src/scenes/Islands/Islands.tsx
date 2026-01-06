@@ -1,13 +1,13 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { GltfModel, Scene } from "lume";
 
-import islands_glb from './assets/DG_ISLANDS_B3.glb?url';
+import islands_glb from './assets/DG_ISLANDS_B4.glb';
 import Freecam from "@/3d/camera/Freecam";
 
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
-  useDGShader(() => sceneRef);
+  useDGShader(() => sceneRef, 'normal');
 
 
   return (
@@ -30,7 +30,7 @@ export default function Islands() {
         sceneRef={sceneRef!}
       /> */}
 
-      <lume-ambient-light intensity="6.75" />
+      <lume-ambient-light intensity="6.5" />
       {/* <lume-directional-light intensity="2" position="0 10 0" align-point="0.5 0.5"/> */}
       <lume-gltf-model
         src={islands_glb}

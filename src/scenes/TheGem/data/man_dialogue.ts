@@ -134,7 +134,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
         .then("His tone shifts.", VISUALIZER)
         .then("Daemons don't exactly make sigils, but whatever they send at you will be rendered as such.", MAN)
         .chain("Try to build something that counteracts it.", "Closest thing I got to a guide.")
-        .then("Right. Any other protocol besides \"don't die?\"", ARDA)
+        .then("Got it. Anything else I should know?", ARDA)
         .then("He exhales slowly, as if the question is an inconvenience.", VISUALIZER)
         .then("Yeah, one more thing...", MAN)
 )

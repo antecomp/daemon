@@ -216,4 +216,5 @@
     float: right;
     margin-top: 2px;
 	cursor: var(--cursor_pointer);
+	-webkit-user-drag: none;
 }
