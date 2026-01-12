@@ -46,6 +46,8 @@ import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
+import { pushUILayer } from "@/app/shell/layers/UILayerManager";
+import EnochPuzzle from "@/features/puzzles/enoch";
 
 export default function DevMenu() {
 
@@ -94,6 +96,13 @@ export default function DevMenu() {
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
+            <h3>Puzzles</h3>
+            <button onClick={() => pushUILayer(
+                {
+                    component: () => <EnochPuzzle target='RAVENS'/>,
+                    blockBehind: true
+                }
+            )}>ENOCH</button>
         </div>
     )
 }

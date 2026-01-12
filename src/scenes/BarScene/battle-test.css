@@ -9,7 +9,7 @@
     z-index: 1;
     width: 500px;
     padding: 100px;
-    pointer-events: none;
+    /* pointer-events: none; */
 }
 
 .battle-playtest-menu {

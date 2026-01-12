@@ -26,6 +26,7 @@ import bt6 from '@/assets/placeholders/battletut/tut6.png'
 import sleep from "@/shared/utils/sleep";
 import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
+import EnochPuzzle from "@/features/puzzles/enoch";
 
 
 export default function BarScene() {
@@ -44,7 +45,7 @@ export default function BarScene() {
 
     return (
         <>
-        <CornerRect width="500px" height="111px" borderSize={1} borderType="solid white" corners={[cr, undefined, undefined, cr]} class='battle-playtest-container'>
+        {/* <CornerRect width="500px" height="111px" borderSize={1} borderType="solid white" corners={[cr, undefined, undefined, cr]} class='battle-playtest-container'>
             <div class='battle-playtest-menu'>
                 <div class="battle-playtest-option" onClick={spawnBattleTutorial}>
                     <img src={serpent_icon}/>
@@ -55,6 +56,9 @@ export default function BarScene() {
                     Battle the Mimicry (More Difficult)
                 </div>
             </div>
+        </CornerRect> */}
+        <CornerRect width="500px" height="111px" borderSize={1} borderType="solid white" corners={[cr, undefined, undefined, cr]} class='battle-playtest-container'>
+            <EnochPuzzle target='APPLES'/>
         </CornerRect>
         <lume-scene
             webgl
