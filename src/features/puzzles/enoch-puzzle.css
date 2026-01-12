@@ -5,6 +5,7 @@
         gap: 4px;
 
         .guess-letter {
+            font-family: 'enochian';
             font-size: 64px;
             width: 70px;
             text-align: center;
