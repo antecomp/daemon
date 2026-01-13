@@ -71,4 +71,13 @@
         top: 170px;
         left: 230px;        
     }
+
+    .guess-counter {
+        position: absolute;
+        right: 10px;
+        top: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
 }

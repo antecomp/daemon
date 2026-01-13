@@ -1,13 +1,16 @@
-import { createMemo, createSignal, Index } from "solid-js";
+import { createMemo, createSignal, For, Index } from "solid-js";
 import './enoch-puzzle.css'
 import { SparseRecord } from "@/shared/types/misc.types";
 import CharCol from "./CharCol";
 
 import guess_btn from './assets/decrypt button.png'
+import atb_o from './assets/atb_open.png'
+import atb_f from './assets/atb_filled.png'
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
 const WORD_LENGTH = 6;
+const MAX_GUESSES = 7;
 
 enum RowHint {
   CORRECT,
@@ -66,7 +69,7 @@ export default function EnochPuzzle(props: { target: string }) {
   const targetPlainNums = () => lettersToNums(props.target);
   const targetEncodedNums = () => encodeCascading(targetPlainNums());
 
-  const [guess, setGuess] = createSignal(new Array<number>(WORD_LENGTH).fill(12));
+  const [guess, setGuess] = createSignal(new Array<number>(WORD_LENGTH).fill(0).map(_ => Math.floor(Math.random() * MOD)));
 
   const [numGuesses, setNumGuesses] = createSignal(0);
   const [hintTable, setHintTable] = createSignal(
@@ -132,11 +135,16 @@ export default function EnochPuzzle(props: { target: string }) {
           }}
         </Index>
       </div>
-      {numGuesses()} &nbsp;
       <p class="decrypt-preview">
         {numsToLetters(decodeCascading(guess()))}
       </p>
       <br />
+      <div class="guess-counter">
+        <For each={Array.from({length: MAX_GUESSES}, (_, i) => i < numGuesses())}>
+          {g => <img src={g ? atb_f : atb_o}>
+          </img>}
+        </For>
+      </div>
       <img class="guess-button" src={guess_btn} onClick={commitGuess}/>
     </div>
   );
