@@ -5,6 +5,7 @@ export default function CharCol(props: {
     els: JSX.Element[],
     index: number; // Which part we're currently at.
 
+    windowSize?: number
     rowHeight?: number
     blank?: JSX.Element
     durationMs?: number
@@ -12,10 +13,12 @@ export default function CharCol(props: {
     class?: string
     rowClass?: string
 }) {
+    const windowSize = () => Math.max(1, Math.floor(props.windowSize ?? 5));
     const rowHeight = () => props.rowHeight ?? 28;
     const blank = props.blank ?? (<></>);
     const durationMs = () => props.durationMs ?? 180;
     const easing = () => props.easing ?? "cubic-bezier(0.2, 0.8, 0.2, 1)";
+    const pad = () => Math.floor(windowSize() / 2);
 
     // Clamp index
     const safeIndex = () => {
@@ -25,22 +28,24 @@ export default function CharCol(props: {
     }
 
     // Padded strip
-    // TODO: Change to arbitrary padding
-    const strip = () => [blank, blank, ...props.els, blank, blank];
+    const strip = () => [
+        ...Array.from({ length: pad() }, () => blank),
+        ...props.els,
+        ...Array.from({ length: pad() }, () => blank)
+    ];
 
     // translateY
     const [y, setY] = createSignal(0);
 
-    // Update translation whenever input info changes;
-    // TODO: Change for arbitrary padding & window size.
+    // Update translation whenever input info changes.
     createEffect(() => {
         const centerI = safeIndex();
-        // center row should show character at centerI, but our strip starts at -2.
-        // The row for logical index `centerI` sits at position (centerI - (-2)) rows down in strip.
-        const stripStart = -2;
+        // center row should show character at centerI, but our strip starts at -pad().
+        // The row for logical index `centerI` sits at position (centerI - (-pad())) rows down in strip.
+        const stripStart = -pad();
         const rowPos = centerI - stripStart; // row number inside strip
-        // We want that row to sit at window center, which is row #2 (0-based) in 5 rows.
-        const windowCenterRow = 2;
+        // We want that row to sit at window center, which is row #pad() (0-based) in windowSize() rows.
+        const windowCenterRow = pad();
         const targetY = -(rowPos - windowCenterRow) * rowHeight();
         setY(targetY);
     });
@@ -51,7 +56,7 @@ export default function CharCol(props: {
             style={{
                 position: 'relative',
                 overflow: 'hidden',
-                height: `${rowHeight() * 5}px` // change to arb amount later
+                height: `${rowHeight() * windowSize()}px`
             }}
         >
             <div

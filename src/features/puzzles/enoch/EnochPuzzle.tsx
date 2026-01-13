@@ -3,6 +3,8 @@ import './enoch-puzzle.css'
 import { SparseRecord } from "@/shared/types/misc.types";
 import CharCol from "./CharCol";
 
+import guess_btn from './assets/decrypt button.png'
+
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
 const WORD_LENGTH = 6;
@@ -98,7 +100,6 @@ export default function EnochPuzzle(props: { target: string }) {
   return (
     <div class="enoch-puzzle">
       <div class="enoch-spinners">
-        <div class="enoch-spinner-label">&gt;</div>
         {/* use Index over For, as there's some remounting issues */}
         <Index each={guess()}>
           {(gn, colPos) => {
@@ -123,6 +124,7 @@ export default function EnochPuzzle(props: { target: string }) {
                   index={gn()}
                   class="enoch-col"
                   rowHeight={38}
+                  windowSize={7}
                 />
                 <button onClick={() => (hints()[gn()] != RowHint.CORRECT) && incGuessLetter(colPos)}>▼</button>
               </div>
@@ -131,9 +133,11 @@ export default function EnochPuzzle(props: { target: string }) {
         </Index>
       </div>
       {numGuesses()} &nbsp;
-      {numsToLetters(decodeCascading(guess()))}
+      <p class="decrypt-preview">
+        {numsToLetters(decodeCascading(guess()))}
+      </p>
       <br />
-      <button style={{ border: 'solid white 1px', padding: '5px' }} onClick={commitGuess}>Commit Guess</button>
+      <img class="guess-button" src={guess_btn} onClick={commitGuess}/>
     </div>
   );
 }

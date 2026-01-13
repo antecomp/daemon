@@ -1,13 +1,15 @@
 .enoch-puzzle {
-    border: solid white 1px;
-    width: 350px;
-    padding: 10px;
+    position: relative;
+    background: url('./assets/frame2.png');
+    width: 459px;
+    height: 359px;
     font-size: 32px;
 
     button {
         font-size: 16px;
         box-sizing: border-box;
         border: none;
+        background: transparent;
     }
 
     .char-column-container {
@@ -18,6 +20,9 @@
     }
     
     .enoch-spinners {
+        position: absolute;
+        top: 28px;
+        left: 41px;
         display: flex;
         grid-template-columns: repeat(6, auto);
         gap: 2px;
@@ -35,8 +40,35 @@
             color: lime;
         }
     }
+
+    .enoch-spinners::before {
+        content: '';
+        background: url('./assets/dial_fade.png');
+        background-position-y: -5px;
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+    }
     
     .enoch-col {
         font-family: 'enochian';
+    }
+
+    .guess-button {
+        cursor: var(--cursor_pointer);
+        position: absolute;
+        bottom: -7px;
+        left: 229px;
+    }
+
+    .guess-button:active {
+        bottom: -6px;
+    }
+
+    .decrypt-preview {
+        position: absolute;
+        top: 170px;
+        left: 230px;        
     }
 }
