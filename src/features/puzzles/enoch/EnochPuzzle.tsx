@@ -3,6 +3,7 @@ import { CharColumn } from "./CharColumn";
 import './enoch-puzzle.css'
 import mod from "@/shared/utils/mod";
 import { SparseRecord } from "@/shared/types/misc.types";
+import CharCol from "./CharCol";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
@@ -103,7 +104,12 @@ export default function EnochPuzzle(props: { target: string }) {
             const hintedAlphabet = createMemo(() => {
               const h = hints();
               // NOTE: keys in your hint objects are numbers-as-strings, but h[lp] works fine
-              return ALPHABET.split("").map((lttr, lp) => h[lp] ?? lttr).join("");
+              //return ALPHABET.split("").map((lttr, lp) => () => (<p classList={{'crctn': h[lp] == '▲' || h[lp] == '▼'}}>{h[lp] ?? lttr}</p>));
+              return ALPHABET.split("").map((lttr, lp) => {
+                if (!h[lp]) return () => <p>{lttr}</p> // No hint, base letter.
+                if(h[lp] == '=') return () => <p class='correct-lttr'>{lttr}</p> // letter correct.
+                else return () => <p class='crctn'>{h[lp]}</p>
+              })
             });
 
             return (
@@ -112,10 +118,9 @@ export default function EnochPuzzle(props: { target: string }) {
                 onWheel={(e) => (e.deltaY > 0 ? decGuessLetter(colPos) : incGuessLetter(colPos))}
               >
                 <button onClick={() => decGuessLetter(colPos)}>▲</button>
-                <CharColumn
-                  text={hintedAlphabet()}
+                <CharCol
+                  els={hintedAlphabet()}
                   index={gn()}
-                  blank=""
                   class="enoch-col"
                   rowHeight={38}
                 />

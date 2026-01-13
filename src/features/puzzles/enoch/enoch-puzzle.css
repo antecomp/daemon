@@ -26,6 +26,14 @@
             display: flex;
             align-items: center;
         }
+
+        .crctn {
+            color: red;
+        }
+
+        .correct-lttr {
+            color: lime;
+        }
     }
     
     .enoch-col {
