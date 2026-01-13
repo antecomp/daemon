@@ -1,7 +1,5 @@
-import { createMemo, createSignal, For, Index } from "solid-js";
-import { CharColumn } from "./CharColumn";
+import { createMemo, createSignal, Index } from "solid-js";
 import './enoch-puzzle.css'
-import mod from "@/shared/utils/mod";
 import { SparseRecord } from "@/shared/types/misc.types";
 import CharCol from "./CharCol";
 
@@ -9,7 +7,11 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
 const WORD_LENGTH = 6;
 
-type hintChar = '▲' | '▼' | '='
+enum RowHint {
+  CORRECT,
+  UP,
+  DOWN
+}
 
 function numsToLetters(nums: number[]): string {
   return nums.map((n) => ALPHABET[((n % MOD) + MOD) % MOD]).join("");
@@ -45,15 +47,15 @@ function decodeCascading(cipher: number[]): number[] {
   return plain;
 }
 
-function getHints(guessEnc: number[], targetEnc: number[]): hintChar[] {
-  const hint: hintChar[] = [];
+function getHints(guessEnc: number[], targetEnc: number[]): RowHint[] {
+  const hint: RowHint[] = [];
   for (let i = 0; i < guessEnc.length; i++) {
     const from = guessEnc[i];
     const to = targetEnc[i];
 
-    if (from === to) hint.push("=");
-    else if (to > from) hint.push("▼");
-    else hint.push("▲");
+    if (from === to) hint.push(RowHint.CORRECT);
+    else if (to > from) hint.push(RowHint.DOWN);
+    else hint.push(RowHint.UP);
   }
   return hint;
 }
@@ -66,7 +68,7 @@ export default function EnochPuzzle(props: { target: string }) {
 
   const [numGuesses, setNumGuesses] = createSignal(0);
   const [hintTable, setHintTable] = createSignal(
-    Array.from({ length: WORD_LENGTH }, () => ({} as SparseRecord<number, hintChar>))
+    Array.from({ length: WORD_LENGTH }, () => ({} as SparseRecord<number, RowHint>))
   );
 
   function commitGuess() {
@@ -102,29 +104,27 @@ export default function EnochPuzzle(props: { target: string }) {
           {(gn, colPos) => {
             const hints = createMemo(() => hintTable()[colPos] ?? {});
             const hintedAlphabet = createMemo(() => {
-              const h = hints();
-              // NOTE: keys in your hint objects are numbers-as-strings, but h[lp] works fine
-              //return ALPHABET.split("").map((lttr, lp) => () => (<p classList={{'crctn': h[lp] == '▲' || h[lp] == '▼'}}>{h[lp] ?? lttr}</p>));
               return ALPHABET.split("").map((lttr, lp) => {
-                if (!h[lp]) return () => <p>{lttr}</p> // No hint, base letter.
-                if(h[lp] == '=') return () => <p class='correct-lttr'>{lttr}</p> // letter correct.
-                else return () => <p class='crctn'>{h[lp]}</p>
+                const hint = hints()[lp];
+                if (hint === undefined) return <p>{lttr}</p> // No hint, base letter.
+                if (hint === RowHint.CORRECT) return <p class='correct-lttr'>{lttr}</p> // letter correct.
+                else return <p class='crctn'>{hint === RowHint.UP ? '▲' : '▼'}</p>
               })
             });
 
             return (
               <div
                 class="char-column-container"
-                onWheel={(e) => (e.deltaY > 0 ? decGuessLetter(colPos) : incGuessLetter(colPos))}
+                onWheel={(e) => (hints()[gn()] != RowHint.CORRECT) && (e.deltaY > 0 ? decGuessLetter(colPos) : incGuessLetter(colPos))}
               >
-                <button onClick={() => decGuessLetter(colPos)}>▲</button>
+                <button onClick={() => (hints()[gn()] != RowHint.CORRECT) && decGuessLetter(colPos)}>▲</button>
                 <CharCol
                   els={hintedAlphabet()}
                   index={gn()}
                   class="enoch-col"
                   rowHeight={38}
                 />
-                <button onClick={() => incGuessLetter(colPos)}>▼</button>
+                <button onClick={() => (hints()[gn()] != RowHint.CORRECT) && incGuessLetter(colPos)}>▼</button>
               </div>
             );
           }}
@@ -133,7 +133,7 @@ export default function EnochPuzzle(props: { target: string }) {
       {numGuesses()} &nbsp;
       {numsToLetters(decodeCascading(guess()))}
       <br />
-      <button style={{border: 'solid white 1px', padding: '5px'}} onClick={commitGuess}>Commit Guess</button>
+      <button style={{ border: 'solid white 1px', padding: '5px' }} onClick={commitGuess}>Commit Guess</button>
     </div>
   );
 }

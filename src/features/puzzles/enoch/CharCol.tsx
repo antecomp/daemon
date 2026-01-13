@@ -1,19 +1,19 @@
 import clamp from '@/shared/utils/clamp';
-import { Component, createEffect, createSignal, For } from 'solid-js'
+import { createEffect, createSignal, For, JSX } from 'solid-js'
 
 export default function CharCol(props: {
-    els: Component[],
+    els: JSX.Element[],
     index: number; // Which part we're currently at.
 
     rowHeight?: number
-    blank?: Component
+    blank?: JSX.Element
     durationMs?: number
     easing?: string
     class?: string
     rowClass?: string
 }) {
     const rowHeight = () => props.rowHeight ?? 28;
-    const blank = props.blank ?? (() => <></>);
+    const blank = props.blank ?? (<></>);
     const durationMs = () => props.durationMs ?? 180;
     const easing = () => props.easing ?? "cubic-bezier(0.2, 0.8, 0.2, 1)";
 
@@ -75,7 +75,7 @@ export default function CharCol(props: {
                                 'white-space': 'pre'
                             }}
                         >
-                            {s({})}
+                            {s}
                         </div>
                         }
                 </For>

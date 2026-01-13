@@ -4,4 +4,4 @@ import { render } from "solid-js/web";
 
 // chage this out as needed
 const domroot = document.getElementById('gentest');
-if (domroot) render(() => <EnochPuzzle target='APPLES' />, domroot);
+if (domroot) render(() => <EnochPuzzle target='DAEMON' />, domroot);
