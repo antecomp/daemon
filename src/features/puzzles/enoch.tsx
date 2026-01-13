@@ -39,23 +39,6 @@ function decodeCascading(cipher: number[]): number[] {
     return plain;
 }
 
-// function hintEncodedIndependent(guessEnc: number[], targetEnc: number[]): string {
-//     let hint = "";
-//     for (let i = 0; i < guessEnc.length; i++) {
-//         const from = guessEnc[i];
-//         const to = targetEnc[i];
-
-//         // wrap-aware direction choice on a 26-cycle
-//         const forward = (to - from + MOD) % MOD;
-//         const backward = (from - to + MOD) % MOD;
-
-//         if (forward === 0) hint += "=";
-//         else if (forward <= backward) hint += "+";
-//         else hint += "-";
-//     }
-//     return hint;
-// }
-
 function getHints(guessEnc: number[], targetEnc: number[]): ('+' | '-' | '=')[] {
     let hint = [] as ('+' | '-' | '=')[];
     for (let i = 0; i < guessEnc.length; i++) {
