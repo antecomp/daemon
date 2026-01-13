@@ -21,15 +21,15 @@ export function CharColumn(props: {
     const easing = () => props.easing ?? "cubic-bezier(0.2, 0.8, 0.2, 1)";
 
     // Clamp index so we never request outside the string.
-    const safeIndex = createMemo(() => {
+    const safeIndex = () => {
         const len = props.text.length;
         if (len <= 0) return 0;
         return clamp(props.index, 0, len - 1);
-    });
+    };
 
     // We render a finite strip that is long enough to animate between indices.
     // Strip indices range from -2 .. (len-1)+2, so blanks naturally appear.
-    const strip = createMemo(() => {
+    const strip = () => {
         const len = props.text.length;
         const out: { i: number; ch: string }[] = [];
         for (let i = -2; i <= len - 1 + 2; i++) {
@@ -37,7 +37,7 @@ export function CharColumn(props: {
             out.push({ i, ch });
         }
         return out;
-    });
+    };
 
     // Current translateY of the strip.
     const [y, setY] = createSignal(0);
