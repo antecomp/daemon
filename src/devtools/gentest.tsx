@@ -1,5 +1,5 @@
 import '@/shared/styles/base.css';
-import EnochPuzzle from "@/features/puzzles/enoch/enochPuzzle";
+import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import { render } from "solid-js/web";
 
 // chage this out as needed

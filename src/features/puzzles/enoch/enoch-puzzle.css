@@ -1,0 +1,30 @@
+.enoch-puzzle {
+    border: solid white 1px;
+    width: 350px;
+    padding: 10px;
+    font-size: 32px;
+
+    button {
+        font-size: 16px;
+    }
+
+    .char-column-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .enoch-spinners {
+        display: flex;
+        grid-template-columns: repeat(6, auto);
+
+        .enoch-spinner-label {
+            display: flex;
+            align-items: center;
+        }
+    }
+    
+    .enoch-col {
+        font-family: 'enochian';
+    }
+}
