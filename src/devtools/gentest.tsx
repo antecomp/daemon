@@ -4,4 +4,4 @@ import { render } from "solid-js/web";
 
 // chage this out as needed
 const domroot = document.getElementById('gentest');
-if (domroot) render(() => <EnochPuzzle onFail={() => alert('fail')} onCorrect={() => alert('Good :)')} target='DAEMON' />, domroot);
+if (domroot) render(() => <EnochPuzzle onFail={() => alert('fail')} onCorrect={() => alert('Good :)')} target='ISLAND' />, domroot);

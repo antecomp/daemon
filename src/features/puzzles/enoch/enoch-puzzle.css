@@ -1,3 +1,5 @@
+/* PLEASE FOR THE LOVE OF EVERTYHING MAKE THIS PROPERLY DESIGNED WITHOUT ABSOLUTE POSITIONING */
+
 .enoch-puzzle {
     position: relative;
     background: url('./assets/frame2.png');
@@ -67,8 +69,14 @@
 
     .decrypt-preview {
         position: absolute;
-        top: 170px;
+        display: flex;
+        align-items: center;
+        height: 315px;
+        width: 190px;
+        background: url('./assets/bg.png');
+        top: 18px;
         left: 230px;
+        padding-top: 17px;
     }
 
     .guess-counter {
