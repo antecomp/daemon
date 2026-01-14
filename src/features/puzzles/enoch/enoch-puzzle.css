@@ -1,6 +1,99 @@
 /* PLEASE FOR THE LOVE OF EVERTYHING MAKE THIS PROPERLY DESIGNED WITHOUT ABSOLUTE POSITIONING */
 
 .enoch-puzzle {
+    background: url('./assets/frame2.png');
+    position: relative;
+    width: 459px;
+    height: 359px;
+    padding: 23px 13px 27px 46px;
+
+    font-size: 32px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 30px;
+
+    button {
+        font-size: 16px;
+        box-sizing: border-box;
+        border: none;
+        background: transparent;
+    }
+
+    .enoch-spinners {
+        position: relative;
+        display: flex;
+        justify-content: baseline;
+        /* grid-template-columns: repeat(6, auto); */
+        gap: 2px;
+
+        .crctn {
+            color: red;
+        }
+
+        .correct-lttr {
+            color: lime;
+        }
+    }
+
+    .enoch-spinners::before {
+        content: '';
+        background: url('./assets/dial_fade.png');
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    .enoch-col {
+        font-family: 'enochian';
+    }
+
+    .guess-counter {
+        position: absolute;
+        right: 10px;
+        top: 14px;
+        display: flex;
+        gap: 3px;
+
+        display: grid;
+        grid-template-columns: auto auto;
+
+        img {
+            display: block;
+        }
+
+        div {
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+
+    .guess-button {
+        cursor: var(--cursor_pointer);
+        position: absolute;
+        bottom: -7px;
+        left: 229px;
+    }
+
+    .guess-button:active {
+        bottom: -6px;
+    }
+
+    .decrypt-preview {
+        flex-grow: 1;
+        height: 100%;
+        background-position-y: 10px;
+        background: url('./assets/bg.png');
+        display: flex;
+        align-items: center;
+    }
+
+}
+
+
+/* .enoch-puzzle {
     position: relative;
     background: url('./assets/frame2.png');
     width: 459px;
@@ -98,4 +191,4 @@
             gap: 4px;
         }
     }
-}
+} */
