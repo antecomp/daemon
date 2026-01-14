@@ -1,11 +1,9 @@
-/* PLEASE FOR THE LOVE OF EVERTYHING MAKE THIS PROPERLY DESIGNED WITHOUT ABSOLUTE POSITIONING */
-
 .enoch-puzzle {
     background: url('./assets/frame2.png');
     position: relative;
     width: 459px;
     height: 359px;
-    padding: 23px 13px 27px 46px;
+    padding: 20px 13px 27px 46px;
 
     font-size: 32px;
 
@@ -91,104 +89,3 @@
     }
 
 }
-
-
-/* .enoch-puzzle {
-    position: relative;
-    background: url('./assets/frame2.png');
-    width: 459px;
-    height: 359px;
-    font-size: 32px;
-
-    button {
-        font-size: 16px;
-        box-sizing: border-box;
-        border: none;
-        background: transparent;
-    }
-
-    .char-column-container {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        width: 26px;
-    }
-
-    .enoch-spinners {
-        position: absolute;
-        top: 28px;
-        left: 41px;
-        display: flex;
-        grid-template-columns: repeat(6, auto);
-        gap: 2px;
-
-        .enoch-spinner-label {
-            display: flex;
-            align-items: center;
-        }
-
-        .crctn {
-            color: red;
-        }
-
-        .correct-lttr {
-            color: lime;
-        }
-    }
-
-    .enoch-spinners::before {
-        content: '';
-        background: url('./assets/dial_fade.png');
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        pointer-events: none;
-    }
-
-    .enoch-col {
-        font-family: 'enochian';
-    }
-
-    .guess-button {
-        cursor: var(--cursor_pointer);
-        position: absolute;
-        bottom: -7px;
-        left: 229px;
-    }
-
-    .guess-button:active {
-        bottom: -6px;
-    }
-
-    .decrypt-preview {
-        position: absolute;
-        display: flex;
-        align-items: center;
-        height: 315px;
-        width: 190px;
-        background: url('./assets/bg.png');
-        top: 18px;
-        left: 230px;
-        padding-top: 17px;
-    }
-
-    .guess-counter {
-        position: absolute;
-        right: 10px;
-        top: 14px;
-        display: flex;
-        gap: 3px;
-
-        display: grid;
-        grid-template-columns: auto auto;
-
-        img {
-            display: block;
-        }
-
-        div {
-            flex-direction: column;
-            gap: 4px;
-        }
-    }
-} */

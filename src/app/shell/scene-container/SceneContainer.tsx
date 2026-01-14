@@ -19,6 +19,7 @@ import SceneLoading from "../fallbacks/SceneLoading";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 import attachToConsole from "@/devtools/attachToConsole";
 
+// TODO: Fix this for hot reloading!
 export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
 attachToConsole(setCurrentScene, "DG_setScene");
 
