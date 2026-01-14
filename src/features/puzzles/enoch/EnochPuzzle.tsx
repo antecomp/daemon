@@ -11,7 +11,7 @@ import atb_label from './assets/atb_label.png';
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
 const WORD_LENGTH = 6;
-const MAX_GUESSES = 7;
+const MAX_GUESSES = 6;
 const ALPHABET_CHARS = ALPHABET.split("");
 
 enum RowHint {
