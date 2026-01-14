@@ -12,12 +12,18 @@ const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
 const WORD_LENGTH = 6;
 const MAX_GUESSES = 7;
+const ALPHABET_CHARS = ALPHABET.split("");
 
 enum RowHint {
   CORRECT,
   UP,
   DOWN
 }
+
+type ColumnState = {
+  guess: number;
+  hints: SparseRecord<number, RowHint>;
+};
 
 function lettersToNums(s: string): number[] {
   const out: number[] = [];
@@ -62,94 +68,123 @@ function getHints(guessEnc: number[], targetEnc: number[]): RowHint[] {
   return hint;
 }
 
-export default function EnochPuzzle(props: { target: string, onCorrect: () => void, onFail: () => void }) {
-  const targetPlainNums = () => lettersToNums(props.target);
-  const targetEncodedNums = () => encodeCascading(targetPlainNums());
+function createInitialColumns(length: number): ColumnState[] {
+  return Array.from({ length }, () => ({
+    guess: Math.floor(Math.random() * MOD),
+    hints: {}
+  }));
+}
 
-  const [guess, setGuess] = createSignal(
-    new Array<number>(WORD_LENGTH).fill(0).map(_ => Math.floor(Math.random() * MOD))
+function isColumnCorrect(column: ColumnState): boolean {
+  return column.hints[column.guess] === RowHint.CORRECT;
+}
+
+function EnochColumn(props:
+  {
+    column: () => ColumnState;
+    colIndex: number;
+    onInc: (idx: number) => void;
+    onDec: (idx: number) => void;
+  }
+) {
+  const isLocked = createMemo(() => isColumnCorrect(props.column()));
+  const hintedAlphabet = createMemo(() => {
+    const hints = props.column().hints ?? {};
+    return ALPHABET_CHARS.map((lttr, lp) => {
+      const hint = hints[lp];
+      if (hint === undefined) return <p>{lttr}</p> // No hint, base letter.
+      if (hint === RowHint.CORRECT) return <p class='correct-lttr'>{lttr}</p> // letter correct.
+      return <p class='crctn'>{hint === RowHint.UP ? '▲' : '▼'}</p>
+    })
+  });
+
+  return (
+    <div
+      class="char-column-container"
+      onWheel={(e) => !isLocked() && (e.deltaY > 0 ? props.onDec(props.colIndex) : props.onInc(props.colIndex))}
+    >
+      <button onClick={() => !isLocked() && props.onDec(props.colIndex)}>▲</button>
+      <CharCol
+        els={hintedAlphabet()}
+        index={props.column().guess}
+        class="enoch-col"
+        rowHeight={38}
+        windowSize={7}
+      />
+      <button onClick={() => !isLocked() && props.onInc(props.colIndex)}>▼</button>
+    </div>
   );
+}
 
-  const decodedGuess = () => decodeCascading(guess())
+export default function EnochPuzzle(props: { target: string, onCorrect: () => void, onFail: () => void }) {
+  const targetPlainNums = createMemo(() => lettersToNums(props.target));
+  const targetEncodedNums = createMemo(() => encodeCascading(targetPlainNums()));
+
+  const [columns, setColumns] = createSignal<ColumnState[]>(
+    createInitialColumns(WORD_LENGTH)
+  );
+  const guessNums = createMemo(() => columns().map(column => column.guess));
+  const decodedGuess = createMemo(() => decodeCascading(guessNums()));
 
   const [numGuesses, setNumGuesses] = createSignal(0);
-  const [hintTable, setHintTable] = createSignal(
-    Array.from({ length: WORD_LENGTH }, () => ({} as SparseRecord<number, RowHint>))
-  );
 
   function commitGuess() {
-    setNumGuesses(prev => prev + 1);
-    const g = guess();
+    const g = guessNums();
     const hint = getHints(g, targetEncodedNums());
-    setHintTable(prevHintTable => {
-      const newHintTable = prevHintTable.map((hintCol, idx) => {
-        const guessedLttr = g[idx];
-        const guessedLttrHint = hint[idx];
-        return {
-          ...hintCol,
-          [guessedLttr]: guessedLttrHint
-        }
-      });
-
-      if(newHintTable.every((column, i) => column[guess()[i]] == RowHint.CORRECT)) {
-        props.onCorrect();
-      } else if (numGuesses() >= MAX_GUESSES) {
-        props.onFail();
+    const nextColumns = columns().map((column, idx) => ({
+      ...column,
+      hints: {
+        ...column.hints,
+        [g[idx]]: hint[idx]
       }
+    }));
+    const nextNumGuesses = numGuesses() + 1;
 
-      return newHintTable;
-    });
+    setColumns(nextColumns);
+    setNumGuesses(nextNumGuesses);
+
+    if (nextColumns.every(isColumnCorrect)) {
+      props.onCorrect();
+    } else if (nextNumGuesses >= MAX_GUESSES) {
+      props.onFail();
+    }
   }
 
   const incGuessLetter = (idx: number) => {
-    setGuess(prev => prev.map((letter, i) => i === idx && letter < MOD - 1 ? letter + 1 : letter));
+    setColumns(prev => prev.map((column, i) => {
+      if (i !== idx || column.guess >= MOD - 1) return column;
+      return { ...column, guess: column.guess + 1 };
+    }));
   };
 
   const decGuessLetter = (idx: number) => {
-    setGuess(prev => prev.map((letter, i) => i === idx && letter > 0 ? letter - 1 : letter));
+    setColumns(prev => prev.map((column, i) => {
+      if (i !== idx || column.guess <= 0) return column;
+      return { ...column, guess: column.guess - 1 };
+    }));
   };
 
   return (
     <div class="enoch-puzzle">
       <div class="enoch-spinners">
         {/* use Index over For, as there's some remounting issues */}
-        <Index each={guess()}>
-          {(gn, colPos) => {
-            const hints = createMemo(() => hintTable()[colPos] ?? {});
-            const hintedAlphabet = createMemo(() => {
-              return ALPHABET.split("").map((lttr, lp) => {
-                const hint = hints()[lp];
-                if (hint === undefined) return <p>{lttr}</p> // No hint, base letter.
-                if (hint === RowHint.CORRECT) return <p class='correct-lttr'>{lttr}</p> // letter correct.
-                else return <p class='crctn'>{hint === RowHint.UP ? '▲' : '▼'}</p>
-              })
-            });
-
-            return (
-              <div
-                class="char-column-container"
-                onWheel={(e) => (hints()[gn()] != RowHint.CORRECT) && (e.deltaY > 0 ? decGuessLetter(colPos) : incGuessLetter(colPos))}
-              >
-                <button onClick={() => (hints()[gn()] != RowHint.CORRECT) && decGuessLetter(colPos)}>▲</button>
-                <CharCol
-                  els={hintedAlphabet()}
-                  index={gn()}
-                  class="enoch-col"
-                  rowHeight={38}
-                  windowSize={7}
-                />
-                <button onClick={() => (hints()[gn()] != RowHint.CORRECT) && incGuessLetter(colPos)}>▼</button>
-              </div>
-            );
-          }}
+        <Index each={columns()}>
+          {(column, colPos) => (
+            <EnochColumn
+              column={column}
+              colIndex={colPos}
+              onDec={decGuessLetter}
+              onInc={incGuessLetter}
+            />
+          )}
         </Index>
       </div>
       <p class="decrypt-preview">
-        <For each={guess()}>
+        <For each={columns()}>
           {
-            (guessLetter, glI) => {
+            (column, glI) => {
               return <span
-                style={{ color: hintTable()[glI()][guessLetter] == RowHint.CORRECT ? 'lime' : 'white' }}
+                style={{ color: isColumnCorrect(column) ? 'lime' : 'white' }}
               >
                 {ALPHABET[decodedGuess()[glI()]]}
               </span>
@@ -158,12 +193,12 @@ export default function EnochPuzzle(props: { target: string, onCorrect: () => vo
       </p>
       <br />
       <div class="guess-counter">
-         <img src={atb_label} />
+        <img src={atb_label} />
         <div>
-        <For each={Array.from({ length: MAX_GUESSES }, (_, i) => i < numGuesses())}>
-          {g => <img src={g ? atb_f : atb_o}>
-          </img>}
-        </For>
+          <For each={Array.from({ length: MAX_GUESSES }, (_, i) => i < numGuesses())}>
+            {g => <img src={g ? atb_f : atb_o}>
+            </img>}
+          </For>
         </div>
       </div>
       <img class="guess-button" src={guess_btn} onClick={commitGuess} />
