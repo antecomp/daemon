@@ -11,7 +11,6 @@ import { AssetURL } from "@/shared/types/misc.types";
 
 import debug_icon from './assets/swindow-icons/debug.png';
 import inventory_icon from './assets/swindow-icons/inventory.png';
-import ex_icon from './assets/swindow-icons/ex.png';
 
 interface SideBarItem {
     id: string,
