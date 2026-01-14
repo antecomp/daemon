@@ -153,6 +153,8 @@ export default function EnochPuzzle(props: { target: string, onCorrect: () => vo
   const incGuessLetter = (idx: number) => {
     setColumns(prev => prev.map((column, i) => {
       if (i !== idx || column.guess >= MOD - 1) return column;
+      const hint = column.hints[column.guess];
+      if (hint === RowHint.UP) return column;
       return { ...column, guess: column.guess + 1 };
     }));
   };
@@ -160,6 +162,8 @@ export default function EnochPuzzle(props: { target: string, onCorrect: () => vo
   const decGuessLetter = (idx: number) => {
     setColumns(prev => prev.map((column, i) => {
       if (i !== idx || column.guess <= 0) return column;
+      const hint = column.hints[column.guess];
+      if (hint === RowHint.DOWN) return column;
       return { ...column, guess: column.guess - 1 };
     }));
   };
