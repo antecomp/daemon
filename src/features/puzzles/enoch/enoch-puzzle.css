@@ -18,7 +18,7 @@
         flex-direction: column;
         width: 26px;
     }
-    
+
     .enoch-spinners {
         position: absolute;
         top: 28px;
@@ -49,7 +49,7 @@
         z-index: 3;
         pointer-events: none;
     }
-    
+
     .enoch-col {
         font-family: 'enochian';
     }
@@ -68,7 +68,7 @@
     .decrypt-preview {
         position: absolute;
         top: 170px;
-        left: 230px;        
+        left: 230px;
     }
 
     .guess-counter {
@@ -76,7 +76,18 @@
         right: 10px;
         top: 14px;
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        gap: 3px;
+
+        display: grid;
+        grid-template-columns: auto auto;
+
+        img {
+            display: block;
+        }
+
+        div {
+            flex-direction: column;
+            gap: 4px;
+        }
     }
 }

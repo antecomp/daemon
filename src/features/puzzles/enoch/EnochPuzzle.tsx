@@ -6,6 +6,7 @@ import CharCol from "./CharCol";
 import guess_btn from './assets/decrypt button.png'
 import atb_o from './assets/atb_open.png'
 import atb_f from './assets/atb_filled.png'
+import atb_label from './assets/atb_label.png';
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
@@ -157,10 +158,13 @@ export default function EnochPuzzle(props: { target: string, onCorrect: () => vo
       </p>
       <br />
       <div class="guess-counter">
+         <img src={atb_label} />
+        <div>
         <For each={Array.from({ length: MAX_GUESSES }, (_, i) => i < numGuesses())}>
           {g => <img src={g ? atb_f : atb_o}>
           </img>}
         </For>
+        </div>
       </div>
       <img class="guess-button" src={guess_btn} onClick={commitGuess} />
     </div>
