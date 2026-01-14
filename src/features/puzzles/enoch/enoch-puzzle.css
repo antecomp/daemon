@@ -44,7 +44,6 @@
     .enoch-spinners::before {
         content: '';
         background: url('./assets/dial_fade.png');
-        background-position-y: -5px;
         position: absolute;
         inset: 0;
         z-index: 3;

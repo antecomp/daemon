@@ -18,10 +18,6 @@ enum RowHint {
   DOWN
 }
 
-function numsToLetters(nums: number[]): string {
-  return nums.map((n) => ALPHABET[((n % MOD) + MOD) % MOD]).join("");
-}
-
 function lettersToNums(s: string): number[] {
   const out: number[] = [];
   for (const ch of s) {
@@ -65,11 +61,15 @@ function getHints(guessEnc: number[], targetEnc: number[]): RowHint[] {
   return hint;
 }
 
-export default function EnochPuzzle(props: { target: string }) {
+export default function EnochPuzzle(props: { target: string, onCorrect: () => void, onFail: () => void }) {
   const targetPlainNums = () => lettersToNums(props.target);
   const targetEncodedNums = () => encodeCascading(targetPlainNums());
 
-  const [guess, setGuess] = createSignal(new Array<number>(WORD_LENGTH).fill(0).map(_ => Math.floor(Math.random() * MOD)));
+  const [guess, setGuess] = createSignal(
+    new Array<number>(WORD_LENGTH).fill(0).map(_ => Math.floor(Math.random() * MOD))
+  );
+
+  const decodedGuess = () => decodeCascading(guess())
 
   const [numGuesses, setNumGuesses] = createSignal(0);
   const [hintTable, setHintTable] = createSignal(
@@ -80,23 +80,31 @@ export default function EnochPuzzle(props: { target: string }) {
     setNumGuesses(prev => prev + 1);
     const g = guess();
     const hint = getHints(g, targetEncodedNums());
-    setHintTable(prevHintTable => prevHintTable.map((hintCol, idx) => {
-      const guessedLttr = g[idx];
-      const guessedLttrHint = hint[idx];
-      return {
-        ...hintCol,
-        [guessedLttr]: guessedLttrHint
+    setHintTable(prevHintTable => {
+      const newHintTable = prevHintTable.map((hintCol, idx) => {
+        const guessedLttr = g[idx];
+        const guessedLttrHint = hint[idx];
+        return {
+          ...hintCol,
+          [guessedLttr]: guessedLttrHint
+        }
+      });
+
+      if(newHintTable.every((column, i) => column[guess()[i]] == RowHint.CORRECT)) {
+        props.onCorrect();
+      } else if (numGuesses() >= MAX_GUESSES) {
+        props.onFail();
       }
-    }));
+
+      return newHintTable;
+    });
   }
 
   const incGuessLetter = (idx: number) => {
-    //setGuess(prev => prev.map((letter, i) => i === idx ? mod(letter + 1, MOD) : letter));
     setGuess(prev => prev.map((letter, i) => i === idx && letter < MOD - 1 ? letter + 1 : letter));
   };
 
   const decGuessLetter = (idx: number) => {
-    //setGuess(prev => prev.map((letter, i) => i === idx ? mod(letter - 1, MOD) : letter));
     setGuess(prev => prev.map((letter, i) => i === idx && letter > 0 ? letter - 1 : letter));
   };
 
@@ -136,16 +144,25 @@ export default function EnochPuzzle(props: { target: string }) {
         </Index>
       </div>
       <p class="decrypt-preview">
-        {numsToLetters(decodeCascading(guess()))}
+        <For each={guess()}>
+          {
+            (guessLetter, glI) => {
+              return <span
+                style={{ color: hintTable()[glI()][guessLetter] == RowHint.CORRECT ? 'lime' : 'white' }}
+              >
+                {ALPHABET[decodedGuess()[glI()]]}
+              </span>
+            }}
+        </For>
       </p>
       <br />
       <div class="guess-counter">
-        <For each={Array.from({length: MAX_GUESSES}, (_, i) => i < numGuesses())}>
+        <For each={Array.from({ length: MAX_GUESSES }, (_, i) => i < numGuesses())}>
           {g => <img src={g ? atb_f : atb_o}>
           </img>}
         </For>
       </div>
-      <img class="guess-button" src={guess_btn} onClick={commitGuess}/>
+      <img class="guess-button" src={guess_btn} onClick={commitGuess} />
     </div>
   );
 }
