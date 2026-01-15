@@ -12,23 +12,23 @@ import { startBattle as startNewBattle } from "@/features/battle/startBattle";
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
 
 const eggggg: TextOverlaySequence = [
-    {segments: [{text: "This is the first line, one color", color: "red"}], sideEffect: () => console.log("side effect triggered")}, 
-    {segments: [{text: "This uses the default colour"}]},
-    {segments: [{text: "Now we split into "}, {text: "Two colours", color: "red"}]}
+    { segments: [{ text: "This is the first line, one color", color: "red" }], sideEffect: () => console.log("side effect triggered") },
+    { segments: [{ text: "This uses the default colour" }] },
+    { segments: [{ text: "Now we split into " }, { text: "Two colours", color: "red" }] }
 ]
 
-import {default as loopbacktest} from '@/tests/dialogues/questionLoopback';
+import { default as loopbacktest } from '@/tests/dialogues/questionLoopback';
 const loopBackRoot = loopbacktest as DialogueNode;
 
 const dmnintro: TextOverlaySequence = [
-    {segments: [{text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of "}, {text: "THE DAEMONS", color: "red"}]},
-    {segments: [{text: "and continue to live unaffected by them."}]},
-    {segments: [{text: "They are more numerous than we are, and they stand over us like mounds of earth surrounding a pit."}]},
-    {segments: [{text: "Each and every one of us has a thousand daemons to his left and ten thousand to his right."}]},
-    {segments: [{text: "THE DAEMONVEIL ", color: "red"}, {text: "protects man from these daemons,"}]},
-    {segments: [{text: "As it says in the verse:"}]},
-    {segments: [{text: 'A thousand may fall at your side and ten thousand at your right hand;'}]},
-    {segments: [{text: 'they will not approach you.'}]},
+    { segments: [{ text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of " }, { text: "THE DAEMONS", color: "red" }] },
+    { segments: [{ text: "and continue to live unaffected by them." }] },
+    { segments: [{ text: "They are more numerous than we are, and they stand over us like mounds of earth surrounding a pit." }] },
+    { segments: [{ text: "Each and every one of us has a thousand daemons to his left and ten thousand to his right." }] },
+    { segments: [{ text: "THE DAEMONVEIL ", color: "red" }, { text: "protects man from these daemons," }] },
+    { segments: [{ text: "As it says in the verse:" }] },
+    { segments: [{ text: 'A thousand may fall at your side and ten thousand at your right hand;' }] },
+    { segments: [{ text: 'they will not approach you.' }] },
 ]
 
 import tut1 from '@/assets/placeholders/tut_1.png'
@@ -46,24 +46,26 @@ import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
+import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
+import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 
 export default function DevMenu() {
 
     return (
-        <div id="debug-menu" style={{width: '300px'}}>
+        <div id="debug-menu" style={{ width: '300px' }}>
             <h2>Scenes</h2>
             <For each={[
-                "Islands", 
-                "Liminality", 
-                "Porch", 
-                "AnotherScene", 
-                "DefaultScene", 
-                "Sponza", 
-                "Doors", 
-                "BarScene", 
-                "Crumbling", 
-                "Elevator", 
-                "GemmaBar", 
+                "Islands",
+                "Liminality",
+                "Porch",
+                "AnotherScene",
+                "DefaultScene",
+                "Sponza",
+                "Doors",
+                "BarScene",
+                "Crumbling",
+                "Elevator",
+                "GemmaBar",
                 "Bridge",
                 "TheGem"
             ]}>
@@ -76,8 +78,8 @@ export default function DevMenu() {
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
             <h2>MUSIC STACK</h2>
-            <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-496757.wav"})}>SONG 1</button>
-            <button onClick={() => MusicManager.pushTrack({src: "PWL/erokia-786215.wav"})}>SONG 2</button>
+            <button onClick={() => MusicManager.pushTrack({ src: "PWL/erokia-496757.wav" })}>SONG 1</button>
+            <button onClick={() => MusicManager.pushTrack({ src: "PWL/erokia-786215.wav" })}>SONG 2</button>
             <button onClick={() => MusicManager.wipeTracks()}>Stop All Music</button>
             <button onclick={() => MusicManager._debug_pop()}>Pop Song</button>
             <h2>TEXT SCENE</h2>
@@ -94,6 +96,17 @@ export default function DevMenu() {
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
+            <h3>Misc</h3>
+            <button onClick={() => pushUILayer({
+                id: 'test-puzzle',
+                blockBehind: true,
+                style: {display: 'flex', 'justify-content': 'center', 'align-items': 'center'},
+                component: () => <EnochPuzzle
+                    target="GARDEN"
+                    onCorrect={() => popUILayer('test-puzzle')}
+                    onFail={() => popUILayer('test-puzzle')}
+                />
+            })}>Test Puzzle</button>
         </div>
     )
 }

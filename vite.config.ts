@@ -29,7 +29,8 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),      // Main game
         dialogue: path.resolve(__dirname, 'dialogue.html'), // Dialogue visualizer (for development)
-        battle: path.resolve(__dirname, 'battle.html')
+        battle: path.resolve(__dirname, 'battle.html'),
+        gentest: path.resolve(__dirname, 'gentest.html')
       }
     },
   }
