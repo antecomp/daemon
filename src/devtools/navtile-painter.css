@@ -34,8 +34,12 @@
         background: #f2f2f2;
     }
 
-    .painter-tile.selected {
+    .painter-tile.selected, .painter-tile.exists.painter-tile.selected {
         background-color: #7c5fb3;
+    }
+
+    .painter-tile.exists {
+        background-color: #529958;
     }
 
     .painter-tile:hover {

@@ -8,38 +8,58 @@ import world from '@/scenes/Test/assets/world.glb';
 import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
-import { createSignal, onCleanup, onMount } from 'lume';
+import { createSignal, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
+import attachToConsole from './attachToConsole';
 
 export default function NavTilePainter() {
 
     const [nm, setNm] = createStore<NavMap>(
-        // {
-        //     config: {
-        //         playerHeight: 10,
-        //         size: 1250,
-        //         numTiles: 10,
-        //         offset: { x: 0, y: 20, z: 0 },
-        //         spawn: `0,0`
-        //     },
-        //     tiles: {}
-        // }
-        TEST_NAVMAP
+        {
+            config: {
+                playerHeight: 10,
+                size: 1250,
+                numTiles: 10,
+                offset: { x: 0, y: 20, z: 0 },
+                spawn: `0,0`
+            },
+            tiles: {}
+        }
     );
 
     const [selectedTiles, setSelectedTiles] = createSignal<NavCoord[]>([]);
     const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
-    const createTile = (where: Coord2D) => {
+    const createTile = (where: NavCoord) => {
         setNm('tiles', prev => {
-            const coords = where.join(',') as NavCoord;
-            if (prev[coords]) return prev; // tile already there
-            return {...prev, [coords]: {
+            if (prev[where]) return prev; // tile already there
+            return {...prev, [where]: {
                 height: 0, active: true, edges: 15
             }}
         })
     }
+
+    function createTilesAtSelected() {
+        selectedTiles().forEach(navcoord => createTile(navcoord))
+    }
+
+    // Solid shallow-merges the object in. 
+    // So, to remove properties, shallow merge with key: undefined.
+    // const deleteTile = (where: NavCoord) => {
+    //     setNm('tiles', {[where]: undefined})
+    // }
+    function deleteSelectedTiles() {
+        // cannot call singular deleteTile in a loop : race condition?
+        setNm('tiles', Object.fromEntries(
+            selectedTiles().map(nc => [nc, undefined])
+        ));
+        setSelectedTiles([]);
+    }
+
+    
+
+    
 
     // const toggleSelectTile = (where: NavCoord) => {
     //     setSelectedTiles(prev => {
@@ -128,7 +148,8 @@ export default function NavTilePainter() {
                             return (
                                 <div
                                     classList={{
-                                        'selected': isSelected()
+                                        'selected': isSelected(),
+                                        'exists': nm.tiles[coordKey] != undefined
                                     }}
                                     class="painter-tile"
                                     style={{
@@ -156,6 +177,8 @@ export default function NavTilePainter() {
                     ))}
                 </div>
                 <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
+                <button onclick={createTilesAtSelected}>Place new tiles at selected</button>
+                <button onclick={deleteSelectedTiles}>Delete Selected Tiles</button>
             </div>
         </>
     )
