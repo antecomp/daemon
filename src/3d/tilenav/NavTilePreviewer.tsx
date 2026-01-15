@@ -24,6 +24,7 @@ export default function NavTilePreviewer(
     const tileColor = ([tx, tz]: Coord2D, hasTile: boolean) => {
         const baseColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
         const emptyColor = (tx + tz) % 2 === 0 ? "#2b2b2b" : "#3a3a3a";
+        const existsAndSelectedColor = (tx + tz) % 2 === 0 ? "#108178" : "#1fc0b3";
         const selectedColor = (tx + tz) % 2 === 0 ? '#2a2341' : '#7c5fb3'
         const h = props.hoveredTile;
         const isHovered = !!h && h[0] == tx && h[1] == tz;
@@ -31,82 +32,29 @@ export default function NavTilePreviewer(
         const navcoord = `${tx},${tz}` as NavCoord;
         const isSelected = props.selectedTiles?.includes(navcoord);
         if (isHovered) return 'yellow';
+        if(isSelected && hasTile) return existsAndSelectedColor;
         if (isSelected) return selectedColor;
         return hasTile ? baseColor : emptyColor;
     }
 
-    const tileAt = (coordKey: NavCoord) => props.NM.tiles[coordKey];
-
-    return (
-        <For
-            each={Array.from({ length: props.NM.config.numTiles ** 2 }, (_, i) => ([
+    const coords = createMemo(() =>
+        Array.from(
+            { length: props.NM.config.numTiles ** 2 },
+            (_, i) => ([
                 i % props.NM.config.numTiles,
                 Math.floor(i / props.NM.config.numTiles),
-            ] as Coord2D))}
-        >
+            ] as Coord2D)
+        )
+    );
+
+    return (
+        <For each={coords()}>
             {([tx, tz]) => {
                 const coordKey = `${tx},${tz}` as const;
-                //const tile = props.NM.tiles[coordKey];
-                const tile = createMemo(() => tileAt(coordKey));
+                const tile = createMemo(() => props.NM.tiles[coordKey]);
                 const x = baseX + tx * tileSize;
                 const y = baseY - (tile()?.height ?? 0) //- 20;
                 const z = baseZ + tz * tileSize;
-
-                const walls = [];
-                if (tile() && (tile().edges & NavTileMask.EDGE_UP) === 0) {
-                    walls.push(
-                        <lume-plane
-                            color='#ff3b30'
-                            sidedness="double"
-                            align-point='0.5 0.5'
-                            mount-point='0.5 0.5'
-                            position={`${x} ${y - wallHeight / 2} ${z - wallOffset - wallEps}`}
-                            size={`${tileSize} ${wallHeight}`}
-                            opacity='0.8'
-                        />
-                    );
-                }
-                if (tile() && (tile().edges & NavTileMask.EDGE_RIGHT) === 0) {
-                    walls.push(
-                        <lume-plane
-                            color='#ff3b30'
-                            sidedness="double"
-                            align-point='0.5 0.5'
-                            mount-point='0.5 0.5'
-                            rotation='0 90 0'
-                            position={`${x + wallOffset + wallEps} ${y - wallHeight / 2} ${z}`}
-                            size={`${tileSize} ${wallHeight}`}
-                            opacity='0.8'
-                        />
-                    );
-                }
-                if (tile() && (tile().edges & NavTileMask.EDGE_DOWN) === 0) {
-                    walls.push(
-                        <lume-plane
-                            color='#ff3b30'
-                            sidedness="double"
-                            align-point='0.5 0.5'
-                            mount-point='0.5 0.5'
-                            position={`${x} ${y - wallHeight / 2} ${z + wallOffset + wallEps}`}
-                            size={`${tileSize} ${wallHeight}`}
-                            opacity='0.8'
-                        />
-                    );
-                }
-                if (tile() && (tile().edges & NavTileMask.EDGE_LEFT) === 0) {
-                    walls.push(
-                        <lume-plane
-                            color='#ff3b30'
-                            sidedness="double"
-                            align-point='0.5 0.5'
-                            mount-point='0.5 0.5'
-                            rotation='0 90 0'
-                            position={`${x - wallOffset - wallEps} ${y - wallHeight / 2} ${z}`}
-                            size={`${tileSize} ${wallHeight}`}
-                            opacity='0.8'
-                        />
-                    );
-                }
                 return (
                     <>
                         <lume-plane
@@ -121,7 +69,52 @@ export default function NavTilePreviewer(
                             depth-test={props.clip ? 'false' : 'true'}
                             depth-write={props.clip ? 'false' : 'true'}
                         />
-                        {walls}
+                        {tile() && (tile()!.edges & NavTileMask.EDGE_UP) === 0 && (
+                            <lume-plane
+                                color='#ff3b30'
+                                sidedness="double"
+                                align-point='0.5 0.5'
+                                mount-point='0.5 0.5'
+                                position={`${x} ${y - wallHeight / 2} ${z - wallOffset - wallEps}`}
+                                size={`${tileSize} ${wallHeight}`}
+                                opacity='0.8'
+                            />
+                        )}
+                        {tile() && (tile()!.edges & NavTileMask.EDGE_RIGHT) === 0 && (
+                            <lume-plane
+                                color='#ff3b30'
+                                sidedness="double"
+                                align-point='0.5 0.5'
+                                mount-point='0.5 0.5'
+                                rotation='0 90 0'
+                                position={`${x + wallOffset + wallEps} ${y - wallHeight / 2} ${z}`}
+                                size={`${tileSize} ${wallHeight}`}
+                                opacity='0.8'
+                            />
+                        )}
+                        {tile() && (tile()!.edges & NavTileMask.EDGE_DOWN) === 0 && (
+                            <lume-plane
+                                color='#ff3b30'
+                                sidedness="double"
+                                align-point='0.5 0.5'
+                                mount-point='0.5 0.5'
+                                position={`${x} ${y - wallHeight / 2} ${z + wallOffset + wallEps}`}
+                                size={`${tileSize} ${wallHeight}`}
+                                opacity='0.8'
+                            />
+                        )}
+                        {tile() && (tile()!.edges & NavTileMask.EDGE_LEFT) === 0 && (
+                            <lume-plane
+                                color='#ff3b30'
+                                sidedness="double"
+                                align-point='0.5 0.5'
+                                mount-point='0.5 0.5'
+                                rotation='0 90 0'
+                                position={`${x - wallOffset - wallEps} ${y - wallHeight / 2} ${z}`}
+                                size={`${tileSize} ${wallHeight}`}
+                                opacity='0.8'
+                            />
+                        )}
                     </>
                 )
             }}

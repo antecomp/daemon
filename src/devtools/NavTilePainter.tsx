@@ -31,19 +31,30 @@ export default function NavTilePainter() {
     const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
-    const createTile = (where: NavCoord) => {
-        setNm('tiles', prev => {
-            if (prev[where]) return prev; // tile already there
-            return {
-                ...prev, [where]: {
-                    height: 0, active: true, edges: 15
-                }
-            }
-        })
-    }
+    // const createTile = (where: NavCoord) => {
+    //     setNm('tiles', prev => {
+    //         if (prev[where]) return prev; // tile already there
+    //         return {
+    //             ...prev, [where]: {
+    //                 height: 0, active: true, edges: 15
+    //             }
+    //         }
+    //     })
+    // }
 
     function createTilesAtSelected() {
-        selectedTiles().forEach(navcoord => createTile(navcoord))
+        // Many state updates - very laggy and shit
+        //selectedTiles().forEach(navcoord => createTile(navcoord));
+        setNm('tiles', prev => {
+            const toAdd: NavMap['tiles'] = {};
+            selectedTiles().forEach(nc => {
+                if (prev[nc]) return;
+                toAdd[nc] = {
+                    height: 0, active: true, edges: 15
+                }
+            });
+            return toAdd;
+        })
     }
 
     // Solid shallow-merges the object in. 
@@ -70,6 +81,18 @@ export default function NavTilePainter() {
         setSelectedTiles(coords);
     };
 
+    // Probably a cleaner way of doing this!
+    function toggleEdgesOfSelectedTiles(direction: NavTileMask) {
+        setNm('tiles', prev => Object.fromEntries(
+            selectedTiles().map(nc => {
+                const oldTile = prev[nc];
+                if(!oldTile) return [nc, undefined];
+                const newEdge = oldTile.edges ^ direction;
+                return [nc, { ...oldTile, edges: newEdge }]
+            })
+        ))
+    }
+
 
 
     // const toggleSelectTile = (where: NavCoord) => {
@@ -86,8 +109,26 @@ export default function NavTilePainter() {
     let isShiftDown = false;
 
     const keyDown = (e: KeyboardEvent) => {
-        if (e.key == 'Shift') isShiftDown = true;
-        // Add other keybinds here ez.
+        //if (e.key == 'Shift') isShiftDown = true;
+        switch (e.key) {
+            // Add other keybinds here ez.
+            case "Shift":
+                isShiftDown = true;
+                break;
+            case 'ArrowDown':
+                toggleEdgesOfSelectedTiles(NavTileMask.EDGE_DOWN);
+                break;
+            case 'ArrowUp':
+                toggleEdgesOfSelectedTiles(NavTileMask.EDGE_UP);
+                break;
+            case 'ArrowLeft':
+                toggleEdgesOfSelectedTiles(NavTileMask.EDGE_LEFT);
+                break;
+            case 'ArrowRight':
+                toggleEdgesOfSelectedTiles(NavTileMask.EDGE_RIGHT);
+                break;
+        }
+
     }
 
     const keyUp = (e: KeyboardEvent) => {
