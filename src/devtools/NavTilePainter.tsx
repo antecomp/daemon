@@ -19,7 +19,7 @@ export default function NavTilePainter() {
             config: {
                 playerHeight: 10,
                 size: 1250,
-                numTiles: 10,
+                numTiles: 12,
                 offset: { x: 0, y: 20, z: 0 },
                 spawn: `0,0`
             },
@@ -34,9 +34,11 @@ export default function NavTilePainter() {
     const createTile = (where: NavCoord) => {
         setNm('tiles', prev => {
             if (prev[where]) return prev; // tile already there
-            return {...prev, [where]: {
-                height: 0, active: true, edges: 15
-            }}
+            return {
+                ...prev, [where]: {
+                    height: 0, active: true, edges: 15
+                }
+            }
         })
     }
 
@@ -57,9 +59,18 @@ export default function NavTilePainter() {
         setSelectedTiles([]);
     }
 
-    
+    const selectAll = () => {
+        const n = nm.config.numTiles;
+        const coords: NavCoord[] = [];
+        for (let z = 0; z < n; z++) {
+            for (let x = 0; x < n; x++) {
+                coords.push(`${x},${z}` as NavCoord);
+            }
+        }
+        setSelectedTiles(coords);
+    };
 
-    
+
 
     // const toggleSelectTile = (where: NavCoord) => {
     //     setSelectedTiles(prev => {
@@ -69,16 +80,34 @@ export default function NavTilePainter() {
     // }
 
     const selectTile = (where: NavCoord) => setSelectedTiles(prev => [...prev, where]);
+    const deselectTile = (where: NavCoord) => setSelectedTiles(prev => prev.filter(loc => loc != where));
 
     let isPointerDown = false;
+    let isShiftDown = false;
+
+    const keyDown = (e: KeyboardEvent) => {
+        if (e.key == 'Shift') isShiftDown = true;
+        // Add other keybinds here ez.
+    }
+
+    const keyUp = (e: KeyboardEvent) => {
+        if (e.key == 'Shift') isShiftDown = false;
+    }
+
     onMount(() => {
         document.addEventListener('pointerup', () => isPointerDown = false);
         document.addEventListener('pointercancel', () => isPointerDown = false);
+
+
+        window.addEventListener("keydown", keyDown);
+        window.addEventListener("keyup", keyUp);
     });
 
     onCleanup(() => {
         document.removeEventListener('pointerup', () => isPointerDown = false);
         document.removeEventListener('pointercancel', () => isPointerDown = false);
+        window.removeEventListener("keydown", keyDown);
+        window.removeEventListener("keyup", keyUp);
     });
 
     return (
@@ -112,11 +141,11 @@ export default function NavTilePainter() {
                         src={world}
                     />
 
-                    <NavTilePreviewer 
-                        NM={nm} 
-                        hoveredTile={hoveredTile()} 
+                    <NavTilePreviewer
+                        NM={nm}
+                        hoveredTile={hoveredTile()}
                         selectedTiles={selectedTiles()}
-                        clip={clipMode()} 
+                        clip={clipMode()}
                     />
 
                 </lume-scene>
@@ -163,10 +192,12 @@ export default function NavTilePainter() {
                                     onMouseLeave={() => setHoveredTile(null)}
                                     onPointerDown={() => {
                                         isPointerDown = true;
-                                        selectTile(coordKey);
+                                        isShiftDown ? deselectTile(coordKey) : selectTile(coordKey);
                                     }}
                                     onPointerEnter={() => {
-                                        if(isPointerDown) selectTile(coordKey)
+                                        if (isPointerDown) {
+                                            isShiftDown ? deselectTile(coordKey) : selectTile(coordKey);
+                                        }
                                     }}
                                     onPointerUp={() => {
                                         isPointerDown = false;
@@ -176,9 +207,12 @@ export default function NavTilePainter() {
                         })
                     ))}
                 </div>
-                <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
-                <button onclick={createTilesAtSelected}>Place new tiles at selected</button>
-                <button onclick={deleteSelectedTiles}>Delete Selected Tiles</button>
+                <div class='actions'>
+                    <button onclick={selectAll}>Select All</button>
+                    <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
+                    <button onclick={createTilesAtSelected}>Place new tiles at selected</button>
+                    <button onclick={deleteSelectedTiles}>Delete Selected Tiles</button>
+                </div>
             </div>
         </>
     )

@@ -43,7 +43,11 @@
     }
 
     .painter-tile:hover {
-        background: yellow;
+        filter: brightness(1.1);
+    }
+
+    .actions {
+        display: flex;
     }
 
     button {
