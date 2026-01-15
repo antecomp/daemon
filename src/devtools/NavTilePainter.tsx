@@ -28,7 +28,7 @@ export default function NavTilePainter() {
     );
 
     const [selectedTiles, setSelectedTiles] = createSignal<Coord2D[]>([]);
-    const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>([1,5]);
+    const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
     const EDGE_UP = 1;
@@ -75,6 +75,9 @@ export default function NavTilePainter() {
                         min-distance='0'
                         initial-polar-angle='20'
                         distance='1000'
+                        max-horizontal-angle='60'
+                        min-horizontal-angle='-60'
+                        horizontal-angle='0'
                     ></lume-camera-rig>
 
                     <lume-ambient-light intensity={1} />
