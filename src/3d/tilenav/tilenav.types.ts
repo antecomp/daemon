@@ -1,3 +1,5 @@
+export type NavCoord = `${number},${number}`
+
 export interface NavTile {
   height: number, // for raised surfaces.
   active: boolean,
@@ -19,10 +21,10 @@ export interface NavMap {
       y: number // added to every tile height to push it up to "ground"
       z: number
     }
-    spawn: `${number},${number}`
+    spawn: NavCoord
   }
   tiles: {
-    [coord: `${number},${number}`]: NavTile
+    [coord: NavCoord]: NavTile
   }
 }
 

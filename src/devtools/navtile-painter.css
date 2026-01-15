@@ -11,6 +11,7 @@
     }
 
     #scene-preview {
+        position: relative;
         & lume-scene {
             display: block;
             width: 100%;

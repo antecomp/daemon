@@ -1,9 +1,12 @@
 import { For } from "solid-js";
 import { NavMap } from "./tilenav.types";
+import { Coord2D } from "@/shared/types/3d.types";
 
 export default function NavTilePreviewer(
     props: {
         NM: NavMap
+        hoveredTile?: Coord2D | null;
+        clip?: boolean
     }
 ) {
     const tileSize = props.NM.config.size / props.NM.config.numTiles;
@@ -29,7 +32,13 @@ export default function NavTilePreviewer(
                 const x = baseX + tx * tileSize;
                 const y = baseY - tile.height //- 20;
                 const z = baseZ + tz * tileSize;
-                const color = (tx + tz) % 2 === 0 ? '#529958' : '#70ca96';
+                let color = (tx + tz) % 2 === 0 ? '#529958' : '#70ca96';
+                if (
+                    props.hoveredTile &&
+                    JSON.stringify(props.hoveredTile) == JSON.stringify([tx, tz])
+                ) {
+                    color = 'yellow';
+                }
                 const walls = [];
                 if ((tile.edges & EDGE_UP) === 0) {
                     walls.push(
@@ -96,6 +105,8 @@ export default function NavTilePreviewer(
                             position={`${x} ${y} ${z}`}
                             size={`${tileSize} ${tileSize}`}
                             opacity='0.5'
+                            depth-test={props.clip ? 'false' : 'true'}
+                            depth-write={props.clip ? 'false' : 'true'}
                         />
                         {walls}
                     </>

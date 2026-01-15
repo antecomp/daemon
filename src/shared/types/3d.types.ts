@@ -26,6 +26,8 @@ export interface Gimbal {
  *  Can convert from this to LumePosition with array.join(' ')... */
 export type XYZ = [number, number, number];
 
+export type Coord2D = [number, number];
+
 export type Orientation = Omit<Gimbal, "roll">
 
 export type VLID = `${string}:${string}` // I wish I could make this more robust but whatever
