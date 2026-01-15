@@ -93,6 +93,20 @@ export default function NavTilePainter() {
         ))
     }
 
+    function raiseSelectedTiles() {
+        const input = prompt("Raise by how much?", "10");
+        const amt = parseInt(input ?? '10');
+        if(isNaN(amt)) return;
+        else setNm('tiles', prev => Object.fromEntries(
+            selectedTiles().map(nc => {
+                const oldTile = prev[nc];
+                if(!oldTile) return [nc, undefined];
+                const newHeight = oldTile.height + amt;
+                return [nc, {...oldTile, height: newHeight}]
+            })
+        ))
+    }
+
 
 
     // const toggleSelectTile = (where: NavCoord) => {
@@ -126,6 +140,21 @@ export default function NavTilePainter() {
                 break;
             case 'ArrowRight':
                 toggleEdgesOfSelectedTiles(NavTileMask.EDGE_RIGHT);
+                break;
+            case 'A':
+                createTilesAtSelected();
+                break;
+            case 'd':
+                setSelectedTiles([]);
+                break;
+            case 'x':
+                deleteSelectedTiles();
+                break;
+            case 'a':
+                selectAll();
+                break;
+            case 'PageUp':
+                raiseSelectedTiles();
                 break;
         }
 
@@ -224,10 +253,10 @@ export default function NavTilePainter() {
                                     class="painter-tile"
                                     style={{
                                         '--numtiles': nm.config.numTiles,
-                                        'border-top-color': (edges & NavTileMask.EDGE_UP) === 0 ? '#c40000' : 'inherit',
-                                        'border-right-color': (edges & NavTileMask.EDGE_RIGHT) === 0 ? '#c40000' : 'inherit',
-                                        'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) === 0 ? '#c40000' : 'inherit',
-                                        'border-left-color': (edges & NavTileMask.EDGE_LEFT) === 0 ? '#c40000' : 'inherit',
+                                        'border-top-color': (edges & NavTileMask.EDGE_UP) === 0 ? '#c40000' : '',
+                                        'border-right-color': (edges & NavTileMask.EDGE_RIGHT) === 0 ? '#c40000' : '',
+                                        'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) === 0 ? '#c40000' : '',
+                                        'border-left-color': (edges & NavTileMask.EDGE_LEFT) === 0 ? '#c40000' : '',
                                     }}
                                     onMouseEnter={() => setHoveredTile([x, z])}
                                     onMouseLeave={() => setHoveredTile(null)}
@@ -243,7 +272,7 @@ export default function NavTilePainter() {
                                     onPointerUp={() => {
                                         isPointerDown = false;
                                     }}
-                                />
+                                >{tile?.height}</div>
                             );
                         })
                     ))}

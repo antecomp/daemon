@@ -29,7 +29,7 @@
 
     .painter-tile {
         aspect-ratio: 1;
-        border: 5px solid #dfdfdf;
+        border: 5px solid #b4b4b4;
         box-sizing: border-box;
         background: #f2f2f2;
     }

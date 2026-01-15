@@ -53,7 +53,7 @@ export default function NavTilePreviewer(
                 const coordKey = `${tx},${tz}` as const;
                 const tile = createMemo(() => props.NM.tiles[coordKey]);
                 const x = baseX + tx * tileSize;
-                const y = baseY - (tile()?.height ?? 0) //- 20;
+                const y = createMemo(() => baseY - (tile()?.height ?? 0));
                 const z = baseZ + tz * tileSize;
                 return (
                     <>
@@ -63,7 +63,7 @@ export default function NavTilePreviewer(
                             align-point='0.5 0.5'
                             mount-point='0.5 0.5'
                             rotation='90 0 0'
-                            position={`${x} ${y} ${z}`}
+                            position={`${x} ${y()} ${z}`}
                             size={`${tileSize} ${tileSize}`}
                             opacity='0.5'
                             depth-test={props.clip ? 'false' : 'true'}
@@ -75,7 +75,7 @@ export default function NavTilePreviewer(
                                 sidedness="double"
                                 align-point='0.5 0.5'
                                 mount-point='0.5 0.5'
-                                position={`${x} ${y - wallHeight / 2} ${z - wallOffset - wallEps}`}
+                                position={`${x} ${y() - wallHeight / 2} ${z - wallOffset - wallEps}`}
                                 size={`${tileSize} ${wallHeight}`}
                                 opacity='0.8'
                             />
@@ -87,7 +87,7 @@ export default function NavTilePreviewer(
                                 align-point='0.5 0.5'
                                 mount-point='0.5 0.5'
                                 rotation='0 90 0'
-                                position={`${x + wallOffset + wallEps} ${y - wallHeight / 2} ${z}`}
+                                position={`${x + wallOffset + wallEps} ${y() - wallHeight / 2} ${z}`}
                                 size={`${tileSize} ${wallHeight}`}
                                 opacity='0.8'
                             />
@@ -98,7 +98,7 @@ export default function NavTilePreviewer(
                                 sidedness="double"
                                 align-point='0.5 0.5'
                                 mount-point='0.5 0.5'
-                                position={`${x} ${y - wallHeight / 2} ${z + wallOffset + wallEps}`}
+                                position={`${x} ${y() - wallHeight / 2} ${z + wallOffset + wallEps}`}
                                 size={`${tileSize} ${wallHeight}`}
                                 opacity='0.8'
                             />
@@ -110,7 +110,7 @@ export default function NavTilePreviewer(
                                 align-point='0.5 0.5'
                                 mount-point='0.5 0.5'
                                 rotation='0 90 0'
-                                position={`${x - wallOffset - wallEps} ${y - wallHeight / 2} ${z}`}
+                                position={`${x - wallOffset - wallEps} ${y() - wallHeight / 2} ${z}`}
                                 size={`${tileSize} ${wallHeight}`}
                                 opacity='0.8'
                             />
