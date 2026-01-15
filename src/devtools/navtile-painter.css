@@ -34,6 +34,10 @@
     background: #f2f2f2;
 }
 
+.painter-tile.selected {
+    background-color: #7c5fb3;
+}
+
 .painter-tile:hover {
     background: yellow;
 }

@@ -1,5 +1,12 @@
 export type NavCoord = `${number},${number}`
 
+export enum NavTileMask {
+    EDGE_UP = 1,
+    EDGE_RIGHT = 2,
+    EDGE_DOWN = 4,
+    EDGE_LEFT = 8
+}
+
 export interface NavTile {
   height: number, // for raised surfaces.
   active: boolean,

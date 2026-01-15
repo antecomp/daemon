@@ -5,7 +5,7 @@ import 'lume';
 import world from '@/scenes/Test/assets/world.glb';
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
-import { NavCoord, NavMap, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
+import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
 import { createSignal } from 'lume';
@@ -14,38 +14,24 @@ import { Coord2D } from '@/shared/types/3d.types';
 export default function NavTilePainter() {
 
     const [nm, setNm] = createStore<NavMap>(
-        {
-            config: {
-                playerHeight: 10,
-                size: 1250,
-                numTiles: 10,
-                offset: { x: 0, y: 20, z: 0 },
-                spawn: `0,0`
-            },
-            tiles: {}
-        }
-        //TEST_NAVMAP
+        // {
+        //     config: {
+        //         playerHeight: 10,
+        //         size: 1250,
+        //         numTiles: 10,
+        //         offset: { x: 0, y: 20, z: 0 },
+        //         spawn: `0,0`
+        //     },
+        //     tiles: {}
+        // }
+        TEST_NAVMAP
     );
 
-    const [selectedTiles, setSelectedTiles] = createSignal<Coord2D[]>([]);
+    const [selectedTiles, setSelectedTiles] = createSignal<NavCoord[]>([]);
     const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
-    const EDGE_UP = 1;
-    const EDGE_RIGHT = 2;
-    const EDGE_DOWN = 4;
-    const EDGE_LEFT = 8;
-
-    // const raiseTile = (where: [number, number]) => {
-    //     setNm('tiles', prev => {
-    //         const raiseCoords = where.join(',') as NavCoord;
-    //         const td = prev[raiseCoords];
-    //         const tdn = {...td, height: td.height + 20 }
-    //         return { ...prev, [raiseCoords]: tdn }
-    //     });
-    // }
-
-    const createTile = (where: [number, number]) => {
+    const createTile = (where: Coord2D) => {
         setNm('tiles', prev => {
             const coords = where.join(',') as NavCoord;
             if (prev[coords]) return prev; // tile already there
@@ -55,7 +41,12 @@ export default function NavTilePainter() {
         })
     }
 
-    
+    const toggleSelectTile = (where: NavCoord) => {
+        setSelectedTiles(prev => {
+            if (prev.includes(where)) return prev.filter(i => i != where)
+            return [...prev, where]
+        });
+    }
 
     return (
         <>
@@ -73,8 +64,8 @@ export default function NavTilePainter() {
                         // distance="1500"
                         max-distance='Infinity'
                         min-distance='0'
-                        initial-polar-angle='20'
-                        distance='1000'
+                        initial-polar-angle='75'
+                        distance='2000'
                         max-horizontal-angle='60'
                         min-horizontal-angle='-60'
                         horizontal-angle='0'
@@ -88,7 +79,12 @@ export default function NavTilePainter() {
                         src={world}
                     />
 
-                    <NavTilePreviewer NM={nm} hoveredTile={hoveredTile()} clip={clipMode()} />
+                    <NavTilePreviewer 
+                        NM={nm} 
+                        hoveredTile={hoveredTile()} 
+                        selectedTiles={selectedTiles()}
+                        clip={clipMode()} 
+                    />
 
                 </lume-scene>
                 <button
@@ -115,19 +111,23 @@ export default function NavTilePainter() {
                             const coordKey = `${x},${z}` as const;
                             const tile = nm.tiles[coordKey];
                             const edges = tile?.edges ?? 15;
+                            const isSelected = () => selectedTiles().includes(coordKey);
                             return (
                                 <div
+                                    classList={{
+                                        'selected': isSelected()
+                                    }}
                                     class="painter-tile"
                                     style={{
                                         '--numtiles': nm.config.numTiles,
-                                        'border-top-color': (edges & EDGE_UP) === 0 ? '#c40000' : 'inherit',
-                                        'border-right-color': (edges & EDGE_RIGHT) === 0 ? '#c40000' : 'inherit',
-                                        'border-bottom-color': (edges & EDGE_DOWN) === 0 ? '#c40000' : 'inherit',
-                                        'border-left-color': (edges & EDGE_LEFT) === 0 ? '#c40000' : 'inherit',
+                                        'border-top-color': (edges & NavTileMask.EDGE_UP) === 0 ? '#c40000' : 'inherit',
+                                        'border-right-color': (edges & NavTileMask.EDGE_RIGHT) === 0 ? '#c40000' : 'inherit',
+                                        'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) === 0 ? '#c40000' : 'inherit',
+                                        'border-left-color': (edges & NavTileMask.EDGE_LEFT) === 0 ? '#c40000' : 'inherit',
                                     }}
                                     onMouseEnter={() => setHoveredTile([x, z])}
                                     onMouseLeave={() => setHoveredTile(null)}
-                                    onClick={() => createTile([x,z])}
+                                    onClick={() => toggleSelectTile(coordKey)}
                                 />
                             );
                         })
