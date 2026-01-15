@@ -32,7 +32,7 @@ export const TEST_NAVMAP: NavMap = {
   config: {
     playerHeight: 1.7,
     size: 1250,
-    numTiles: 10,
+    numTiles: 11,
     offset: {
       x: 0,
       y: 25,
@@ -127,8 +127,6 @@ export const TEST_NAVMAP: NavMap = {
     "8,7": { height: 0, active: true, edges: 15 },
     "9,7": { height: 0, active: true, edges: 15 },
 
-    "0,8": { height: 0, active: true, edges: 15 },
-    "1,8": { height: 0, active: true, edges: 15 },
     "2,8": { height: 0, active: true, edges: 15 },
     "3,8": { height: 0, active: true, edges: 15 },
     "4,8": { height: 0, active: true, edges: 15 },
@@ -138,8 +136,6 @@ export const TEST_NAVMAP: NavMap = {
     "8,8": { height: 0, active: true, edges: 15 },
     "9,8": { height: 0, active: true, edges: 15 },
 
-    "0,9": { height: 0, active: true, edges: 15 },
-    "1,9": { height: 0, active: true, edges: 15 },
     "2,9": { height: 0, active: true, edges: 15 },
     "3,9": { height: 0, active: true, edges: 15 },
     "4,9": { height: 0, active: true, edges: 15 },

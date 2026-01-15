@@ -14,17 +14,17 @@ import { Coord2D } from '@/shared/types/3d.types';
 export default function NavTilePainter() {
 
     const [nm, setNm] = createStore<NavMap>(
-        // {
-        //     config: {
-        //         playerHeight: 10,
-        //         size: 100,
-        //         numTiles: 10,
-        //         offset: { x: 0, y: 0, z: 0 },
-        //         spawn: `0,0`
-        //     },
-        //     tiles: {}
-        // }
-        TEST_NAVMAP
+        {
+            config: {
+                playerHeight: 10,
+                size: 1250,
+                numTiles: 10,
+                offset: { x: 0, y: 20, z: 0 },
+                spawn: `0,0`
+            },
+            tiles: {}
+        }
+        //TEST_NAVMAP
     );
 
     const [selectedTiles, setSelectedTiles] = createSignal<Coord2D[]>([]);
@@ -36,13 +36,23 @@ export default function NavTilePainter() {
     const EDGE_DOWN = 4;
     const EDGE_LEFT = 8;
 
-    const raiseTile = (where: [number, number]) => {
+    // const raiseTile = (where: [number, number]) => {
+    //     setNm('tiles', prev => {
+    //         const raiseCoords = where.join(',') as NavCoord;
+    //         const td = prev[raiseCoords];
+    //         const tdn = {...td, height: td.height + 20 }
+    //         return { ...prev, [raiseCoords]: tdn }
+    //     });
+    // }
+
+    const createTile = (where: [number, number]) => {
         setNm('tiles', prev => {
-            const raiseCoords = where.join(',') as NavCoord;
-            const td = prev[raiseCoords];
-            const tdn = {...td, height: td.height + 20 }
-            return { ...prev, [raiseCoords]: tdn }
-        });
+            const coords = where.join(',') as NavCoord;
+            if (prev[coords]) return prev; // tile already there
+            return {...prev, [coords]: {
+                height: 0, active: true, edges: 15
+            }}
+        })
     }
 
     
@@ -114,7 +124,7 @@ export default function NavTilePainter() {
                                     }}
                                     onMouseEnter={() => setHoveredTile([x, z])}
                                     onMouseLeave={() => setHoveredTile(null)}
-                                    onClick={() => raiseTile([x,z])}
+                                    onClick={() => createTile([x,z])}
                                 />
                             );
                         })
