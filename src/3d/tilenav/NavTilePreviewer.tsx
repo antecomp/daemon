@@ -25,6 +25,13 @@ export default function NavTilePreviewer(
     const baseY = props.NM.config.offset.y;
     const baseZ = props.NM.config.offset.z - halfSize + tileOffset;
 
+    const tileColor = ([tx, tz]: Coord2D) => {
+        const baseColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
+        const h = props.hoveredTile;
+        const isHovered = !!h && h[0] == tx && h[1] == tz;
+        return isHovered ? 'yellow' : baseColor
+    }
+
     return (
         <For each={Object.entries(props.NM.tiles)}>
             {([coord, tile]) => {
@@ -32,16 +39,6 @@ export default function NavTilePreviewer(
                 const x = baseX + tx * tileSize;
                 const y = baseY - tile.height //- 20;
                 const z = baseZ + tz * tileSize;
-
-                const baseColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
-
-                // stupid bullshit to actually enforce reactivity.
-                const isHovered = createMemo(() => {
-                    const h = props.hoveredTile;
-                    return !!h && h[0] === tx && h[1] === tz;
-                });
-
-                const color = createMemo(() => (isHovered() ? "yellow" : baseColor));
 
                 const walls = [];
                 if ((tile.edges & EDGE_UP) === 0) {
@@ -102,7 +99,7 @@ export default function NavTilePreviewer(
                     <>
                         <lume-plane
                             sidedness="double"
-                            color={color()}
+                            color={tileColor([tx, tz])}
                             align-point='0.5 0.5'
                             mount-point='0.5 0.5'
                             rotation='90 0 0'

@@ -49,8 +49,7 @@ export const TEST_NAVMAP: NavMap = {
     "5,0": { height: 20, active: true, edges: 15 },
     "6,0": { height: 20, active: true, edges: 15 },
     "7,0": { height: 20, active: true, edges: 15 },
-    "8,0": { height: 20, active: true, edges: 15 },
-    "9,0": { height: 20, active: true, edges: 15 },
+
 
     "0,1": { height: 0, active: true, edges: 15 },
     "1,1": { height: 0, active: true, edges: 15 },
@@ -60,8 +59,7 @@ export const TEST_NAVMAP: NavMap = {
     "5,1": { height: 0, active: true, edges: 15 },
     "6,1": { height: 0, active: true, edges: 15 },
     "7,1": { height: 0, active: true, edges: 15 },
-    "8,1": { height: 0, active: true, edges: 15 },
-    "9,1": { height: 0, active: true, edges: 15 },
+
 
     "0,2": { height: 0, active: true, edges: 15 },
     "1,2": { height: 0, active: true, edges: 15 },

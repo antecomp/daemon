@@ -5,7 +5,7 @@ import 'lume';
 import world from '@/scenes/Test/assets/world.glb';
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
-import { NavMap, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
+import { NavCoord, NavMap, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
 import { createSignal } from 'lume';
@@ -35,6 +35,17 @@ export default function NavTilePainter() {
     const EDGE_RIGHT = 2;
     const EDGE_DOWN = 4;
     const EDGE_LEFT = 8;
+
+    const raiseTile = (where: [number, number]) => {
+        setNm('tiles', prev => {
+            const raiseCoords = where.join(',') as NavCoord;
+            const td = prev[raiseCoords];
+            const tdn = {...td, height: td.height + 20 }
+            return { ...prev, [raiseCoords]: tdn }
+        });
+    }
+
+    
 
     return (
         <>
@@ -103,6 +114,7 @@ export default function NavTilePainter() {
                                     }}
                                     onMouseEnter={() => setHoveredTile([x, z])}
                                     onMouseLeave={() => setHoveredTile(null)}
+                                    onClick={() => raiseTile([x,z])}
                                 />
                             );
                         })
