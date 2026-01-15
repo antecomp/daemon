@@ -8,7 +8,7 @@ import world from '@/scenes/Test/assets/world.glb';
 import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
-import { createSignal, onCleanup, onMount } from 'solid-js';
+import { createSignal, For, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
 import attachToConsole from './attachToConsole';
 
@@ -30,17 +30,6 @@ export default function NavTilePainter() {
     const [selectedTiles, setSelectedTiles] = createSignal<NavCoord[]>([]);
     const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
-
-    // const createTile = (where: NavCoord) => {
-    //     setNm('tiles', prev => {
-    //         if (prev[where]) return prev; // tile already there
-    //         return {
-    //             ...prev, [where]: {
-    //                 height: 0, active: true, edges: 15
-    //             }
-    //         }
-    //     })
-    // }
 
     function createTilesAtSelected() {
         // Many state updates - very laggy and shit
@@ -81,12 +70,25 @@ export default function NavTilePainter() {
         setSelectedTiles(coords);
     };
 
+    function invertSelection() {
+        const n = nm.config.numTiles;
+        const current = new Set(selectedTiles());
+        const inverted: NavCoord[] = [];
+        for (let z = 0; z < n; z++) {
+            for (let x = 0; x < n; x++) {
+                const key = `${x},${z}` as NavCoord;
+                if (!current.has(key)) inverted.push(key);
+            }
+        }
+        setSelectedTiles(inverted);
+    }
+
     // Probably a cleaner way of doing this!
     function toggleEdgesOfSelectedTiles(direction: NavTileMask) {
         setNm('tiles', prev => Object.fromEntries(
             selectedTiles().map(nc => {
                 const oldTile = prev[nc];
-                if(!oldTile) return [nc, undefined];
+                if (!oldTile) return [nc, undefined];
                 const newEdge = oldTile.edges ^ direction;
                 return [nc, { ...oldTile, edges: newEdge }]
             })
@@ -96,25 +98,16 @@ export default function NavTilePainter() {
     function raiseSelectedTiles() {
         const input = prompt("Raise by how much?", "10");
         const amt = parseInt(input ?? '10');
-        if(isNaN(amt)) return;
+        if (isNaN(amt)) return;
         else setNm('tiles', prev => Object.fromEntries(
             selectedTiles().map(nc => {
                 const oldTile = prev[nc];
-                if(!oldTile) return [nc, undefined];
+                if (!oldTile) return [nc, undefined];
                 const newHeight = oldTile.height + amt;
-                return [nc, {...oldTile, height: newHeight}]
+                return [nc, { ...oldTile, height: newHeight }]
             })
         ))
     }
-
-
-
-    // const toggleSelectTile = (where: NavCoord) => {
-    //     setSelectedTiles(prev => {
-    //         if (prev.includes(where)) return prev.filter(i => i != where)
-    //         return [...prev, where]
-    //     });
-    // }
 
     const selectTile = (where: NavCoord) => setSelectedTiles(prev => [...prev, where]);
     const deselectTile = (where: NavCoord) => setSelectedTiles(prev => prev.filter(loc => loc != where));
@@ -156,6 +149,12 @@ export default function NavTilePainter() {
             case 'PageUp':
                 raiseSelectedTiles();
                 break;
+            case 'i':
+                invertSelection();
+                break;
+            case 'c':
+                setClipMode(p => !p);
+                break;
         }
 
     }
@@ -179,6 +178,42 @@ export default function NavTilePainter() {
         window.removeEventListener("keydown", keyDown);
         window.removeEventListener("keyup", keyUp);
     });
+
+
+    function config(property: keyof NavMap['config']) {
+
+        const updt: Partial<NavMap['config']> = {};
+
+        switch (property) {
+            case 'playerHeight': {
+                const input = prompt("Set Player Height To?", "10");
+                const amt = parseInt(input ?? '10');
+                updt.playerHeight = amt;
+                break;
+            }
+            case 'size': {
+                const input = prompt("Set Navmap Size To?", "1000");
+                const amt = parseInt(input ?? '1000');
+                updt.size = amt;
+                break;
+            }
+            case 'spawn': {
+                const input = prompt("Set Navmap Size To?", "0,0");
+                const amt = input?.split(',');
+                if(!amt || amt.length != 2 || typeof amt[0] != 'number' || typeof amt[1] != 'number') return;
+                updt.spawn = input as NavCoord;
+                break;
+            }
+            case 'numTiles': {
+                const input = prompt("Set # of Tiles To?", "10");
+                const amt = parseInt(input ?? '10');
+                updt.numTiles = amt;
+                break;                
+            }
+        }
+
+        setNm('config', updt);
+    }
 
     return (
         <>
@@ -219,16 +254,19 @@ export default function NavTilePainter() {
                     />
 
                 </lume-scene>
-                <button
+                <p
                     style={{
                         position: 'absolute',
-                        top: '3px',
-                        left: '3px'
+                        border: 'none',
+                        padding: '0px',
+                        'font-size': '32px',
+                        top: '0px',
+                        left: '10px'
                     }}
                     onClick={() => setClipMode(p => !p)}
                 >
-                    Toggle Tile Clipping
-                </button>
+                    {clipMode() ? '○' : '●'}
+                </p>
             </div>
             <div id="painter">
                 <div
@@ -282,6 +320,12 @@ export default function NavTilePainter() {
                     <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
                     <button onclick={createTilesAtSelected}>Place new tiles at selected</button>
                     <button onclick={deleteSelectedTiles}>Delete Selected Tiles</button>
+                </div>
+                <hr />
+                <div class='config'>
+                    <For each={['spawn', 'size', 'playerHeight', 'numTiles'] satisfies (keyof NavMap['config'])[]}>
+                        {opt => <button onclick={() => config(opt)}>Configure {opt}</button>}
+                    </For>
                 </div>
             </div>
         </>
