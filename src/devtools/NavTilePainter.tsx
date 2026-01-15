@@ -1,12 +1,20 @@
 import { render } from 'solid-js/web';
+import { For } from 'solid-js'
 import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
 
 import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
-import { TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
+import { TEST_NAVMAP as TC } from '@/3d/tilenav/tilenav.types';
 
 export default function NavTilePainter() {
+
+    const TILE_SIZE = TC.config.dimensions.size / TC.config.dimensions.numTiles;
+    const halfSize = TC.config.dimensions.size / 2;
+    const tileOffset = TILE_SIZE / 2;
+    const baseX = TC.config.dimensions.offset.x - halfSize + tileOffset;
+    const baseY = TC.config.dimensions.offset.y;
+    const baseZ = TC.config.dimensions.offset.z - halfSize + tileOffset;
 
     return (
         <>
@@ -39,20 +47,41 @@ export default function NavTilePainter() {
 
 
                     {/* Visualize Tilemap Container */}
-                    <lume-plane
+                    {/* <lume-plane
                         color='red'
                         align-point='0.5 0.5'
                         mount-point='0.5 0.5'
                         rotation='90 0 0'
                         position={
-                            TEST_NAVMAP.config.dimensions.offset.x.toString() + " " +
-                            TEST_NAVMAP.config.dimensions.offset.y.toString() + " " +
-                            TEST_NAVMAP.config.dimensions.offset.z.toString()
+                            TC.config.dimensions.offset.x.toString() + " " +
+                            TC.config.dimensions.offset.y.toString() + " " +
+                            TC.config.dimensions.offset.z.toString()
                         }
-                        size={`${TEST_NAVMAP.config.dimensions.size} ${TEST_NAVMAP.config.dimensions.size}`}
+                        size={`${TC.config.dimensions.size} ${TC.config.dimensions.size}`}
                         sidedness='double'
                         opacity='0.1'
-                    />
+                    /> */}
+
+                    <For each={Object.entries(TC.tiles)}>
+                        {([coord, tile]) => {
+                            const [tx, tz] = coord.split(',').map(Number);
+                            const x = baseX + tx * TILE_SIZE;
+                            const y = baseY - tile.height //- 20;
+                            const z = baseZ + tz * TILE_SIZE;
+                            const color = (tx + tz) % 2 === 0 ? '#529958' : '#70ca96';
+                            return (
+                                <lume-plane
+                                    color={color}
+                                    align-point='0.5 0.5'
+                                    mount-point='0.5 0.5'
+                                    rotation='90 0 0'
+                                    position={`${x} ${y} ${z}`}
+                                    size={`${TILE_SIZE} ${TILE_SIZE}`}
+                                    opacity='0.5'
+                                />
+                            )
+                        }}
+                    </For>
 
                 </lume-scene>
             </div>

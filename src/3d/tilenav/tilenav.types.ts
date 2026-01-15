@@ -32,7 +32,7 @@ export const TEST_NAVMAP: NavMap = {
   config: {
     playerHeight: 1.7,
     dimensions: {
-      size: 7500,
+      size: 1000,
       numTiles: 10,
       offset: {
         x: 0,
@@ -43,16 +43,16 @@ export const TEST_NAVMAP: NavMap = {
     spawn: "0,0",
   },
   tiles: {
-    "0,0": { height: 0, active: true, edges: 15 },
-    "1,0": { height: 0, active: true, edges: 15 },
-    "2,0": { height: 0, active: true, edges: 15 },
-    "3,0": { height: 0, active: true, edges: 15 },
-    "4,0": { height: 0, active: true, edges: 15 },
-    "5,0": { height: 0, active: true, edges: 15 },
-    "6,0": { height: 0, active: true, edges: 15 },
-    "7,0": { height: 0, active: true, edges: 15 },
-    "8,0": { height: 0, active: true, edges: 15 },
-    "9,0": { height: 0, active: true, edges: 15 },
+    "0,0": { height: 20, active: true, edges: 15 },
+    "1,0": { height: 20, active: true, edges: 15 },
+    "2,0": { height: 20, active: true, edges: 15 },
+    "3,0": { height: 20, active: true, edges: 15 },
+    "4,0": { height: 20, active: true, edges: 15 },
+    "5,0": { height: 20, active: true, edges: 15 },
+    "6,0": { height: 20, active: true, edges: 15 },
+    "7,0": { height: 20, active: true, edges: 15 },
+    "8,0": { height: 20, active: true, edges: 15 },
+    "9,0": { height: 20, active: true, edges: 15 },
 
     "0,1": { height: 0, active: true, edges: 15 },
     "1,1": { height: 0, active: true, edges: 15 },
