@@ -8,7 +8,7 @@ import world from '@/scenes/Test/assets/world.glb';
 import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
-import { createSignal } from 'lume';
+import { createSignal, onCleanup, onMount } from 'lume';
 import { Coord2D } from '@/shared/types/3d.types';
 
 export default function NavTilePainter() {
@@ -41,12 +41,25 @@ export default function NavTilePainter() {
         })
     }
 
-    const toggleSelectTile = (where: NavCoord) => {
-        setSelectedTiles(prev => {
-            if (prev.includes(where)) return prev.filter(i => i != where)
-            return [...prev, where]
-        });
-    }
+    // const toggleSelectTile = (where: NavCoord) => {
+    //     setSelectedTiles(prev => {
+    //         if (prev.includes(where)) return prev.filter(i => i != where)
+    //         return [...prev, where]
+    //     });
+    // }
+
+    const selectTile = (where: NavCoord) => setSelectedTiles(prev => [...prev, where]);
+
+    let isPointerDown = false;
+    onMount(() => {
+        document.addEventListener('pointerup', () => isPointerDown = false);
+        document.addEventListener('pointercancel', () => isPointerDown = false);
+    });
+
+    onCleanup(() => {
+        document.removeEventListener('pointerup', () => isPointerDown = false);
+        document.removeEventListener('pointercancel', () => isPointerDown = false);
+    });
 
     return (
         <>
@@ -127,12 +140,22 @@ export default function NavTilePainter() {
                                     }}
                                     onMouseEnter={() => setHoveredTile([x, z])}
                                     onMouseLeave={() => setHoveredTile(null)}
-                                    onClick={() => toggleSelectTile(coordKey)}
+                                    onPointerDown={() => {
+                                        isPointerDown = true;
+                                        selectTile(coordKey);
+                                    }}
+                                    onPointerEnter={() => {
+                                        if(isPointerDown) selectTile(coordKey)
+                                    }}
+                                    onPointerUp={() => {
+                                        isPointerDown = false;
+                                    }}
                                 />
                             );
                         })
                     ))}
                 </div>
+                <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
             </div>
         </>
     )
