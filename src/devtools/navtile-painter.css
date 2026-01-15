@@ -5,7 +5,7 @@
     grid-template-columns: 2fr 1fr;
     gap: 15px;
 
-    div {
+    > div {
         border: solid white 1px;
         box-sizing: border-box;
     }
@@ -18,4 +18,22 @@
             height: 100%;
         }
     }
+}
+
+.painter-grid {
+    display: grid;
+    grid-template-columns: var(--numtiles);
+    gap: 0;
+    width: 100%;
+}
+
+.painter-tile {
+    aspect-ratio: 1;
+    border: 5px solid #dfdfdf;
+    box-sizing: border-box;
+    background: #f2f2f2;
+}
+
+.painter-tile:hover {
+    background: yellow;
 }

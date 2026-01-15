@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { createMemo, For } from "solid-js";
 import { NavMap } from "./tilenav.types";
 import { Coord2D } from "@/shared/types/3d.types";
 
@@ -32,13 +32,17 @@ export default function NavTilePreviewer(
                 const x = baseX + tx * tileSize;
                 const y = baseY - tile.height //- 20;
                 const z = baseZ + tz * tileSize;
-                let color = (tx + tz) % 2 === 0 ? '#529958' : '#70ca96';
-                if (
-                    props.hoveredTile &&
-                    JSON.stringify(props.hoveredTile) == JSON.stringify([tx, tz])
-                ) {
-                    color = 'yellow';
-                }
+
+                const baseColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
+
+                // stupid bullshit to actually enforce reactivity.
+                const isHovered = createMemo(() => {
+                    const h = props.hoveredTile;
+                    return !!h && h[0] === tx && h[1] === tz;
+                });
+
+                const color = createMemo(() => (isHovered() ? "yellow" : baseColor));
+
                 const walls = [];
                 if ((tile.edges & EDGE_UP) === 0) {
                     walls.push(
@@ -98,7 +102,7 @@ export default function NavTilePreviewer(
                     <>
                         <lume-plane
                             sidedness="double"
-                            color={color}
+                            color={color()}
                             align-point='0.5 0.5'
                             mount-point='0.5 0.5'
                             rotation='90 0 0'

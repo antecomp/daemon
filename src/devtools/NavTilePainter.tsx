@@ -14,22 +14,27 @@ import { Coord2D } from '@/shared/types/3d.types';
 export default function NavTilePainter() {
 
     const [nm, setNm] = createStore<NavMap>(
-        {
-            config: {
-                playerHeight: 10,
-                size: 100,
-                numTiles: 10,
-                offset: { x: 0, y: 0, z: 0 },
-                spawn: `0,0`
-            },
-            tiles: {}
-        }
+        // {
+        //     config: {
+        //         playerHeight: 10,
+        //         size: 100,
+        //         numTiles: 10,
+        //         offset: { x: 0, y: 0, z: 0 },
+        //         spawn: `0,0`
+        //     },
+        //     tiles: {}
+        // }
+        TEST_NAVMAP
     );
 
     const [selectedTiles, setSelectedTiles] = createSignal<Coord2D[]>([]);
-    const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
-    const [clipMode, setClipMode] = createSignal<boolean>(true);
+    const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>([1,5]);
+    const [clipMode, setClipMode] = createSignal<boolean>(false);
 
+    const EDGE_UP = 1;
+    const EDGE_RIGHT = 2;
+    const EDGE_DOWN = 4;
+    const EDGE_LEFT = 8;
 
     return (
         <>
@@ -59,7 +64,7 @@ export default function NavTilePainter() {
                         src={world}
                     />
 
-                    <NavTilePreviewer NM={TEST_NAVMAP} hoveredTile={hoveredTile()} clip={clipMode()}/>
+                    <NavTilePreviewer NM={nm} hoveredTile={hoveredTile()} clip={clipMode()} />
 
                 </lume-scene>
                 <button
@@ -74,7 +79,35 @@ export default function NavTilePainter() {
                 </button>
             </div>
             <div id="painter">
-
+                <div
+                    class="painter-grid"
+                    style={{
+                        'grid-template-columns': `repeat(${nm.config.numTiles}, minmax(0, 1fr))`,
+                        'grid-template-rows': `repeat(${nm.config.numTiles}, minmax(0, 1fr))`,
+                    }}
+                >
+                    {Array.from({ length: nm.config.numTiles }).map((_, z) => (
+                        Array.from({ length: nm.config.numTiles }).map((__, x) => {
+                            const coordKey = `${x},${z}` as const;
+                            const tile = nm.tiles[coordKey];
+                            const edges = tile?.edges ?? 15;
+                            return (
+                                <div
+                                    class="painter-tile"
+                                    style={{
+                                        '--numtiles': nm.config.numTiles,
+                                        'border-top-color': (edges & EDGE_UP) === 0 ? '#c40000' : 'inherit',
+                                        'border-right-color': (edges & EDGE_RIGHT) === 0 ? '#c40000' : 'inherit',
+                                        'border-bottom-color': (edges & EDGE_DOWN) === 0 ? '#c40000' : 'inherit',
+                                        'border-left-color': (edges & EDGE_LEFT) === 0 ? '#c40000' : 'inherit',
+                                    }}
+                                    onMouseEnter={() => setHoveredTile([x, z])}
+                                    onMouseLeave={() => setHoveredTile(null)}
+                                />
+                            );
+                        })
+                    ))}
+                </div>
             </div>
         </>
     )
