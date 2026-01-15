@@ -2,8 +2,9 @@ import { render } from 'solid-js/web';
 import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
+import world from '@/scenes/Test/assets/world.glb';
 
-import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
+//import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
 import { TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 
@@ -29,13 +30,13 @@ export default function NavTilePainter() {
                         distance='1000'
                     ></lume-camera-rig>
 
-                    <lume-ambient-light intensity={20} />
+                    <lume-ambient-light intensity={1} />
 
-                    <lume-fbx-model
+                    <lume-gltf-model
                         align-point="0.5 0.5"
-                        scale="10 10 10"
-                        src={bridge}
-                    ></lume-fbx-model>
+                        scale="100 100 100"
+                        src={world}
+                    />
 
                     <NavTilePreviewer NM={TEST_NAVMAP}/>
 

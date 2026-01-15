@@ -9,6 +9,14 @@ export default function NavTilePreviewer(
     const tileSize = props.NM.config.size / props.NM.config.numTiles;
     const halfSize = props.NM.config.size / 2;
     const tileOffset = tileSize / 2;
+    const wallHeight = tileSize / 3;
+    const wallOffset = tileSize / 2;
+    const wallEps = 0.01;
+
+    const EDGE_UP = 1;
+    const EDGE_RIGHT = 2;
+    const EDGE_DOWN = 4;
+    const EDGE_LEFT = 8;
 
     const baseX = props.NM.config.offset.x - halfSize + tileOffset;
     const baseY = props.NM.config.offset.y;
@@ -22,16 +30,75 @@ export default function NavTilePreviewer(
                 const y = baseY - tile.height //- 20;
                 const z = baseZ + tz * tileSize;
                 const color = (tx + tz) % 2 === 0 ? '#529958' : '#70ca96';
+                const walls = [];
+                if ((tile.edges & EDGE_UP) === 0) {
+                    walls.push(
+                        <lume-plane
+                            color='#ff3b30'
+                            sidedness="double"
+                            align-point='0.5 0.5'
+                            mount-point='0.5 0.5'
+                            position={`${x} ${y - wallHeight / 2} ${z - wallOffset - wallEps}`}
+                            size={`${tileSize} ${wallHeight}`}
+                            opacity='0.8'
+                        />
+                    );
+                }
+                if ((tile.edges & EDGE_RIGHT) === 0) {
+                    walls.push(
+                        <lume-plane
+                            color='#ff3b30'
+                            sidedness="double"
+                            align-point='0.5 0.5'
+                            mount-point='0.5 0.5'
+                            rotation='0 90 0'
+                            position={`${x + wallOffset + wallEps} ${y - wallHeight / 2} ${z}`}
+                            size={`${tileSize} ${wallHeight}`}
+                            opacity='0.8'
+                        />
+                    );
+                }
+                if ((tile.edges & EDGE_DOWN) === 0) {
+                    walls.push(
+                        <lume-plane
+                            color='#ff3b30'
+                            sidedness="double"
+                            align-point='0.5 0.5'
+                            mount-point='0.5 0.5'
+                            position={`${x} ${y - wallHeight / 2} ${z + wallOffset + wallEps}`}
+                            size={`${tileSize} ${wallHeight}`}
+                            opacity='0.8'
+                        />
+                    );
+                }
+                if ((tile.edges & EDGE_LEFT) === 0) {
+                    walls.push(
+                        <lume-plane
+                            color='#ff3b30'
+                            sidedness="double"
+                            align-point='0.5 0.5'
+                            mount-point='0.5 0.5'
+                            rotation='0 90 0'
+                            position={`${x - wallOffset - wallEps} ${y - wallHeight / 2} ${z}`}
+                            size={`${tileSize} ${wallHeight}`}
+                            opacity='0.8'
+                        />
+                    );
+                }
                 return (
-                    <lume-plane
-                        color={color}
-                        align-point='0.5 0.5'
-                        mount-point='0.5 0.5'
-                        rotation='90 0 0'
-                        position={`${x} ${y} ${z}`}
-                        size={`${tileSize} ${tileSize}`}
-                        opacity='0.5'
-                    />
+                    <>
+                        <lume-plane
+                            sidedness="double"
+                            color={color}
+                            align-point='0.5 0.5'
+                            mount-point='0.5 0.5'
+                            rotation='90 0 0'
+                            position={`${x} ${y} ${z}`}
+                            size={`${tileSize} ${tileSize}`}
+                            opacity='0.5'
+                        />
+                        {walls}
+                    </>
                 )
             }}
         </For>

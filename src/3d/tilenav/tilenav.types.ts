@@ -29,17 +29,17 @@ export interface NavMap {
 export const TEST_NAVMAP: NavMap = {
   config: {
     playerHeight: 1.7,
-    size: 1000,
+    size: 1250,
     numTiles: 10,
     offset: {
       x: 0,
-      y: -55,
+      y: 25,
       z: 0
     },
     spawn: "0,0",
   },
   tiles: {
-    "0,0": { height: 20, active: true, edges: 15 },
+    "0,0": { height: 20, active: true, edges: 0 },
     "1,0": { height: 20, active: true, edges: 15 },
     "2,0": { height: 20, active: true, edges: 15 },
     "3,0": { height: 20, active: true, edges: 15 },
@@ -118,7 +118,7 @@ export const TEST_NAVMAP: NavMap = {
 
     "0,7": { height: 0, active: true, edges: 15 },
     "1,7": { height: 0, active: true, edges: 15 },
-    "2,7": { height: 0, active: true, edges: 15 },
+    "2,7": { height: 0, active: true, edges: 3 },
     "3,7": { height: 0, active: true, edges: 15 },
     "4,7": { height: 0, active: true, edges: 15 },
     "5,7": { height: 0, active: true, edges: 15 },
