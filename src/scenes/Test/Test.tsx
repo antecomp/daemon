@@ -14,7 +14,7 @@ import { DialogueNode } from '@/core/dialogue/dialogueNode.types';
 import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 
-const dr: DialogueNode = makeDialogueNode('helo.', 'gril');
+const dr: DialogueNode = makeDialogueNode('Hello.', 'Strange Girl');
 
 export default function Test() {
 
@@ -57,10 +57,10 @@ export default function Test() {
                 scale={90}
                 interactions={
                     [
-                        () => addLogMessage('hello.'),
+                        () => addLogMessage('It is rude to poke people.'),
                         //() => addLogMessage('she has nothing to say'),
                         () => grlc.start(),
-                        () => addLogMessage('you don\'t know why, but her presence fills you with rage', 'red')
+                        () => addLogMessage('You don\'t know why, but her presence fills you with rage', 'red')
                     ]
                 }
             />

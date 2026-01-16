@@ -1,10 +1,28 @@
 import { Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
-import { BaseCameraSettings, CameraControlSignals, CameraController, CameraOverride, CameraSettings } from "../camera/camera.types";
+import {
+    BaseCameraSettings,
+    CameraControlSignals,
+    CameraController,
+    CameraOverride,
+    CameraSettings
+} from "../camera/camera.types";
 
 enum Direction {
-    NORTH, WEST, SOUTH, EAST
+    NORTH,
+    WEST,
+    SOUTH,
+    EAST
+}
+
+enum NavAction {
+    StepForward,
+    StepBack,
+    StrafeLeft,
+    StrafeRight,
+    TurnLeft,
+    TurnRight
 }
 
 export default function createTileNavigator(
@@ -13,10 +31,9 @@ export default function createTileNavigator(
     cameraControlSignals: CameraControlSignals,
     cameraController: CameraController
 } {
-
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(NM.config.spawn);
 
-    // TODO: Add to NM config later.
+    // TODO: Add initial spawn direction to NM config later.
     const [currentDirection, setCurrentDirection] = createSignal<Direction>(Direction.EAST);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
     const [baseAnim, setBaseAnim] = createSignal(true);
@@ -26,9 +43,9 @@ export default function createTileNavigator(
     const halfSize = createMemo(() => NM.config.size / 2);
     const tileOffset = createMemo(() => tileSize() / 2);
 
-    const baseX = createMemo( () => NM.config.offset.x - halfSize() + tileOffset());
+    const baseX = createMemo(() => NM.config.offset.x - halfSize() + tileOffset());
     const baseY = createMemo(() => NM.config.offset.y);
-    const baseZ = createMemo( () => NM.config.offset.z - halfSize() + tileOffset());
+    const baseZ = createMemo(() => NM.config.offset.z - halfSize() + tileOffset());
 
     const cameraPositionForTile = (pos: NavCoord): XYZ => {
         const comma = pos.indexOf(",");
@@ -39,10 +56,12 @@ export default function createTileNavigator(
         return [baseX() + tx * size, y, baseZ() + tz * size];
     };
 
+    // Camera Override Stuff (Ripped from createCameraController)
     let nextOverrideID = 0;
     const [overrideStack, setOverrideStack] = createSignal<CameraOverride[]>([]);
 
-    const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
+    const removeOverride = (id: number) =>
+        setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
 
     function createOverride(ovr: CameraSettings) {
         const id = nextOverrideID++;
@@ -63,16 +82,17 @@ export default function createTileNavigator(
     const currentOverridePos = () => overrideStack().at(-1)?.pos;
     const currentOverrideOri = () => overrideStack().at(-1)?.ori;
 
+    function clearOverrides(anim?: boolean) {
+        (anim != undefined) && setBaseAnim(anim);
+        setOverrideStack([]);
+    }
+
     const shouldAnim = () => {
         const ovrAnim = overrideStack().at(-1)?.anim;
         if (ovrAnim == undefined) return baseAnim();
         return ovrAnim;
     };
 
-    function clearOverrides(anim?: boolean) {
-        (anim != undefined) && setBaseAnim(anim);
-        setOverrideStack([]);
-    }
 
     const cameraControlSignals: CameraControlSignals = createMemo(() => ({
         basePos: cameraPositionForTile(currentTile()),
@@ -87,13 +107,25 @@ export default function createTileNavigator(
         maxPitch: 30
     }));
 
+
+    // Movement Stuff -------------------------------------
+
+    // Directions -> Tile Deltas
     const dirDX = [0, -1, 0, 1];
     const dirDZ = [-1, 0, 1, 0];
-    const dirEdge = [NavTileMask.EDGE_UP, NavTileMask.EDGE_LEFT, NavTileMask.EDGE_DOWN, NavTileMask.EDGE_RIGHT];
+    // Index corresponds to Direction Enum.
+    const dirEdge = [
+        NavTileMask.EDGE_UP,
+        NavTileMask.EDGE_LEFT,
+        NavTileMask.EDGE_DOWN,
+        NavTileMask.EDGE_RIGHT
+    ];
 
     const tryMove = (dirIndex: Direction) => {
         const tile = currentTile();
         const current = NM.tiles[tile];
+
+        // Blocks you moving through edges marked @ current tile.
         if (!current || !(current.edges & dirEdge[dirIndex])) return;
 
         const comma = tile.indexOf(",");
@@ -107,27 +139,137 @@ export default function createTileNavigator(
         setCurrentTile(next);
     };
 
-    const onKeyDown = (e: KeyboardEvent) => {
-        const key = e.key.toLowerCase();
-        if (key === "a") {
-            setCurrentDirection((dir) => (dir + 1) & 3);
-            setCurrentYaw((yaw) => yaw + 90);
-        } else if (key === "d") {
-            setCurrentDirection((dir) => (dir + 3) & 3);
-            setCurrentYaw((yaw) => yaw - 90);
-        } else if (key === "w") {
-            tryMove(currentDirection());
-        } else if (key === "s") {
-            tryMove(((currentDirection() + 2) & 3) as Direction);
-        } else if (key === "q") {
-            tryMove(((currentDirection() + 1) & 3) as Direction);
-        } else if (key === "e") {
-            tryMove(((currentDirection() + 3) & 3) as Direction);
+
+    // Controls
+
+    const keyToActions: Record<string, NavAction[]> = {
+        w: [NavAction.StepForward],
+        s: [NavAction.StepBack],
+        q: [NavAction.StrafeLeft],
+        e: [NavAction.StrafeRight],
+        a: [NavAction.TurnLeft],
+        d: [NavAction.TurnRight]
+    };
+
+
+    function performNavAction(action: NavAction) {
+
+        // using & to modulo with bitmask, equiv to (dir + X) % 4
+        switch (action) {
+            case NavAction.TurnLeft:
+                setCurrentDirection(dir => (dir + 1) & 3);
+                setCurrentYaw(yaw => yaw + 90);
+                break;
+
+            case NavAction.TurnRight:
+                setCurrentDirection(dir => (dir + 3) & 3);
+                setCurrentYaw(yaw => yaw - 90);
+                break;
+
+            case NavAction.StepForward:
+                tryMove(currentDirection());
+                break;
+
+            case NavAction.StepBack:
+                tryMove(((currentDirection() + 2) & 3) as Direction);
+                break;
+
+            case NavAction.StrafeLeft:
+                tryMove(((currentDirection() + 1) & 3) as Direction);
+                break;
+
+            case NavAction.StrafeRight:
+                tryMove(((currentDirection() + 3) & 3) as Direction);
+                break;
+        }
+    }
+
+    type ActionTiming = {
+        initialDelay: number
+        repeatInterval: number
+    }
+
+    const ACTION_TIMING: Readonly<Record<NavAction, ActionTiming>> = {
+        [NavAction.StepForward]: { initialDelay: 400, repeatInterval: 330 },
+        [NavAction.StepBack]: { initialDelay: 400, repeatInterval: 310 },
+        [NavAction.StrafeLeft]: { initialDelay: 400, repeatInterval: 310 },
+        [NavAction.StrafeRight]: { initialDelay: 400, repeatInterval: 310 },
+        [NavAction.TurnLeft]: { initialDelay: 500, repeatInterval: 500 },
+        [NavAction.TurnRight]: { initialDelay: 500, repeatInterval: 500 }
+    };
+
+    const heldActions = new Set<NavAction>();
+    const nextAllowedTime = new Map<NavAction, number>();
+
+    function handleKeyDown(e: KeyboardEvent) {
+        const key = e.key.toLocaleLowerCase();
+
+        // Ignore OS's autorepeat.
+        if (e.repeat) return;
+
+        const actions = keyToActions[key];
+        if (!actions) return;
+
+        const now = performance.now();
+
+        for (const action of actions) {
+            heldActions.add(action);
+
+            performNavAction(action);
+
+            // Schedule first repeat after initialDelay
+            const timing = ACTION_TIMING[action];
+            nextAllowedTime.set(action, now + timing.initialDelay);
         }
     };
 
-    onMount(() => document.addEventListener("keydown", onKeyDown));
-    onCleanup(() => document.removeEventListener("keydown", onKeyDown));
+    function handleKeyUp(e: KeyboardEvent) {
+        const key = e.key.toLocaleLowerCase();
+        const actions = keyToActions[key];
+        if (!actions) return;
+
+        for (const action of actions) {
+            heldActions.delete(action);
+            nextAllowedTime.delete(action);
+        }
+    };
+
+    let raf: number | null = null;
+
+    const loop = (now: number) => {
+        for (const action of heldActions) {
+            const allowedAt = nextAllowedTime.get(action);
+            if (allowedAt === undefined) continue;
+
+            if (now >= allowedAt) {
+                performNavAction(action);
+                const timing = ACTION_TIMING[action];
+                nextAllowedTime.set(action, now + timing.repeatInterval);
+            }
+        }
+
+        raf = requestAnimationFrame(loop);
+    }
+
+    onMount(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        raf = requestAnimationFrame(loop);
+    });
+
+    onCleanup(() => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('keyup', handleKeyUp);
+        if (raf !== null) {
+            cancelAnimationFrame(raf);
+            raf = null;
+        }
+        heldActions.clear();
+        nextAllowedTime.clear();
+    });
+
+
+    // ---- Camera controller API ----
 
     const currentBase = () => ({
         pos: cameraPositionForTile(currentTile()),
@@ -156,6 +298,7 @@ export default function createTileNavigator(
         throw new Error("Tile navigator does not support setBaseOri overrides.");
     };
 
+
     return {
         cameraControlSignals,
         cameraController: {
@@ -169,4 +312,6 @@ export default function createTileNavigator(
             currentOverride
         }
     };
+
+
 }
