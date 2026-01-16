@@ -1,6 +1,6 @@
 {
   "config": {
-    "playerHeight": 75,
+    "playerHeight": 80,
     "size": 1300,
     "numTiles": 15,
     "offset": {
@@ -310,11 +310,6 @@
       "height": -4,
       "active": true,
       "edges": 15
-    },
-    "2,7": {
-      "height": -4,
-      "active": true,
-      "edges": 13
     },
     "2,8": {
       "height": -4,
