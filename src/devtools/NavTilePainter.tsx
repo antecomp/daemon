@@ -3,6 +3,7 @@ import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
 import world from '@/scenes/Test/assets/world.glb';
+import X from '@/scenes/Test/assets/NM.json'
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
 import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
@@ -12,7 +13,7 @@ import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
 import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
 
-export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
+export default function NavTilePainter(props: { initialConfiguration?: NavMap }) {
 
     const [nm, setNm] = createStore<NavMap>(
         props.initialConfiguration ?? {
@@ -156,7 +157,7 @@ export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
                 setClipMode(p => !p);
                 break;
             case 's':
-                setNm('config', {spawn: hoveredTile()?.join(',') as NavCoord ?? '0,0'});
+                setNm('config', { spawn: hoveredTile()?.join(',') as NavCoord ?? '0,0' });
                 break;
         }
 
@@ -217,7 +218,7 @@ export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
                 const input = prompt("Set offset to?", `${nm.config.offset.x},${nm.config.offset.y},${nm.config.offset.z}`);
                 const amt = input?.split(',').map(a => Number(a));
                 if (
-                    !amt || 
+                    !amt ||
                     amt.length != 3 ||
                     typeof amt[0] != 'number' ||
                     typeof amt[1] != 'number' ||
@@ -262,6 +263,8 @@ export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
                         scale="100 100 100"
                         src={world}
                     />
+
+{/* ----------------------------------------------------------------------- */}
 
                     <NavTilePreviewer
                         NM={nm}
@@ -354,4 +357,4 @@ export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
 }
 
 const domroot = document.getElementById('navtile-painter');
-if (domroot) render(() => <NavTilePainter />, domroot);
+if (domroot) render(() => <NavTilePainter initialConfiguration={X as NavMap}/>, domroot);
