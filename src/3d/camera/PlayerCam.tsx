@@ -30,6 +30,13 @@ function getCameraTransform(
     }
 }
 
+// Lerp angles in degrees along the shortest path to avoid unwinding spins.
+function lerpAngleDeg(prev: number, target: number, t: number) {
+    let delta = ((target - prev + 180) % 360) - 180;
+    if (delta < -180) delta += 360;
+    return prev + delta * t;
+}
+
 /**
  * The main camera system for the game. Has an initial "base" setting for the point-and-click player camera,
  * which runs and performs all the raycast/interaction logic + head movement on mouse move. This camera can then 
@@ -184,13 +191,13 @@ export default function PlayerCam(props: {
                 ? props.overrideOri.yaw
                 : baseYaw + mouseInter.yaw;
 
-            return getCameraTransform(
-                [prevX, prevY, prevZ],
-                [prevX, effectiveYaw, prevZ],
-                dt,
-                props.animate ?? false,
-                props.speed ?? DEFAULT_CAMERA_SPEED
-            )
+            if (props.animate) {
+                const dtInSec = dt / 1000;
+                const t = (props.speed ?? DEFAULT_CAMERA_SPEED) * dtInSec;
+                return [prevX, lerpAngleDeg(prevY, effectiveYaw, t), prevZ];
+            }
+
+            return [prevX, effectiveYaw, prevZ];
         }
 
         camRef.rotation = (prevX, prevY, prevZ, _t, dt) => {
@@ -208,13 +215,13 @@ export default function PlayerCam(props: {
                 ? props.overrideOri.pitch
                 : basePitch + mouseInter.pitch;
 
-            return getCameraTransform(
-                [prevX, prevY, prevZ],
-                [effectivePitch, prevY, prevZ],
-                dt,
-                props.animate ?? false,
-                props.speed ?? DEFAULT_CAMERA_SPEED
-            )
+            if (props.animate) {
+                const dtInSec = dt / 1000;
+                const t = (props.speed ?? DEFAULT_CAMERA_SPEED) * dtInSec;
+                return [lerpAngleDeg(prevX, effectivePitch, t), prevY, prevZ];
+            }
+
+            return [effectivePitch, prevY, prevZ];
         }
     });
 

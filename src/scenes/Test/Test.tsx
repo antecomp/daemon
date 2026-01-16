@@ -23,7 +23,7 @@ export default function Test() {
     useDGShader(() => sceneRef, 'normal')
 
     const grlc = createDialogueWithCamOvr(cameraController, {
-        pos: [-482, -57, -24],
+        pos: [-482, -55, -24],
         ori: {yaw: 216, pitch: 0}
     }, dr)
 
