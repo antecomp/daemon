@@ -5,21 +5,20 @@ import 'lume';
 import world from '@/scenes/Test/assets/world.glb';
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
-import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
+import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
 import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
-import attachToConsole from './attachToConsole';
 import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
 
-export default function NavTilePainter() {
+export default function NavTilePainter(props: {initialConfiguration?: NavMap}) {
 
     const [nm, setNm] = createStore<NavMap>(
-        {
+        props.initialConfiguration ?? {
             config: {
                 playerHeight: 10,
-                size: 1250,
+                size: 1000,
                 numTiles: 12,
                 offset: { x: 0, y: 20, z: 0 },
                 spawn: `0,0`

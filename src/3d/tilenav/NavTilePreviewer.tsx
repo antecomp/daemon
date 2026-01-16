@@ -89,6 +89,14 @@ export default function NavTilePreviewer(props: {
               depth-write={props.clip ? "false" : "true"}
             />
 
+            {props.NM.config.spawn == coordKey && <lume-sphere
+                color='red'
+                mount-point='0.5 0.5'
+                align-point='0.5 0.5'
+                size="20 20 20"
+                position={`${x()} ${y() - props.NM.config.playerHeight} ${z()}`}
+            />}
+
             {hasTile() && (edges() & NavTileMask.EDGE_UP) === 0 && (
               <lume-plane
                 color="#ff3b30"
