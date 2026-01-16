@@ -1,4 +1,4 @@
-import { Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { Accessor, Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import {
@@ -25,11 +25,26 @@ enum NavAction {
     TurnRight
 }
 
+export interface NavController {
+    state: Accessor<{
+        direction: Direction
+        tile: NavCoord
+        base: {
+            pos: XYZ,
+            ori: Orientation
+        }
+    }>
+
+    performNavAction: (action: NavAction) => void;
+    setCurrentTile: Setter<NavCoord>;
+}
+
 export default function createTileNavigator(
     NM: NavMap
 ): {
     cameraControlSignals: CameraControlSignals,
     cameraController: CameraController
+    navController: NavController
 } {
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(NM.config.spawn);
 
@@ -298,6 +313,12 @@ export default function createTileNavigator(
         throw new Error("Tile navigator does not support setBaseOri overrides.");
     };
 
+    // will this be properly reactive?
+    const navState = createMemo(() => ({
+        direction: currentDirection(),
+        tile: currentTile(),
+        base: currentBase()
+    }));
 
     return {
         cameraControlSignals,
@@ -310,6 +331,12 @@ export default function createTileNavigator(
             setBaseOri,
             currentBase,
             currentOverride
+        },
+
+        navController: {
+            state: navState,
+            performNavAction,
+            setCurrentTile
         }
     };
 
