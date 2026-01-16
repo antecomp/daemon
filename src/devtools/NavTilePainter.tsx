@@ -8,9 +8,10 @@ import world from '@/scenes/Test/assets/world.glb';
 import { NavCoord, NavMap, NavTileMask, TEST_NAVMAP } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
-import { createSignal, For, onCleanup, onMount } from 'solid-js';
+import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
 import attachToConsole from './attachToConsole';
+import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
 
 export default function NavTilePainter() {
 
@@ -155,6 +156,9 @@ export default function NavTilePainter() {
             case 'c':
                 setClipMode(p => !p);
                 break;
+            case 's':
+                setNm('config', {spawn: hoveredTile()?.join(',') as NavCoord ?? '0,0'});
+                break;
         }
 
     }
@@ -199,8 +203,8 @@ export default function NavTilePainter() {
             }
             case 'spawn': {
                 const input = prompt("Set Navmap Size To?", "0,0");
-                const amt = input?.split(',');
-                if(!amt || amt.length != 2 || typeof amt[0] != 'number' || typeof amt[1] != 'number') return;
+                const amt = input?.split(',').map(x => Number(x));
+                if (!amt || amt.length != 2 || typeof amt[0] != 'number' || typeof amt[1] != 'number') return;
                 updt.spawn = input as NavCoord;
                 break;
             }
@@ -208,7 +212,21 @@ export default function NavTilePainter() {
                 const input = prompt("Set # of Tiles To?", "10");
                 const amt = parseInt(input ?? '10');
                 updt.numTiles = amt;
-                break;                
+                break;
+            }
+            case 'offset': {
+                const input = prompt("Set offset to?", `${nm.config.offset.x},${nm.config.offset.y},${nm.config.offset.z}`);
+                const amt = input?.split(',').map(a => Number(a));
+                if (
+                    !amt || 
+                    amt.length != 3 ||
+                    typeof amt[0] != 'number' ||
+                    typeof amt[1] != 'number' ||
+                    typeof amt[2] != 'number'
+                ) return;
+                updt.offset = {
+                    x: amt[0], y: amt[1], z: amt[2]
+                }
             }
         }
 
@@ -279,6 +297,7 @@ export default function NavTilePainter() {
                     {Array.from({ length: nm.config.numTiles }).map((_, z) => (
                         Array.from({ length: nm.config.numTiles }).map((__, x) => {
                             const coordKey = `${x},${z}` as const;
+                            const isSpawnPoint = createMemo(() => nm.config.spawn == coordKey);
                             const tile = nm.tiles[coordKey];
                             const edges = tile?.edges ?? 15;
                             const isSelected = () => selectedTiles().includes(coordKey);
@@ -286,7 +305,8 @@ export default function NavTilePainter() {
                                 <div
                                     classList={{
                                         'selected': isSelected(),
-                                        'exists': nm.tiles[coordKey] != undefined
+                                        'exists': nm.tiles[coordKey] != undefined,
+                                        'is-spawn': isSpawnPoint()
                                     }}
                                     class="painter-tile"
                                     style={{
@@ -323,10 +343,12 @@ export default function NavTilePainter() {
                 </div>
                 <hr />
                 <div class='config'>
-                    <For each={['spawn', 'size', 'playerHeight', 'numTiles'] satisfies (keyof NavMap['config'])[]}>
-                        {opt => <button onclick={() => config(opt)}>Configure {opt}</button>}
+                    <For each={['spawn', 'size', 'playerHeight', 'numTiles', 'offset'] satisfies (keyof NavMap['config'])[]}>
+                        {opt => <button onclick={() => config(opt)}>Configure {opt}|{JSON.stringify(nm.config[opt])}</button>}
                     </For>
                 </div>
+                <hr />
+                <button class="export" onclick={() => downloadObjectAsJson(nm, 'NM')}>EXPORT</button>
             </div>
         </>
     )

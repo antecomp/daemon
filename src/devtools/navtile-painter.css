@@ -36,6 +36,18 @@
         background: #f2f2f2;
     }
 
+    .painter-tile.is-spawn {
+        position: relative;
+    }
+
+    .painter-tile.is-spawn::after {
+        content: 'SPAWN';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: black;
+    }
+
     .painter-tile.selected {
         background-color: #7c5fb3;
     }
@@ -52,8 +64,17 @@
         filter: brightness(1.1);
     }
 
-    .actions {
+    .actions, .config {
         display: flex;
+        flex-wrap: wrap;
+
+        > button {
+            flex-grow: 1;
+        }
+    }
+
+    hr {
+        margin: 10px 0px;
     }
 
     button {
@@ -61,6 +82,15 @@
         padding: 3px;
         perspective: 0px;
         font-family: 'monospace';
+    }
+
+    .export {
+        box-sizing: border-box;
+        width: 95%;
+        margin: 0 auto;
+        display: block;
+        border: inset lime 2px;
+        background: rgb(30, 146, 30);
     }
 
 }
