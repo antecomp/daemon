@@ -1,0 +1,71 @@
+.nav-compass {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    color: white;
+    background: black;
+    border: solid white 2px;
+    border-radius: 3px;
+    z-index: 1;
+    aspect-ratio: 1;
+    width: 100px;
+
+    display: block;
+    overflow: hidden;
+}
+
+.nav-compass-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+}
+
+.nav-compass-tile {
+    aspect-ratio: 1;
+    border: 1px solid #b4b4b4;
+    box-sizing: border-box;
+    background: #f2f2f2;
+    position: relative;
+}
+
+.nav-compass-tile.is-existing {
+    background: #529958;
+}
+
+.nav-compass-tile.is-outside {
+    background: #1d1d1d;
+    border-color: #333333;
+}
+
+/* .nav-compass-tile.is-center.is-existing {
+    background: #1fc0b3;
+}
+
+.nav-compass-tile.is-center.is-empty {
+    background: #7c5fb3;
+} */
+
+/* .nav-compass-tile.is-spawn::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #ff3b30;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+} */
+
+.nav-compass-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transform-origin: top left;
+}

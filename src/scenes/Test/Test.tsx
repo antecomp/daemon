@@ -33,7 +33,7 @@ export default function Test() {
 
     return (
         <>
-        <NavCompass nc={navController}/>
+        <NavCompass nc={navController} nm={NM as NavMap}/>
             <lume-scene
                 ref={sceneRef}
                 webgl
