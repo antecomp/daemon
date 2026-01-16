@@ -1,7 +1,7 @@
-import { Accessor, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
-import { Coord2D, XYZ } from "@/shared/types/3d.types";
-import { CameraControlSignals } from "../camera/camera.types";
+import { Orientation, XYZ } from "@/shared/types/3d.types";
+import { BaseCameraSettings, CameraControlSignals, CameraController, CameraOverride, CameraSettings } from "../camera/camera.types";
 
 enum Direction {
     NORTH, WEST, SOUTH, EAST
@@ -9,13 +9,17 @@ enum Direction {
 
 export default function createTileNavigator(
     NM: NavMap
-): CameraControlSignals {
+): {
+    cameraControlSignals: CameraControlSignals,
+    cameraController: CameraController
+} {
 
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(NM.config.spawn);
 
     // TODO: Add to NM config later.
     const [currentDirection, setCurrentDirection] = createSignal<Direction>(Direction.EAST);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
+    const [baseAnim, setBaseAnim] = createSignal(true);
 
     const tileSize = createMemo(() => NM.config.size / NM.config.numTiles);
 
@@ -35,15 +39,50 @@ export default function createTileNavigator(
         return [baseX() + tx * size, y, baseZ() + tz * size];
     };
 
+    let nextOverrideID = 0;
+    const [overrideStack, setOverrideStack] = createSignal<CameraOverride[]>([]);
+
+    const removeOverride = (id: number) => setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
+
+    function createOverride(ovr: CameraSettings) {
+        const id = nextOverrideID++;
+        return {
+            commit(anim?: boolean) {
+                if (overrideStack().some(o => o.id == id)) return;
+                (anim != undefined) && setBaseAnim(anim);
+                setOverrideStack(prev => [...prev, { id, ...ovr }]);
+            },
+            release(anim?: boolean) {
+                (anim != undefined) && setBaseAnim(anim);
+                removeOverride(id);
+            },
+            id
+        };
+    }
+
+    const currentOverridePos = () => overrideStack().at(-1)?.pos;
+    const currentOverrideOri = () => overrideStack().at(-1)?.ori;
+
+    const shouldAnim = () => {
+        const ovrAnim = overrideStack().at(-1)?.anim;
+        if (ovrAnim == undefined) return baseAnim();
+        return ovrAnim;
+    };
+
+    function clearOverrides(anim?: boolean) {
+        (anim != undefined) && setBaseAnim(anim);
+        setOverrideStack([]);
+    }
+
     const cameraControlSignals: CameraControlSignals = createMemo(() => ({
         basePos: cameraPositionForTile(currentTile()),
         baseOri: {
             yaw: currentYaw(),
             pitch: 0
         },
-        overrideOri: undefined,
-        overridePos: undefined,
-        animate: true,
+        overrideOri: currentOverrideOri(),
+        overridePos: currentOverridePos(),
+        animate: shouldAnim(),
         maxYaw: 30,
         maxPitch: 30
     }));
@@ -90,5 +129,44 @@ export default function createTileNavigator(
     onMount(() => document.addEventListener("keydown", onKeyDown));
     onCleanup(() => document.removeEventListener("keydown", onKeyDown));
 
-    return cameraControlSignals;
+    const currentBase = () => ({
+        pos: cameraPositionForTile(currentTile()),
+        ori: {
+            yaw: currentYaw(),
+            pitch: 0
+        }
+    });
+
+    const currentOverride = () => {
+        const ori = currentOverrideOri();
+        const pos = currentOverridePos();
+        if (ori == undefined && pos == undefined) return null;
+        return { pos, ori };
+    };
+
+    const setBase: CameraController["setBase"] = (_settings: BaseCameraSettings) => {
+        throw new Error("Tile navigator does not support setBase overrides.");
+    };
+
+    const setBasePos: Setter<XYZ> = (_next: XYZ | ((prev: XYZ) => XYZ)) => {
+        throw new Error("Tile navigator does not support setBasePos overrides.");
+    };
+
+    const setBaseOri: Setter<Orientation> = (_next: Orientation | ((prev: Orientation) => Orientation)) => {
+        throw new Error("Tile navigator does not support setBaseOri overrides.");
+    };
+
+    return {
+        cameraControlSignals,
+        cameraController: {
+            createOverride,
+            removeOverride,
+            clearOverrides,
+            setBase,
+            setBasePos,
+            setBaseOri,
+            currentBase,
+            currentOverride
+        }
+    };
 }
