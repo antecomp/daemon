@@ -1,5 +1,5 @@
 import { Accessor, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { NavCoord, NavMap } from "./tilenav.types";
+import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Coord2D, XYZ } from "@/shared/types/3d.types";
 import { CameraControlSignals } from "../camera/camera.types";
 
@@ -48,14 +48,42 @@ export default function createTileNavigator(
         maxPitch: 30
     }));
 
+    const dirDX = [0, -1, 0, 1];
+    const dirDZ = [-1, 0, 1, 0];
+    const dirEdge = [NavTileMask.EDGE_UP, NavTileMask.EDGE_LEFT, NavTileMask.EDGE_DOWN, NavTileMask.EDGE_RIGHT];
+
+    const tryMove = (dirIndex: Direction) => {
+        const tile = currentTile();
+        const current = NM.tiles[tile];
+        if (!current || !(current.edges & dirEdge[dirIndex])) return;
+
+        const comma = tile.indexOf(",");
+        const tx = Number(tile.slice(0, comma));
+        const tz = Number(tile.slice(comma + 1));
+        const nx = tx + dirDX[dirIndex];
+        const nz = tz + dirDZ[dirIndex];
+        const next = `${nx},${nz}` as NavCoord;
+        const target = NM.tiles[next];
+        if (!target || !target.active) return;
+        setCurrentTile(next);
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
-        const key = e.key;
-        if (key === "q" || key === "Q") {
+        const key = e.key.toLowerCase();
+        if (key === "a") {
             setCurrentDirection((dir) => (dir + 1) & 3);
             setCurrentYaw((yaw) => yaw + 90);
-        } else if (key === "e" || key === "E") {
+        } else if (key === "d") {
             setCurrentDirection((dir) => (dir + 3) & 3);
             setCurrentYaw((yaw) => yaw - 90);
+        } else if (key === "w") {
+            tryMove(currentDirection());
+        } else if (key === "s") {
+            tryMove(((currentDirection() + 2) & 3) as Direction);
+        } else if (key === "q") {
+            tryMove(((currentDirection() + 1) & 3) as Direction);
+        } else if (key === "e") {
+            tryMove(((currentDirection() + 3) & 3) as Direction);
         }
     };
 
