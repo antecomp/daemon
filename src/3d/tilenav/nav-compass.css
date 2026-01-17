@@ -2,16 +2,28 @@
     position: absolute;
     top: 3px;
     right: 3px;
-    color: white;
-    background: black;
-    border: solid white 2px;
-    border-radius: 3px;
+    background: rgb(0, 0, 0);
+    /* border: solid white 2px; */
+    /* border-radius: 3px; */
+    border-image-slice:
+        3 3 3 3;
+    border-image-width:
+        3px 3px 3px 3px;
+    border-image-outset:
+        0px 0px 0px 0px;
+    border-image-repeat:
+        stretch stretch;
+    border-image-source:
+        url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAIAAABv85FHAAAAAXNSR0IB2cksfwAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+oBEQAUMz+wPU0AAAA1SURBVAjXY2RgYPj//z8DBmBkZGTEKgEBLMgKIQy4aiY0CWQ2EwNuQIQcsovgbHzuZMTjPwAjGxUL1GvXfgAAAABJRU5ErkJggg==");
+    border-style:
+        solid;
     z-index: 1;
     aspect-ratio: 1;
     width: 100px;
 
     display: block;
     overflow: hidden;
+    outline: black solid 2px;
 }
 
 .nav-compass-grid {
@@ -20,25 +32,26 @@
     gap: 0;
     width: 100%;
     height: 100%;
-    padding: 6px;
+    /* padding: 6px; */
     box-sizing: border-box;
+    background: url('./assets/x.png');
 }
 
 .nav-compass-tile {
     aspect-ratio: 1;
-    border: 1px solid #b4b4b4;
     box-sizing: border-box;
-    background: #f2f2f2;
+    background: transparent;
     position: relative;
 }
 
 .nav-compass-tile.is-existing {
-    background: #529958;
+    border: 1px solid #000000;
+    background: black;
 }
 
 .nav-compass-tile.is-outside {
-    background: #1d1d1d;
-    border-color: #333333;
+    background: transparent;
+    border-color: transparent;
 }
 
 /* .nav-compass-tile.is-center.is-existing {
