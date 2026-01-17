@@ -118,7 +118,7 @@ export default function createTileNavigator(
         overrideOri: currentOverrideOri(),
         overridePos: currentOverridePos(),
         animate: shouldAnim(),
-        maxYaw: 30,
+        maxYaw: 45,
         maxPitch: 30
     }));
 

@@ -2,8 +2,8 @@ import { render } from 'solid-js/web';
 import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
-import world from '@/scenes/Test/assets/world.glb';
-import X from '@/scenes/Test/assets/NM.json'
+import world from '@/scenes/Islands/assets/malice.glb';
+import X from '@/scenes/Islands/assets/NM.json'
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
 import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
@@ -260,7 +260,7 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
 
                     <lume-gltf-model
                         align-point="0.5 0.5"
-                        scale="100 100 100"
+                        scale="10 10 10"
                         src={world}
                     />
 
