@@ -1,8 +1,11 @@
 import { NavController } from "./createTileNavigator";
 import cn from './assets/needle.png';
 import './nav-compass.css'
-import { NavCoord, NavMap } from "./tilenav.types";
+import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { For, createMemo } from "solid-js";
+
+const EDGE_BORDER = "dashed white 1px"
+const NOEDGE_BORDER = "solid black 1px;"
 
 export default function NavCompass(props: {
     nc: NavController
@@ -22,6 +25,7 @@ export default function NavCompass(props: {
             exists: boolean
             isCenter: boolean
             isSpawn: boolean
+            borderMask: number
         }[] = [];
 
         for (let dz = -2; dz <= 2; dz++) {
@@ -32,12 +36,15 @@ export default function NavCompass(props: {
                 const coord = `${tx},${tz}` as NavCoord;
                 const tileData = inBounds ? props.nm.tiles[coord] : undefined;
                 const exists = !!tileData && tileData.active !== false;
+                const edges = exists ? (tileData?.edges ?? 15) : 15;
+                const borderMask = (~edges) & 15;
                 out.push({
                     coord,
                     inBounds,
                     exists,
                     isCenter: dx === 0 && dz === 0,
-                    isSpawn: inBounds && spawn === coord
+                    isSpawn: inBounds && spawn === coord,
+                    borderMask
                 });
             }
         }
@@ -57,6 +64,12 @@ export default function NavCompass(props: {
                                 "is-outside": !tile.inBounds,
                                 "is-center": tile.isCenter,
                                 "is-spawn": tile.isSpawn
+                            }}
+                            style={{
+                                "border-top": (tile.borderMask & NavTileMask.EDGE_UP) ? EDGE_BORDER : NOEDGE_BORDER,
+                                "border-right": (tile.borderMask & NavTileMask.EDGE_RIGHT) ? EDGE_BORDER : NOEDGE_BORDER,
+                                "border-bottom": (tile.borderMask & NavTileMask.EDGE_DOWN) ? EDGE_BORDER : NOEDGE_BORDER,
+                                "border-left": (tile.borderMask & NavTileMask.EDGE_LEFT) ? EDGE_BORDER : NOEDGE_BORDER
                             }}
                         />
                     )}
