@@ -2,7 +2,7 @@ import { render } from 'solid-js/web';
 import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
-import world from '@/scenes/Islands/assets/malice.glb';
+import world from '@/scenes/Bridge/assets/bridge_a.glb';
 import X from '@/scenes/Islands/assets/NM.json'
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
