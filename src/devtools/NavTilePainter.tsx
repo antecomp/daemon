@@ -12,6 +12,7 @@ import { createStore } from 'solid-js/store';
 import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import { Coord2D } from '@/shared/types/3d.types';
 import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
+import { getWSPositionOfTile } from '@/3d/tilenav/tilenav.utils';
 
 export default function NavTilePainter(props: { initialConfiguration?: NavMap }) {
 
@@ -174,6 +175,12 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
             case 's':
                 setNm('config', { spawn: hoveredTile()?.join(',') as NavCoord ?? '0,0' });
                 break;
+            case 'l': 
+                const tileLoc = hoveredTile()
+                    ? getWSPositionOfTile(hoveredTile()!.join(',') as NavCoord, nm)
+                    : null
+                console.log(tileLoc);
+                navigator.clipboard.writeText(String(tileLoc));
         }
 
     }

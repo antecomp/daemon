@@ -9,6 +9,9 @@ import PlayerCam from "@/3d/camera/PlayerCam";
 import NavCompass from "@/3d/tilenav/NavCompass";
 import { NavMap } from "@/3d/tilenav/tilenav.types";
 
+import test_girl_sprite from '../Test/assets/girl2.png';
+import Billboard from "@/3d/components/Billboard";
+
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
@@ -43,6 +46,14 @@ export default function Islands() {
           scale="10 10 10"
           ref={islands_ref}
         />
+
+        <Billboard
+          texture={test_girl_sprite}
+          scale={60}
+          position="-455 -12 -362"
+        />
+
+
       </lume-scene>
     </>
   )
