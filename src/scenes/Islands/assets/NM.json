@@ -94,7 +94,8 @@
     "2,1": {
       "height": 10,
       "active": true,
-      "edges": 15
+      "edges": 15,
+      "occupied": true
     },
     "3,1": {
       "height": 10,

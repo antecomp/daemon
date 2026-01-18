@@ -10,7 +10,6 @@ import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
 import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
-import { Coord2D } from '@/shared/types/3d.types';
 import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
 import { getWSPositionOfTile } from '@/3d/tilenav/tilenav.utils';
 
@@ -30,14 +29,14 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
     );
 
     const [selectedTiles, setSelectedTiles] = createSignal<NavCoord[]>([]);
-    const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
+    const [hoveredTile, setHoveredTile] = createSignal<NavCoord | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
     function selectedOrHoveredTiles() {
         const selected = selectedTiles();
         if (selected.length > 0) return selected;
         const hovered = hoveredTile();
-        return hovered ? [`${hovered[0]},${hovered[1]}` as NavCoord] : [];
+        return hovered ? [hovered] : [];
     }
 
     function createTilesAtSelected() {
@@ -173,14 +172,26 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                 setClipMode(p => !p);
                 break;
             case 's':
-                setNm('config', { spawn: hoveredTile()?.join(',') as NavCoord ?? '0,0' });
+                setNm('config', { spawn: hoveredTile() ?? '0,0' });
                 break;
             case 'l': 
                 const tileLoc = hoveredTile()
-                    ? getWSPositionOfTile(hoveredTile()!.join(',') as NavCoord, nm)
+                    ? getWSPositionOfTile(hoveredTile()!, nm)
                     : null
                 console.log(tileLoc);
                 navigator.clipboard.writeText(String(tileLoc));
+                break;
+            case 'o':
+                const hc = hoveredTile();
+                if (!hc || !nm.tiles[hc]) return;
+                setNm('tiles', (prev) => {
+                    const tileState = prev[hc];
+                    const occState = tileState?.occupied ?? false;
+                    return {[hc]: {
+                        ...tileState,
+                        occupied: !occState
+                    }};
+                })
         }
 
     }
@@ -330,7 +341,8 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                                     classList={{
                                         'selected': isSelected(),
                                         'exists': nm.tiles[coordKey] != undefined,
-                                        'is-spawn': isSpawnPoint()
+                                        'is-spawn': isSpawnPoint(),
+                                        'is-occupied': tile?.occupied ?? false
                                     }}
                                     class="painter-tile"
                                     style={{
@@ -340,7 +352,7 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                                         'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) === 0 ? '#c40000' : '',
                                         'border-left-color': (edges & NavTileMask.EDGE_LEFT) === 0 ? '#c40000' : '',
                                     }}
-                                    onMouseEnter={() => setHoveredTile([x, z])}
+                                    onMouseEnter={() => setHoveredTile(coordKey)}
                                     onMouseLeave={() => setHoveredTile(null)}
                                     onPointerDown={() => {
                                         isPointerDown = true;

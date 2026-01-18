@@ -54,6 +54,15 @@
     border-color: transparent;
 }
 
+.nav-compass-tile.is-occupied {
+    display: grid;
+    place-items: center;
+}
+
+.nav-compass-tile.is-occupied::before {
+    content: '+'; /* replace with cool image later */
+}
+
 /* .nav-compass-tile.is-center.is-existing {
     background: #1fc0b3;
 }

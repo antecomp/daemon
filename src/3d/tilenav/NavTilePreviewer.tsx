@@ -1,10 +1,10 @@
 import { createMemo, For } from "solid-js";
-import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
+import { NavCoord, NavMap, NavTile, NavTileMask } from "./tilenav.types";
 import { Coord2D } from "@/shared/types/3d.types";
 
 export default function NavTilePreviewer(props: {
   NM: NavMap;
-  hoveredTile?: Coord2D | null;
+  hoveredTile?: NavCoord | null;
   selectedTiles?: NavCoord[];
   clip?: boolean;
 }) {
@@ -30,22 +30,21 @@ export default function NavTilePreviewer(props: {
 
   // --- helpers ---
 
-  const tileColor = ([tx, tz]: Coord2D, hasTile: boolean) => {
-    const baseColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
+  const tileColor = ([tx, tz]: Coord2D, hasTile: boolean, tileData: NavTile | undefined) => {
+    const existsColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
     const emptyColor = (tx + tz) % 2 === 0 ? "#2b2b2b" : "#3a3a3a";
     const existsAndSelectedColor = (tx + tz) % 2 === 0 ? "#108178" : "#1fc0b3";
     const selectedColor = (tx + tz) % 2 === 0 ? "#2a2341" : "#7c5fb3";
 
-    const h = props.hoveredTile;
-    const isHovered = !!h && h[0] === tx && h[1] === tz;
-
     const navcoord = `${tx},${tz}` as NavCoord;
+    const isHovered = props.hoveredTile === navcoord;
     const isSelected = props.selectedTiles?.includes(navcoord);
 
     if (isHovered) return "yellow";
     if (isSelected && hasTile) return existsAndSelectedColor;
     if (isSelected) return selectedColor;
-    return hasTile ? baseColor : emptyColor;
+    if(tileData?.occupied) return '#d86b98'
+    return hasTile ? existsColor : emptyColor;
   };
 
   const coords = createMemo(() => {
@@ -78,7 +77,7 @@ export default function NavTilePreviewer(props: {
           <>
             <lume-plane
               sidedness="double"
-              color={tileColor([tx, tz], hasTile())}
+              color={tileColor([tx, tz], hasTile(), tile())}
               align-point="0.5 0.5"
               mount-point="0.5 0.5"
               rotation="90 0 0"

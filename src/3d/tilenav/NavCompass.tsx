@@ -26,6 +26,7 @@ export default function NavCompass(props: {
             isCenter: boolean
             isSpawn: boolean
             borderMask: number
+            occupied: boolean
         }[] = [];
 
         for (let dz = -2; dz <= 2; dz++) {
@@ -44,7 +45,8 @@ export default function NavCompass(props: {
                     exists,
                     isCenter: dx === 0 && dz === 0,
                     isSpawn: inBounds && spawn === coord,
-                    borderMask
+                    borderMask,
+                    occupied: tileData?.occupied ?? false
                 });
             }
         }
@@ -63,7 +65,8 @@ export default function NavCompass(props: {
                                 "is-empty": tile.inBounds && !tile.exists,
                                 "is-outside": !tile.inBounds,
                                 "is-center": tile.isCenter,
-                                "is-spawn": tile.isSpawn
+                                "is-spawn": tile.isSpawn,
+                                "is-occupied": tile.occupied
                             }}
                             style={{
                                 "border-top": (tile.borderMask & NavTileMask.EDGE_UP) ? EDGE_BORDER : NOEDGE_BORDER,

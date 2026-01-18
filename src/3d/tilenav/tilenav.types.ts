@@ -10,6 +10,7 @@ export enum NavTileMask {
 export interface NavTile {
   height: number, // for raised surfaces.
   active: boolean,
+  occupied?: boolean,
   /* 4bit mask of navigation 
   1 = up
   2 = right

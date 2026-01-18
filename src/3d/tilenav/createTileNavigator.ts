@@ -150,7 +150,7 @@ export default function createTileNavigator(
         const nz = tz + dirDZ[dirIndex];
         const next = `${nx},${nz}` as NavCoord;
         const target = NM.tiles[next];
-        if (!target || !target.active) return;
+        if (!target || !target.active || target.occupied) return;
         setCurrentTile(next);
     };
 
