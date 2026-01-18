@@ -32,12 +32,21 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
     const [hoveredTile, setHoveredTile] = createSignal<Coord2D | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
+    function selectedOrHoveredTiles() {
+        const selected = selectedTiles();
+        if (selected.length > 0) return selected;
+        const hovered = hoveredTile();
+        return hovered ? [`${hovered[0]},${hovered[1]}` as NavCoord] : [];
+    }
+
     function createTilesAtSelected() {
         // Many state updates - very laggy and shit
         //selectedTiles().forEach(navcoord => createTile(navcoord));
+        const targets = selectedOrHoveredTiles();
+        if (targets.length === 0) return;
         setNm('tiles', prev => {
             const toAdd: NavMap['tiles'] = {};
-            selectedTiles().forEach(nc => {
+            targets.forEach(nc => {
                 if (prev[nc]) return;
                 toAdd[nc] = {
                     height: 0, active: true, edges: 15
@@ -53,9 +62,11 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
     //     setNm('tiles', {[where]: undefined})
     // }
     function deleteSelectedTiles() {
+        const targets = selectedOrHoveredTiles();
+        if (targets.length === 0) return;
         // cannot call singular deleteTile in a loop : race condition?
         setNm('tiles', Object.fromEntries(
-            selectedTiles().map(nc => [nc, undefined])
+            targets.map(nc => [nc, undefined])
         ));
         setSelectedTiles([]);
     }
@@ -86,8 +97,10 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
 
     // Probably a cleaner way of doing this!
     function toggleEdgesOfSelectedTiles(direction: NavTileMask) {
+        const targets = selectedOrHoveredTiles();
+        if (targets.length === 0) return;
         setNm('tiles', prev => Object.fromEntries(
-            selectedTiles().map(nc => {
+            targets.map(nc => {
                 const oldTile = prev[nc];
                 if (!oldTile) return [nc, undefined];
                 const newEdge = oldTile.edges ^ direction;
@@ -97,11 +110,13 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
     }
 
     function raiseSelectedTiles() {
+        const targets = selectedOrHoveredTiles();
+        if (targets.length === 0) return;
         const input = prompt("Raise by how much?", "10");
         const amt = parseInt(input ?? '10');
         if (isNaN(amt)) return;
         else setNm('tiles', prev => Object.fromEntries(
-            selectedTiles().map(nc => {
+            targets.map(nc => {
                 const oldTile = prev[nc];
                 if (!oldTile) return [nc, undefined];
                 const newHeight = oldTile.height + amt;
