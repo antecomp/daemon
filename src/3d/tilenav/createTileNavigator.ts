@@ -8,6 +8,7 @@ import {
     CameraOverride,
     CameraSettings
 } from "../camera/camera.types";
+import { createStore, SetStoreFunction } from "solid-js/store";
 
 enum NavAction {
     StepForward,
@@ -27,40 +28,43 @@ export interface NavController {
             ori: Orientation
         }
     }>
-
+    navMap: NavMap,
+    setNavMap: SetStoreFunction<NavMap>
     performNavAction: (action: NavAction) => void;
     setCurrentTile: Setter<NavCoord>;
 }
 
 export default function createTileNavigator(
-    NM: NavMap
+    initialNM: NavMap
 ): {
     cameraControlSignals: CameraControlSignals,
     cameraController: CameraController
     navController: NavController
 } {
-    const [currentTile, setCurrentTile] = createSignal<NavCoord>(NM.config.spawn);
 
-    // TODO: Add initial spawn direction to NM config later.
-    const [currentDirection, setCurrentDirection] = createSignal<Direction>(NM.config.spawnDirection);
+    const [navMap, setNavMap] = createStore<NavMap>(initialNM);
+
+    const [currentTile, setCurrentTile] = createSignal<NavCoord>(navMap.config.spawn);
+
+    const [currentDirection, setCurrentDirection] = createSignal<Direction>(navMap.config.spawnDirection);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
     const [baseAnim, setBaseAnim] = createSignal(true);
 
-    const tileSize = createMemo(() => NM.config.size / NM.config.numTiles);
+    const tileSize = createMemo(() => navMap.config.size / navMap.config.numTiles);
 
-    const halfSize = createMemo(() => NM.config.size / 2);
+    const halfSize = createMemo(() => navMap.config.size / 2);
     const tileOffset = createMemo(() => tileSize() / 2);
 
-    const baseX = createMemo(() => NM.config.offset.x - halfSize() + tileOffset());
-    const baseY = createMemo(() => NM.config.offset.y);
-    const baseZ = createMemo(() => NM.config.offset.z - halfSize() + tileOffset());
+    const baseX = createMemo(() => navMap.config.offset.x - halfSize() + tileOffset());
+    const baseY = createMemo(() => navMap.config.offset.y);
+    const baseZ = createMemo(() => navMap.config.offset.z - halfSize() + tileOffset());
 
     const cameraPositionForTile = (pos: NavCoord): XYZ => {
         const comma = pos.indexOf(",");
         const tx = Number(pos.slice(0, comma));
         const tz = Number(pos.slice(comma + 1));
         const size = tileSize();
-        const y = baseY() - (NM.tiles[pos]?.height ?? 0) - NM.config.playerHeight;
+        const y = baseY() - (navMap.tiles[pos]?.height ?? 0) - navMap.config.playerHeight;
         return [baseX() + tx * size, y, baseZ() + tz * size];
     };
 
@@ -131,7 +135,7 @@ export default function createTileNavigator(
 
     const tryMove = (dirIndex: Direction) => {
         const tile = currentTile();
-        const current = NM.tiles[tile];
+        const current = navMap.tiles[tile];
 
         // Blocks you moving through edges marked @ current tile.
         if (!current || !(current.edges & dirEdge[dirIndex])) return;
@@ -142,7 +146,7 @@ export default function createTileNavigator(
         const nx = tx + dirDX[dirIndex];
         const nz = tz + dirDZ[dirIndex];
         const next = `${nx},${nz}` as NavCoord;
-        const target = NM.tiles[next];
+        const target = navMap.tiles[next];
         if (!target || !target.active || target.occupied) return;
         setCurrentTile(next);
     };
@@ -310,7 +314,7 @@ export default function createTileNavigator(
     const navState = createMemo(() => ({
         direction: currentDirection(),
         tile: currentTile(),
-        base: currentBase()
+        base: currentBase(),
     }));
 
     return {
@@ -329,7 +333,9 @@ export default function createTileNavigator(
         navController: {
             state: navState,
             performNavAction,
-            setCurrentTile
+            setCurrentTile,
+            navMap,
+            setNavMap
         }
     };
 

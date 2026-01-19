@@ -23,7 +23,7 @@ export default function Islands() {
 
   return (
     <>
-      <NavCompass nc={navController} nm={NM as NavMap} />
+      <NavCompass nc={navController} nm={navController.navMap} />
       <lume-scene webgl perspective="800" ref={sceneRef}
       >
         {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
@@ -50,6 +50,9 @@ export default function Islands() {
           texture={test_girl_sprite}
           scale={60}
           position="-455 -12 -362"
+          interactions={[
+            () => navController.setNavMap('tiles', '2,1', 'occupied', prev => !prev)
+          ]}
         />
 
 
