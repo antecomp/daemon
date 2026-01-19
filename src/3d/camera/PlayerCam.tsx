@@ -32,9 +32,10 @@ function getCameraTransform(
 
 // Lerp angles in degrees along the shortest path to avoid unwinding spins.
 function lerpAngleDeg(prev: number, target: number, t: number) {
+    const clampedT = Math.min(Math.max(t, 0), 1);
     let delta = ((target - prev + 180) % 360) - 180;
     if (delta < -180) delta += 360;
-    return prev + delta * t;
+    return prev + delta * clampedT;
 }
 
 /**
