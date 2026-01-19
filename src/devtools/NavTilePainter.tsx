@@ -22,7 +22,8 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                 size: 1000,
                 numTiles: 12,
                 offset: { x: 0, y: 20, z: 0 },
-                spawn: `0,0`
+                spawn: `0,0`,
+                spawnDirection: 0
             },
             tiles: {}
         }

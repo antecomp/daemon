@@ -30,8 +30,15 @@ export interface NavMap {
       z: number
     }
     spawn: NavCoord
+    spawnDirection: Direction
   }
   tiles: {
     [coord: NavCoord]: NavTile
   }
+}
+export enum Direction {
+    NORTH,
+    WEST,
+    SOUTH,
+    EAST
 }

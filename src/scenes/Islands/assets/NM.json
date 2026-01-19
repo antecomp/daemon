@@ -8,7 +8,8 @@
       "y": 30,
       "z": 210
     },
-    "spawn": "1,2"
+    "spawn": "1,2",
+    "spawnDirection": 0
   },
   "tiles": {
     "12,4": {

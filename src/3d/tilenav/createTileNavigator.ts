@@ -1,5 +1,5 @@
 import { Accessor, Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
+import { Direction, NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import {
     BaseCameraSettings,
@@ -8,13 +8,6 @@ import {
     CameraOverride,
     CameraSettings
 } from "../camera/camera.types";
-
-enum Direction {
-    NORTH,
-    WEST,
-    SOUTH,
-    EAST
-}
 
 enum NavAction {
     StepForward,
@@ -49,7 +42,7 @@ export default function createTileNavigator(
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(NM.config.spawn);
 
     // TODO: Add initial spawn direction to NM config later.
-    const [currentDirection, setCurrentDirection] = createSignal<Direction>(Direction.EAST);
+    const [currentDirection, setCurrentDirection] = createSignal<Direction>(NM.config.spawnDirection);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
     const [baseAnim, setBaseAnim] = createSignal(true);
 
