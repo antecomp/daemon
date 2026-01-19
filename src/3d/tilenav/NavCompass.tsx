@@ -8,6 +8,20 @@ import { navCoordToTuple } from "./tilenav.utils";
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
 
+
+/**
+ * Renders a compact 5x5 navigational compass/minimap centered on the current navigation tile,
+ * plus a rotating needle indicating the current yaw orientation.
+ * 
+ * @param props - An object containing:
+ *   - nc: NavController — provides current navigation state and orientation.
+ *   - nm: NavMap — provides map tiles and configuration.
+ * @returns JSX.Element — a navigational compass element (grid + rotating needle).
+ *
+ * @remark Typically you want to pass the reactive NM store that's part of navController, as to add reactivity to the minimap.
+ * @example
+ * <NavCompass nc={navController} nm={navController.navMap} />
+ */
 export default function NavCompass(props: {
     nc: NavController
     nm: NavMap

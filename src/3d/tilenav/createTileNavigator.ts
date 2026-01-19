@@ -35,6 +35,74 @@ export interface NavController {
     setCurrentTile: Setter<NavCoord>;
 }
 
+/**
+ * createTileNavigator
+ *
+ * Initializes and returns a tile-based navigation subsystem and a camera controller
+ * for a grid-like navigation map.
+ *
+ * @param initialNM - The initial NavMap describing tiles, configuration (size,
+ *   offset, spawn point/direction, player height, numTiles), and per-tile data
+ *   (height, active, occupied, edges bitmask, etc.).
+ *
+ * @returns An object containing:
+ *   - cameraControlSignals: CameraControlSignals
+ *       A memoized signals object used by PlayerCam. It
+ *       provides:
+ *         - basePos: computed XYZ position at the current tile (takes tile
+ *           height and player height into account).
+ *         - baseOri: base orientation with current yaw and zero pitch.
+ *         - overridePos / overrideOri: the top-most active camera override
+ *           (if any) from the override stack.
+ *         - animate: whether camera transitions should animate (considers both
+ *           base animation flag and top-most override's anim flag).
+ *         - maxYaw / maxPitch: clamped limits used by the camera consumer.
+ *
+ *   - cameraController: CameraController
+ *       A small API to manage camera overrides and query current base/override (replicating return of normal createCameraController)
+ *       states. Methods:
+ *         - createOverride(settings): returns an object { id, commit(anim?), release(anim?) }
+ *             which can commit the override to the active override stack or release it.
+ *             Each override is assigned a unique numeric id.
+ *         - removeOverride(id): remove an override by id.
+ *         - clearOverrides(anim?): clear all overrides.
+ *         - setBase(...): throws — tile navigator does not support direct base overrides.
+ *         - setBasePos(...): throws - not supported.
+ *         - setBaseOri(...): throws - not supported.
+ *         - currentBase(): returns the current base camera { pos, ori } computed
+ *             from the current tile and direction.
+ *         - currentOverride(): returns the current override { pos?, ori? } or null.
+ *
+ *   - navController: NavController
+ *       Navigation API and live state:
+ *         - state: Accessor of a reactive object containing:
+ *             - direction: current Direction enum value (0-3).
+ *             - tile: current NavCoord (string key like "x,z").
+ *             - base: { pos: XYZ, ori: Orientation } representing current base camera.
+ *         - navMap: reactive NavMap store (cloned from initialNM).
+ *         - setNavMap: SetStoreFunction to update the navMap store.
+ *         - performNavAction(action): execute a navigation action (turn/step/strafe).
+ *         - setCurrentTile: Setter<NavCoord> to programmatically set the active tile.
+ *
+ * @remarks
+ * - Input handling:
+ *     - Keyboard mapping (keyToActions): w/s/q/e/a/d -> StepForward/StepBack/StrafeLeft/StrafeRight/TurnLeft/TurnRight.
+ *     - Initial keydown triggers one action immediately (OS auto-repeat is ignored via e.repeat).
+ *     - Held-key repeats are implemented with a RAF-driven loop plus per-action
+ *       timing stored in ACTION_TIMING, using performance.now() and a nextAllowedTime map.
+ *     - handleKeyUp clears held state for the associated actions.
+ *
+ * - Camera override stack:
+ *     - Overrides are pushed to an internal stack; the top-most override determines
+ *       overridePos/overrideOri and its anim flag influences the animate signal.
+ *     - createOverride returns a handle with commit/release helpers that may set
+ *       the base animation flag when provided with an anim boolean.
+ * 
+ * - Errors:
+ *     - setBase, setBasePos, and setBaseOri throw if called because this navigator
+ *       enforces base camera driven by tile+direction and does not accept direct
+ *       base overrides through those methods.
+*/
 export default function createTileNavigator(
     initialNM: NavMap
 ): {

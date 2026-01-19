@@ -16,7 +16,8 @@ import { playSound } from '@/shared/utils/playSound';
 import yeah_sound from './assets/yeah.ogg'
 import NavCompass from '@/3d/tilenav/NavCompass';
 import { CameraSettings } from '@/3d/camera/camera.types';
-import attachToConsole from '@/devtools/attachToConsole';
+//import attachToConsole from '@/devtools/attachToConsole';
+import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 
 const dr: DialogueNode = makeDialogueNode('Hello.', 'Strange Girl');
 
@@ -39,7 +40,8 @@ export default function Test() {
     };
     const grlc = createDialogueWithCamOvr(cameraController, ovrCam, dr);
 
-    attachToConsole(ovrCam, 'OVR');
+    // You can edit the ovrCam in realtime in the console to test positions!
+    //attachToConsole(ovrCam, 'OVR');
 
     return (
         <>
@@ -77,7 +79,7 @@ export default function Test() {
                             () => playSound(yeah_sound),
                             //() => addLogMessage('she has nothing to say'),
                             () => {
-                                if (navController.state().tile == '2,8') {
+                                if (navCoordToTuple(navController.state().tile)[1] === 8) {
                                     ovrCam.pos = [-482, -55, 46];
                                     ovrCam.ori = { "yaw": -54, "pitch": 0 }
                                 } else {

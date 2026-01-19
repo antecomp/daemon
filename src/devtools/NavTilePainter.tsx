@@ -184,16 +184,7 @@ export default function NavTilePainter() {
             case 'o':
                 const hc = hoveredTile();
                 if (!hc || !nm.tiles[hc]) return;
-                setNm('tiles', (prev) => {
-                    const tileState = prev[hc];
-                    const occState = tileState?.occupied ?? false;
-                    return {
-                        [hc]: {
-                            ...tileState,
-                            occupied: !occState
-                        }
-                    };
-                })
+                setNm('tiles', hc, 'occupied', prev => !prev);
         }
 
     }

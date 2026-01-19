@@ -2,6 +2,7 @@ import { createMemo, For } from "solid-js";
 import { NavCoord, NavMap, NavTile, NavTileMask } from "./tilenav.types";
 import { Coord2D } from "@/shared/types/3d.types";
 
+/** Renders a decorated plane representing the tiles of a NavMap. Add inside a lume scene. */
 export default function NavTilePreviewer(props: {
   NM: NavMap;
   hoveredTile?: NavCoord | null;
