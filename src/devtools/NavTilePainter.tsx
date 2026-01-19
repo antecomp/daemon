@@ -175,7 +175,7 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
             case 's':
                 setNm('config', { spawn: hoveredTile() ?? '0,0' });
                 break;
-            case 'l': 
+            case 'l':
                 const tileLoc = hoveredTile()
                     ? getWSPositionOfTile(hoveredTile()!, nm)
                     : null
@@ -188,10 +188,12 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                 setNm('tiles', (prev) => {
                     const tileState = prev[hc];
                     const occState = tileState?.occupied ?? false;
-                    return {[hc]: {
-                        ...tileState,
-                        occupied: !occState
-                    }};
+                    return {
+                        [hc]: {
+                            ...tileState,
+                            occupied: !occState
+                        }
+                    };
                 })
         }
 
@@ -298,7 +300,7 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                         src={world}
                     />
 
-{/* ----------------------------------------------------------------------- */}
+                    {/* ----------------------------------------------------------------------- */}
 
                     <NavTilePreviewer
                         NM={nm}
@@ -320,6 +322,18 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                     onClick={() => setClipMode(p => !p)}
                 >
                     {clipMode() ? '○' : '●'}
+                </p>
+                <p
+                    style={{
+                        position: 'absolute',
+                        border: 'none',
+                        padding: '0px',
+                        'font-size': '32px',
+                        bottom: '5px',
+                        left: '5px'
+                    }}
+                >
+                    {hoveredTile()}
                 </p>
             </div>
             <div id="painter">
@@ -392,4 +406,4 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
 }
 
 const domroot = document.getElementById('navtile-painter');
-if (domroot) render(() => <NavTilePainter initialConfiguration={X as NavMap}/>, domroot);
+if (domroot) render(() => <NavTilePainter initialConfiguration={X as NavMap} />, domroot);

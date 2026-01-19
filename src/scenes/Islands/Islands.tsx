@@ -2,7 +2,6 @@ import { useDGShader } from "@/3d/pipeline/dgRender";
 import { GltfModel, Scene } from "lume";
 
 import islands_glb from './assets/malice.glb';
-import Freecam from "@/3d/camera/Freecam";
 import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NM.json'
 import PlayerCam from "@/3d/camera/PlayerCam";
@@ -17,7 +16,7 @@ export default function Islands() {
   let sceneRef!: Scene;
   useDGShader(() => sceneRef, 'quantized');
 
-  const { cameraControlSignals, cameraController, navController } = createTileNavigator(
+  const { cameraControlSignals, navController } = createTileNavigator(
     NM as NavMap
   );
 
