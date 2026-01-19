@@ -15,6 +15,8 @@ import { playSound } from '@/shared/utils/playSound';
 
 import yeah_sound from './assets/yeah.ogg'
 import NavCompass from '@/3d/tilenav/NavCompass';
+import { CameraSettings } from '@/3d/camera/camera.types';
+import attachToConsole from '@/devtools/attachToConsole';
 
 const dr: DialogueNode = makeDialogueNode('Hello.', 'Strange Girl');
 
@@ -22,16 +24,26 @@ export default function Test() {
 
     const { cameraControlSignals, cameraController, navController } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
-    useDGShader(() => sceneRef, 'normal')
+    useDGShader(() => sceneRef, 'normal');
 
-    const grlc = createDialogueWithCamOvr(cameraController, {
-        pos: [-482, -55, -24],
-        ori: { yaw: 216, pitch: 0 },
-    }, dr)
+    const ovrCam: CameraSettings = {
+        "pos": [
+            -497,
+            -50,
+            -39
+        ],
+        "ori": {
+            "yaw": 216,
+            "pitch": 0
+        }
+    };
+    const grlc = createDialogueWithCamOvr(cameraController, ovrCam, dr);
+
+    attachToConsole(ovrCam, 'OVR');
 
     return (
         <>
-        <NavCompass nc={navController} nm={navController.navMap}/>
+            <NavCompass nc={navController} nm={navController.navMap} />
             <lume-scene
                 ref={sceneRef}
                 webgl
@@ -64,7 +76,18 @@ export default function Test() {
                         [
                             () => playSound(yeah_sound),
                             //() => addLogMessage('she has nothing to say'),
-                            () => grlc.start(),
+                            () => {
+                                if (navController.state().tile == '2,8') {
+                                    ovrCam.pos = [-482, -55, 46];
+                                    ovrCam.ori = { "yaw": -54, "pitch": 0 }
+                                } else {
+                                    {
+                                        ovrCam.pos = [-497, -50, -39];
+                                        ovrCam.ori = { "yaw": 216, "pitch": 0 }
+                                    }
+                                }
+                                grlc.start();
+                            },
                             () => addLogMessage('You don\'t know why, but her presence fills you with rage', 'red')
                         ]
                     }
