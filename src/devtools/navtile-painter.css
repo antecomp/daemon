@@ -68,11 +68,12 @@
         color: magenta;
     }
 
-    .actions, .config {
+    .actions,
+    .config {
         display: flex;
         flex-wrap: wrap;
 
-        > button {
+        >button {
             flex-grow: 1;
         }
     }
@@ -88,13 +89,22 @@
         font-family: 'monospace';
     }
 
-    .export {
+    .export,
+    .import {
         box-sizing: border-box;
         width: 95%;
-        margin: 0 auto;
+        margin: 5px auto;
         display: block;
+    }
+
+    .export {
         border: inset lime 2px;
         background: rgb(30, 146, 30);
+    }
+
+    .import {
+        border: inset rgb(179, 47, 157) 2px;
+        background: rgb(121, 16, 134);
     }
 
 }

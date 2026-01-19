@@ -2,8 +2,6 @@ import { render } from 'solid-js/web';
 import './navtile-painter.css';
 import '@/shared/styles/base.css'
 import 'lume';
-import world from '@/scenes/Bridge/assets/bridge_a_bake.glb';
-import X from '@/scenes/Islands/assets/NM.json'
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
 import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
@@ -12,11 +10,12 @@ import { createStore } from 'solid-js/store';
 import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
 import downloadObjectAsJson from '@/shared/utils/downloadAsJson';
 import { getWSPositionOfTile } from '@/3d/tilenav/tilenav.utils';
+import NavTilePainterScene from './NavTilePainterScene';
 
-export default function NavTilePainter(props: { initialConfiguration?: NavMap }) {
+export default function NavTilePainter() {
 
     const [nm, setNm] = createStore<NavMap>(
-        props.initialConfiguration ?? {
+       {
             config: {
                 playerHeight: 10,
                 size: 1000,
@@ -269,6 +268,21 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
         setNm('config', updt);
     }
 
+    async function importNavMapFromFile(file: File) {
+        try {
+            const text = await file.text();
+            const parsed = JSON.parse(text) as NavMap;
+            if (!parsed?.config || !parsed?.tiles) return;
+            setNm({ config: parsed.config, tiles: parsed.tiles });
+            setSelectedTiles([]);
+            setHoveredTile(null);
+        } catch (err) {
+            console.error("Failed to import navmap JSON.", err);
+        }
+    }
+
+    let importInputRef: HTMLInputElement | undefined;
+
     return (
         <>
             <div id="scene-preview">
@@ -292,13 +306,7 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                         horizontal-angle='0'
                     ></lume-camera-rig>
 
-                    <lume-ambient-light intensity={1} />
-
-                    <lume-gltf-model
-                        align-point="0.5 0.5"
-                        scale="10 10 10"
-                        src={world}
-                    />
+                    <NavTilePainterScene></NavTilePainterScene>
 
                     {/* ----------------------------------------------------------------------- */}
 
@@ -399,6 +407,19 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
                     </For>
                 </div>
                 <hr />
+                <input
+                    ref={el => (importInputRef = el)}
+                    type="file"
+                    accept="application/json"
+                    style={{ display: 'none' }}
+                    onChange={(event) => {
+                        const file = event.currentTarget.files?.[0];
+                        if (!file) return;
+                        void importNavMapFromFile(file);
+                        event.currentTarget.value = '';
+                    }}
+                />
+                <button class="import" onclick={() => importInputRef?.click()}>IMPORT</button>
                 <button class="export" onclick={() => downloadObjectAsJson(nm, 'NM')}>EXPORT</button>
             </div>
         </>
@@ -406,4 +427,4 @@ export default function NavTilePainter(props: { initialConfiguration?: NavMap })
 }
 
 const domroot = document.getElementById('navtile-painter');
-if (domroot) render(() => <NavTilePainter initialConfiguration={X as NavMap} />, domroot);
+if (domroot) render(() => <NavTilePainter/>, domroot);
