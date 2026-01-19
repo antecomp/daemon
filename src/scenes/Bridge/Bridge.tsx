@@ -10,7 +10,7 @@ import NavigationGraph from '@/3d/components/navigation/NavigationGraph';
 import Freecam from '@/3d/camera/Freecam';
 //import NavigationPlane from '@/3d/components/navigation/NavigationPlane';
 
-import world from '@/scenes/Bridge/assets/bridge_a.glb';
+import world from '@/scenes/Bridge/assets/bridge_a_bake.glb';
 import { L } from 'vitest/dist/chunks/reporters.d.BFLkQcL6.js';
 import applyShadows from '@/3d/pipeline/applyShadows';
 
@@ -32,18 +32,13 @@ export default function Bridge() {
             physically-correct-lights
             perspective="800"
             shadowmap-type="pcfsoft"
+            fog-mode="linear" fog-color="#000000" fog-near="600" fog-far="1500"
         >
 
             {/* <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef}/> */}
             <Freecam sceneRef={sceneRef!} />
 
-            {/* <lume-ambient-light intensity={20} /> */}
-            <lume-directional-light intensity={3} position="1 -1 1"
-                shadow-bias="-0.0002"
-                shadow-normal-bias={0.2}
-                shadow-map-height={4096}
-                shadow-map-width={4096}
-            />
+            <lume-ambient-light intensity={3} />
 
             <lume-gltf-model
                 ref={worldRef}
