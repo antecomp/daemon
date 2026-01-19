@@ -44,6 +44,7 @@ export default function Test() {
                 <PlayerCam
                     sceneRef={sceneRef}
                     {...cameraControlSignals()}
+                    interactionDistance={120}
                 />
                 {/* <Freecam sceneRef={sceneRef} initialPos={[-45, -81, -98]} initialOri={{yaw:-253, pitch:0}}/> */}
 

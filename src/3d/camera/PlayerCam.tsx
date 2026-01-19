@@ -71,10 +71,14 @@ export default function PlayerCam(props: {
     speed?: number
     maxYaw: number,
     maxPitch: number,
+    interactionDistance?: number,
     sceneRef: Scene
 }) {
 
     const raycaster = new Raycaster();
+    createEffect(() => {
+        raycaster.far = props.interactionDistance ?? Infinity;
+    });
     const mouse = new Vector2();
     const mouseOffset = { yaw: 0, pitch: 0 };
 
