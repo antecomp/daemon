@@ -97,7 +97,7 @@ export default function NavTilePreviewer(props: {
                 position={`${x()} ${y() - props.NM.config.playerHeight} ${z()}`}
             />}
 
-            {hasTile() && (edges() & NavTileMask.EDGE_UP) === 0 && (
+            {hasTile() && (edges() & NavTileMask.EDGE_UP) !== 0 && (
               <lume-plane
                 color="#ff3b30"
                 sidedness="double"
@@ -111,7 +111,7 @@ export default function NavTilePreviewer(props: {
               />
             )}
 
-            {hasTile() && (edges() & NavTileMask.EDGE_RIGHT) === 0 && (
+            {hasTile() && (edges() & NavTileMask.EDGE_RIGHT) !== 0 && (
               <lume-plane
                 color="#ff3b30"
                 sidedness="double"
@@ -126,7 +126,7 @@ export default function NavTilePreviewer(props: {
               />
             )}
 
-            {hasTile() && (edges() & NavTileMask.EDGE_DOWN) === 0 && (
+            {hasTile() && (edges() & NavTileMask.EDGE_DOWN) !== 0 && (
               <lume-plane
                 color="#ff3b30"
                 sidedness="double"
@@ -140,7 +140,7 @@ export default function NavTilePreviewer(props: {
               />
             )}
 
-            {hasTile() && (edges() & NavTileMask.EDGE_LEFT) === 0 && (
+            {hasTile() && (edges() & NavTileMask.EDGE_LEFT) !== 0 && (
               <lume-plane
                 color="#ff3b30"
                 sidedness="double"

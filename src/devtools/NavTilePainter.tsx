@@ -49,7 +49,7 @@ export default function NavTilePainter() {
             targets.forEach(nc => {
                 if (prev[nc]) return;
                 toAdd[nc] = {
-                    height: 0, active: true, edges: 15
+                    height: 0, active: true, edges: 0
                 }
             });
             return toAdd;
@@ -348,7 +348,7 @@ export default function NavTilePainter() {
                             const coordKey = `${x},${z}` as const;
                             const isSpawnPoint = createMemo(() => nm.config.spawn == coordKey);
                             const tile = nm.tiles[coordKey];
-                            const edges = tile?.edges ?? 15;
+                            const edges = tile?.edges ?? 0;
                             const isSelected = () => selectedTiles().includes(coordKey);
                             return (
                                 <div
@@ -361,10 +361,10 @@ export default function NavTilePainter() {
                                     class="painter-tile"
                                     style={{
                                         '--numtiles': nm.config.numTiles,
-                                        'border-top-color': (edges & NavTileMask.EDGE_UP) === 0 ? '#c40000' : '',
-                                        'border-right-color': (edges & NavTileMask.EDGE_RIGHT) === 0 ? '#c40000' : '',
-                                        'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) === 0 ? '#c40000' : '',
-                                        'border-left-color': (edges & NavTileMask.EDGE_LEFT) === 0 ? '#c40000' : '',
+                                        'border-top-color': (edges & NavTileMask.EDGE_UP) !== 0 ? '#c40000' : '',
+                                        'border-right-color': (edges & NavTileMask.EDGE_RIGHT) !== 0 ? '#c40000' : '',
+                                        'border-bottom-color': (edges & NavTileMask.EDGE_DOWN) !== 0 ? '#c40000' : '',
+                                        'border-left-color': (edges & NavTileMask.EDGE_LEFT) !== 0 ? '#c40000' : '',
                                     }}
                                     onMouseEnter={() => setHoveredTile(coordKey)}
                                     onMouseLeave={() => setHoveredTile(null)}

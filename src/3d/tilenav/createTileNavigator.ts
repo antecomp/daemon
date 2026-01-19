@@ -205,7 +205,7 @@ export default function createTileNavigator(
         const current = navMap.tiles[tile];
 
         // Blocks you moving through edges marked @ current tile.
-        if (!current || !(current.edges & dirEdge[dirIndex])) return;
+        if (!current || (current.edges & dirEdge[dirIndex])) return;
 
         const [tx, tz] = navCoordToTuple(tile);
         const nx = tx + dirDX[dirIndex];

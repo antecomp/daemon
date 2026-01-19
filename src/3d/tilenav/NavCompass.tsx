@@ -50,8 +50,8 @@ export default function NavCompass(props: {
                 const coord = `${tx},${tz}` as NavCoord;
                 const tileData = inBounds ? props.nm.tiles[coord] : undefined;
                 const exists = !!tileData && tileData.active !== false;
-                const edges = exists ? (tileData?.edges ?? 15) : 15;
-                const borderMask = (~edges) & 15;
+                const edges = exists ? (tileData?.edges ?? 0) : 0;
+                const borderMask = edges & 15;
                 out.push({
                     coord,
                     inBounds,
