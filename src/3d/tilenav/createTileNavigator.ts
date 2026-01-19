@@ -9,6 +9,7 @@ import {
     CameraSettings
 } from "../camera/camera.types";
 import { createStore, SetStoreFunction } from "solid-js/store";
+import { navCoordToTuple } from "./tilenav.utils";
 
 enum NavAction {
     StepForward,
@@ -60,9 +61,7 @@ export default function createTileNavigator(
     const baseZ = createMemo(() => navMap.config.offset.z - halfSize() + tileOffset());
 
     const cameraPositionForTile = (pos: NavCoord): XYZ => {
-        const comma = pos.indexOf(",");
-        const tx = Number(pos.slice(0, comma));
-        const tz = Number(pos.slice(comma + 1));
+        const [tx, tz] = navCoordToTuple(pos);
         const size = tileSize();
         const y = baseY() - (navMap.tiles[pos]?.height ?? 0) - navMap.config.playerHeight;
         return [baseX() + tx * size, y, baseZ() + tz * size];
@@ -140,9 +139,7 @@ export default function createTileNavigator(
         // Blocks you moving through edges marked @ current tile.
         if (!current || !(current.edges & dirEdge[dirIndex])) return;
 
-        const comma = tile.indexOf(",");
-        const tx = Number(tile.slice(0, comma));
-        const tz = Number(tile.slice(comma + 1));
+        const [tx, tz] = navCoordToTuple(tile);
         const nx = tx + dirDX[dirIndex];
         const nz = tz + dirDZ[dirIndex];
         const next = `${nx},${nz}` as NavCoord;

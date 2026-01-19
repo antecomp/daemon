@@ -3,6 +3,7 @@ import cn from './assets/needle.png';
 import './nav-compass.css'
 import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { For, createMemo } from "solid-js";
+import { navCoordToTuple } from "./tilenav.utils";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
@@ -13,9 +14,7 @@ export default function NavCompass(props: {
 }) {
     const gridTiles = createMemo(() => {
         const tile = props.nc.state().tile;
-        const comma = tile.indexOf(",");
-        const cx = Number(tile.slice(0, comma));
-        const cz = Number(tile.slice(comma + 1));
+        const [cx, cz] = navCoordToTuple(tile);
         const n = props.nm.config.numTiles;
         const spawn = props.nm.config.spawn;
 
