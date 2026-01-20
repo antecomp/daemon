@@ -1,6 +1,7 @@
 import { CameraController, CameraSettings } from "./camera.types";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 
 /**
  * Prepares a dialogue sequence that uses a deferred camera override.
@@ -17,22 +18,35 @@ import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueS
  * @returns An object containing `start`, which commits the override and launches the dialogue,
  *          and `ovrMgr`, which exposes the underlying override handle (commit/release/id) to be used for advanced mid-dialogue camera control.
  */
+type DialogueCamOptions = StartDialogueOptions & {
+    fadeTransition?: boolean;
+};
+
 export function createDialogueWithCamOvr(
     cameraController: CameraController,
     ovr: CameraSettings,
     dialogueRoot: DialogueNode,
-    dialogueOptions?: StartDialogueOptions
+    dialogueOptions?: DialogueCamOptions
 ) {
     const ovrMgr = cameraController.createOverride(ovr);
+    const useFade = dialogueOptions?.fadeTransition;
+
+    const runWithFadeTransition = async (action: () => void) => {
+        if (!useFade) {
+            action();
+            return;
+        }
+        await SceneFadeManager.fadeTransition(action);
+    };
 
     return {
         start: async () => {
             if (DialogueService.dialogueOngoing()) return; // dialogue already active. Prevent double commit.
-            ovrMgr.commit();
+            await runWithFadeTransition(() => ovrMgr.commit());
             try {
                 return await DialogueService.startDialogue(dialogueRoot, dialogueOptions);
             } finally {
-                ovrMgr.release(ovr.anim);
+                await runWithFadeTransition(() => ovrMgr.release(ovr.anim));
             }  
         },
         ovrMgr
