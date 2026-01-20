@@ -35,17 +35,19 @@
         }
     }
 
-    .enoch-spinners::before {
-        content: '';
-        background: url('./assets/dial_fade.png');
-        position: absolute;
-        inset: 0;
-        z-index: 3;
-        pointer-events: none;
+    .enoch-col {
+        position: relative;
+        font-family: 'enochian';
+        width: 24px;
     }
 
-    .enoch-col {
-        font-family: 'enochian';
+    .enoch-col::before {
+        content: '';
+        z-index: 5;
+        background: url('./assets/dfade.png');
+        /* background-color: #ff00006a; */
+        position: absolute;
+        inset: 0;
     }
 
     .guess-counter {
