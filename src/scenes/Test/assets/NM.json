@@ -8,8 +8,8 @@
       "y": 25,
       "z": 0
     },
-    "spawn": "0,8",
-    "spawnDirection": 3
+    "spawn": "13,7",
+    "spawnDirection": 1
   },
   "tiles": {
     "3,7": {
@@ -460,7 +460,8 @@
     "12,7": {
       "height": -4,
       "active": true,
-      "edges": 8
+      "edges": 8,
+      "occupied": true
     },
     "13,7": {
       "height": -4,

@@ -8,7 +8,6 @@ import girl_sprite from './assets/yeah.png';
 import { useDGShader } from '@/3d/pipeline/dgRender';
 import Billboard from '@/3d/components/Billboard';
 import { addLogMessage } from '@/app/shell/hud/EventLog';
-import { DialogueNode } from '@/core/dialogue/dialogueNode.types';
 import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { playSound } from '@/shared/utils/playSound';
@@ -19,7 +18,11 @@ import { CameraSettings } from '@/3d/camera/camera.types';
 //import attachToConsole from '@/devtools/attachToConsole';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 
-const dr: DialogueNode = makeDialogueNode('Hello.', 'Strange Girl');
+import viya_texture from "@/assets/artwork/characters/viya.png"
+
+const dr = makeDialogueNode('Hello.', 'Strange Girl');
+import viya_root from '@/tests/dialogues/v'
+import attachToConsole from '@/devtools/attachToConsole';
 
 export default function Test() {
 
@@ -27,7 +30,7 @@ export default function Test() {
     let sceneRef!: Scene;
     useDGShader(() => sceneRef, 'normal');
 
-    const ovrCam: CameraSettings = {
+    const necoCam: CameraSettings = {
         "pos": [
             -497,
             -50,
@@ -36,12 +39,22 @@ export default function Test() {
         "ori": {
             "yaw": 216,
             "pitch": 0
-        }
+        },
+        //'anim': false
     };
-    const grlc = createDialogueWithCamOvr(cameraController, ovrCam, dr);
+    const necoDia = createDialogueWithCamOvr(cameraController, necoCam, dr);
+
+    const viyaCam: CameraSettings = {
+        pos: [470, -56, -8],
+        ori: { yaw: 90, pitch: 0 },
+        anim: false
+    }
+    const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_root);
 
     // You can edit the ovrCam in realtime in the console to test positions!
     //attachToConsole(ovrCam, 'OVR');
+
+    attachToConsole(viyaCam, 'OVR');
 
     return (
         <>
@@ -80,19 +93,32 @@ export default function Test() {
                             //() => addLogMessage('she has nothing to say'),
                             () => {
                                 if (navCoordToTuple(navController.state().tile)[1] === 8) {
-                                    ovrCam.pos = [-482, -55, 46];
-                                    ovrCam.ori = { "yaw": -54, "pitch": 0 }
+                                    necoCam.pos = [-482, -55, 46];
+                                    necoCam.ori = { "yaw": -54, "pitch": 0 }
                                 } else {
                                     {
-                                        ovrCam.pos = [-497, -50, -39];
-                                        ovrCam.ori = { "yaw": 216, "pitch": 0 }
+                                        necoCam.pos = [-497, -50, -39];
+                                        necoCam.ori = { "yaw": 216, "pitch": 0 }
                                     }
                                 }
-                                grlc.start();
+                                necoDia.start();
                             },
                             () => addLogMessage('You don\'t know why, but her presence fills you with rage', 'red')
                         ]
                     }
+                />
+
+                <Billboard
+                    texture={viya_texture}
+                    position="433 -20 1"
+                    scale={100}
+                    interactions={[
+                        () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
+                        () => {
+                            viyaDialogue.start();
+                        },
+                        () => addLogMessage(`She is smoking a cigarette.`)
+                    ]}
                 />
 
                 {/* <NavTilePreviewer NM={NM as NavMap}/> */}

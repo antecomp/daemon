@@ -139,8 +139,26 @@ export default function createTileNavigator(
     let nextOverrideID = 0;
     const [overrideStack, setOverrideStack] = createSignal<CameraOverride[]>([]);
 
-    const removeOverride = (id: number) =>
-        setOverrideStack(prev => prev.filter(ovr => ovr.id != id));
+    const restoreAnimAfterSnap = () => {
+        requestAnimationFrame(() => {
+            if (overrideStack().length === 0) setBaseAnim(true);
+        });
+    };
+
+    const removeOverride = (id: number, snapBackNoAnim?: boolean) =>
+        setOverrideStack(prev => {
+            const next = prev.filter(ovr => ovr.id != id);
+            if (next.length === 0) {
+                if (snapBackNoAnim) {
+                    // One-frame snap back to base, then restore animations.
+                    setBaseAnim(false);
+                    restoreAnimAfterSnap();
+                } else {
+                    setBaseAnim(true);
+                }
+            }
+            return next;
+        });
 
     function createOverride(ovr: CameraSettings) {
         const id = nextOverrideID++;
@@ -152,7 +170,8 @@ export default function createTileNavigator(
             },
             release(anim?: boolean) {
                 (anim != undefined) && setBaseAnim(anim);
-                removeOverride(id);
+                const snapBackNoAnim = anim === false || (anim === undefined && ovr.anim === false);
+                removeOverride(id, snapBackNoAnim);
             },
             id
         };
