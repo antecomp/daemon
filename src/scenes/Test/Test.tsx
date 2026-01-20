@@ -47,9 +47,9 @@ export default function Test() {
     const viyaCam: CameraSettings = {
         pos: [470, -56, -8],
         ori: { yaw: 90, pitch: 0 },
-        anim: false
+        anim: false,
     }
-    const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_root);
+    const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_root, {fadeTransition: true});
 
     // You can edit the ovrCam in realtime in the console to test positions!
     //attachToConsole(ovrCam, 'OVR');
