@@ -10,6 +10,7 @@ import { popUILayer, pushUILayer } from '../layers/UILayerManager';
 
 interface PopupProps {
     closeSelf: () => void
+    title?: string,
     actions?: {
         prompt: string,
         dontClose?: boolean,
@@ -23,7 +24,7 @@ const Popup: ParentComponent<PopupProps> = (props) => {
             <div class="topbar"><span /><img src={topbar_end} /></div>
             <div class="topbar-label">
                 <img class="topbar-label-head" src={topbar_label_head} />
-                <span>NOTICE</span>
+                <span>{props.title ?? 'NOTICE'}</span>
                 <img src={topbar_label_end} />
             </div>
             <div class="popup-body">
@@ -49,7 +50,8 @@ const Popup: ParentComponent<PopupProps> = (props) => {
     )
 }
 
-export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions']) {
+/** TODO: DOCUMENT */
+export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string) {
     const id = nanoid();
 
     pushUILayer({
@@ -61,6 +63,6 @@ export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['ac
             'place-items': 'center',
             'padding-bottom': '90px'
         },
-        component: () => <Popup closeSelf={() => popUILayer(id)} actions={actions}>{prompt}</Popup>
+        component: () => <Popup closeSelf={() => popUILayer(id)} actions={actions} title={title}>{prompt}</Popup>
     })    
 }
