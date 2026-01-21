@@ -7,6 +7,7 @@ import bottom_end from './assets/bbe-end.png';
 import { For, JSX, Match, ParentComponent, Switch } from 'solid-js';
 import { nanoid } from 'nanoid';
 import { popUILayer, pushUILayer } from '../layers/UILayerManager';
+import attachToConsole from '@/devtools/attachToConsole';
 
 interface PopupProps {
     closeSelf: () => void
@@ -17,6 +18,8 @@ interface PopupProps {
         action: () => void;
     }[]
 }
+
+let activePopupCount = 0;
 
 const Popup: ParentComponent<PopupProps> = (props) => {
     return (
@@ -50,9 +53,32 @@ const Popup: ParentComponent<PopupProps> = (props) => {
     )
 }
 
-/** TODO: DOCUMENT */
+/**
+ * Spawns a modal popup UI layer with custom content and optional action buttons.
+ *
+ * @param {JSX.Element} prompt - The content to display inside the popup body.
+ * @param {Array<{prompt: string, dontClose?: boolean, action: () => void}>} [actions] - Optional array of button definitions.
+ *        Each button has a label (`prompt`), an action callback, and an optional `dontClose` flag to keep the popup open after the action.
+ * @param {string} [title] - Optional title to display in the popup header. Defaults to "NOTICE".
+ *
+ * @example
+ * spawnPopup(<div>Hello!</div>, [
+ *   { prompt: "OK", action: () => console.log("Confirmed") }
+ * ], "Greeting");
+ *
+ * The popup is stacked visually when multiple are open, and only the topmost can be interacted with.
+ * Closing a popup decrements the stack count.
+ */
 export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string) {
     const id = nanoid();
+    const stackOffset = activePopupCount * 12;
+    let closed = false;
+    const closeSelf = () => {
+        if (closed) return;
+        closed = true;
+        activePopupCount = Math.max(0, activePopupCount - 1);
+        popUILayer(id);
+    };
 
     pushUILayer({
         id,
@@ -61,8 +87,12 @@ export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['ac
         style: {
             'display': 'grid',
             'place-items': 'center',
-            'padding-bottom': '90px'
+            'padding-bottom': '90px',
+            'transform': `translate(${stackOffset}px, ${stackOffset}px)`
         },
-        component: () => <Popup closeSelf={() => popUILayer(id)} actions={actions} title={title}>{prompt}</Popup>
-    })    
+        component: () => <Popup closeSelf={closeSelf} actions={actions} title={title}>{prompt}</Popup>
+    })
+    activePopupCount += 1;
 }
+
+attachToConsole(() => spawnPopup("Test Popup"), "DG_TEST_POPUP");

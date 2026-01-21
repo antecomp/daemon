@@ -1,5 +1,5 @@
 import { Scene } from "lume";
-import { onMount } from "solid-js";
+import { createEffect, onMount } from "solid-js";
 // import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 //import Freecam from "@/3d/camera/Freecam";
@@ -20,19 +20,24 @@ export default function Bridge() {
 
     onMount(() => useDGShader(() => sceneRef));
 
+    createEffect(() => {
+        if (navController.state().tile == '12,4') {
+            alert('Trigger')
+        }
+    })
 
-    const {cameraControlSignals, navController} = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
 
     onMount(() => {
-        spawnPopup((<div style={{'padding': '20px', 'display': 'flex', 'gap': '10px', 'width': '450px', 'justify-content': 'center', 'align-items': 'center'}}>
-            <img src={controls_dia}/>
-            <p style={{'transform': 'perspective(0px)'}}>Cardinal Controls Now Available.</p>
+        spawnPopup((<div style={{ 'padding': '20px', 'display': 'flex', 'gap': '10px', 'width': '450px', 'justify-content': 'center', 'align-items': 'center' }}>
+            <img src={controls_dia} />
+            <p style={{ 'transform': 'perspective(0px)' }}>Cardinal Controls Now Available.</p>
         </div>), undefined, "NOTE")
     })
 
     return (
         <>
-        <NavCompass nc={navController} nm={NM as NavMap}/>
+            <NavCompass nc={navController} nm={NM as NavMap} />
             <lume-scene
                 webgl
                 ref={sceneRef}
@@ -43,7 +48,7 @@ export default function Bridge() {
                 shadowmap-type="pcfsoft"
                 fog-mode="linear" fog-color="#000000" fog-near="600" fog-far="1200"
             >
-                <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef}/>
+                <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef} />
                 {/* <Freecam sceneRef={sceneRef!} /> */}
                 <lume-ambient-light intensity={3} />
                 <lume-gltf-model
