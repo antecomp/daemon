@@ -28,6 +28,7 @@ const ITEM_DV_MOD: Item = {
     displayName: 'dv_mod',
     previewName: 'Daemonveil safegaurd mod',
     uploadable: false,
+    actionShouldCloseViewer: false,
     action() {
 
         const getPuzzleText = () => pickRandom(['GARDEN', 'DAEMON', 'ISLAND'])
@@ -107,7 +108,6 @@ const ITEM_DV_MOD: Item = {
         );
 
     },
-    actionShouldCloseViewer: true,
     previewComponent() {
         let sceneRef!: Scene;
         useDGShader(() => sceneRef, 'stable', { width: 290, height: 240 });
