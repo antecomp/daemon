@@ -13,6 +13,9 @@ const ITEM_EXAMPLE: Item = {
             </div>
         );
     },
+    action() {
+        
+    },
     uploadable: true,
 }
 
