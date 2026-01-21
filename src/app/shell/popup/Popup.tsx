@@ -4,10 +4,20 @@ import topbar_label_end from './assets/tbl-end.png';
 import topbar_label_head from './assets/tbl-head.png';
 import bottom_header from './assets/bbe-header.png';
 import bottom_end from './assets/bbe-end.png';
-import btn_left_first from './assets/b-left-first.png';
-import { ParentComponent } from 'solid-js';
+import { For, JSX, Match, ParentComponent, Switch } from 'solid-js';
+import { nanoid } from 'nanoid';
+import { popUILayer, pushUILayer } from '../layers/UILayerManager';
 
-const Popup: ParentComponent = (props) => {
+interface PopupProps {
+    closeSelf: () => void
+    actions?: {
+        prompt: string,
+        dontClose?: boolean,
+        action: () => void;
+    }[]
+}
+
+const Popup: ParentComponent<PopupProps> = (props) => {
     return (
         <div class="popup">
             <div class="topbar"><span /><img src={topbar_end} /></div>
@@ -24,20 +34,33 @@ const Popup: ParentComponent = (props) => {
                 <span />
                 <img src={bottom_end} />
                 <div class="buttons">
-                    <p class="button">
-                        <img src={btn_left_first} />
-                        <span>Button 1</span>
-                    </p>
-                    <p class="button">
-                        <span>Button 2</span>
-                    </p>
-                    <p class="button">
-                        <span>Button 3</span>
-                    </p>
+                    <Switch fallback={<p class='button' onClick={props.closeSelf}><span>OK</span></p>}>
+                        <Match when={props.actions && props.actions.length > 0}>
+                            <For each={props.actions}>
+                                {action => <p class="button" onClick={() => {action.action(); action.dontClose || props.closeSelf()}}>
+                                    <span>{action.prompt}</span>
+                                </p>}
+                            </For>
+                        </Match>
+                    </Switch>
                 </div>
             </div>
         </div>
     )
 }
 
-export default Popup;
+export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions']) {
+    const id = nanoid();
+
+    pushUILayer({
+        id,
+        lock: 'all',
+        blockBehind: true,
+        style: {
+            'display': 'grid',
+            'place-items': 'center',
+            'padding-bottom': '90px'
+        },
+        component: () => <Popup closeSelf={() => popUILayer(id)} actions={actions}>{prompt}</Popup>
+    })    
+}

@@ -48,6 +48,7 @@ import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
+import spawnPopup from "@/app/shell/popup/Popup";
 
 export default function DevMenu() {
 
@@ -108,6 +109,11 @@ export default function DevMenu() {
                     onFail={() => popUILayer('test-puzzle')}
                 />
             })}>Test Puzzle</button>
+            <button onclick={() => spawnPopup("HELLO")}>Popup</button>
+            <button onclick={() => spawnPopup("Test", [
+                {prompt: 'NC', action() {alert('action no close')}, dontClose: true},
+                {prompt: 'CL', action() {alert('action, close')}}
+                ])}>Popup 2</button>
         </div>
     )
 }
