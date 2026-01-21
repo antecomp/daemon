@@ -1,13 +1,26 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
-import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
+import spawnPopup from "@/app/shell/popup/Popup";
 import { Item } from "@/core/inventory/Items";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
 import pickRandom from "@/shared/utils/pickRandom";
 import { Scene } from "lume";
+import alert_icon from '@/assets/ui/icons/popup-icons/alert.png';
+import { JSX } from "solid-js";
+import decrypt_textscene from '@/scenes/TheGem/data/decrypt_textscene.ts'
+import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
+import controls_dia from '@/assets/misc/controls dia.png';
 
 const PUZZLE_ID = 'dv-mod-puzzle';
+
+const POPUP_STYLE: JSX.CSSProperties = {
+    'display': 'grid',
+    'width': '325px',
+    'gap': '15px',
+    'grid-template-columns': 'auto auto',
+    'padding': '25px'
+}
 
 const ITEM_DV_MOD: Item = {
     category: 'caches',
@@ -19,17 +32,80 @@ const ITEM_DV_MOD: Item = {
 
         const getPuzzleText = () => pickRandom(['GARDEN', 'DAEMON', 'ISLAND'])
 
-        //setCurrentScene('Bridge')
-        pushUILayer({
-            id: PUZZLE_ID,
-            blockBehind: true,
-            style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center' },
-            component: () => <EnochPuzzle
-                target={getPuzzleText()}
-                onCorrect={() => {popUILayer(PUZZLE_ID); setCurrentScene('Bridge')}}
-                onFail={() => {popUILayer(PUZZLE_ID)}}
-            />
-        })
+        const spawnFailPopup = () =>
+            spawnPopup(
+                (<div style={POPUP_STYLE}>
+                    <img src={alert_icon} />
+                    <p>Decryption Failed, passkey may have changed. Try again?</p>
+                </div>),
+                [
+                    {
+                        prompt: 'Yes',
+                        action: openPuzzle
+                    },
+                    {
+                        prompt: 'No',
+                        action: () => undefined // Noop, just close.
+                    }
+                ]
+            );
+
+        const spawnSuccessPopup = () =>
+            spawnPopup((<div style={POPUP_STYLE}>
+                <img src={alert_icon} />
+                <p>Decryption Success. Cache contains one executable.</p>
+            </div>),
+                [{
+                    prompt: 'Run',
+                    action() {
+                        popUILayer(PUZZLE_ID);
+                        playTextOverlay(decrypt_textscene).finally(() => spawnPopup((
+                        <div 
+                            style={{ 
+                                'padding': '20px', 
+                                'display': 'flex', 
+                                'gap': '10px', 
+                                'width': '450px', 
+                                'justify-content': 'center', 
+                                'align-items': 'center' 
+                            }}
+                        >
+                            <img src={controls_dia} />
+                            <p style={{ 'transform': 'perspective(0px)' }}>Cardinal Controls Now Available.</p>
+                        </div>), undefined, "NOTE"))
+                    }
+                }]
+            )
+
+        const openPuzzle = () =>
+            pushUILayer({
+                id: PUZZLE_ID,
+                blockBehind: true,
+                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center' },
+                component: () => <EnochPuzzle
+                    target={getPuzzleText()}
+                    onCorrect={spawnSuccessPopup}
+                    onFail={() => { popUILayer(PUZZLE_ID); spawnFailPopup() }}
+                />
+            });
+
+        spawnPopup(
+            (<div style={POPUP_STYLE}>
+                <img src={alert_icon} />
+                <p>Unable to read or execute cache. Data is encrypted. Attempt to decrypt?</p>
+            </div>),
+            [
+                {
+                    prompt: 'Decrypt',
+                    action: openPuzzle
+                },
+                {
+                    prompt: 'Cancel',
+                    action: () => undefined // noop
+                }
+            ]
+        );
+
     },
     actionShouldCloseViewer: true,
     previewComponent() {

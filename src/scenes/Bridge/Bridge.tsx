@@ -11,8 +11,6 @@ import NM from './assets/NM.json';
 import createTileNavigator from '@/3d/tilenav/createTileNavigator';
 import { NavMap } from '@/3d/tilenav/tilenav.types';
 import NavCompass from '@/3d/tilenav/NavCompass';
-import spawnPopup from '@/app/shell/popup/Popup';
-import controls_dia from '../../assets/misc/controls dia.png';
 
 
 export default function Bridge() {
@@ -27,13 +25,6 @@ export default function Bridge() {
     })
 
     const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
-
-    onMount(() => {
-        spawnPopup((<div style={{ 'padding': '20px', 'display': 'flex', 'gap': '10px', 'width': '450px', 'justify-content': 'center', 'align-items': 'center' }}>
-            <img src={controls_dia} />
-            <p style={{ 'transform': 'perspective(0px)' }}>Cardinal Controls Now Available.</p>
-        </div>), undefined, "NOTE")
-    })
 
     return (
         <>

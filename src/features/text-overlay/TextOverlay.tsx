@@ -104,9 +104,12 @@ export default function TextScene(props: {
     )
 }
 
+
+// TODO: DOCUMENT THIS AND THE TYPE BETTER SO YOU ACTUALLY REMEMBER HOW TO WRITE THESE LOL
 /**
  * Pushes a `TextScene` layer that renders the provided sequence and resolves
  * once the overlay is dismissed by the player.
+ * 
  */
 export function playTextOverlay(sequence: TextOverlayLine[]) {
     const id = "text-scene" + nanoid();
