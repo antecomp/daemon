@@ -20,18 +20,17 @@ type NodeRoot = {
 type NodeChoice = {
     '$type': 'NodeChoice',
     ID: string,
-    // Choices have a mysterious NextID. Just ignore it.
+    // Choices have a weird NextID we will just ignore.
     OptionsID: string[] // IDs of associated node options.
 }
 
 type NodeOption = {
     '$type': 'NodeOption',
     ID: string,
-    NextID: string | -1, // -1 for termination options
+    NextID: string | -1,
     Option: {
         English: string
     }
-    // These also have a "OneShot" flag that could easily be used to flag options as consumable.
     OneShot: boolean
 }
 
@@ -44,8 +43,9 @@ type NodeAction = {
     '$type': 'NodeAction',
     ID: string,
     NextID: string | -1,
-    Action: string, // Look up action by this name in some seperatly-passed table? Ergo, utilize CTX.
-    Arguments: ( // Might be lazy and collapse these types down, we'll see if the strict types here provide any advantage.
+    Action: string,
+    // Might be lazy and collapse these types down, we'll see if the strict types here provide any advantage.
+    Arguments: (
         {
             Name?: string,
             Type: "Integer",
@@ -86,16 +86,15 @@ export default function parseDialogue(rawDialogue: MonoData): DialogueNode {
         nodes.map(node => [node.ID, node])
     );
 
-    // For some reason nodes actually reference characters by index, not by ID.
-    const characters = rawDialogue.Characters.map(({Character: {Name}}) => Name);
+    const characters = rawDialogue.Characters.map(({ Character: { Name } }) => Name);
 
     // Going to save a map of dialogue nodes and options based on their ID in the JSON file.
     const DGDialogueNodes: Record<string, DialogueNode> = {};
     const options: Record<string, DialogueOption> = {};
 
-    // Build and store DialogueNodes and Options, mapped by ID.
+    // Build initial nodes.
     for (const node of nodes) {
-        switch(node.$type) {
+        switch (node.$type) {
             case "NodeSentence": {
                 const text = node.Sentence.English;
                 const speaker = characters[node.Speaker] ?? "SPEAKER UNDEFINED";
@@ -104,61 +103,98 @@ export default function parseDialogue(rawDialogue: MonoData): DialogueNode {
             }
             case "NodeOption": {
                 const text = node.Option.English;
+                // TODO: Come up with syntax (i.e split on | to denote full/summary in editor.)
                 options[node.ID] = {
                     fullText: text,
                     summaryText: text
-                }
+                };
                 break;
             }
-            default: break;
+
+            // Lazy solution - all actions will just be an empty node.
+            case "NodeAction": {
+                // Represent an action as an empty dialogue node with a sideEffect
+                const diaNode = createEmptyDialogueNode();
+                const actionName = node.Action;
+                const args = node.Arguments.map(arg => arg.Value);
+
+                diaNode.sideEffect = (ctx) => {
+                    const fn = ctx?.actions?.[actionName];
+                    if (typeof fn === "function") {
+                        fn(...args);
+                    }
+                };
+
+                DGDialogueNodes[node.ID] = diaNode;
+                break;
+            }
+            default:
+                break;
         }
     }
 
     // Wire up connections.
     for (const node of nodes) {
-        if(node.$type == 'NodeSentence') {
+
+        // ----- NodeSentence -----
+        if (node.$type === 'NodeSentence') {
             const current = DGDialogueNodes[node.ID];
-            // Leaf node (or failed lookup).
             if (!current || node.NextID === -1) continue;
 
             const nextRaw = nodesByID[node.NextID];
-            if(!nextRaw) continue;
+            if (!nextRaw) continue;
 
-            if(nextRaw.$type == 'NodeSentence') {
+            if (nextRaw.$type === 'NodeSentence' || nextRaw.$type === 'NodeAction') {
                 current.next = DGDialogueNodes[nextRaw.ID];
-            }
-            
-            if (nextRaw.$type == 'NodeChoice') {
-                for(const optionId of nextRaw.OptionsID) {
+            } else if (nextRaw.$type === 'NodeChoice') {
+                for (const optionId of nextRaw.OptionsID) {
                     const option = options[optionId];
                     if (option) current.options.push(option);
                 }
             }
         }
 
-        if(node.$type == 'NodeOption') {
+        // ----- NodeOption -----
+        if (node.$type === 'NodeOption') {
             const option = options[node.ID];
-            // Termination option (or failed lookup).
-            if (!option || node.NextID == -1) continue;
+            if (!option || node.NextID === -1) continue;
 
             const nextRaw = nodesByID[node.NextID];
             if (!nextRaw) continue;
 
-            if (nextRaw.$type == "NodeSentence") {
+            if (nextRaw.$type === "NodeSentence" || nextRaw.$type === "NodeAction") {
                 option.next = DGDialogueNodes[nextRaw.ID];
-            } 
-            
-            if (nextRaw.$type == 'NodeChoice') { // Chaining choices together...
+            } else if (nextRaw.$type === 'NodeChoice') {
                 const hinge = createEmptyDialogueNode();
-                for(const chainedID of nextRaw.OptionsID) {
+                for (const chainedID of nextRaw.OptionsID) {
                     const chainedOption = options[chainedID];
-                    if(chainedOption) hinge.options.push(chainedOption);
+                    if (chainedOption) hinge.options.push(chainedOption);
                 }
                 option.next = hinge;
             }
         }
+
+        // ----- NodeAction -----
+        if (node.$type === 'NodeAction') {
+            const current = DGDialogueNodes[node.ID];
+            if (!current || node.NextID === -1) continue;
+
+            const nextRaw = nodesByID[node.NextID];
+            if (!nextRaw) continue;
+
+            if (nextRaw.$type === 'NodeSentence' || nextRaw.$type === 'NodeAction') {
+                current.next = DGDialogueNodes[nextRaw.ID];
+            } else if (nextRaw.$type === 'NodeChoice') {
+                const hinge = createEmptyDialogueNode();
+                for (const chainedID of nextRaw.OptionsID) {
+                    const chainedOption = options[chainedID];
+                    if (chainedOption) hinge.options.push(chainedOption);
+                }
+                current.next = hinge;
+            }
+        }
     }
 
-    const rootPointer = nodesByID[rawDialogue.RootNodeID] as NodeRoot; // trusted to always be NodeRoot.
+    const rootPointer = nodesByID[rawDialogue.RootNodeID] as NodeRoot;
     return DGDialogueNodes[rootPointer.NextID];
 }

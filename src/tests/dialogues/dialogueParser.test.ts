@@ -1,6 +1,6 @@
 import parseDialogue, { MonoData } from "@/core/dialogue/dialogueParser";
 //import parseDialogue, {MonoData} from "@/core/dialogue/exampleParser";
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, vi} from "vitest";
 import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
 
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
@@ -129,4 +129,145 @@ describe("Handle branching dialogue", () => {
     it("Loopbacks work", () => {
         expect(parsedRoot.options[4]?.next).toBe(parsedRoot);
     })
-})
+});
+
+const dia_actions_raw: MonoData = {
+  RootNodeID: "root",
+  Characters: [
+    {
+      ID: "0",
+      Character: { Name: C1 },
+    },
+    {
+      ID: "1",
+      Character: { Name: C2 },
+    },
+  ],
+  ListNodes: [
+    {
+      $type: "NodeRoot",
+      ID: "root",
+      NextID: "S1",
+    },
+    {
+      $type: "NodeSentence",
+      ID: "S1",
+      Speaker: 0,
+      Sentence: {
+        English: "Before action",
+      },
+      NextID: "A1",
+    },
+    {
+      $type: "NodeAction",
+      ID: "A1",
+      Action: "aaaa",
+      Arguments: [
+        {
+          Type: "Integer",
+          Value: 3,
+        },
+        {
+          Type: "String",
+          Value: "something",
+        },
+      ],
+      NextID: "S2",
+    },
+    {
+      $type: "NodeSentence",
+      ID: "S2",
+      Speaker: 1,
+      Sentence: {
+        English: "After action",
+      },
+      NextID: "A2",
+    },
+    {
+      $type: "NodeAction",
+      ID: "A2",
+      Action: "argless",
+      Arguments: [],
+      NextID: "A3",
+    },
+    {
+      $type: "NodeAction",
+      ID: "A3",
+      Action: "anotherac",
+      Arguments: [
+        {
+          Type: "Boolean",
+          Value: true,
+        },
+      ],
+      NextID: -1,
+    },
+  ],
+};
+
+describe("NodeAction side effects", () => {
+  const parsedRoot = parseDialogue(dia_actions_raw as MonoData);
+
+  it("wires NodeAction nodes into the chain correctly", () => {
+    // Root sentence
+    expect(parsedRoot.render).toBe("Before action");
+    expect(parsedRoot.name).toBe(C1);
+
+    const firstAction = evalDialogueNodeNext(parsedRoot.next)!;
+    expect(firstAction).toBeTruthy();
+    // firstAction is an action node (created via createEmptyDialogueNode),
+    // so it will typically have EMPTY_RENDER or similar.
+    expect(firstAction.sideEffect).toBeTypeOf("function");
+
+    const secondSentence = evalDialogueNodeNext(firstAction.next)!;
+    expect(secondSentence.render).toBe("After action");
+    expect(secondSentence.name).toBe(C2);
+
+    const secondAction = evalDialogueNodeNext(secondSentence.next)!;
+    expect(secondAction).toBeTruthy();
+    expect(secondAction.sideEffect).toBeTypeOf("function");
+
+    const thirdAction = evalDialogueNodeNext(secondAction.next)!;
+    expect(thirdAction).toBeTruthy();
+    expect(thirdAction.sideEffect).toBeTypeOf("function");
+
+    // End of chain
+    expect(evalDialogueNodeNext(thirdAction.next)).toBeUndefined();
+  });
+
+  it("executes actions with expected arguments via sideEffect", () => {
+    const aaaa = vi.fn();
+    const argless = vi.fn();
+    const anotherac = vi.fn();
+
+    const ctx = {
+      actions: {
+        aaaa,
+        argless,
+        anotherac,
+      },
+    };
+
+    // Sentence 1 -> Action A1
+    const firstAction = evalDialogueNodeNext(parsedRoot.next)!;
+    firstAction.sideEffect?.(ctx);
+
+    // A1 -> Sentence 2 -> Action A2
+    const secondSentence = evalDialogueNodeNext(firstAction.next)!;
+    const secondAction = evalDialogueNodeNext(secondSentence.next)!;
+    secondAction.sideEffect?.(ctx);
+
+    // A2 -> Action A3
+    const thirdAction = evalDialogueNodeNext(secondAction.next)!;
+    thirdAction.sideEffect?.(ctx);
+
+    expect(aaaa).toHaveBeenCalledTimes(1);
+    expect(aaaa).toHaveBeenCalledWith(3, "something");
+
+    expect(argless).toHaveBeenCalledTimes(1);
+    expect(argless).toHaveBeenCalledWith();
+
+    expect(anotherac).toHaveBeenCalledTimes(1);
+    expect(anotherac).toHaveBeenCalledWith(true);
+  });
+});
