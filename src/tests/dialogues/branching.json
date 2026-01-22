@@ -1,0 +1,391 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "934MAGIRCX",
+	"ListNodes": [
+		{
+			"$type": "NodeChoice",
+			"ID": "U3G4i7hmC9",
+			"EditorPosition": [
+				1684.35900878906,
+				-505.042724609375
+			],
+			"NextID": "FFj1tIM19H",
+			"OptionsID": [
+				"VZz006IgjW",
+				"caMo8bTDg9"
+			]
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "VZz006IgjW",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "FFj1tIM19H",
+			"Option": {
+				"English": "Option 1 Extending Choice"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "caMo8bTDg9",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "4hToDg8YgT",
+			"Option": {
+				"English": "Option 1 Extending Choice 2"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "4hToDg8YgT",
+			"EditorPosition": [
+				2191.6240234375,
+				-360.0
+			],
+			"NextID": -1,
+			"Speaker": 0,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Result Of Choice 1-2"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "E1c2jOcjAN",
+			"EditorPosition": [
+				1710.94006347656,
+				-69.6581344604492
+			],
+			"NextID": "7agNPxd57i",
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "This choice spawns a chain of dialogue"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "Ul50uJsbvs",
+			"EditorPosition": [
+				2897.94873046875,
+				-90.7692413330078
+			],
+			"NextID": "UraAdNkIN1",
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Blah Blah!!!"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "ZHGKP1xFCi",
+			"EditorPosition": [
+				1557.31579589844,
+				90.0
+			],
+			"NextID": "FlDCTf2XWf",
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "There will be some dialogue here"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeRoot",
+			"ID": "934MAGIRCX",
+			"EditorPosition": [
+				42.1206207275391,
+				-268.040344238281
+			],
+			"NextID": "1jSbTrI0c3"
+		},
+		{
+			"$type": "NodeChoice",
+			"ID": "rLs7Og3qnU",
+			"EditorPosition": [
+				2485.47778320312,
+				769.926818847656
+			],
+			"NextID": "UraAdNkIN1",
+			"OptionsID": [
+				"Hxis0LtbXT",
+				"g1nODRBCq7",
+				"BIhNoIJVEN"
+			]
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "Hxis0LtbXT",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "UraAdNkIN1",
+			"Option": {
+				"English": "Go To End"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "g1nODRBCq7",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": -1,
+			"Option": {
+				"English": "Termination Option 2"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "BIhNoIJVEN",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "1jSbTrI0c3",
+			"Option": {
+				"English": "Loop back to root!"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "1jSbTrI0c3",
+			"EditorPosition": [
+				399.825012207031,
+				-21.2316589355469
+			],
+			"NextID": "FNz3I2i0CY",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Root"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "FlDCTf2XWf",
+			"EditorPosition": [
+				2045.5625,
+				312.664794921875
+			],
+			"NextID": "rLs7Og3qnU",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Followed by another branch of choices"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "7agNPxd57i",
+			"EditorPosition": [
+				2371.794921875,
+				-76.9230880737305
+			],
+			"NextID": "Ul50uJsbvs",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Blah blah blah"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "UraAdNkIN1",
+			"EditorPosition": [
+				3437.17944335938,
+				-102.136756896973
+			],
+			"NextID": -1,
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "The End!"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "FFj1tIM19H",
+			"EditorPosition": [
+				2160.0,
+				-688.376098632812
+			],
+			"NextID": -1,
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Result Of Choice 1-1"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeComment",
+			"ID": "gsItkGsJu6",
+			"EditorPosition": [
+				1125.40393066406,
+				-434.562927246094
+			],
+			"NextID": -1,
+			"Comment": "This option -> option chaining should create a EMPTY_RENDER node between them to string additional options on without sending any text."
+		},
+		{
+			"$type": "NodeChoice",
+			"ID": "FNz3I2i0CY",
+			"EditorPosition": [
+				1026.31286621094,
+				-145.18669128418
+			],
+			"NextID": "U3G4i7hmC9",
+			"OptionsID": [
+				"qtX55Cal3q",
+				"m56S3Vpva2",
+				"dGfjRIuqUO",
+				"RKRsZN0vX2",
+				"1Rs9lCqQM9"
+			]
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "qtX55Cal3q",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "U3G4i7hmC9",
+			"Option": {
+				"English": "Option 1"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "m56S3Vpva2",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "E1c2jOcjAN",
+			"Option": {
+				"English": "Option 2"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "dGfjRIuqUO",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "ZHGKP1xFCi",
+			"Option": {
+				"English": "Option 3"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "RKRsZN0vX2",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": -1,
+			"Option": {
+				"English": "Termination Option"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "1Rs9lCqQM9",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "1jSbTrI0c3",
+			"Option": {
+				"English": "Back To Root!"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		}
+	],
+	"Characters": [
+		{
+			"ID": "SmeHMmNjr1",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0
+		},
+		{
+			"ID": "cwkCforwMf",
+			"Protected": false,
+			"Character": {
+				"Name": "A"
+			},
+			"EditorIndex": 1
+		},
+		{
+			"ID": "PK64cdTd1E",
+			"Protected": false,
+			"Character": {
+				"Name": "B"
+			},
+			"EditorIndex": 2
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}

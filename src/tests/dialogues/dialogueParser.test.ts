@@ -1,0 +1,132 @@
+import parseDialogue, { MonoData } from "@/core/dialogue/dialogueParser";
+//import parseDialogue, {MonoData} from "@/core/dialogue/exampleParser";
+import {describe, it, expect} from "vitest";
+import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
+
+import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
+
+function evalDialogueNodeNext(node: DialogueNode | (() => DialogueNode) | undefined) {
+    if (typeof node == "function") {
+        return node()
+    } else {
+        return node;
+    }
+}
+
+export function extractAllDialogueNodes(root: DialogueNode): DialogueNode[] {
+  const visited = new Set<DialogueNode>();
+  const acc: DialogueNode[] = [];
+
+  const rec = (current: DialogueNode | undefined) => {
+    if (!current || visited.has(current)) return;
+    visited.add(current);
+    acc.push(current);
+
+    if (current.next) rec(evalDialogueNodeNext(current.next));
+    current.options.forEach(option => rec(option.next && evalDialogueNodeNext(option.next)));
+  };
+
+  rec(root);
+  return acc;
+}
+
+import dia_basic_raw from "./basic.json";
+import dia_chain_raw from "./chain.json";
+import dia_branching_raw from "./branching.json"
+
+
+const C1 = "CHAR1";
+const C2 = "CHAR2";
+
+// Has no protection against loopbacks, stack overflow/timeout will fail the test anyeays lol
+function findEndOfDialogueTree (current: DialogueNode) {
+    if (current.next) return findEndOfDialogueTree(evalDialogueNodeNext(current.next)!);
+    // always select first option out of laziness.
+    if(current.options[0]?.next) return findEndOfDialogueTree(evalDialogueNodeNext(current.options[0].next)!)
+    return current;
+}
+
+describe("Very basic dialogue tree", () => {
+    const parsedRoot = parseDialogue(dia_basic_raw as MonoData); // should typecheck at compile time also.
+    it("parseDialogue returns a DialogueNode containing the correct text and speaker", () => {
+        expect(parsedRoot.render).toBe("This is the root node, spoken by CHAR1");
+        expect(parsedRoot.name).toBe(C1);
+    });
+
+    it("returned root's next points to the correct node, and that node is intialized", () => {
+        expect(evalDialogueNodeNext(parsedRoot.next)).toBeDefined();
+        const next = evalDialogueNodeNext(parsedRoot.next);
+        if (!next) return;
+        expect(next.render).toBe("Second Node Text, Spoken By CHAR2");
+        expect(next.name).toBe(C2);
+    });
+})
+
+describe("Parser traverses simple chain of dialogue nodes, correctly orders and appends each", () => {
+        const parsedRoot = parseDialogue(dia_chain_raw as MonoData);
+        const nodes = extractAllDialogueNodes(parsedRoot);
+
+        it("We can follow this dialogue tree to the end node", () => {
+            const tail = findEndOfDialogueTree(parsedRoot);
+            expect(tail.name).toBe(C2);
+            expect(tail.render).toBe("End Node");
+        });
+
+        it("Dialogue tree contains all the nodes we expect", () => {
+            expect(nodes).toEqual(expect.arrayContaining([
+                expect.objectContaining({ name: C1, render: "Root Node" }),
+                expect.objectContaining({ name: C1, render: "Second Node" }),
+                expect.objectContaining({ name: C1, render: "Third Node" }),
+                expect.objectContaining({ name: C2, render: "End Node" }),
+            ]))
+        })
+
+        it("Dialogue tree does not include inaccessible nodes", () => {
+            expect(nodes).not.toEqual(expect.arrayContaining([
+                expect.objectContaining({render: "YOU SHOULD NOT SEE THIS NODE" }),
+            ]));
+        })
+
+});
+
+
+describe("Handle branching dialogue", () => {
+    const parsedRoot = parseDialogue(dia_branching_raw as MonoData);
+    const nodes = extractAllDialogueNodes(parsedRoot);
+
+    it("follows a basic connection to a sentence", () => {
+        const next = evalDialogueNodeNext(parsedRoot.options[1].next);
+        expect(next).toBeTruthy();
+    })
+
+    it("Check that we contain some of the expected nodes", () => {
+        expect(nodes).toEqual(expect.arrayContaining([
+            expect.objectContaining({ name: "A", render: "Root" }),
+            expect.objectContaining({ name: "A", render: "Blah blah blah" }),
+            expect.objectContaining({ name: "A", render: "The End!" }),
+            expect.objectContaining({ name: "B", render: "Result Of Choice 1-1" }),
+        ]))
+    });
+
+    it("Root has 5 options", () => {
+        expect(parsedRoot.options.length).toBe(5);
+    });
+
+    it("Chain of options using EMPTY_RENDER (root option 1 -> option 1 again)", () => {
+        const next = evalDialogueNodeNext(parsedRoot.options[0].next);
+        expect(next).toBeTruthy();
+        expect(next?.render).toBe(EMPTY_RENDER);
+        expect(next?.options.length).toBe(2);
+        const followup = evalDialogueNodeNext(next?.options[0].next);
+        expect(followup?.render).toBe("Result Of Choice 1-1");
+    });
+
+    it("Termination options go nowhere", () => {
+        expect(parsedRoot.options[3]).toBeDefined();
+        expect(parsedRoot.options[3].next).toBeUndefined();
+    })
+
+    it("Loopbacks work", () => {
+        expect(parsedRoot.options[4]?.next).toBe(parsedRoot);
+    })
+})

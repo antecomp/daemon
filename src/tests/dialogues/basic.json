@@ -1,0 +1,84 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "Q2OxPjaFAh",
+	"ListNodes": [
+		{
+			"$type": "NodeSentence",
+			"ID": "vlyJoWUuye",
+			"EditorPosition": [
+				395.297454833984,
+				1.05725228786469
+			],
+			"NextID": "eQ0jEwDTOr",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "This is the root node, spoken by CHAR1"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "eQ0jEwDTOr",
+			"EditorPosition": [
+				969.347412109375,
+				19.6848888397217
+			],
+			"NextID": -1,
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Second Node Text, Spoken By CHAR2"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeRoot",
+			"ID": "Q2OxPjaFAh",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "vlyJoWUuye"
+		}
+	],
+	"Characters": [
+		{
+			"ID": "92Q2ePMg57",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0
+		},
+		{
+			"ID": "y6i5GacqzV",
+			"Protected": false,
+			"Character": {
+				"Name": "CHAR1",
+				"Nicknames": "The FIrst Test Character",
+				"DisplayName": "First Character Display Name",
+				"Portraits": [],
+				"Description": "",
+				"DefaultPortrait": "ZGTCG"
+			},
+			"EditorIndex": 1
+		},
+		{
+			"ID": "fUa5XS97Cw",
+			"Protected": false,
+			"Character": {
+				"Name": "CHAR2"
+			},
+			"EditorIndex": 2
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}

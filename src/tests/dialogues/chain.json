@@ -1,0 +1,130 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "NUfgEN56cY",
+	"ListNodes": [
+		{
+			"$type": "NodeRoot",
+			"ID": "NUfgEN56cY",
+			"EditorPosition": [
+				-319.082092285156,
+				-250.438232421875
+			],
+			"NextID": "CUwL5KWsxy"
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "gDs8X1vGBB",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "vbX43L7vsc",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Second Node"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "CUwL5KWsxy",
+			"EditorPosition": [
+				100.082626342773,
+				-242.14875793457
+			],
+			"NextID": "gDs8X1vGBB",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Root Node"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "vbX43L7vsc",
+			"EditorPosition": [
+				1316.33337402344,
+				-271.833343505859
+			],
+			"NextID": "dsHVcS7luA",
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Third Node"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "dsHVcS7luA",
+			"EditorPosition": [
+				1875.0,
+				-243.666656494141
+			],
+			"NextID": -1,
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "End Node"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "UdH9k1nKTN",
+			"EditorPosition": [
+				315.333251953125,
+				44.6666679382324
+			],
+			"NextID": -1,
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "YOU SHOULD NOT SEE THIS NODE"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		}
+	],
+	"Characters": [
+		{
+			"ID": "komMYN3pZX",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0
+		},
+		{
+			"ID": "DYSA0DqRSn",
+			"Protected": false,
+			"Character": {
+				"Name": "CHAR1"
+			},
+			"EditorIndex": 1
+		},
+		{
+			"ID": "ZLiVFw7umO",
+			"Protected": false,
+			"Character": {
+				"Name": "CHAR2"
+			},
+			"EditorIndex": 2
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}
