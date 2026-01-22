@@ -103,10 +103,12 @@ export default function parseDialogue(rawDialogue: MonoData): DialogueNode {
             }
             case "NodeOption": {
                 const text = node.Option.English;
-                // TODO: Come up with syntax (i.e split on | to denote full/summary in editor.)
+                const splitIndex = text.indexOf("|");
+                const summaryText = splitIndex === -1 ? text : text.slice(0, splitIndex);
+                const fullText = splitIndex === -1 ? text : text.slice(splitIndex + 1);
                 options[node.ID] = {
-                    fullText: text,
-                    summaryText: text
+                    fullText,
+                    summaryText
                 };
                 break;
             }

@@ -33,7 +33,7 @@ export function extractAllDialogueNodes(root: DialogueNode): DialogueNode[] {
 import dia_basic_raw from "./basic.json";
 import dia_chain_raw from "./chain.json";
 import dia_branching_raw from "./branching.json"
-
+import dia_fullsum_raw from './fullsumtext.json';
 
 const C1 = "CHAR1";
 const C2 = "CHAR2";
@@ -271,3 +271,18 @@ describe("NodeAction side effects", () => {
     expect(anotherac).toHaveBeenCalledWith(true);
   });
 });
+
+describe("Summary Text and Full Text of option split on '|' ", () => {
+    const parsedRoot = parseDialogue(dia_fullsum_raw as MonoData);
+    //const nodes = extractAllDialogueNodes(parsedRoot);
+
+    it("Splits on |", () => {
+        const options = parsedRoot.options;
+        expect(options.length).toBe(2);
+        expect(options[0].summaryText).toBe('Summary');
+        expect(options[0].fullText).toBe('Full');
+        expect(options[1].summaryText).toBe('Summary2');
+        expect(options[1].fullText).toBe('Full2');
+    })
+
+})

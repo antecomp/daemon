@@ -1,0 +1,121 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "YcoVnpt8pt",
+	"ListNodes": [
+		{
+			"$type": "NodeRoot",
+			"ID": "YcoVnpt8pt",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "r4T1bfJc8V"
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "r4T1bfJc8V",
+			"EditorPosition": [
+				459.166656494141,
+				-98.3333435058594
+			],
+			"NextID": "lkQrDphYUa",
+			"Speaker": 0.0,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Question"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeChoice",
+			"ID": "lkQrDphYUa",
+			"EditorPosition": [
+				1073.60388183594,
+				-332.290069580078
+			],
+			"NextID": "Hup0VOCmQh",
+			"OptionsID": [
+				"U5QDxbClTQ",
+				"FBPMiMblKN"
+			]
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "U5QDxbClTQ",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "Hup0VOCmQh",
+			"Option": {
+				"English": "Summary|Full"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeOption",
+			"ID": "FBPMiMblKN",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "KwCdjrjKTd",
+			"Option": {
+				"English": "Summary2|Full2"
+			},
+			"EnableByDefault": true,
+			"OneShot": false
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "Hup0VOCmQh",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": -1,
+			"Speaker": 0,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Resp 1"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "KwCdjrjKTd",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": -1,
+			"Speaker": 0,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Resp 2"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		}
+	],
+	"Characters": [
+		{
+			"ID": "L3TN7Tssn2",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0.0
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}

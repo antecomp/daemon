@@ -1,0 +1,54 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "AVFW2HYr5l",
+	"ListNodes": [
+		{
+			"$type": "NodeRoot",
+			"ID": "AVFW2HYr5l",
+			"EditorPosition": [
+				-214.124710083008,
+				62.6095657348633
+			],
+			"NextID": "BDcjo3Bvbb"
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "BDcjo3Bvbb",
+			"EditorPosition": [
+				212.031051635742,
+				-97.3027725219727
+			],
+			"NextID": -1,
+			"Speaker": 1,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "We will always have a root like this"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		}
+	],
+	"Characters": [
+		{
+			"ID": "TlT1lT63bn",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0
+		},
+		{
+			"ID": "QOvbgZJdVk",
+			"Protected": false,
+			"Character": {
+				"Name": "Omni"
+			},
+			"EditorIndex": 1
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}
