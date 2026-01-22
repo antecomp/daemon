@@ -21,19 +21,19 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
     // Summary Text, Text That Is Sent In Dialogue.
     ["Say Nothing", "..."],
     // Response
-    ["His smirk fades as quickly as it appeared", VISUALIZER]
+    ["His smirk fades as quickly as it appeared.", VISUALIZER]
 )
 .addCarBranch(
-    ["Tell him off", "None of your fucking business"],
+    ["Tell him off", "None of your fucking business."],
     "Like hell it isn't my business, I'm here to make sure you don't snitch right off the link.",
     // Build a small sub-tree off the response.
     r => r.chain(
-        "I got what I needed from that response though", 
+        "I got what I needed from that response though-", 
         "Hold on to that angst kid, it'll keep you going."
     )
 )
 .joinBranches( // Collapse all current branches to a single node. (tail of each branch will point back here)
-    "Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers"
+    "Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers."
 )
 .then("I hand off the mod, then you're on your own. Understand?")
 .addCarBranch(
@@ -50,7 +50,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
             "I'm not threatening you, just some... terms and conditions.",
             "Right. Moving on."
         )
-        .then("He smirks, though it's hard to tell if it's out of amusement or annoyance", VISUALIZER)
+        .then("He smirks, though it's hard to tell if it's out of amusement or annoyance.", VISUALIZER)
         .then("Moving on...", MAN)
         .chain(
             "What you're getting isn't a patch or plug-in, it's a permanent bypass.",
@@ -100,7 +100,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
 .joinBranches("So... when you slot it, you're exposed. That clear?")
 .addCarBranch(
     ['Ask a technical question', 'Is it disabling my DV entirely? Sounds suicidal.'],
-    ["He raises an eyebrow, slightly, a hint that you've said something outside his usual script", VISUALIZER],
+    ["He raises an eyebrow, slightly, a hint that you've said something outside his usual script.", VISUALIZER],
     disable => disable
         .t("No. Not entirely. We're not trying to kill you.", MAN)
         .t("Even if you're paying us \"getting killed\" rates.")
@@ -139,7 +139,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
         .then("Yeah, one more thing...", MAN)
 )
 .addCarBranch( // Add another branch that skips over the above subtree.
-    ['No', 'No really.'],
+    ['No', 'Not really.'],
     "Look, if you don't know what the hell the mod is doing, I can't help you.",
     nb => nb
         .chain(

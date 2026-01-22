@@ -20,7 +20,7 @@ export default function Bridge() {
 
     createEffect(() => {
         if (navController.state().tile == '12,4') {
-            alert('Trigger')
+            console.log('Trigger');
         }
     })
 

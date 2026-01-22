@@ -4,7 +4,7 @@ const openingTextScene: TextOverlaySequence = [
     ["This is it..."],
     ["The Hidden Gem"],
     ["It almost looks touristy and the name feels ironic."],
-    ["But I have heard this place is more than meets the eye."],
+    ["But I have heard this bar is more than meets the eye."],
     ["That..."],
     ["There is something here that is important to \"our\" ", ["Nullspace", "red"], "."],
     ["There is a secret that the patrons share with each other."],
