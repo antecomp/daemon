@@ -123,23 +123,36 @@ export default function createColorTypewriter(
     }
   };
 
-  const display = (): JSX.Element => {
+  const renderSegments = (withLineBreaks: boolean): JSX.Element => {
     let remaining = totCharsShown();
-    return (
-      <>
-        {segments().map((s) => {
-          const take = Math.max(0, Math.min(remaining, s.text.length));
-          remaining -= take;
-          const text = take > 0 ? s.text.slice(0, take) : "";
-          return (
-            <span style={{ color: s.color ?? undefined }}>
-              {text}
-            </span>
-          );
-        })}
-      </>
-    );
+    const nodes: JSX.Element[] = [];
+
+    segments().forEach((s) => {
+      const take = Math.max(0, Math.min(remaining, s.text.length));
+      remaining -= take;
+      const text = take > 0 ? s.text.slice(0, take) : "";
+
+      if (!withLineBreaks) {
+        nodes.push(<span style={{ color: s.color ?? undefined }}>{text}</span>);
+        return;
+      }
+
+      const parts = text.split("\n");
+      parts.forEach((part, index) => {
+        if (part) {
+          nodes.push(<span style={{ color: s.color ?? undefined }}>{part}</span>);
+        }
+        if (index < parts.length - 1) {
+          nodes.push(<br />);
+        }
+      });
+    });
+
+    return <>{nodes}</>;
   };
 
-  return { display, skipTypingAnimation, isFinished };
+  const display = (): JSX.Element => renderSegments(false);
+  const displayWithLineBreaks = (): JSX.Element => renderSegments(true);
+
+  return { display, displayWithLineBreaks, skipTypingAnimation, isFinished };
 }

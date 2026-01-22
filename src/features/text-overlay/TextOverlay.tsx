@@ -31,7 +31,7 @@ export default function TextScene(props: {
             ? currentLine.segments
             : currentLine
     }
-    const {display, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineSegs);
+    const {displayWithLineBreaks, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineSegs);
 
     let textElement!: HTMLParagraphElement // ref used to apply fade anim.
 
@@ -98,7 +98,7 @@ export default function TextScene(props: {
                     "pointer-events": "none" // allowing clicking through text to trigger handleClick.
                 }}
             >
-                {display()}
+                {displayWithLineBreaks()}
             </p>
         </div>
     )
