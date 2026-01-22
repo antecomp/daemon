@@ -1,0 +1,112 @@
+{
+	"EditorVersion": "3.0.0-dev2",
+	"RootNodeID": "Nb63gASr03",
+	"ListNodes": [
+		{
+			"$type": "NodeRoot",
+			"ID": "Nb63gASr03",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "e4mfJh3gxH"
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "e4mfJh3gxH",
+			"EditorPosition": [
+				390.0,
+				-151.109176635742
+			],
+			"NextID": "aHGsmpDvf0",
+			"Speaker": 1.0,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "I eat worms"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeSentence",
+			"ID": "ZfZ7m5RC7q",
+			"EditorPosition": [
+				0.0,
+				0.0
+			],
+			"NextID": "391fyYlITk",
+			"Speaker": 2,
+			"DisplayName": "",
+			"Sentence": {
+				"English": "Piss"
+			},
+			"Voiceline": {
+				"English": ""
+			}
+		},
+		{
+			"$type": "NodeAction",
+			"ID": "aHGsmpDvf0",
+			"EditorPosition": [
+				930.0,
+				-271.138366699219
+			],
+			"NextID": "ZfZ7m5RC7q",
+			"Action": "aaaa",
+			"Arguments": [
+				{
+					"Name": "",
+					"Type": "Integer",
+					"Value": 3
+				},
+				{
+					"Name": "",
+					"Type": "String",
+					"Value": "something"
+				}
+			]
+		},
+		{
+			"$type": "NodeAction",
+			"ID": "391fyYlITk",
+			"EditorPosition": [
+				1839.03698730469,
+				-241.13835144043
+			],
+			"NextID": -1,
+			"Action": "argless",
+			"Arguments": []
+		}
+	],
+	"Characters": [
+		{
+			"ID": "3GjziiyBCh",
+			"Protected": true,
+			"Character": {
+				"Name": "_NARRATOR"
+			},
+			"EditorIndex": 0.0
+		},
+		{
+			"ID": "D4GaB22qTN",
+			"Protected": false,
+			"Character": {
+				"Name": "Arda"
+			},
+			"EditorIndex": 1.0
+		},
+		{
+			"ID": "xnbvxmBtXI",
+			"Protected": false,
+			"Character": {
+				"Name": "The Man"
+			},
+			"EditorIndex": 2.0
+		}
+	],
+	"Variables": [],
+	"Languages": [
+		"English"
+	]
+}

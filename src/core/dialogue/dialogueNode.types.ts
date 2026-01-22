@@ -10,7 +10,7 @@ export interface DialogueOption extends DialogueOptionConfig {
 export interface DialogueContext {
     flags?: Record<string, string | boolean | number>
     signals?: Record<string, Accessor<any>>
-    actions?: Record<string, () => void>
+    actions?: Record<string, (...args: Array<string | boolean | number>) => void>
 }
 
 export interface DialogueOptionConfig {

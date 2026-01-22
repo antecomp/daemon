@@ -40,6 +40,29 @@ type NodeComment = {
     ID: string,
 }
 
+type NodeAction = {
+    '$type': 'NodeAction',
+    ID: string,
+    NextID: string | -1,
+    Action: string, // Look up action by this name in some seperatly-passed table? Ergo, utilize CTX.
+    Arguments: ( // Might be lazy and collapse these types down, we'll see if the strict types here provide any advantage.
+        {
+            Name?: string,
+            Type: "Integer",
+            Value: number
+        } |
+        {
+            Name?: string,
+            Type: "String",
+            Value: string,
+        } | {
+            Name?: string,
+            Type: 'Boolean',
+            Value: boolean
+        }
+    )[]
+}
+
 
 export type MonoData = {
     RootNodeID: string,
@@ -49,8 +72,10 @@ export type MonoData = {
             Name: string
         }
     }[]
-    ListNodes: (NodeSentence | NodeRoot | NodeChoice | NodeOption | NodeComment)[]
+    ListNodes: (NodeSentence | NodeRoot | NodeChoice | NodeOption | NodeComment | NodeAction)[]
 };
+
+
 
 export default function parseDialogue(rawDialogue: MonoData): DialogueNode {
     const nodes = rawDialogue.ListNodes;
