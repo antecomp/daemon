@@ -42,7 +42,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
         r => r
             .chain(
                 "I'll know it's you if Asuracom comes knocking on my door.",
-                "My team works on homebrewed DVs daily, we can just as easily bypass an existing one."
+                "Don't think my team can't just as easily break your VI-LINK."
             )
             .chainAlt(
                 ARDA, MAN,
@@ -63,13 +63,13 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
         r => r
             .questionLoop(
                 'Any other questions?',
-                'Alright, enough questions, I have other things to do today kid.',
+                'Alright, enough questions, I have other things to do today, kid.',
                 ['No more questions', 'No more questions'],
                 [
                     {
                         id: "caught",
                         option: ['Caught', "What if I get caught with this thing?"],
-                        answer: "You never check the feeds kid? Or is this your idea of a joke?",
+                        answer: "You never check the feeds? Or is this your idea of a joke?",
                         builder: r => r
                             .chain(
                                 "Asuracom has an agreement with every country they serve.",
@@ -105,6 +105,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
             .t("No. Not entirely. We're not trying to kill you.", MAN)
             .t("Even if you're paying us \"getting killed\" rates.")
             .t("He shifts in his seat.", VISUALIZER)
+            // Keep abbreviation here? I think its close enough to the daemonveil question to make the acronym clear?
             .t("It forces your DV into manual, just like how Agents have it.", MAN)
             .chain(
                 "The safety net's still there, but it's last-ditch stuff.",
@@ -126,7 +127,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
     .addCarBranch(
         'Yes',
         "I would envy your confidence if I didn't know it will get you killed.",
-        r => r.t("Remember, your DV will have to be manually controlled. Don't get too comfortable.")
+        r => r.t("Remember, your daemonveil will have to be manually controlled. Don't get too comfortable.")
     )
     .mergeBranches( // Combine the first two branches onto a subtree we quickly build. This subtree will become a new merged branch tail.
         [EMPTY_RENDER, EMPTY_RENDER], // Hinge point to force player to pick a single available text option.
@@ -136,7 +137,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
                 ["No documentation for manual mode, at least anything public.", ARDA],
             )
             .then("This mod come with a guide?")
-            .then("He snorts", VISUALIZER)
+            .then("He snorts.", VISUALIZER)
             .then("You have to learn how to select sigils, and thread runes, on your own.", MAN)
             .then("If you aren't quick on the pickup, you aren't meant for the Fringe.")
             .then("His tone shifts.", VISUALIZER)
@@ -144,7 +145,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
             .chain("Try to build something that counteracts it.", "Closest thing I got to a guide.")
             .then("Got it. Anything else I should know?", ARDA)
             .then("He exhales slowly, as if the question is an inconvenience.", VISUALIZER)
-            .then("Yeah, one more thing...", MAN)
+            .then("Yeah, one more thing...", MAN) // Will pick up at "cache encrypted" line
     )
     .addCarBranch( // Add another branch that skips over the above subtree.
         ['No', 'Not really.'],
