@@ -2,7 +2,7 @@ uniform float time;
 uniform sampler2D map;   // <- GLTF base color map
 varying vec2 vUv;
 
-// Simple 2D hash
+// Simple 2D noise sample hash
 float hash(vec2 p) {
     p = fract(p * vec2(123.34, 456.21));
     p += dot(p, p + 45.32);
@@ -10,6 +10,7 @@ float hash(vec2 p) {
 }
 
 // Value noise: bilinear interpolation of 4 corner hashes
+// gives you a nice soft noise texture where each grid cell smoothly blends into the next.
 float valueNoise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
@@ -25,6 +26,7 @@ float valueNoise(vec2 p) {
                mix(c, d, u.x), u.y);
 }
 
+// This is “fractal Brownian motion”: multiple layers (octaves) of noise at different frequencies and amplitudes.
 float fbm(vec2 p) {
     float sum = 0.0;
     float amp = 0.5;
@@ -49,22 +51,25 @@ float tri(float x, float center, float width) {
 void main() {
     vec2 uv = vUv;
 
-    // --- noise / shimmer section (same as before) ---
-
+    
+    // Scale UV to make stretched bands.
     vec2 riverUV = vec2(
         uv.x * 32.0,
         uv.y * 14.0
     );
 
+    // Shift UVs to move sampled noise over time.
     vec2 uv1 = riverUV + vec2( time * 0.30,  time * 0.07);
     vec2 uv2 = riverUV + vec2(-time * 0.18, -time * 0.11);
 
-    float base = fbm(uv1) * 0.6 + fbm(uv2) * 0.4;
+    // Create two noise textures we will mix together.
+    float base = fbm(uv1) * 0.4 + fbm(uv2) * 0.4;
     float fine = valueNoise(riverUV * 6.0 + vec2(time * 0.6, -time * 0.4));
 
     float n = mix(base, fine, 0.4);
     n = clamp(n, 0.0, 1.0);
 
+    // Make clamped bumps of colour.
     float p1 = tri(n, 0.20, 0.10);
     float p2 = tri(n, 0.48, 0.18);
     float p3 = tri(n, 0.78, 0.16);
@@ -79,7 +84,7 @@ void main() {
 
     vec4 baseColor = texture2D(map, vUv);
 
-    // Option A: shimmer as brightness multiplier
+    // shimmer as brightness multiplier
     // Keeps color hue from the texture, but modulates value.
     float minMul = 0.1;   // darkest multiplier
     float maxMul = 2.5;   // brightest multiplier

@@ -21,7 +21,7 @@ export default function Bridge() {
 
     let riverRef!: GltfModel
 
-    onMount(() => useDGShader(() => sceneRef));
+    useDGShader(() => sceneRef);
 
     createEffect(() => {
         if (navController.state().tile == '12,4') {
