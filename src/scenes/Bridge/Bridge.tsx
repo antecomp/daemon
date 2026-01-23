@@ -1,5 +1,5 @@
 import { GltfModel, Motor, Scene } from "lume";
-import { createEffect, onMount } from "solid-js";
+import { createEffect, createSignal, onMount } from "solid-js";
 // import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 //import Freecam from "@/3d/camera/Freecam";
@@ -15,17 +15,27 @@ import river from './assets/river.glb'
 import { ShaderMaterial } from "three";
 import river_shader from './assets/river.glsl';
 import passthrough_vert from  '@/3d/shaders/post-processing/pass.vert.glsl'
+import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 export default function Bridge() {
     let sceneRef!: Scene;
 
     let riverRef!: GltfModel
 
+    const [hasCrossedBridge, setHasCrossedBridge] = createSignal(false);
+
     useDGShader(() => sceneRef);
 
     createEffect(() => {
-        if (navController.state().tile == '12,4') {
-            console.log('Trigger');
+        // Crossing the bridge.
+        if (navController.state().tile == '15,4') {
+            if(!hasCrossedBridge()) {
+                setHasCrossedBridge(true);
+                addLogMessage("The air suddenly feels much heavier.");
+            }
+        }
+        if(navController.state().tile == '14,4' && hasCrossedBridge()) {
+            addLogMessage("No turning back now.", "teal");
         }
     });
 

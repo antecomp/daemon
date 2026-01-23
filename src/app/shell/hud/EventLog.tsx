@@ -13,7 +13,9 @@ const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, c
  * @param msg Message to append
  */
 export const addLogMessage = (text: string, color = "#aaa") => {
-    // Use date to force uniqueness.
+    // Use date to force uniqueness. 
+    // TODO: do I need IDs instead of switching to Index over For?
+    // TODO: Enforce uniqueness (perhaps on an optional timeout before allowing repeat of same message?) before messages can spammed - simplifies messages caused by a trigger event.
     setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text, color }]);
 };
 
