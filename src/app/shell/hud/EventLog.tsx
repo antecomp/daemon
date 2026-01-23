@@ -8,15 +8,23 @@ import { LOGIN_MESSAGE } from "@/config/init.config";
 const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([
     {id: 0, text: LOGIN_MESSAGE, color: '#cfb886ff'}
 ]);
+const recentMessages = new Map<string, number>();
 /**
  * Append a message to the "EventLog" which is the small text box at the bottom of the screen.
  * @param msg Message to append
  */
-export const addLogMessage = (text: string, color = "#aaa") => {
-    // Use date to force uniqueness. 
-    // TODO: do I need IDs instead of switching to Index over For?
-    // TODO: Enforce uniqueness (perhaps on an optional timeout before allowing repeat of same message?) before messages can spammed - simplifies messages caused by a trigger event.
-    setLogMessages((prev) => [...prev.slice(-15), { id: Date.now(), text, color }]);
+export const addLogMessage = (text: string, color = "#aaa", options?: { dedupeMs?: number }) => {
+    const dedupeMs = options?.dedupeMs ?? 1000;
+    if (dedupeMs > 0) {
+        const now = performance.now();
+        const key = `${text}\x00${color}`;
+        const last = recentMessages.get(key);
+        if (last !== undefined && now - last < dedupeMs) {
+            return;
+        }
+        recentMessages.set(key, now);
+    }
+    setLogMessages((prev) => [...prev.slice(-15), { id: performance.now(), text, color }]);
 };
 
 export default function EventLog() {
