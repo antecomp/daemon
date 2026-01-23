@@ -2,7 +2,7 @@ import { Element3D, ObjModel } from "lume";
 
 
 /** Recursively enables shadows (including self-shadowing) on all subcomponents of model. Can be used to add shadows to a map component. */
-export default function applyShadows(ref: Element3D | ObjModel) {
+export default function applyShadows(ref: Element3D | ObjModel, cast?: boolean, receive?: boolean) {
 
     // Cursed but functional alternative (keepin just in case).
     // if(ref.three.children.length == 0) {
@@ -25,8 +25,8 @@ export default function applyShadows(ref: Element3D | ObjModel) {
         ref.three.traverse(n => {
             //@ts-ignore // (property does exist but it's not typed in)
             if(!n.isMesh) return;
-            n.castShadow = true;
-            n.receiveShadow = true;
+            n.castShadow = cast === undefined ? true : cast;
+            n.receiveShadow = receive === undefined ? true : receive;
         });
     })
 
