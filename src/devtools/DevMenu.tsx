@@ -49,6 +49,7 @@ import Inventory from "@/core/inventory/inventory";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import spawnPopup from "@/app/shell/popup/Popup";
+import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 
 export default function DevMenu() {
 
@@ -102,9 +103,9 @@ export default function DevMenu() {
             <button onClick={() => pushUILayer({
                 id: 'test-puzzle',
                 blockBehind: true,
-                style: {display: 'flex', 'justify-content': 'center', 'align-items': 'center'},
+                style: {display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px"},
                 component: () => <EnochPuzzle
-                    target="GARDEN"
+                    target="ATHENA"
                     onCorrect={() => popUILayer('test-puzzle')}
                     onFail={() => popUILayer('test-puzzle')}
                 />

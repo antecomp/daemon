@@ -7,6 +7,9 @@ import guess_btn from './assets/decrypt button.png'
 import atb_o from './assets/atb_open.png'
 import atb_f from './assets/atb_filled.png'
 import atb_label from './assets/atb_label.png';
+import tutorial_button from './assets/tut_button.png';
+import tutorial_dia from './assets/tut_dia.png';
+import spawnPopup from "@/app/shell/popup/Popup";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
@@ -78,6 +81,23 @@ function createInitialColumns(length: number): ColumnState[] {
 function isColumnCorrect(column: ColumnState): boolean {
   return column.hints[column.guess] === RowHint.CORRECT;
 }
+
+const spawnHelp = () =>
+  spawnPopup(
+    <div
+      class="enoch-tutorial-content"
+    >
+      <img src={tutorial_dia}/>
+      <ul>
+        <li>Your goal is to guess and run "DECRYPT" on the correct 6-letter keyword. The keyword will always be a real word or name, but your intermediate guesses can be anything.</li>
+        <li>Tune the dials on the left to change the keyphrase attempt on the right. Upon hitting decrypt, correct letters will be highlighted in green, and incorrect dial positions will be denoted by red arrows.</li>
+        <li>The arrows indicate if the correct dial position should be higher or lower than the guess you just submitted. Refine your guess using that information and try again.</li>
+        <li>You have 6 decryption attempts to get the entire keyword correct.</li>
+      </ul>
+    </div>,
+    undefined,
+    "DECRYPT HELP"
+  )
 
 function EnochColumn(props:
   {
@@ -206,6 +226,7 @@ export default function EnochPuzzle(props: { target: string, onCorrect: () => vo
         </div>
       </div>
       <img class="guess-button" src={guess_btn} onClick={commitGuess} />
+      <img class="tutorial-button" src={tutorial_button} onClick={spawnHelp} />
     </div>
   );
 }

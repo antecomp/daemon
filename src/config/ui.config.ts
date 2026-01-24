@@ -9,6 +9,8 @@ export const SCENE_DIMENSIONS = {
 * */
 export const SIDEBAR_WIDTH = 45;
 
+export const BOTTOMBAR_HEIGHT = 81;
+
 /** Inset of the scene context menu (from cursor position) */
 export const SCENE_MENU_OFFSET = 26;
 

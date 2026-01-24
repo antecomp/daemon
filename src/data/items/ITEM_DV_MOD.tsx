@@ -11,6 +11,7 @@ import { JSX } from "solid-js";
 import decrypt_textscene from '@/scenes/TheGem/data/decrypt_textscene.ts'
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import controls_dia from '@/assets/misc/controls dia.png';
+import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 
 const PUZZLE_ID = 'dv-mod-puzzle';
 
@@ -61,19 +62,19 @@ const ITEM_DV_MOD: Item = {
                     action() {
                         popUILayer(PUZZLE_ID);
                         playTextOverlay(decrypt_textscene).finally(() => spawnPopup((
-                        <div 
-                            style={{ 
-                                'padding': '20px', 
-                                'display': 'flex', 
-                                'gap': '10px', 
-                                'width': '450px', 
-                                'justify-content': 'center', 
-                                'align-items': 'center' 
-                            }}
-                        >
-                            <img src={controls_dia} />
-                            <p style={{ 'transform': 'perspective(0px)' }}>Cardinal Controls Now Available.</p>
-                        </div>), undefined, "NOTE"))
+                            <div
+                                style={{
+                                    'padding': '20px',
+                                    'display': 'flex',
+                                    'gap': '10px',
+                                    'width': '450px',
+                                    'justify-content': 'center',
+                                    'align-items': 'center',
+                                }}
+                            >
+                                <img src={controls_dia} />
+                                <p style={{ 'transform': 'perspective(0px)' }}>Cardinal Controls Now Available.</p>
+                            </div>), undefined, "NOTE"))
                     }
                 }]
             )
@@ -82,7 +83,8 @@ const ITEM_DV_MOD: Item = {
             pushUILayer({
                 id: PUZZLE_ID,
                 blockBehind: true,
-                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center' },
+                // TODO: MAKE THIS A COMMON CLASS FOR UI LAYERS WE CAN APPLY TO CENTER CHILDREN.
+                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px" },
                 component: () => <EnochPuzzle
                     target={getPuzzleText()}
                     onCorrect={spawnSuccessPopup}
