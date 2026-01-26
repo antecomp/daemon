@@ -1,6 +1,7 @@
 import { Accessor, Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { Direction, NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
+import { createPayloadEmitter } from "@/shared/utils/emitter";
 import {
     BaseCameraSettings,
     CameraControlSignals,
@@ -11,7 +12,7 @@ import {
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { navCoordToTuple } from "./tilenav.utils";
 
-enum NavAction {
+export enum NavAction {
     StepForward,
     StepBack,
     StrafeLeft,
@@ -19,6 +20,23 @@ enum NavAction {
     TurnLeft,
     TurnRight
 }
+
+export type NavActionEvent =
+    | {
+        type: "move";
+        action: NavAction;
+        origin: NavCoord;
+        originDirection: Direction;
+        target: NavCoord;
+        success: boolean;
+    }
+    | {
+        type: "turn";
+        origin: NavCoord;
+        originDirection: Direction;
+        action: NavAction;
+        targetDirection: Direction;
+    };
 
 export interface NavController {
     state: Accessor<{
@@ -84,6 +102,10 @@ export interface NavController {
  *         - performNavAction(action): execute a navigation action (turn/step/strafe).
  *         - setCurrentTile: Setter<NavCoord> to programmatically set the active tile.
  *
+ *   - listen: (fn: (event: NavActionEvent) => void) => void
+ *       Subscribe to navigation actions (move/turn), receiving a payload with the
+ *       action, intended target (for moves), and whether the move succeeded.
+ *
  * @remarks
  * - Input handling:
  *     - Keyboard mapping (keyToActions): w/s/q/e/a/d -> StepForward/StepBack/StrafeLeft/StrafeRight/TurnLeft/TurnRight.
@@ -109,6 +131,7 @@ export default function createTileNavigator(
     cameraControlSignals: CameraControlSignals,
     cameraController: CameraController
     navController: NavController
+    navListen: (fn: (event: NavActionEvent) => void) => void
 } {
 
     const [navMap, setNavMap] = createStore<NavMap>(initialNM);
@@ -118,6 +141,8 @@ export default function createTileNavigator(
     const [currentDirection, setCurrentDirection] = createSignal<Direction>(navMap.config.spawnDirection);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
     const [baseAnim, setBaseAnim] = createSignal(true);
+
+    const { emit: emitNavAction, listen: listenNavAction } = createPayloadEmitter<NavActionEvent>();
 
     const tileSize = createMemo(() => navMap.config.size / navMap.config.numTiles);
 
@@ -219,20 +244,27 @@ export default function createTileNavigator(
         NavTileMask.EDGE_RIGHT
     ];
 
-    const tryMove = (dirIndex: Direction) => {
-        const tile = currentTile();
-        const current = navMap.tiles[tile];
-
-        // Blocks you moving through edges marked @ current tile.
-        if (!current || (current.edges & dirEdge[dirIndex])) return;
-
+    const targetForDir = (tile: NavCoord, dirIndex: Direction): NavCoord => {
         const [tx, tz] = navCoordToTuple(tile);
         const nx = tx + dirDX[dirIndex];
         const nz = tz + dirDZ[dirIndex];
-        const next = `${nx},${nz}` as NavCoord;
-        const target = navMap.tiles[next];
-        if (!target || !target.active || target.occupied) return;
-        setCurrentTile(next);
+        return `${nx},${nz}` as NavCoord;
+    };
+
+    const canMoveTo = (from: NavCoord, dirIndex: Direction, target: NavCoord) => {
+        const current = navMap.tiles[from];
+        if (!current || (current.edges & dirEdge[dirIndex])) return false;
+        const targetTile = navMap.tiles[target];
+        if (!targetTile || !targetTile.active || targetTile.occupied) return false;
+        return true;
+    };
+
+    const tryMove = (dirIndex: Direction) => {
+        const from = currentTile();
+        const target = targetForDir(from, dirIndex);
+        const success = canMoveTo(from, dirIndex, target);
+        if (success) setCurrentTile(target);
+        return { target, success, from };
     };
 
 
@@ -250,32 +282,55 @@ export default function createTileNavigator(
 
     function performNavAction(action: NavAction) {
 
+        const originDirection = currentDirection();
+        const origin = currentTile();
+
         // using & to modulo with bitmask, equiv to (dir + X) % 4
         switch (action) {
             case NavAction.TurnLeft:
-                setCurrentDirection(dir => (dir + 1) & 3);
-                setCurrentYaw(yaw => yaw + 90);
+                {
+                    const nextDirection = ((currentDirection() + 1) & 3) as Direction;
+                    setCurrentDirection(nextDirection);
+                    setCurrentYaw(yaw => yaw + 90);
+                    emitNavAction({ type: "turn", action, targetDirection: nextDirection, originDirection, origin });
+                }
                 break;
 
             case NavAction.TurnRight:
-                setCurrentDirection(dir => (dir + 3) & 3);
-                setCurrentYaw(yaw => yaw - 90);
+                {
+                    const nextDirection = ((currentDirection() + 3) & 3) as Direction;
+                    setCurrentDirection(nextDirection);
+                    setCurrentYaw(yaw => yaw - 90);
+                    emitNavAction({ type: "turn", action, targetDirection: nextDirection, originDirection, origin });
+                }
                 break;
 
             case NavAction.StepForward:
-                tryMove(currentDirection());
+                {
+                    const { target, success } = tryMove(currentDirection());
+                    emitNavAction({ type: "move", action, target, success, originDirection, origin });
+                }
                 break;
 
             case NavAction.StepBack:
-                tryMove(((currentDirection() + 2) & 3) as Direction);
+                {
+                    const { target, success } = tryMove(((currentDirection() + 2) & 3) as Direction);
+                    emitNavAction({ type: "move", action, target, success, originDirection, origin });
+                }
                 break;
 
             case NavAction.StrafeLeft:
-                tryMove(((currentDirection() + 1) & 3) as Direction);
+                {
+                    const { target, success } = tryMove(((currentDirection() + 1) & 3) as Direction);
+                    emitNavAction({ type: "move", action, target, success, originDirection, origin });
+                }
                 break;
 
             case NavAction.StrafeRight:
-                tryMove(((currentDirection() + 3) & 3) as Direction);
+                {
+                    const { target, success } = tryMove(((currentDirection() + 3) & 3) as Direction);
+                    emitNavAction({ type: "move", action, target, success, originDirection, origin });
+                }
                 break;
         }
     }
@@ -420,7 +475,8 @@ export default function createTileNavigator(
             setCurrentTile,
             navMap,
             setNavMap
-        }
+        },
+        navListen: listenNavAction
     };
 
 

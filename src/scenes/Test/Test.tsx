@@ -13,6 +13,7 @@ import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { playSound } from '@/shared/utils/playSound';
 
 import yeah_sound from './assets/yeah.ogg'
+import bonk_sound from '@/assets/sfx/misc/bonk.mp3';
 import NavCompass from '@/3d/tilenav/NavCompass';
 import { CameraSettings } from '@/3d/camera/camera.types';
 //import attachToConsole from '@/devtools/attachToConsole';
@@ -26,7 +27,7 @@ import attachToConsole from '@/devtools/attachToConsole';
 
 export default function Test() {
 
-    const { cameraControlSignals, cameraController, navController } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef, 'normal');
 
@@ -55,6 +56,10 @@ export default function Test() {
     //attachToConsole(ovrCam, 'OVR');
 
     attachToConsole(viyaCam, 'OVR');
+
+    navListen((e => console.log(e)));
+
+    navListen(e => (e.type == 'move' && !e.success) && playSound(bonk_sound))
 
     return (
         <>
