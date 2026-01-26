@@ -19,7 +19,8 @@ const TEXT_FADE_DURATION = 300;
 export default function TextScene(props: {
     sequence: TextOverlayLine[],
     id?: string
-    onComplete?: () => void
+    onComplete?: () => void,
+    skipFadeIn?: boolean,
 }) {
 
     let containerRef!: HTMLDivElement;
@@ -85,7 +86,7 @@ export default function TextScene(props: {
                 "align-items": "center"
             }}
             ref={containerRef}
-            class="fademein"
+            class={props.skipFadeIn ? "" :"fademein"}
             data-fade-duration="1000" // or remove - defaults to 500ms by current css setup
         >
             <p
@@ -111,7 +112,7 @@ export default function TextScene(props: {
  * once the overlay is dismissed by the player.
  * 
  */
-export function playTextOverlay(sequence: TextOverlayLine[]) {
+export function playTextOverlay(sequence: TextOverlayLine[], skipFadeIn = false) {
     const id = "text-scene" + nanoid();
 
     let resolveEnd: (() => void);
@@ -121,7 +122,7 @@ export function playTextOverlay(sequence: TextOverlayLine[]) {
 
     pushUILayer({
         id, 
-        component: () => TextScene({sequence, id, onComplete: resolveEnd}),
+        component: () => TextScene({sequence, id, onComplete: resolveEnd, skipFadeIn}),
         blockBehind: true,
         lock: 'all'
     });
