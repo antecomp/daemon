@@ -34,9 +34,6 @@ export default function Bridge() {
                 addLogMessage("The air suddenly feels much heavier.");
             }
         }
-        if(navController.state().tile == '14,4' && hasCrossedBridge()) {
-            addLogMessage("No turning back now.", "teal");
-        }
     });
 
     onMount(() => {
@@ -69,7 +66,9 @@ export default function Bridge() {
         })
     })
 
-    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController, navListen } = createTileNavigator(NM as NavMap);
+
+    navListen(e => e.type == 'move' && e.target == '13,4' && !e.success && addLogMessage('No turning back now.'));
 
     return (
         <>
