@@ -1,0 +1,32 @@
+#login-screen {
+    text-align: center;
+
+    button {
+        border-image-slice: 3 3 3 3;
+        border-image-width: 3px 3px 3px 3px;
+        border-image-outset: 0px 0px 0px 0px;
+        border-image-repeat: stretch stretch;
+        border-image-source: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAIAAABv85FHAAAAAXNSR0IB2cksfwAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+oBGwQ3JGp+h1MAAAAySURBVAjXfY4xEgAwCMKg//9zOrROipk4c6JWAWikiz8ZN4BYBRxlNpePbR9K7s72Cxd/pSPm3ZaU0wAAAABJRU5ErkJggg==");
+        border-style: solid;
+        padding: 4px;
+        width: 100%;
+        font-size: 15px;
+
+        position: relative;
+    }
+
+    button::after {
+        content: '(New Game)';
+        color: gray;
+        position: absolute;
+        top: 100%;
+        right: 5px;
+    }
+
+    footer {
+        color: gray;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+}
