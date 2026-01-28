@@ -17,62 +17,10 @@ import river_shader from './assets/river.glsl';
 import passthrough_vert from  '@/3d/shaders/post-processing/passfog.vert.glsl'
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import Clouds from "@/shared/components/Clouds/Clouds";
-import { MusicManager } from "@/core/audio/musicManager";
 import windsfx from './assets/wind3.wav';
 import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { UniformsLib } from "three";
-
-
-// bruh
-import Steps_dirt_001 from '@/assets/sfx/steps/dirt/Steps_dirt-001.ogg';
-import Steps_dirt_002 from '@/assets/sfx/steps/dirt/Steps_dirt-002.ogg';
-import Steps_dirt_003 from '@/assets/sfx/steps/dirt/Steps_dirt-003.ogg';
-import Steps_dirt_004 from '@/assets/sfx/steps/dirt/Steps_dirt-004.ogg';
-import Steps_dirt_005 from '@/assets/sfx/steps/dirt/Steps_dirt-005.ogg';
-import Steps_dirt_006 from '@/assets/sfx/steps/dirt/Steps_dirt-006.ogg';
-import Steps_dirt_007 from '@/assets/sfx/steps/dirt/Steps_dirt-007.ogg';
-import Steps_dirt_008 from '@/assets/sfx/steps/dirt/Steps_dirt-008.ogg';
-import Steps_dirt_009 from '@/assets/sfx/steps/dirt/Steps_dirt-009.ogg';
-import Steps_dirt_010 from '@/assets/sfx/steps/dirt/Steps_dirt-010.ogg';
-import Steps_dirt_011 from '@/assets/sfx/steps/dirt/Steps_dirt-011.ogg';
-import Steps_dirt_012 from '@/assets/sfx/steps/dirt/Steps_dirt-012.ogg';
-import Steps_dirt_013 from '@/assets/sfx/steps/dirt/Steps_dirt-013.ogg';
-import Steps_dirt_014 from '@/assets/sfx/steps/dirt/Steps_dirt-014.ogg';
-import Steps_dirt_015 from '@/assets/sfx/steps/dirt/Steps_dirt-015.ogg';
-import Steps_dirt_016 from '@/assets/sfx/steps/dirt/Steps_dirt-016.ogg';
-import Steps_dirt_017 from '@/assets/sfx/steps/dirt/Steps_dirt-017.ogg';
-import Steps_dirt_018 from '@/assets/sfx/steps/dirt/Steps_dirt-018.ogg';
-import Steps_dirt_019 from '@/assets/sfx/steps/dirt/Steps_dirt-019.ogg';
-import Steps_dirt_020 from '@/assets/sfx/steps/dirt/Steps_dirt-020.ogg';
-import Steps_dirt_021 from '@/assets/sfx/steps/dirt/Steps_dirt-021.ogg';
-import { playSound } from "@/shared/utils/playSound";
-import pickRandom from "@/shared/utils/pickRandom";
-
-export const stepsDirt = [
-  Steps_dirt_001,
-  Steps_dirt_002,
-  Steps_dirt_003,
-  Steps_dirt_004,
-  Steps_dirt_005,
-  Steps_dirt_006,
-  Steps_dirt_007,
-  Steps_dirt_008,
-  Steps_dirt_009,
-  Steps_dirt_010,
-  Steps_dirt_011,
-  Steps_dirt_012,
-  Steps_dirt_013,
-  Steps_dirt_014,
-  Steps_dirt_015,
-  Steps_dirt_016,
-  Steps_dirt_017,
-  Steps_dirt_018,
-  Steps_dirt_019,
-  Steps_dirt_020,
-  Steps_dirt_021,
-];
-
-
+import playStepSound from "@/3d/tilenav/stepsound";
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -131,7 +79,7 @@ export default function Bridge() {
 
     navListen(e => e.type == 'move' && e.target == '13,4' && !e.success && addLogMessage('No turning back now.'));
 
-    navListen(e => e.type == 'move' && e.success && playSound(pickRandom(stepsDirt)));
+    navListen(e => e.type == 'move' && e.success && playStepSound('dirt'));
 
     return (
         <>

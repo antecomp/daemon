@@ -1,6 +1,8 @@
 /** Tile coordinate key formatted as "x,z" in grid space. */
 export type NavCoord = `${number},${number}`
 
+export type StepSFXCategory = "carpet" | "dirt" | "floor" | "gravel" | "snow" | "tiles" | "water" | "wood";
+
 /** Bitmask for blocking movement across tile edges. */
 export enum NavTileMask {
     EDGE_UP = 1,
@@ -19,7 +21,8 @@ export interface NavTile {
   2 = right
   4 = down
   8 = left */
-  edges: number
+  edges: number,
+  stepSfx?: StepSFXCategory;
 }
 
 /** Full navigation map config plus tile lookup by coord. */
