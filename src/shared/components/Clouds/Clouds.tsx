@@ -30,7 +30,7 @@ export default function Clouds(props: { size: LumePosition, position: LumePositi
             mount-point="0.5 0.5"
             size={props.size}
             uniforms='{
-                "time": { "value": 1.0 }
+                "time": { "value": 0.0 }
             }'
             opacity={0.5}
             rotation='90 0 90'
