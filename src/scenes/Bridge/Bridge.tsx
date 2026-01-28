@@ -14,12 +14,13 @@ import NavCompass from '@/3d/tilenav/NavCompass';
 import river from './assets/river.glb'
 import { ShaderMaterial } from "three";
 import river_shader from './assets/river.glsl';
-import passthrough_vert from  '@/3d/shaders/post-processing/pass.vert.glsl'
+import passthrough_vert from  '@/3d/shaders/post-processing/passfog.vert.glsl'
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import Clouds from "@/shared/components/Clouds/Clouds";
 import { MusicManager } from "@/core/audio/musicManager";
 import windsfx from './assets/wind3.wav';
 import { createMusicTrack } from "@/core/audio/createMusicTrack";
+import { UniformsLib } from "three";
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -44,7 +45,8 @@ export default function Bridge() {
 
         const uniforms = {
             time: {value: 1.0},
-            map: {value: undefined}
+            map: {value: undefined},
+            ...(UniformsLib.fog ?? {}),
         }
 
         riverRef?.on('MODEL_LOAD', () => {
@@ -59,8 +61,9 @@ export default function Bridge() {
                 n.material = new ShaderMaterial({
                     uniforms,
                     vertexShader: passthrough_vert,
-                    fragmentShader: river_shader
-                })
+                    fragmentShader: river_shader,
+                    fog: true
+                });
             })
         });
 
@@ -87,7 +90,7 @@ export default function Bridge() {
                 physically-correct-lights
                 perspective="800"
                 shadowmap-type="pcfsoft"
-                fog-mode="linear" fog-color="#000000" fog-near="600" fog-far="1200"
+                //fog-mode="linear" fog-color="#000000" fog-near="1000" fog-far="1200"
             >
                 <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef} />
                 {/* <Freecam sceneRef={sceneRef!} /> */}

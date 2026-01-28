@@ -2,6 +2,8 @@ uniform float time;
 uniform sampler2D map;   // <- GLTF base color map
 varying vec2 vUv;
 
+#include <fog_pars_fragment>
+
 // Simple 2D noise sample hash
 float hash(vec2 p) {
     p = fract(p * vec2(123.34, 456.21));
@@ -93,4 +95,6 @@ void main() {
     vec3 finalColor = baseColor.rgb * mul;
 
     gl_FragColor = vec4(finalColor, baseColor.a);
+
+    #include <fog_fragment>
 }
