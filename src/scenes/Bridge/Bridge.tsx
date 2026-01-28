@@ -79,7 +79,7 @@ export default function Bridge() {
 
     navListen(e => e.type == 'move' && e.target == '13,4' && !e.success && addLogMessage('No turning back now.'));
 
-    navListen(e => e.type == 'move' && e.success && playStepSound('dirt'));
+    //navListen(e => e.type == 'move' && e.success && playStepSound('dirt'));
 
     return (
         <>
@@ -112,6 +112,7 @@ export default function Bridge() {
                 <Clouds
                     position="0 -1200 0"
                     size="10000 10000 100"
+                    initialTime={10000}
                 />
             </lume-scene>
         </>

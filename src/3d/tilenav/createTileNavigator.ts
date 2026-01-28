@@ -11,6 +11,7 @@ import {
 } from "../camera/camera.types";
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { navCoordToTuple } from "./tilenav.utils";
+import playStepSound from "./stepsound";
 
 export enum NavAction {
     StepForward,
@@ -334,6 +335,13 @@ export default function createTileNavigator(
                 break;
         }
     }
+
+    listenNavAction(e => {
+        if (e.type != 'move') return;
+        const tileStepType = navMap.tiles?.[e.target]?.stepSfx;
+        if(!tileStepType) return;
+        playStepSound(tileStepType);
+    });
 
     type ActionTiming = {
         initialDelay: number

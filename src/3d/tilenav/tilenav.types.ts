@@ -2,6 +2,7 @@
 export type NavCoord = `${number},${number}`
 
 export type StepSFXCategory = "carpet" | "dirt" | "floor" | "gravel" | "snow" | "tiles" | "water" | "wood";
+export const StepSFXNames = ['carpet', 'dirt', 'floor', 'gravel', 'snow', 'tiles', 'water', 'wood'] as const satisfies StepSFXCategory[];
 
 /** Bitmask for blocking movement across tile edges. */
 export enum NavTileMask {

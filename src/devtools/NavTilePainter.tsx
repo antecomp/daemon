@@ -4,7 +4,7 @@ import '@/shared/styles/base.css'
 import 'lume';
 
 //import bridge from '@/scenes/Bridge/assets/bridge_bake_att2X.fbx'
-import { NavCoord, NavMap, NavTileMask } from '@/3d/tilenav/tilenav.types';
+import { NavCoord, NavMap, NavTileMask, StepSFXCategory, StepSFXNames } from '@/3d/tilenav/tilenav.types';
 import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
 import { createStore } from 'solid-js/store';
 import { createMemo, createSignal, For, onCleanup, onMount } from 'solid-js';
@@ -125,6 +125,21 @@ export default function NavTilePainter() {
         ))
     }
 
+    function setTileSound() {
+        const targets = selectedOrHoveredTiles();
+        if (targets.length === 0) return;
+        const input = prompt("Set to what sound type? \n " + `"carpet" | "dirt" | "floor" | "gravel" | "snow" | "tiles" | "water" | "wood"`);
+        if(StepSFXNames.some(x => x === input)) {
+            setNm('tiles', prev => Object.fromEntries(
+                targets.map(nc => {
+                    const oldTile = prev[nc];
+                    if (!oldTile) return [nc, undefined];
+                    return [nc, {...oldTile, stepSfx: (input as StepSFXCategory)}]
+                })
+            ))
+        }
+    }
+
     const selectTile = (where: NavCoord) => setSelectedTiles(prev => [...prev, where]);
     const deselectTile = (where: NavCoord) => setSelectedTiles(prev => prev.filter(loc => loc != where));
 
@@ -185,6 +200,10 @@ export default function NavTilePainter() {
                 const hc = hoveredTile();
                 if (!hc || !nm.tiles[hc]) return;
                 setNm('tiles', hc, 'occupied', prev => !prev);
+                break;
+            case 'S':
+                setTileSound();
+                break;
         }
 
     }

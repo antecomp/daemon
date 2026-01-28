@@ -15,1064 +15,1276 @@
     "3,7": {
       "height": 11,
       "active": true,
-      "edges": 8
+      "edges": 8,
+      "stepSfx": "tiles"
     },
     "4,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,7": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,7": {
       "height": 11,
       "active": true,
-      "edges": 2
+      "edges": 2,
+      "stepSfx": "tiles"
     },
     "11,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,6": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,8": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,9": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,5": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,4": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,4": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,4": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,4": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,4": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,3": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,3": {
       "height": 11,
       "active": true,
-      "edges": 1
+      "edges": 1,
+      "stepSfx": "tiles"
     },
     "8,3": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,10": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,10": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,10": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,10": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,10": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,11": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,11": {
       "height": 11,
       "active": true,
-      "edges": 4
+      "edges": 4,
+      "stepSfx": "tiles"
     },
     "6,11": {
       "height": 11,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,7": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,7": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,12": {
       "height": -4,
       "active": true,
-      "edges": 1
+      "edges": 1,
+      "stepSfx": "tiles"
     },
     "7,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "6,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "7,2": {
       "height": -4,
       "active": true,
-      "edges": 4
+      "edges": 4,
+      "stepSfx": "tiles"
     },
     "8,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "8,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,6": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,7": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,8": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,7": {
       "height": -4,
       "active": true,
       "edges": 8,
-      "occupied": true
+      "occupied": true,
+      "stepSfx": "tiles"
     },
     "13,7": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,0": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,1": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "14,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "13,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,14": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,13": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "0,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "1,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,12": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,11": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,10": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,9": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "12,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "11,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "10,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "9,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,5": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "3,4": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "4,3": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "5,2": {
       "height": -4,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "tiles"
     },
     "2,7": {
       "height": -4,
       "active": true,
       "edges": 0,
-      "occupied": true
+      "occupied": true,
+      "stepSfx": "tiles"
     }
   }
 }

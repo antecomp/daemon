@@ -3,19 +3,21 @@ import { Motor, onMount, Plane } from "lume";
 import pass_vert from '@/3d/shaders/post-processing/pass.vert.glsl';
 import cloud_frag from './clouds.glsl';
 
+// Controls speed of cloud movement.
 const DEFAULT_TIME_SCALE = 0.0001;
 
-export default function Clouds(props: { size: LumePosition, position: LumePosition, timeScale?: number }) {
+export default function Clouds(props: { size: LumePosition, position: LumePosition, timeScale?: number, initialTime?: number }) {
     let cloudPlane!: Plane;
 
     onMount(() => {
+        // "has=" doesn't properly update type - just doing a lazy cast.
         (cloudPlane as any).vertexShader = pass_vert;
         (cloudPlane as any).fragmentShader = cloud_frag;
 
         Motor.addRenderTask(t => {
             const mat = cloudPlane.behaviors.get('shader-material');
             if (!mat) return;
-            mat.uniforms.time.value = t * (props.timeScale ?? DEFAULT_TIME_SCALE);
+            mat.uniforms.time.value = (props.initialTime ?? 0) + t * (props.timeScale ?? DEFAULT_TIME_SCALE);
             cloudPlane.needsUpdate();
         });
     })
