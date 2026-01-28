@@ -25,9 +25,9 @@ export interface NavTile {
 /** Full navigation map config plus tile lookup by coord. */
 export interface NavMap {
   config: {
-    playerHeight: number,
-    size: number // physical size of the entire thing. divided by numtiles.
-    numTiles: number // physical size divided up to make this number of tiles.
+    playerHeight: number, // Determines cameras y offset from tile height.
+    size: number // width/height of the whole map.
+    numTiles: number // number of tiles on one axis, size of tiles determined from size / numTiles.
     offset: {
       x: number,
       y: number // added to every tile height to push it up to "ground"
