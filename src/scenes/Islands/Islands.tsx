@@ -26,12 +26,6 @@ export default function Islands() {
       <NavCompass nc={navController} nm={navController.navMap} />
       <lume-scene webgl perspective="800" ref={sceneRef}
       >
-        {/* <lume-camera-rig align-point="0.5 0.5" distance="10000"></lume-camera-rig> */}
-
-        {/* <Freecam
-        sceneRef={sceneRef}
-      /> */}
-
         <PlayerCam
           sceneRef={sceneRef}
           {...cameraControlSignals()}

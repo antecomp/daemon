@@ -19,7 +19,7 @@ const eggggg: TextOverlaySequence = [
 
 import { default as loopbacktest } from '@/tests/dialogues/questionLoopback';
 const loopBackRoot = loopbacktest as DialogueNode;
-
+import dec_textscene from '../scenes/TheGem/data/decrypt_textscene.ts';
 const dmnintro: TextOverlaySequence = [
     { segments: [{ text: "If the eye was given permission to see, no creature would be able to withstand the abundance and ubiquity of " }, { text: "THE DAEMONS", color: "red" }] },
     { segments: [{ text: "and continue to live unaffected by them." }] },
@@ -110,6 +110,7 @@ export default function DevMenu() {
                     onFail={() => popUILayer('test-puzzle')}
                 />
             })}>Test Puzzle</button>
+            <button onClick={() => playTextOverlay(dec_textscene)}>Dec TextScene</button>
             <button onclick={() => spawnPopup("HELLO")}>Popup</button>
             <button onclick={() => spawnPopup("Test", [
                 {prompt: 'NC', action() {alert('action no close')}, dontClose: true},

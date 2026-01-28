@@ -16,6 +16,10 @@ import { ShaderMaterial } from "three";
 import river_shader from './assets/river.glsl';
 import passthrough_vert from  '@/3d/shaders/post-processing/pass.vert.glsl'
 import { addLogMessage } from "@/app/shell/hud/EventLog";
+import Clouds from "@/shared/components/Clouds/Clouds";
+import { MusicManager } from "@/core/audio/musicManager";
+import windsfx from './assets/wind3.wav';
+import { createMusicTrack } from "@/core/audio/createMusicTrack";
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -64,7 +68,9 @@ export default function Bridge() {
             uniforms.time.value = elapsed * 0.001;
             riverRef.needsUpdate();
         })
-    })
+    });
+
+    createMusicTrack({src: windsfx});
 
     const { cameraControlSignals, navController, navListen } = createTileNavigator(NM as NavMap);
 
@@ -96,6 +102,11 @@ export default function Bridge() {
                     scale="10 10 10"
                     src={river}
                     ref={riverRef}
+                />
+
+                <Clouds
+                    position="0 -1200 0"
+                    size="10000 10000 100"
                 />
             </lume-scene>
         </>

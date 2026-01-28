@@ -6,7 +6,8 @@ const decrypt_textscene: TextOverlaySequence = [
     {segments: ["-and my vision blurs as my ", ['VI-LINK', 'red'], ' resets.'], sideEffect() {setCurrentScene('Bridge')}},
     ["Once I come to, I read the contents of the diskette again."],
     ["Whatever code ran deleted itself, the cache only contains some coordinates and nothing else."],
-    [['"This must be the meeting spot"', 'teal'], "\n I say to myself."]
+    // TODO: FIGURE OUT WHY SIDE EFFECTS FAIL TO RUN ON FINAL LINE.
+    {segments: [['"This must be the meeting spot"', 'teal'], "\n I say to myself."], sideEffect: () => alert("why.")}
 ]
 
 export default decrypt_textscene;
