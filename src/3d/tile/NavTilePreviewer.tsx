@@ -7,7 +7,7 @@ export const WINDOW_HALF_SIZE = Math.trunc(WINDOW_SIZE_TILES / 2);
 
 export default function NavTilePreviewer(props: {
     NM: NavMap,
-    hoveredTile?: NavCoord | null;
+    hoveredTile?: NavCoord | null; // How should this be defined, in chunk space or in general?
     selectedTiles?: NavCoord[];
     clip?: boolean;
     // TODO Only changes the coords these tiles correspond to, shouldn't visually do anything other than supplament the offsets.
@@ -31,8 +31,8 @@ export default function NavTilePreviewer(props: {
         return hasTile ? existsColor : emptyColor;
     };
 
+    // Negative z is "up" away from the camera, x is typical left/right
     const coords = createMemo(() => {
-        const arrDim = WINDOW_SIZE_TILES * WINDOW_SIZE_TILES
         const out: Coord2D[] = [];
         for (let x = -WINDOW_HALF_SIZE; x <= WINDOW_HALF_SIZE; x++) {
             for (let z = -WINDOW_HALF_SIZE; z <= WINDOW_HALF_SIZE; z++) {
@@ -46,6 +46,8 @@ export default function NavTilePreviewer(props: {
     const tileSize = createMemo(() => props.NM.config.tileSize);
     const tileOffsets = createMemo(() => props.NM.config.offset);
 
+    const windowSizeWS = createMemo(() => WINDOW_SIZE_TILES * tileSize());
+
     const wallHeight = createMemo(() => tileSize() / 3);
     const wallOffset = createMemo(() => tileSize() / 2);
     const wallEps = 0.01; // constant is fine
@@ -56,9 +58,9 @@ export default function NavTilePreviewer(props: {
                 const coordKey: NavCoord = `${tx},${tz}`;
                 const tile = createMemo(() => props.NM.tiles[coordKey]);
 
-                const x = () => tileOffsets().x + (tx * tileSize());
+                const x = () => tileOffsets().x + (tx * tileSize()) + (windowSizeWS() * props.chunkOffset[0]);
                 const y = () => tileOffsets().y - (tile()?.height ?? 0);
-                const z = () => tileOffsets().z + (tz * tileSize());
+                const z = () => tileOffsets().z + (tz * tileSize()) + (windowSizeWS() * props.chunkOffset[1]);
 
                 const hasTile = () => !!tile();
                 const edges = () => tile()?.edges ?? 0;
