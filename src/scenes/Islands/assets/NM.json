@@ -8,590 +8,706 @@
       "y": 30,
       "z": 210
     },
-    "spawn": "1,2",
+    "spawn": "1,3",
     "spawnDirection": 3
   },
   "tiles": {
     "12,4": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,5": {
       "height": 95,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,6": {
       "height": 95,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,7": {
       "height": 95,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,8": {
       "height": 105,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,9": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,10": {
       "height": 140,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,16": {
       "height": 185,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,15": {
       "height": 150,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "12,17": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "15,19": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "16,19": {
       "height": 250,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "10,2": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "0,2": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "1,2": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "2,2": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "2,1": {
       "height": 10,
       "active": true,
       "edges": 0,
-      "occupied": true
+      "occupied": true,
+      "stepSfx": "dirt"
     },
     "3,1": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "1,1": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "1,3": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "1,4": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "2,4": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "2,3": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "3,3": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "3,4": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "4,4": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "4,3": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "4,2": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "3,2": {
       "height": 10,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "4,1": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "0,3": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "2,0": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "3,0": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,2": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,2": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,2": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,2": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,3": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,3": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,3": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,3": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,3": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,1": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,1": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,1": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,1": {
       "height": 120,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,1": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,0": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,4": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,4": {
       "height": 110,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,11": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,12": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,13": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,14": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,14": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,13": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,12": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,11": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,11": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,12": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,13": {
       "height": 148,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,14": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,12": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,13": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,14": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,14": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,13": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,12": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,11": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,11": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,10": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,10": {
       "height": 145,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,18": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,19": {
       "height": 245,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,20": {
       "height": 245,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "12,21": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,21": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,21": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,20": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,20": {
       "height": 245,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,19": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,19": {
       "height": 245,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,18": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,18": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,19": {
       "height": 240,
       "active": true,
-      "edges": 4
+      "edges": 4,
+      "stepSfx": "dirt"
     },
     "13,19": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "13,20": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "14,20": {
       "height": 240,
       "active": true,
-      "edges": 1
+      "edges": 1,
+      "stepSfx": "dirt"
     },
     "13,21": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "10,18": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "11,17": {
       "height": 240,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "17,19": {
       "height": 270,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "18,19": {
       "height": 298,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "21,19": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "21,20": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "21,21": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "20,21": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "20,20": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "22,19": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "22,20": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "22,21": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "23,19": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "23,20": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "23,18": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "22,18": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "21,18": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "20,18": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "20,19": {
       "height": 330,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "19,19": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "19,20": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "19,18": {
       "height": 327,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "dirt"
     },
     "5,2": {
       "height": 5,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "6,2": {
       "height": 13,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "7,2": {
       "height": 28,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "8,2": {
       "height": 48,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     },
     "9,2": {
       "height": 80,
       "active": true,
-      "edges": 0
+      "edges": 0,
+      "stepSfx": "wood"
     }
   }
 }

@@ -10,6 +10,7 @@ import { NavMap } from "@/3d/tilenav/tilenav.types";
 
 import test_girl_sprite from '../Test/assets/girl2.png';
 import Billboard from "@/3d/components/Billboard";
+import Clouds from "@/shared/components/Clouds/Clouds";
 
 export default function Islands() {
   let islands_ref!: GltfModel;
@@ -49,6 +50,10 @@ export default function Islands() {
           ]}
         />
 
+      <Clouds
+        size="10000 10000 1"
+        position="0 -750 0"
+      />
 
       </lume-scene>
     </>

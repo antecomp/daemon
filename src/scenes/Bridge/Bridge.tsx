@@ -20,7 +20,8 @@ import Clouds from "@/shared/components/Clouds/Clouds";
 import windsfx from './assets/wind3.wav';
 import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { UniformsLib } from "three";
-import playStepSound from "@/3d/tilenav/stepsound";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -31,6 +32,8 @@ export default function Bridge() {
 
     useDGShader(() => sceneRef);
 
+    let sceneTransitionStart = false;
+
     createEffect(() => {
         // Crossing the bridge.
         if (navController.state().tile == '15,4') {
@@ -38,6 +41,12 @@ export default function Bridge() {
                 setHasCrossedBridge(true);
                 addLogMessage("The air suddenly feels much heavier.");
             }
+        }
+
+        if(navController.state().tile == '24,4' && !sceneTransitionStart) {
+            sceneTransitionStart = true;
+            // Really lazy transition until I figure out the design of the islands!
+            SceneFadeManager.fadeTransition(() => setCurrentScene('Islands'));
         }
     });
 
