@@ -7,20 +7,19 @@ export const WINDOW_HALF_SIZE = Math.trunc(WINDOW_SIZE_TILES / 2);
 
 export default function NavTilePreviewer(props: {
     NM: NavMap,
-    hoveredTile?: NavCoord | null; // How should this be defined, in chunk space or in general?
+    hoveredTile?: NavCoord | null; // World-space nav coord.
     selectedTiles?: NavCoord[];
     clip?: boolean;
     // TODO Only changes the coords these tiles correspond to, shouldn't visually do anything other than supplament the offsets.
-    chunkOffset: [number, number]; // positive/negative x,y from center chunk.
+    chunk: [number, number]; // positive/negative x,y from center chunk.
 }) {
 
-    const tileColor = ([tx, tz]: Coord2D, hasTile: boolean, tileData: NavTile | undefined) => {
+    const tileColor = ([tx, tz]: Coord2D, navcoord: NavCoord, hasTile: boolean, tileData: NavTile | undefined) => {
         const existsColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
         const emptyColor = (tx + tz) % 2 === 0 ? "#2b2b2b" : "#3a3a3a";
         const existsAndSelectedColor = (tx + tz) % 2 === 0 ? "#108178" : "#1fc0b3";
         const selectedColor = (tx + tz) % 2 === 0 ? "#2a2341" : "#7c5fb3";
 
-        const navcoord = `${tx},${tz}` as NavCoord;
         const isHovered = props.hoveredTile === navcoord;
         const isSelected = props.selectedTiles?.includes(navcoord);
 
@@ -47,6 +46,12 @@ export default function NavTilePreviewer(props: {
     const tileOffsets = createMemo(() => props.NM.config.offset);
 
     const windowSizeWS = createMemo(() => WINDOW_SIZE_TILES * tileSize());
+    
+    // Tile offsets based on current chunk.
+    const chunkTileOffset = createMemo(() => [
+        WINDOW_SIZE_TILES * props.chunk[0],
+        WINDOW_SIZE_TILES * props.chunk[1],
+    ] as const);
 
     const wallHeight = createMemo(() => tileSize() / 3);
     const wallOffset = createMemo(() => tileSize() / 2);
@@ -55,12 +60,16 @@ export default function NavTilePreviewer(props: {
     return (
         <For each={coords()}>
             {([tx, tz]) => {
-                const coordKey: NavCoord = `${tx},${tz}`;
+                const [chunkX, chunkZ] = chunkTileOffset();
+                // NavMap location of the tile (adjusting chunkspace coords to wherever the chunk is).
+                const nmX = tx + chunkX;
+                const nmZ = tz + chunkZ;
+                const coordKey: NavCoord = `${nmX},${nmZ}`;
                 const tile = createMemo(() => props.NM.tiles[coordKey]);
 
-                const x = () => tileOffsets().x + (tx * tileSize()) + (windowSizeWS() * props.chunkOffset[0]);
+                const x = () => tileOffsets().x + (tx * tileSize()) + (windowSizeWS() * props.chunk[0]);
                 const y = () => tileOffsets().y - (tile()?.height ?? 0);
-                const z = () => tileOffsets().z + (tz * tileSize()) + (windowSizeWS() * props.chunkOffset[1]);
+                const z = () => tileOffsets().z + (tz * tileSize()) + (windowSizeWS() * props.chunk[1]);
 
                 const hasTile = () => !!tile();
                 const edges = () => tile()?.edges ?? 0;
@@ -70,7 +79,7 @@ export default function NavTilePreviewer(props: {
                     <>
                         <lume-plane
                             sidedness="double"
-                            color={tileColor([tx, tz], hasTile(), tile())}
+                            color={tileColor([tx, tz], coordKey, hasTile(), tile())}
                             align-point="0.5 0.5"
                             mount-point="0.5 0.5"
                             rotation="90 0 0"

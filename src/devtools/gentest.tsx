@@ -1,10 +1,14 @@
-import NavTilePreviewer from '@/3d/tile/NavTilePreviewer';
+import NavTilePreviewer, { WINDOW_SIZE_TILES } from '@/3d/tile/NavTilePreviewer';
 import { Direction, NavMap } from '@/3d/tile/tilenav.types';
 import EnochPuzzle from '@/features/puzzles/enoch/EnochPuzzle';
 import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
 
 import 'lume';
+import NavTilePreviewCamera from '@/3d/tile/NavTilePreviewCamera';
+
+const chunk: [number, number] = [-1,-1];
+const hoveredTile: [number, number] = [5,5];
 
 const nm: NavMap = {
     config: {
@@ -30,8 +34,8 @@ const nm: NavMap = {
 const Comp = () =>
     <div
         style={{
-            width: '500px',
-            height: '400px'
+            width: '900px',
+            height: '800px'
         }}
     >
         <lume-scene
@@ -48,18 +52,6 @@ const Comp = () =>
         >
 
             <lume-ambient-light intensity={1} />
-
-            <lume-camera-rig
-                align-point="0.5 0.5"
-                // distance="1500"
-                max-distance='Infinity'
-                min-distance='0'
-                initial-polar-angle='75'
-                distance='2000'
-                max-horizontal-angle='60'
-                min-horizontal-angle='-60'
-                horizontal-angle='0'
-            ></lume-camera-rig>
 
             <lume-plane
                 size="110 110 1"
@@ -106,10 +98,26 @@ const Comp = () =>
 
             <NavTilePreviewer
                 NM={nm}
-                hoveredTile={'0,-5'}
+                hoveredTile={'-6,-6'}
                 selectedTiles={[]}
                 clip={false}
-                chunkOffset={[-1, -1]}
+                chunk={chunk}
+            />
+
+            {/* <lume-camera-rig
+                align-point="0.5 0.5"
+                max-distance='Infinity'
+                min-distance='0'
+                initial-polar-angle='75'
+                distance='250'
+                max-horizontal-angle='60'
+                min-horizontal-angle='-60'
+                horizontal-angle='0'
+            ></lume-camera-rig> */}
+
+            <NavTilePreviewCamera
+                chunk={chunk}
+                chunkWSSize={WINDOW_SIZE_TILES * nm.config.tileSize}
             />
 
         </lume-scene>
