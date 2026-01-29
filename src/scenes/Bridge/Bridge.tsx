@@ -121,7 +121,7 @@ export default function Bridge() {
                 <Clouds
                     position="0 -1200 0"
                     size="10000 10000 100"
-                    initialTime={10000}
+                    initialTime={-100}
                 />
             </lume-scene>
         </>

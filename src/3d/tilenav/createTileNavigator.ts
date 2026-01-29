@@ -338,6 +338,7 @@ export default function createTileNavigator(
 
     listenNavAction(e => {
         if (e.type != 'move') return;
+        if(!e.success) return;
         const tileStepType = navMap.tiles?.[e.target]?.stepSfx;
         if(!tileStepType) return;
         playStepSound(tileStepType);
