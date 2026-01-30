@@ -1,8 +1,8 @@
 import world from './assets/world.glb';
-import NM from './assets/NM.json';
+import NM from './assets/NEONM.json';
 import PlayerCam from '@/3d/camera/PlayerCam';
-import createTileNavigator from '@/3d/tilenav/createTileNavigator';
-import { NavMap } from '@/3d/tilenav/tilenav.types';
+import createTileNavigator from '@/3d/tile/createTileNavigator';
+import { NavMap } from '@/3d/tile/tilenav.types';
 import { Scene } from 'lume';
 import girl_sprite from './assets/yeah.png';
 import { useDGShader } from '@/3d/pipeline/dgRender';
@@ -63,7 +63,7 @@ export default function Test() {
 
     return (
         <>
-            <NavCompass nc={navController} nm={navController.navMap} />
+            {/* <NavCompass nc={navController} nm={navController.navMap} /> */}
             <lume-scene
                 ref={sceneRef}
                 webgl

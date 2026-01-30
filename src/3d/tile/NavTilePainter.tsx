@@ -226,19 +226,19 @@ export default function NavTilePainter() {
                 isShiftDown = true;
                 break;
             case 'ArrowDown':
-                if(isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_DOWN);
+                if (isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_DOWN);
                 else setCurrentChunk(prev => [prev[0], prev[1] + 1]);
                 break;
             case 'ArrowUp':
-                if(isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_UP);
+                if (isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_UP);
                 else setCurrentChunk(prev => [prev[0], prev[1] - 1]);
                 break;
             case 'ArrowLeft':
-                if(isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_LEFT);
+                if (isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_LEFT);
                 else setCurrentChunk(prev => [prev[0] - 1, prev[1]]);
                 break;
             case 'ArrowRight':
-                if(isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_RIGHT);
+                if (isShiftDown) toggleEdgesOfSelectedTiles(NavTileMask.EDGE_RIGHT);
                 else setCurrentChunk(prev => [prev[0] + 1, prev[1]]);
                 break;
             case 'A':
@@ -254,6 +254,9 @@ export default function NavTilePainter() {
                 selectAll();
                 break;
             case 'PageUp':
+                raiseSelectedTiles();
+                break;
+            case 'r':
                 raiseSelectedTiles();
                 break;
             case 'i':
@@ -440,4 +443,4 @@ export default function NavTilePainter() {
 }
 
 const domroot = document.getElementById('navtile-painter');
-if (domroot) render(() => <NavTilePainter/>, domroot);
+if (domroot) render(() => <NavTilePainter />, domroot);
