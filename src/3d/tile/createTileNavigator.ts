@@ -147,9 +147,9 @@ export default function createTileNavigator(
     const tileOffset = createMemo(() => navMap.config.tileSize / 2);
 
     const base = createMemo(() => ({
-        x: navMap.config.offset.x + tileOffset(),
+        x: navMap.config.offset.x ,//+ tileOffset(),
         y: navMap.config.offset.y - navMap.config.playerHeight,
-        z: navMap.config.offset.z + tileOffset()
+        z: navMap.config.offset.z //+ tileOffset()
     }));
 
     const cameraPositionForTile = (coord: NavCoord): XYZ => {

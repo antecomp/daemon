@@ -322,6 +322,7 @@ export default function NavTilePainter() {
                     <NavTilePreviewCamera
                         chunk={currentChunk()}
                         chunkWSSize={WINDOW_SIZE_TILES * nm.config.tileSize}
+                        offsets={nm.config.offset}
                     />
 
                     <PainterPreviewMap />

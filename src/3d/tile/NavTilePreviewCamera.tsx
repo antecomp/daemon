@@ -1,4 +1,4 @@
-export default function NavTilePreviewCamera(props: { chunk: [number, number], chunkWSSize: number }) {
+export default function NavTilePreviewCamera(props: { chunk: [number, number], chunkWSSize: number, offsets: {x: number, z: number} }) {
     return <lume-camera-rig
         align-point="0.5 0.5"
         // distance="1500"
@@ -9,6 +9,6 @@ export default function NavTilePreviewCamera(props: { chunk: [number, number], c
         max-horizontal-angle='60'
         min-horizontal-angle='-60'
         horizontal-angle='0'
-        position={`${props.chunk[0] * props.chunkWSSize} 0 ${props.chunk[1] * props.chunkWSSize}`}
+        position={`${props.offsets.x + (props.chunk[0] * props.chunkWSSize)} 0 ${props.offsets.z + (props.chunk[1] * props.chunkWSSize)}`}
     />
 }
