@@ -1,5 +1,5 @@
 import { GltfModel, Motor, Scene } from "lume";
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
 // import PlayerCam from "@/components/lume/playerCam/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 //import Freecam from "@/3d/camera/Freecam";
@@ -7,14 +7,16 @@ import PlayerCam from '@/3d/camera/PlayerCam';
 //import NavigationPlane from '@/3d/components/navigation/NavigationPlane';
 
 import world from './assets/bridge_a_bake.glb';
-import NM from './assets/NM.json';
-import createTileNavigator from '@/3d/tilenav/createTileNavigator';
-import { NavMap } from '@/3d/tilenav/tilenav.types';
-import NavCompass from '@/3d/tilenav/NavCompass';
 import river from './assets/river.glb'
+import island_surface from './assets/island_surface.glb'
+
+import NM from './assets/NEONM.json';
+import createTileNavigator from '@/3d/tile/createTileNavigator';
+import { NavMap } from '@/3d/tile/tilenav.types';
+import NavCompass from '@/3d/tile/NavCompass';
 import { ShaderMaterial } from "three";
 import river_shader from './assets/river.glsl';
-import passthrough_vert from  '@/3d/shaders/post-processing/passfog.vert.glsl'
+import passthrough_vert from '@/3d/shaders/post-processing/passfog.vert.glsl'
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import Clouds from "@/shared/components/Clouds/Clouds";
 import windsfx from './assets/wind3.wav';
@@ -36,14 +38,14 @@ export default function Bridge() {
 
     createEffect(() => {
         // Crossing the bridge.
-        if (navController.state().tile == '15,4') {
-            if(!hasCrossedBridge()) {
+        if (navController.state().tile == '1,0') {
+            if (!hasCrossedBridge()) {
                 setHasCrossedBridge(true);
                 addLogMessage("The air suddenly feels much heavier.");
             }
         }
 
-        if(navController.state().tile == '24,4' && !sceneTransitionStart) {
+        if (navController.state().tile == '22,0' && !sceneTransitionStart) {
             sceneTransitionStart = true;
             // Really lazy transition until I figure out the design of the islands!
             SceneFadeManager.fadeTransition(() => setCurrentScene('Islands'));
@@ -53,8 +55,8 @@ export default function Bridge() {
     onMount(() => {
 
         const uniforms = {
-            time: {value: 1.0},
-            map: {value: undefined},
+            time: { value: 1.0 },
+            map: { value: undefined },
             ...(UniformsLib.fog ?? {}),
         }
 
@@ -82,7 +84,7 @@ export default function Bridge() {
         })
     });
 
-    createMusicTrack({src: windsfx});
+    createMusicTrack({ src: windsfx });
 
     const { cameraControlSignals, navController, navListen } = createTileNavigator(NM as NavMap);
 
@@ -101,7 +103,7 @@ export default function Bridge() {
                 physically-correct-lights
                 perspective="800"
                 shadowmap-type="pcfsoft"
-                //fog-mode="linear" fog-color="#000000" fog-near="1000" fog-far="1200"
+            //fog-mode="linear" fog-color="#000000" fog-near="1000" fog-far="1200"
             >
                 <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef} />
                 {/* <Freecam sceneRef={sceneRef!} /> */}
@@ -117,6 +119,16 @@ export default function Bridge() {
                     src={river}
                     ref={riverRef}
                 />
+
+                <Show when={hasCrossedBridge()}>
+                    <lume-gltf-model
+                        align-point="0.5 0.5"
+                        mount-point="0.5 0.5"
+                        scale="10 10 10"
+                        position="1100,0,0"
+                        src={island_surface}
+                    />
+                </Show>
 
                 <Clouds
                     position="0 -1200 0"
