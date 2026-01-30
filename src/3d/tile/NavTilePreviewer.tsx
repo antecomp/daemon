@@ -1,9 +1,7 @@
 import { Coord2D } from "@/shared/types/3d.types";
 import { NavCoord, NavMap, NavTile, NavTileMask } from "./tilenav.types";
 import { createMemo, For } from "solid-js";
-
-export const WINDOW_SIZE_TILES = 11; // centered + 5 on either side.
-export const WINDOW_HALF_SIZE_TILES = Math.trunc(WINDOW_SIZE_TILES / 2);
+import { GRID_COORDS, WINDOW_SIZE_TILES } from "./tilenav.config";
 
 export default function NavTilePreviewer(props: {
     NM: NavMap,
@@ -29,19 +27,6 @@ export default function NavTilePreviewer(props: {
         if (tileData?.occupied) return '#d86b98'
         return hasTile ? existsColor : emptyColor;
     };
-
-    // Negative z is "up" away from the camera, x is typical left/right
-    const coords = createMemo(() => {
-        const out: Coord2D[] = [];
-        for (let x = -WINDOW_HALF_SIZE_TILES; x <= WINDOW_HALF_SIZE_TILES; x++) {
-            for (let z = -WINDOW_HALF_SIZE_TILES; z <= WINDOW_HALF_SIZE_TILES; z++) {
-                out.push([x, z]);
-            }
-        }
-
-        return out;
-    });
-
     const tileSize = createMemo(() => props.NM.config.tileSize);
     const tileOffsets = createMemo(() => props.NM.config.offset);
 
@@ -58,7 +43,7 @@ export default function NavTilePreviewer(props: {
     const wallEps = 0.01; // constant is fine
 
     return (
-        <For each={coords()}>
+        <For each={GRID_COORDS}>
             {([tx, tz]) => {
                 const coordKey = createMemo<NavCoord>(() => {
                     const [chunkX, chunkZ] = chunkTileOffset();

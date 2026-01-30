@@ -1,4 +1,5 @@
-import NavTilePreviewer, { WINDOW_SIZE_TILES } from '@/3d/tile/NavTilePreviewer';
+import NavTilePreviewer from '@/3d/tile/NavTilePreviewer';
+import { WINDOW_SIZE_TILES } from "@/3d/tile/tilenav.config";
 import { Direction, NavMap } from '@/3d/tile/tilenav.types';
 import EnochPuzzle from '@/features/puzzles/enoch/EnochPuzzle';
 import '@/shared/styles/base.css';

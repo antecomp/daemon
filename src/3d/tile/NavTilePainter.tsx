@@ -1,7 +1,9 @@
 import { createStore } from "solid-js/store";
 import { Direction, NavCoord, NavMap, NavTileMask, StepSFXCategory, StepSFXNames } from "./tilenav.types";
 import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount } from "solid-js";
-import NavTilePreviewer, { WINDOW_HALF_SIZE_TILES, WINDOW_SIZE_TILES } from "./NavTilePreviewer";
+import NavTilePreviewer from "./NavTilePreviewer";
+import { GRID_COORDS, WINDOW_HALF_SIZE_TILES } from "./tilenav.config";
+import { WINDOW_SIZE_TILES } from "./tilenav.config";
 
 import './navtile-painter.css'
 import '@/shared/styles/base.css'
@@ -11,16 +13,7 @@ import downloadObjectAsJson from "@/shared/utils/downloadAsJson";
 
 import 'lume'
 import { render } from "lume";
-
-const GRID_COORDS: [number, number][] = (() => {
-    const coords: [number, number][] = [];
-    for (let z = -WINDOW_HALF_SIZE_TILES; z <= WINDOW_HALF_SIZE_TILES; z++) {
-        for (let x = -WINDOW_HALF_SIZE_TILES; x <= WINDOW_HALF_SIZE_TILES; x++) {
-            coords.push([x, z]);
-        }
-    }
-    return coords;
-})();
+import { getWSPositionOfTile } from "./tilenav.utils";
 
 export default function NavTilePainter() {
     const [nm, setNm] = createStore<NavMap>({
@@ -270,9 +263,7 @@ export default function NavTilePainter() {
                 break;
             case 'l':
                 const tileLoc = hoveredTile()
-                    // TODO: RESTORE FUNC
-                    //? getWSPositionOfTile(hoveredTile()!, nm)
-                    ? console.error('Need to implement getWSPositionOfTile')
+                    ? getWSPositionOfTile(hoveredTile()!, nm)
                     : null
                 console.log(tileLoc);
                 navigator.clipboard.writeText(String(tileLoc));

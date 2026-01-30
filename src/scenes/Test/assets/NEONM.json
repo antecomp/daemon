@@ -1,6 +1,6 @@
 {
   "config": {
-    "playerHeight": 80,
+    "playerHeight": 85,
     "tileSize": 60,
     "offset": {
       "x": 330,
