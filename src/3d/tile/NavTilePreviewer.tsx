@@ -3,7 +3,7 @@ import { NavCoord, NavMap, NavTile, NavTileMask } from "./tilenav.types";
 import { createMemo, For } from "solid-js";
 
 export const WINDOW_SIZE_TILES = 11; // centered + 5 on either side.
-export const WINDOW_HALF_SIZE = Math.trunc(WINDOW_SIZE_TILES / 2);
+export const WINDOW_HALF_SIZE_TILES = Math.trunc(WINDOW_SIZE_TILES / 2);
 
 export default function NavTilePreviewer(props: {
     NM: NavMap,
@@ -33,8 +33,8 @@ export default function NavTilePreviewer(props: {
     // Negative z is "up" away from the camera, x is typical left/right
     const coords = createMemo(() => {
         const out: Coord2D[] = [];
-        for (let x = -WINDOW_HALF_SIZE; x <= WINDOW_HALF_SIZE; x++) {
-            for (let z = -WINDOW_HALF_SIZE; z <= WINDOW_HALF_SIZE; z++) {
+        for (let x = -WINDOW_HALF_SIZE_TILES; x <= WINDOW_HALF_SIZE_TILES; x++) {
+            for (let z = -WINDOW_HALF_SIZE_TILES; z <= WINDOW_HALF_SIZE_TILES; z++) {
                 out.push([x, z]);
             }
         }
