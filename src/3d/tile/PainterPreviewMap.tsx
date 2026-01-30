@@ -1,4 +1,4 @@
-import world from '@/scenes/Test/assets/world.glb';
+import world from '@/scenes/TestA/assets/world.glb';
 
 export default function PainterPreviewMap() {
     return <>
@@ -6,7 +6,7 @@ export default function PainterPreviewMap() {
 
         <lume-gltf-model
             align-point="0.5 0.5"
-            scale="100 100 100"
+            scale="10 10 10"
             src={world}
         />
 

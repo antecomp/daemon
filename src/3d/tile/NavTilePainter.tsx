@@ -273,7 +273,7 @@ export default function NavTilePainter() {
                 if (!hc || !nm.tiles[hc]) return;
                 setNm('tiles', hc, 'occupied', prev => !prev);
                 break;
-            case 'S':
+            case 'f':
                 setTileSound();
                 break;
         }
