@@ -8,7 +8,6 @@ export default function NavTilePreviewer(props: {
     hoveredTile?: NavCoord | null; // World-space nav coord.
     selectedTiles?: NavCoord[];
     clip?: boolean;
-    // TODO Only changes the coords these tiles correspond to, shouldn't visually do anything other than supplament the offsets.
     chunk: [number, number]; // positive/negative x,y from center chunk.
 }) {
 

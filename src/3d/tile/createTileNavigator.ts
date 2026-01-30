@@ -22,6 +22,15 @@ export enum NavAction {
     TurnRight
 }
 
+const keyToActions: Record<string, NavAction[]> = {
+    w: [NavAction.StepForward],
+    s: [NavAction.StepBack],
+    q: [NavAction.StrafeLeft],
+    e: [NavAction.StrafeRight],
+    a: [NavAction.TurnLeft],
+    d: [NavAction.TurnRight]
+} as const;
+
 export type NavActionEvent =
     | {
         type: "move";
@@ -144,10 +153,8 @@ export default function createTileNavigator(
 
     const { emit: emitNavAction, listen: listenNavAction } = createPayloadEmitter<NavActionEvent>();
 
-    const tileOffset = createMemo(() => navMap.config.tileSize / 2);
-
     const base = createMemo(() => ({
-        x: navMap.config.offset.x ,//+ tileOffset(),
+        x: navMap.config.offset.x,//+ tileOffset(),
         y: navMap.config.offset.y - navMap.config.playerHeight,
         z: navMap.config.offset.z //+ tileOffset()
     }));
@@ -266,17 +273,6 @@ export default function createTileNavigator(
 
 
     // Controls
-
-    const keyToActions: Record<string, NavAction[]> = {
-        w: [NavAction.StepForward],
-        s: [NavAction.StepBack],
-        q: [NavAction.StrafeLeft],
-        e: [NavAction.StrafeRight],
-        a: [NavAction.TurnLeft],
-        d: [NavAction.TurnRight]
-    };
-
-
     function performNavAction(action: NavAction) {
 
         const originDirection = currentDirection();
@@ -454,7 +450,6 @@ export default function createTileNavigator(
         throw new Error("Tile navigator does not support setBaseOri overrides.");
     };
 
-    // will this be properly reactive?
     const navState = createMemo(() => ({
         direction: currentDirection(),
         tile: currentTile(),
