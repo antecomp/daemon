@@ -60,12 +60,14 @@ export default function NavTilePreviewer(props: {
     return (
         <For each={coords()}>
             {([tx, tz]) => {
-                const [chunkX, chunkZ] = chunkTileOffset();
-                // NavMap location of the tile (adjusting chunkspace coords to wherever the chunk is).
-                const nmX = tx + chunkX;
-                const nmZ = tz + chunkZ;
-                const coordKey: NavCoord = `${nmX},${nmZ}`;
-                const tile = createMemo(() => props.NM.tiles[coordKey]);
+                const coordKey = createMemo<NavCoord>(() => {
+                    const [chunkX, chunkZ] = chunkTileOffset();
+                    // NavMap location of the tile (adjusting chunkspace coords to wherever the chunk is).
+                    const nmX = tx + chunkX;
+                    const nmZ = tz + chunkZ;
+                    return `${nmX},${nmZ}`;
+                });
+                const tile = createMemo(() => props.NM.tiles[coordKey()]);
 
                 const x = () => tileOffsets().x + (tx * tileSize()) + (windowSizeWS() * props.chunk[0]);
                 const y = () => tileOffsets().y - (tile()?.height ?? 0);
@@ -79,7 +81,7 @@ export default function NavTilePreviewer(props: {
                     <>
                         <lume-plane
                             sidedness="double"
-                            color={tileColor([tx, tz], coordKey, hasTile(), tile())}
+                            color={tileColor([tx, tz], coordKey(), hasTile(), tile())}
                             align-point="0.5 0.5"
                             mount-point="0.5 0.5"
                             rotation="90 0 0"
@@ -90,7 +92,7 @@ export default function NavTilePreviewer(props: {
                             depth-write={props.clip ? "false" : "true"}
                         />
 
-                        {props.NM.config.spawn == coordKey && <lume-sphere
+                        {props.NM.config.spawn == coordKey() && <lume-sphere
                             color='red'
                             mount-point='0.5 0.5'
                             align-point='0.5 0.5'
