@@ -12,13 +12,16 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 import tada_sound from './assets/tada.mp3';
 import { playSound } from "@/shared/utils/playSound";
 import Clouds from "@/shared/components/Clouds/Clouds";
+import NavCompass from "@/3d/tile/NavCompass";
 
 export default function TestA() {
     const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef);
 
-    return <lume-scene
+    return (<>
+    <NavCompass nc={navController} nm={navController.navMap}></NavCompass>
+    <lume-scene
         ref={sceneRef}
         webgl
         shadow-mode="basic"
@@ -58,4 +61,5 @@ export default function TestA() {
         />
 
     </lume-scene>
+    </>)
 }
