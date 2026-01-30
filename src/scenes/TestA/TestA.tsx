@@ -6,6 +6,13 @@ import { Scene } from "lume";
 import NM from './assets/NM.json';
 import { NavMap } from "@/3d/tile/tilenav.types";
 
+import friend_texture from '@/assets/artwork/characters/friend.png';
+import Billboard from "@/3d/components/Billboard";
+import { addLogMessage } from "@/app/shell/hud/EventLog";
+import tada_sound from './assets/tada.mp3';
+import { playSound } from "@/shared/utils/playSound";
+import Clouds from "@/shared/components/Clouds/Clouds";
+
 export default function TestA() {
     const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
@@ -25,12 +32,30 @@ export default function TestA() {
             interactionDistance={120}
         />
 
-        <lume-ambient-light intensity={4.5}/>
+        <lume-ambient-light intensity={4.5} />
 
         <lume-gltf-model
             align-point="0.5 0.5"
             scale="10 10 10"
             src={world}
         />
+
+        <Billboard
+            texture={friend_texture}
+            scale={7.5}
+            position="0 -14 -120"
+            interactions={[
+                () => { addLogMessage('You pet the rabbit.'); playSound(tada_sound) },
+                () => addLogMessage('Best not to talk to rabbits.'),
+                () => addLogMessage('You stare at the rabbit.')
+            ]}
+        />
+
+        <Clouds
+            size="1000 1000 1"
+            position="0 -150 0"
+            initialTime={2894}
+        />
+
     </lume-scene>
 }
