@@ -48,7 +48,8 @@ export default function Bridge() {
         if (navController.state().tile == '22,0' && !sceneTransitionStart) {
             sceneTransitionStart = true;
             // Really lazy transition until I figure out the design of the islands!
-            SceneFadeManager.fadeTransition(() => setCurrentScene('Islands'));
+            //SceneFadeManager.fadeTransition(() => setCurrentScene('Islands'));
+            setCurrentScene('Islands');
         }
     });
 

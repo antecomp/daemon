@@ -13,6 +13,9 @@ import tada_sound from './assets/tada.mp3';
 import { playSound } from "@/shared/utils/playSound";
 import Clouds from "@/shared/components/Clouds/Clouds";
 import NavCompass from "@/3d/tile/NavCompass";
+import { startBattle } from "@/features/battle/startBattle";
+
+import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 
 export default function TestA() {
     const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
@@ -49,7 +52,7 @@ export default function TestA() {
             position="0 -14 -120"
             interactions={[
                 () => { addLogMessage('You pet the rabbit.'); playSound(tada_sound) },
-                () => addLogMessage('Best not to talk to rabbits.'),
+                () => startBattle(OPPONENT_BNUY),
                 () => addLogMessage('You stare at the rabbit.')
             ]}
         />

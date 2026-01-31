@@ -70,7 +70,8 @@ export default function DevMenu() {
                 "GemmaBar",
                 "Bridge",
                 "TheGem",
-                "Test"
+                "Test",
+                "TestA"
             ]}>
                 {sceneName => <button onClick={() => setCurrentScene(sceneName)}>{sceneName}</button>}
             </For>

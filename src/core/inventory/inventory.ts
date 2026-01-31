@@ -4,7 +4,8 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 // TODO: Consider changing this to use a set or set-like methods, to prevent duplicate items.
 
-const [itemsList, setItemsList] = createSignal<ItemKey[]>(['example', 
+const [itemsList, setItemsList] = createSignal<ItemKey[]>([
+    //'example', 
     'dv_mod'
 ]);
 
