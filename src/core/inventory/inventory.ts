@@ -6,7 +6,7 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 const [itemsList, setItemsList] = createSignal<ItemKey[]>([
     //'example', 
-    'dv_mod'
+    //'dv_mod'
 ]);
 
 
