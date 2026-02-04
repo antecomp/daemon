@@ -1,5 +1,5 @@
 import icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
-import sprite from '@/assets/artwork/dæmons/crow_sketch.png';
+import sprite from '@/assets/artwork/dæmons/crow_sketch_4.png';
 import backgroundShader from '@/assets/background-shaders/stars.glsl'
 import { planMove, PLANNED_MOVE_REGISTRY } from '@/core/battle/moves/plannedMoves';
 import pick from '@/shared/utils/pick';
