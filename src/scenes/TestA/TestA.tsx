@@ -1,9 +1,7 @@
 import PlayerCam from "@/3d/camera/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import createTileNavigator from "@/3d/tilenav/createTileNavigator";
-import world from './assets/world.glb';
 import { Scene } from "lume";
-import NM from './assets/NM.json';
 import { NavMap } from "@/3d/tilenav/tilenav.types";
 
 import friend_texture from '@/assets/artwork/characters/friend.png';
@@ -16,6 +14,9 @@ import NavCompass from "@/3d/tilenav/NavCompass";
 import { startBattle } from "@/features/battle/startBattle";
 
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
+
+import world from './assets/world1.glb';
+import NM from './assets/NM.json';
 
 export default function TestA() {
     const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
@@ -38,7 +39,7 @@ export default function TestA() {
             interactionDistance={120}
         />
 
-        <lume-ambient-light intensity={4.5} />
+        <lume-ambient-light intensity={4} />
 
         <lume-gltf-model
             align-point="0.5 0.5"
