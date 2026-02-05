@@ -14,10 +14,10 @@ import { playSound } from '@/shared/utils/playSound';
 
 import yeah_sound from './assets/yeah.ogg'
 import bonk_sound from '@/assets/sfx/misc/bonk.mp3';
-import NavCompass from '@/3d/tilenav/NavCompass';
+import NavCompass from '@/3d/tile/NavCompass';
 import { CameraSettings } from '@/3d/camera/camera.types';
 //import attachToConsole from '@/devtools/attachToConsole';
-import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
+import { navCoordToTuple } from '@/3d/tile/tilenav.utils';
 
 import viya_texture from "@/assets/artwork/characters/viya.png"
 
@@ -63,7 +63,7 @@ export default function Test() {
 
     return (
         <>
-            {/* <NavCompass nc={navController} nm={navController.navMap} /> */}
+            <NavCompass nc={navController} nm={navController.navMap} />
             <lume-scene
                 ref={sceneRef}
                 webgl
