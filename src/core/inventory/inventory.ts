@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import { ITEM_REGISTRY, ItemKey } from "./Items";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
+import attachToConsole from "@/devtools/attachToConsole";
 
 // TODO: Consider changing this to use a set or set-like methods, to prevent duplicate items.
 
@@ -33,6 +34,7 @@ const Inventory = {
 
 export default Inventory;
 
+attachToConsole(Inventory, 'DG_INVENTORY');
 
 // TODO: Consider making the "upload" feature an interaction mode
 // could easily change the IModePicker to show a little upload icon to also indicate what we're doing
