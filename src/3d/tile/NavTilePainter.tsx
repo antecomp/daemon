@@ -14,6 +14,7 @@ import downloadObjectAsJson from "@/shared/utils/downloadAsJson";
 import 'lume'
 import { render } from "lume";
 import { getWSPositionOfTile } from "./tilenav.utils";
+import playStepSound from "./stepsound";
 
 export default function NavTilePainter() {
     const [nm, setNm] = createStore<NavMap>({
@@ -33,9 +34,17 @@ export default function NavTilePainter() {
     const [hoveredTile, setHoveredTile] = createSignal<NavCoord | null>(null);
     const [clipMode, setClipMode] = createSignal<boolean>(false);
 
+    const [currentDefaultStepSFX, setCurrentDefaultStepSFX] = createSignal<StepSFXCategory | undefined>(undefined);
+    createEffect(() => {
+        const ht = hoveredTile();
+        if (!ht) return;
+        const htsfx = nm.tiles[ht]?.stepSfx;
+        if (htsfx) playStepSound(htsfx);
+    })
+
     const [currentChunk, setCurrentChunk] = createSignal<[number, number]>([0, 0]);
-    const chunkTileOffsetX = createMemo(() => currentChunk()[0] * WINDOW_SIZE_TILES)
-    const chunkTileOffsetZ = createMemo(() => currentChunk()[1] * WINDOW_SIZE_TILES)
+    const chunkTileOffsetX = createMemo(() => currentChunk()[0] * WINDOW_SIZE_TILES);
+    const chunkTileOffsetZ = createMemo(() => currentChunk()[1] * WINDOW_SIZE_TILES);
 
     createEffect(on(currentChunk, () => {
         setSelectedTiles([]);
@@ -91,7 +100,7 @@ export default function NavTilePainter() {
             targets.forEach(nc => {
                 if (prev[nc]) return;
                 toAdd[nc] = {
-                    height: 0, active: true, edges: 0
+                    height: 0, active: true, edges: 0, stepSfx: currentDefaultStepSFX()
                 }
             });
             return toAdd;
@@ -155,6 +164,13 @@ export default function NavTilePainter() {
                     return [nc, { ...oldTile, stepSfx: (input as StepSFXCategory) }]
                 })
             ))
+        }
+    }
+
+    function spawnDefaultSFXChangePrompt() {
+        const input = prompt("Set to what sound type? \n " + `"carpet" | "dirt" | "floor" | "gravel" | "snow" | "tiles" | "water" | "wood"`);
+        if (StepSFXNames.some(x => x === input)) {
+            setCurrentDefaultStepSFX(input as StepSFXCategory);
         }
     }
 
@@ -405,6 +421,7 @@ export default function NavTilePainter() {
                     <button onclick={() => setSelectedTiles([])}>Clear Selection</button>
                     <button onclick={createTilesAtSelected}>Place new tiles at selected</button>
                     <button onclick={deleteSelectedTiles}>Delete Selected Tiles</button>
+                    <button onClick={spawnDefaultSFXChangePrompt}>Default StepSFX: {currentDefaultStepSFX()}</button>
                 </div>
                 <hr />
                 <div class='config'>
