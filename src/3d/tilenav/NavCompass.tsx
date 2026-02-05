@@ -1,13 +1,14 @@
+import { createMemo, For } from "solid-js";
 import { NavController } from "./createTileNavigator";
+import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
+import { navCoordToTuple } from "./tilenav.utils";
 import cn from './assets/needle.png';
 import './nav-compass.css'
-import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
-import { For, createMemo } from "solid-js";
-import { navCoordToTuple } from "./tilenav.utils";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
 
+const COMPASS_SPAN = 4;
 
 /**
  * Renders a compact 5x5 navigational compass/minimap centered on the current navigation tile,
@@ -27,14 +28,12 @@ export default function NavCompass(props: {
     nm: NavMap
 }) {
     const gridTiles = createMemo(() => {
-        const tile = props.nc.state().tile;
-        const [cx, cz] = navCoordToTuple(tile);
-        const n = props.nm.config.numTiles;
+        const currentTile = props.nc.state().tile;
+        const [cx, cz] = navCoordToTuple(currentTile);
         const spawn = props.nm.config.spawn;
 
         const out: {
             coord: NavCoord
-            inBounds: boolean
             exists: boolean
             isCenter: boolean
             isSpawn: boolean
@@ -42,41 +41,41 @@ export default function NavCompass(props: {
             occupied: boolean
         }[] = [];
 
-        for (let dz = -2; dz <= 2; dz++) {
-            for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -COMPASS_SPAN; dz <= COMPASS_SPAN; dz++) {
+            for (let dx = -COMPASS_SPAN; dx <= COMPASS_SPAN; dx++) {
                 const tx = cx + dx;
                 const tz = cz + dz;
-                const inBounds = tx >= 0 && tz >= 0 && tx < n && tz < n;
                 const coord = `${tx},${tz}` as NavCoord;
-                const tileData = inBounds ? props.nm.tiles[coord] : undefined;
-                const exists = !!tileData && tileData.active !== false;
-                const edges = exists ? (tileData?.edges ?? 0) : 0;
+                const tileData = props.nm.tiles[coord];
+                const exists = !!tileData && tileData.active;
+                const edges = exists ? (tileData.edges) : 0;
                 const borderMask = edges & 15;
                 out.push({
                     coord,
-                    inBounds,
                     exists,
                     isCenter: dx === 0 && dz === 0,
-                    isSpawn: inBounds && spawn === coord,
+                    isSpawn: spawn === coord,
                     borderMask,
                     occupied: tileData?.occupied ?? false
                 });
             }
         }
+
         return out;
     });
 
     return (
-        <div class="nav-compass">
-            <div class="nav-compass-grid">
+        <div class='nav-compass'>
+            <div class='nav-compass-grid'
+                style={{'grid-template-columns': `repeat(${1 + (2 * COMPASS_SPAN)}, 1fr)`}}
+            >
                 <For each={gridTiles()}>
-                    {(tile) => (
+                    {tile =>
                         <div
                             class="nav-compass-tile"
                             classList={{
                                 "is-existing": tile.exists,
-                                "is-empty": tile.inBounds && !tile.exists,
-                                "is-outside": !tile.inBounds,
+                                "is-empty": !tile.exists,
                                 "is-center": tile.isCenter,
                                 "is-spawn": tile.isSpawn,
                                 "is-occupied": tile.occupied
@@ -88,7 +87,7 @@ export default function NavCompass(props: {
                                 "border-left": (tile.borderMask & NavTileMask.EDGE_LEFT) ? EDGE_BORDER : NOEDGE_BORDER
                             }}
                         />
-                    )}
+                    }
                 </For>
             </div>
             <img

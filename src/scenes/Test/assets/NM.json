@@ -1285,6 +1285,24 @@
       "edges": 0,
       "occupied": true,
       "stepSfx": "tiles"
+    },
+    "-1,0": {
+      "height": -4,
+      "active": true,
+      "edges": 0,
+      "stepSfx": "tiles"
+    },
+    "0,-1": {
+      "height": -4,
+      "active": true,
+      "edges": 0,
+      "stepSfx": "tiles"
+    },
+    "-1,-1": {
+      "height": -4,
+      "active": true,
+      "edges": 0,
+      "stepSfx": "tiles"
     }
   }
 }

@@ -3,14 +3,14 @@ import { StepSFXCategory } from "./tilenav.types";
 import { playSound } from "@/shared/utils/playSound";
 
 // TODO: Switch off eager true to utilize lazy load. This is way too much loaded for no reason.
-const carpet = Object.values(import.meta.glob('@/assets/sfx/steps/carpet/*', {eager: true, as: 'url'}));
-const dirt = Object.values(import.meta.glob('@/assets/sfx/steps/dirt/*', {eager: true, as: 'url'}));
-const floor = Object.values(import.meta.glob('@/assets/sfx/steps/floor/*', {eager: true, as: 'url'}));
-const gravel = Object.values(import.meta.glob('@/assets/sfx/steps/gravel/*', {eager: true, as: 'url'}));
-const snow = Object.values(import.meta.glob('@/assets/sfx/steps/snow/*', {eager: true, as: 'url'}));
-const tiles = Object.values(import.meta.glob('@/assets/sfx/steps/tiles/*', {eager: true, as: 'url'}));
-const water = Object.values(import.meta.glob('@/assets/sfx/steps/water/*', {eager: true, as: 'url'}));
-const wood = Object.values(import.meta.glob('@/assets/sfx/steps/wood/*', {eager: true, as: 'url'}));
+const carpet = Object.values(import.meta.glob<string>('@/assets/sfx/steps/carpet/*', {eager: true, query: '?url', import: 'default'}));
+const dirt = Object.values(import.meta.glob<string>('@/assets/sfx/steps/dirt/*', {eager: true, query: '?url', import: 'default'}));
+const floor = Object.values(import.meta.glob<string>('@/assets/sfx/steps/floor/*', {eager: true, query: '?url', import: 'default'}));
+const gravel = Object.values(import.meta.glob<string>('@/assets/sfx/steps/gravel/*', {eager: true, query: '?url', import: 'default'}));
+const snow = Object.values(import.meta.glob<string>('@/assets/sfx/steps/snow/*', {eager: true, query: '?url', import: 'default'}));
+const tiles = Object.values(import.meta.glob<string>('@/assets/sfx/steps/tiles/*', {eager: true, query: '?url', import: 'default'}));
+const water = Object.values(import.meta.glob<string>('@/assets/sfx/steps/water/*', {eager: true, query: '?url', import: 'default'}));
+const wood = Object.values(import.meta.glob<string>('@/assets/sfx/steps/wood/*', {eager: true, query: '?url', import: 'default'}));
 
 const stepSounds = {
     carpet, dirt, floor, gravel, snow, tiles, water, wood

@@ -10,7 +10,7 @@ import {
     CameraSettings
 } from "../camera/camera.types";
 import { createStore, SetStoreFunction } from "solid-js/store";
-import { navCoordToTuple } from "./tilenav.utils";
+import { navCoordToTuple } from "./tilenav.utils"
 import playStepSound from "./stepsound";
 
 export enum NavAction {
@@ -21,6 +21,15 @@ export enum NavAction {
     TurnLeft,
     TurnRight
 }
+
+const keyToActions: Record<string, NavAction[]> = {
+    w: [NavAction.StepForward],
+    s: [NavAction.StepBack],
+    q: [NavAction.StrafeLeft],
+    e: [NavAction.StrafeRight],
+    a: [NavAction.TurnLeft],
+    d: [NavAction.TurnRight]
+} as const;
 
 export type NavActionEvent =
     | {
@@ -130,11 +139,10 @@ export default function createTileNavigator(
     initialNM: NavMap
 ): {
     cameraControlSignals: CameraControlSignals,
-    cameraController: CameraController
-    navController: NavController
+    cameraController: CameraController,
+    navController: NavController,
     navListen: (fn: (event: NavActionEvent) => void) => void
 } {
-
     const [navMap, setNavMap] = createStore<NavMap>(initialNM);
 
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(navMap.config.spawn);
@@ -145,21 +153,17 @@ export default function createTileNavigator(
 
     const { emit: emitNavAction, listen: listenNavAction } = createPayloadEmitter<NavActionEvent>();
 
-    const tileSize = createMemo(() => navMap.config.size / navMap.config.numTiles);
+    const base = createMemo(() => ({
+        x: navMap.config.offset.x,//+ tileOffset(),
+        y: navMap.config.offset.y - navMap.config.playerHeight,
+        z: navMap.config.offset.z //+ tileOffset()
+    }));
 
-    const halfSize = createMemo(() => navMap.config.size / 2);
-    const tileOffset = createMemo(() => tileSize() / 2);
-
-    const baseX = createMemo(() => navMap.config.offset.x - halfSize() + tileOffset());
-    const baseY = createMemo(() => navMap.config.offset.y);
-    const baseZ = createMemo(() => navMap.config.offset.z - halfSize() + tileOffset());
-
-    const cameraPositionForTile = (pos: NavCoord): XYZ => {
-        const [tx, tz] = navCoordToTuple(pos);
-        const size = tileSize();
-        const y = baseY() - (navMap.tiles[pos]?.height ?? 0) - navMap.config.playerHeight;
-        return [baseX() + tx * size, y, baseZ() + tz * size];
-    };
+    const cameraPositionForTile = (coord: NavCoord): XYZ => {
+        const [tx, tz] = navCoordToTuple(coord);
+        const size = navMap.config.tileSize;
+        return [base().x + tx * size, base().y - (navMap.tiles[coord]?.height ?? 0), base().z + tz * size]
+    }
 
     // Camera Override Stuff (Ripped from createCameraController)
     let nextOverrideID = 0;
@@ -231,7 +235,6 @@ export default function createTileNavigator(
         maxPitch: 30
     }));
 
-
     // Movement Stuff -------------------------------------
 
     // Directions -> Tile Deltas
@@ -270,17 +273,6 @@ export default function createTileNavigator(
 
 
     // Controls
-
-    const keyToActions: Record<string, NavAction[]> = {
-        w: [NavAction.StepForward],
-        s: [NavAction.StepBack],
-        q: [NavAction.StrafeLeft],
-        e: [NavAction.StrafeRight],
-        a: [NavAction.TurnLeft],
-        d: [NavAction.TurnRight]
-    };
-
-
     function performNavAction(action: NavAction) {
 
         const originDirection = currentDirection();
@@ -338,9 +330,9 @@ export default function createTileNavigator(
 
     listenNavAction(e => {
         if (e.type != 'move') return;
-        if(!e.success) return;
+        if (!e.success) return;
         const tileStepType = navMap.tiles?.[e.target]?.stepSfx;
-        if(!tileStepType) return;
+        if (!tileStepType) return;
         playStepSound(tileStepType);
     });
 
@@ -458,7 +450,6 @@ export default function createTileNavigator(
         throw new Error("Tile navigator does not support setBaseOri overrides.");
     };
 
-    // will this be properly reactive?
     const navState = createMemo(() => ({
         direction: currentDirection(),
         tile: currentTile(),
@@ -487,6 +478,5 @@ export default function createTileNavigator(
         },
         navListen: listenNavAction
     };
-
 
 }

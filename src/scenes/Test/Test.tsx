@@ -1,5 +1,5 @@
 import world from './assets/world.glb';
-import NM from './assets/NM.json';
+import NM from './assets/NEONM.json';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import createTileNavigator from '@/3d/tilenav/createTileNavigator';
 import { NavMap } from '@/3d/tilenav/tilenav.types';

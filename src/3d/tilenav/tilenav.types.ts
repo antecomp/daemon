@@ -26,12 +26,19 @@ export interface NavTile {
   stepSfx?: StepSFXCategory;
 }
 
+/** Cardinal direction *ordering* used by nav movement logic. */
+export enum Direction {
+    NORTH,
+    WEST,
+    SOUTH,
+    EAST
+}
+
 /** Full navigation map config plus tile lookup by coord. */
 export interface NavMap {
   config: {
     playerHeight: number, // Determines cameras y offset from tile height.
-    size: number // width/height of the whole map.
-    numTiles: number // number of tiles on one axis, size of tiles determined from size / numTiles.
+    tileSize: number // width/height of the tiles
     offset: {
       x: number,
       y: number // added to every tile height to push it up to "ground"
@@ -43,11 +50,4 @@ export interface NavMap {
   tiles: {
     [coord: NavCoord]: NavTile | undefined
   }
-}
-/** Cardinal direction *ordering* used by nav movement logic. */
-export enum Direction {
-    NORTH,
-    WEST,
-    SOUTH,
-    EAST
 }

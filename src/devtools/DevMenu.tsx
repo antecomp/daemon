@@ -7,6 +7,7 @@ import { For } from "solid-js";
 
 import { OPPONENT_MIMICRY as OPPONENT_MIMICRY_NEW } from "@/data/battles/mimic";
 import { OPPONENT_ANGEL } from "@/data/battles/angel";
+import { OPPONENT_CROW } from "@/data/battles/crow.ts";
 
 import { startBattle as startNewBattle } from "@/features/battle/startBattle";
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
@@ -70,13 +71,14 @@ export default function DevMenu() {
                 "GemmaBar",
                 "Bridge",
                 "TheGem",
-                "Test"
+                "Test",
+                "TestA"
             ]}>
                 {sceneName => <button onClick={() => setCurrentScene(sceneName)}>{sceneName}</button>}
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>

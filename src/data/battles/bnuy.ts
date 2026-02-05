@@ -37,6 +37,6 @@ export const OPPONENT_BNUY: OpponentProfile = {
                 })
             }
         },
-        stats: {maxHealth: 100000000000} // bnuy laughs in the face of death.
+        stats: {maxHealth: 15} // bnuy laughs in the face of death.
     }
 }
