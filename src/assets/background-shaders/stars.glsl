@@ -2,6 +2,7 @@
 precision mediump float;
 
 uniform float time;
+uniform vec2 u_resolution;
 in vec2 uv;
 out vec4 fragColor;
 
@@ -71,11 +72,15 @@ float starLayer(vec2 p, float density, float flickerSpeed, float size) {
 }
 
 void main() {
+    float aspect = u_resolution.x / u_resolution.y;
+
     // Center uv for nicer composition
     vec2 p = (uv - 0.5) * 2.0;
 
     // Slow drift
     p.x += 0.03 * time;
+
+    p.x *= aspect;
 
     // Two layers of stars
     float stars = 0.0;

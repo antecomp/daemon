@@ -16,6 +16,7 @@ export const OPPONENT_CROW: OpponentProfile = {
     display: {
         name: "Puritanical Corvus",
         icon, sprite, backgroundShader,
+        spriteOffset: { x: -10, y: 8 },
         lexicon: {
             attack: {
                 label: 'claw'
