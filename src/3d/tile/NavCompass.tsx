@@ -8,6 +8,8 @@ import './nav-compass.css'
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
 
+const COMPASS_SPAN = 4;
+
 /**
  * Renders a compact 5x5 navigational compass/minimap centered on the current navigation tile,
  * plus a rotating needle indicating the current yaw orientation.
@@ -39,8 +41,8 @@ export default function NavCompass(props: {
             occupied: boolean
         }[] = [];
 
-        for (let dz = -2; dz <= 2; dz++) {
-            for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -COMPASS_SPAN; dz <= COMPASS_SPAN; dz++) {
+            for (let dx = -COMPASS_SPAN; dx <= COMPASS_SPAN; dx++) {
                 const tx = cx + dx;
                 const tz = cz + dz;
                 const coord = `${tx},${tz}` as NavCoord;
@@ -64,7 +66,9 @@ export default function NavCompass(props: {
 
     return (
         <div class='nav-compass'>
-            <div class='nav-compass-grid'>
+            <div class='nav-compass-grid'
+                style={{'grid-template-columns': `repeat(${1 + (2 * COMPASS_SPAN)}, 1fr)`}}
+            >
                 <For each={gridTiles()}>
                     {tile =>
                         <div
