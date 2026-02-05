@@ -1,8 +1,8 @@
 import world from './assets/world.glb';
 import NM from './assets/NEONM.json';
 import PlayerCam from '@/3d/camera/PlayerCam';
-import createTileNavigator from '@/3d/tile/createTileNavigator';
-import { NavMap } from '@/3d/tile/tilenav.types';
+import createTileNavigator from '@/3d/tilenav/createTileNavigator';
+import { NavMap } from '@/3d/tilenav/tilenav.types';
 import { Scene } from 'lume';
 import girl_sprite from './assets/yeah.png';
 import { useDGShader } from '@/3d/pipeline/dgRender';
@@ -14,10 +14,10 @@ import { playSound } from '@/shared/utils/playSound';
 
 import yeah_sound from './assets/yeah.ogg'
 import bonk_sound from '@/assets/sfx/misc/bonk.mp3';
-import NavCompass from '@/3d/tile/NavCompass';
+import NavCompass from '@/3d/tilenav/NavCompass';
 import { CameraSettings } from '@/3d/camera/camera.types';
 //import attachToConsole from '@/devtools/attachToConsole';
-import { navCoordToTuple } from '@/3d/tile/tilenav.utils';
+import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 
 import viya_texture from "@/assets/artwork/characters/viya.png"
 

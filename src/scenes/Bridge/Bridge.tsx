@@ -11,9 +11,9 @@ import river from './assets/river.glb'
 import island_surface from './assets/island_surface.glb'
 
 import NM from './assets/NEONM.json';
-import createTileNavigator from '@/3d/tile/createTileNavigator';
-import { NavMap } from '@/3d/tile/tilenav.types';
-import NavCompass from '@/3d/tile/NavCompass';
+import createTileNavigator from '@/3d/tilenav/createTileNavigator';
+import { NavMap } from '@/3d/tilenav/tilenav.types';
+import NavCompass from '@/3d/tilenav/NavCompass';
 import { ShaderMaterial } from "three";
 import river_shader from './assets/river.glsl';
 import passthrough_vert from '@/3d/shaders/post-processing/passfog.vert.glsl'

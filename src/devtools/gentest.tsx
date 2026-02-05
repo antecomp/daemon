@@ -1,12 +1,12 @@
-import NavTilePreviewer from '@/3d/tile/NavTilePreviewer';
-import { WINDOW_SIZE_TILES } from "@/3d/tile/tilenav.config";
-import { Direction, NavMap } from '@/3d/tile/tilenav.types';
+import NavTilePreviewer from '@/3d/tilenav/NavTilePreviewer';
+import { WINDOW_SIZE_TILES } from "@/3d/tilenav/tilenav.config";
+import { Direction, NavMap } from '@/3d/tilenav/tilenav.types';
 import EnochPuzzle from '@/features/puzzles/enoch/EnochPuzzle';
 import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
 
 import 'lume';
-import NavTilePreviewCamera from '@/3d/tile/NavTilePreviewCamera';
+import NavTilePreviewCamera from '@/3d/tilenav/NavTilePreviewCamera';
 
 const chunk: [number, number] = [-1,-1];
 const hoveredTile: [number, number] = [5,5];

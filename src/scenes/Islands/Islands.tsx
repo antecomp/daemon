@@ -2,11 +2,11 @@ import { useDGShader } from "@/3d/pipeline/dgRender";
 import { GltfModel, Scene } from "lume";
 
 import islands_glb from './assets/malice.glb';
-import createTileNavigator from "@/3d/tile/createTileNavigator";
+import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NEONM.json'
 import PlayerCam from "@/3d/camera/PlayerCam";
-import NavCompass from "@/3d/tile/NavCompass";
-import { NavMap } from "@/3d/tile/tilenav.types";
+import NavCompass from "@/3d/tilenav/NavCompass";
+import { NavMap } from "@/3d/tilenav/tilenav.types";
 
 import test_girl_sprite from '../Test/assets/girl2.png';
 import Billboard from "@/3d/components/Billboard";

@@ -1,10 +1,10 @@
 import PlayerCam from "@/3d/camera/PlayerCam";
 import { useDGShader } from "@/3d/pipeline/dgRender";
-import createTileNavigator from "@/3d/tile/createTileNavigator";
+import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import world from './assets/world.glb';
 import { Scene } from "lume";
 import NM from './assets/NM.json';
-import { NavMap } from "@/3d/tile/tilenav.types";
+import { NavMap } from "@/3d/tilenav/tilenav.types";
 
 import friend_texture from '@/assets/artwork/characters/friend.png';
 import Billboard from "@/3d/components/Billboard";
@@ -12,7 +12,7 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 import tada_sound from './assets/tada.mp3';
 import { playSound } from "@/shared/utils/playSound";
 import Clouds from "@/shared/components/Clouds/Clouds";
-import NavCompass from "@/3d/tile/NavCompass";
+import NavCompass from "@/3d/tilenav/NavCompass";
 import { startBattle } from "@/features/battle/startBattle";
 
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
