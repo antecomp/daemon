@@ -8,7 +8,7 @@
       "z": 210
     },
     "spawn": "-10,-10",
-    "spawnDirection": 0
+    "spawnDirection": 3
   },
   "tiles": {
     "-5,-10": {

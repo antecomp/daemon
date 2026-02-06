@@ -1,9 +1,10 @@
-import { createMemo, For } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import { NavController } from "./createTileNavigator";
 import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { navCoordToTuple } from "./tilenav.utils";
 import cn from './assets/needle.png';
 import './nav-compass.css'
+import { DialogueService } from "@/core/dialogue/dialogueService";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
@@ -65,40 +66,42 @@ export default function NavCompass(props: {
     });
 
     return (
-        <div class='nav-compass'>
-            <div class='nav-compass-grid'
-                style={{'grid-template-columns': `repeat(${1 + (2 * COMPASS_SPAN)}, 1fr)`}}
-            >
-                <For each={gridTiles()}>
-                    {tile =>
-                        <div
-                            class="nav-compass-tile"
-                            classList={{
-                                "is-existing": tile.exists,
-                                "is-empty": !tile.exists,
-                                "is-center": tile.isCenter,
-                                "is-spawn": tile.isSpawn,
-                                "is-occupied": tile.occupied
-                            }}
-                            style={{
-                                "border-top": (tile.borderMask & NavTileMask.EDGE_UP) ? EDGE_BORDER : NOEDGE_BORDER,
-                                "border-right": (tile.borderMask & NavTileMask.EDGE_RIGHT) ? EDGE_BORDER : NOEDGE_BORDER,
-                                "border-bottom": (tile.borderMask & NavTileMask.EDGE_DOWN) ? EDGE_BORDER : NOEDGE_BORDER,
-                                "border-left": (tile.borderMask & NavTileMask.EDGE_LEFT) ? EDGE_BORDER : NOEDGE_BORDER
-                            }}
-                        />
-                    }
-                </For>
+        <Show when={!DialogueService.dialogueOngoing()}>
+            <div class='nav-compass'>
+                <div class='nav-compass-grid'
+                    style={{ 'grid-template-columns': `repeat(${1 + (2 * COMPASS_SPAN)}, 1fr)` }}
+                >
+                    <For each={gridTiles()}>
+                        {tile =>
+                            <div
+                                class="nav-compass-tile"
+                                classList={{
+                                    "is-existing": tile.exists,
+                                    "is-empty": !tile.exists,
+                                    "is-center": tile.isCenter,
+                                    "is-spawn": tile.isSpawn,
+                                    "is-occupied": tile.occupied
+                                }}
+                                style={{
+                                    "border-top": (tile.borderMask & NavTileMask.EDGE_UP) ? EDGE_BORDER : NOEDGE_BORDER,
+                                    "border-right": (tile.borderMask & NavTileMask.EDGE_RIGHT) ? EDGE_BORDER : NOEDGE_BORDER,
+                                    "border-bottom": (tile.borderMask & NavTileMask.EDGE_DOWN) ? EDGE_BORDER : NOEDGE_BORDER,
+                                    "border-left": (tile.borderMask & NavTileMask.EDGE_LEFT) ? EDGE_BORDER : NOEDGE_BORDER
+                                }}
+                            />
+                        }
+                    </For>
+                </div>
+                <img
+                    class="nav-compass-needle"
+                    src={cn}
+                    width="20px"
+                    style={{
+                        'rotate': -props.nc.state().base.ori.yaw + 'deg',
+                        'transition': 'rotate 0.5s ease'
+                    }}
+                />
             </div>
-            <img
-                class="nav-compass-needle"
-                src={cn}
-                width="20px"
-                style={{
-                    'rotate': -props.nc.state().base.ori.yaw + 'deg',
-                    'transition': 'rotate 0.5s ease'
-                }}
-            />
-        </div>
+        </Show>
     )
 }

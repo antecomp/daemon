@@ -19,15 +19,14 @@ export type StartDialogueOptions = {
 };
 
 const [currentDialogueOverlay, setCurrentDialogueOverlay] = createSignal<string | null>(null);
-
-let activeDialogue: null | string = null;
+const [activeDialogue, setActiveDialogue] = createSignal<string | null>(null);
 let dialogueCompletionResolver: (() => void) | null = null;
 
 function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
-    if(activeDialogue) throw new Error("Dialogue already in progress.");
+    if(activeDialogue()) throw new Error("Dialogue already in progress.");
 
     const id = `dialogue-${Date.now()}`; // TODO: change this. Utilize pushUILayers id?
-    activeDialogue = id;
+    setActiveDialogue(id);
 
     pushUILayer({
         id,
@@ -46,12 +45,12 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
 
 function endDialogue() {
     // soft warn instead of a full error - a conflict shouldn't crash the game, but is worth warning us about.
-    if (!activeDialogue) {console.warn("Close Dialogue Called, but no active dialogue was detected!"); return;}
+    if (!activeDialogue()) {console.warn("Close Dialogue Called, but no active dialogue was detected!"); return;}
 
     setCurrentDialogueOverlay(null);
-    popUILayer(activeDialogue);
+    popUILayer(activeDialogue()!);
 
-    activeDialogue = null;
+    setActiveDialogue(null);
     if(dialogueCompletionResolver) {
         dialogueCompletionResolver();
         dialogueCompletionResolver = null;
@@ -59,7 +58,7 @@ function endDialogue() {
 }
 
 function dialogueOngoing(): boolean {
-    return activeDialogue != null;
+    return activeDialogue() != null;
 }
 
 export const DialogueService = { 
