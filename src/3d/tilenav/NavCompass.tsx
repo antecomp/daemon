@@ -57,7 +57,7 @@ export default function NavCompass(props: {
                     isCenter: dx === 0 && dz === 0,
                     isSpawn: spawn === coord,
                     borderMask,
-                    occupied: tileData?.occupied ?? false
+                    occupied: props.nc.occupiedTiles().includes(coord)
                 });
             }
         }

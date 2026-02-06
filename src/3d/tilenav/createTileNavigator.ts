@@ -61,6 +61,8 @@ export interface NavController {
     setNavMap: SetStoreFunction<NavMap>
     performNavAction: (action: NavAction) => void;
     setCurrentTile: Setter<NavCoord>;
+    occupiedTiles: Accessor<NavCoord[]>;
+    occupyTile: (coord: NavCoord) => () => void;
 }
 
 /**
@@ -146,6 +148,18 @@ export default function createTileNavigator(
     const [navMap, setNavMap] = createStore<NavMap>(initialNM);
 
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(navMap.config.spawn);
+
+    const [occupiedTiles, setOccupiedTiles] = createSignal<NavCoord[]>([]);
+    
+    // Returns the release function.
+    function occupyTile(coord: NavCoord) {
+        setOccupiedTiles(prev => [...prev, coord]);
+        return () => setOccupiedTiles(prev => {
+            // Target only the first instance of. If multiple claim occupancy, they all have to release.
+            const idx = prev.indexOf(coord);
+            return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
+        })
+    }
 
     const [currentDirection, setCurrentDirection] = createSignal<Direction>(navMap.config.spawnDirection);
     const [currentYaw, setCurrentYaw] = createSignal(currentDirection() * 90);
@@ -259,7 +273,7 @@ export default function createTileNavigator(
         const current = navMap.tiles[from];
         if (!current || (current.edges & dirEdge[dirIndex])) return false;
         const targetTile = navMap.tiles[target];
-        if (!targetTile || !targetTile.active || targetTile.occupied) return false;
+        if (!targetTile || !targetTile.active || occupiedTiles().includes(target)) return false;
         return true;
     };
 
@@ -474,7 +488,9 @@ export default function createTileNavigator(
             performNavAction,
             setCurrentTile,
             navMap,
-            setNavMap
+            setNavMap,
+            occupiedTiles,
+            occupyTile
         },
         navListen: listenNavAction
     };

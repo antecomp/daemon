@@ -56,6 +56,7 @@
 
 .nav-compass-tile.is-occupied::before {
     content: '+'; /* replace with cool image later */
+    position: absolute; /* prevent overflow */
 }
 
 .nav-compass-needle {
