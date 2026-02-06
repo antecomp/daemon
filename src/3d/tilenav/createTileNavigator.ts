@@ -157,6 +157,7 @@ export default function createTileNavigator(
         return () => setOccupiedTiles(prev => {
             // Target only the first instance of. If multiple claim occupancy, they all have to release.
             const idx = prev.indexOf(coord);
+            if (idx === -1) return prev; // Noop, nothing to remove. -1 would accidentally pop.
             return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
         })
     }
