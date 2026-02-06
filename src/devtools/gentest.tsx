@@ -1,16 +1,16 @@
 import 'lume';
 import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
-import BattleCanvas from '@/features/battle/ui/BattleCanvas';
+import { onMount } from 'solid-js';
 //////////////////////////////////////////////
 
 import shader from '@/assets/background-shaders/checkers.glsl'
+import createShaderPlane from '@/shared/hooks/createShaderPlane';
 
 function Comp() {
-    return <BattleCanvas
-        sprite=''
-        backgroundShader={shader}
-    />
+    let canvasRef!: HTMLCanvasElement;
+    onMount(() => createShaderPlane(canvasRef, shader));
+    return <canvas ref={canvasRef} width={800} height={600}/>
 }
 
 // chage this out as needed
