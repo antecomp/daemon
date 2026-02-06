@@ -185,3 +185,49 @@ button {
 ::-webkit-scrollbar-button {
   display: none;
 }
+
+/* Integer Scale On HiDPI Displays (Mac). 1.5 actually looks crisp because???? */
+@media screen and (min-resolution: 2dppx)
+       and (min-width: 1483px)
+       and (min-height: 1029px) {
+
+    @supports not (-moz-orient: block) {
+        main {
+            zoom: 1.5;
+        }
+    }
+
+    @supports (-moz-orient: block) {
+        body {
+            scale: 1.5;
+            overflow: hidden;
+        }
+
+        #root, .tooltip {
+            perspective: none;
+            transform: none;
+        }
+    }
+
+    /* upscale all the cursors too */
+    :root {
+        --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
+        --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
+    }
+
+    .cursor-chat {
+        cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
+    }
+
+    .cursor-interact {
+        cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
+    }
+
+    .cursor-observe {
+        cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
+    }
+
+    .cursor-navigate {
+      cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
+    }
+}
