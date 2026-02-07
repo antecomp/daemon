@@ -32,7 +32,7 @@ export default function TextScene(props: {
             ? currentLine.segments
             : currentLine
     }
-    const {displayWithLineBreaks, skipTypingAnimation, isFinished} = createColorTypewriter(currentLineSegs);
+    const { displayWithLineBreaks, skipTypingAnimation, isFinished } = createColorTypewriter(currentLineSegs);
 
     let textElement!: HTMLParagraphElement // ref used to apply fade anim.
 
@@ -42,14 +42,16 @@ export default function TextScene(props: {
 
     let fadeLock = false; // Prevent triggering fade if it's already ongoing.
     function handleClick() {
-        if(isFinished()) {
+        if (isFinished()) {
             if (currentLineIndex() >= props.sequence.length - 1) { // end
                 if (fadeLock) return;
                 fadeLock = true;
+                const currentLine = props.sequence[currentLineIndex()];
+                "sideEffect" in currentLine && currentLine.sideEffect?.();
                 animateAsync(containerRef, [
-                    {opacity: 1}, {opacity: 0}
+                    { opacity: 1 }, { opacity: 0 }
                 ], 1000).finally(() => {
-                    props.id && popUILayer(props.id);   
+                    props.id && popUILayer(props.id);
                 })
             } else { // advance to next line.
                 if (fadeLock) return;
@@ -58,10 +60,10 @@ export default function TextScene(props: {
                 "sideEffect" in currentLine && currentLine.sideEffect?.();
                 textElement.animate(
                     [
-                        {opacity: "1"},
-                        {opacity: "0"}
+                        { opacity: "1" },
+                        { opacity: "0" }
                     ],
-                    {duration: TEXT_FADE_DURATION + 100}
+                    { duration: TEXT_FADE_DURATION + 100 }
                 )
                 setTimeout(() => {
                     setCurrentLineIndex(prev => prev + 1);
@@ -86,7 +88,7 @@ export default function TextScene(props: {
                 "align-items": "center"
             }}
             ref={containerRef}
-            class={props.skipFadeIn ? "" :"fademein"}
+            class={props.skipFadeIn ? "" : "fademein"}
             data-fade-duration="1000" // or remove - defaults to 500ms by current css setup
         >
             <p
@@ -121,8 +123,8 @@ export function playTextOverlay(sequence: TextOverlayLine[], skipFadeIn = false)
     })
 
     pushUILayer({
-        id, 
-        component: () => TextScene({sequence, id, onComplete: resolveEnd, skipFadeIn}),
+        id,
+        component: () => TextScene({ sequence, id, onComplete: resolveEnd, skipFadeIn }),
         blockBehind: true,
         lock: 'all'
     });

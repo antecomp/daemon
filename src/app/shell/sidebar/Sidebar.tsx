@@ -77,7 +77,6 @@ export default function Sidebar() {
 
     const openWindowInfo = () => menuItems.find(i => i.id == openWindow());
 
-    // TODO: Make a derived signal for the current window instead of running filter everywhere.
     return (
         <div id="sidebar">
             <For each={menuItems}>
