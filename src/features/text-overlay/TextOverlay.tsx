@@ -1,4 +1,4 @@
-import { createSignal, onCleanup } from "solid-js"
+import { createSignal, onCleanup, Show } from "solid-js"
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { nanoid } from "nanoid"
 import createColorTypewriter, { SegmentInput } from "@/shared/hooks/createColorTypewriter";
@@ -16,7 +16,7 @@ const TEXT_FADE_DURATION = 300;
  * Renders a full-screen text overlay that typewrites the provided sequence and
  * dismisses itself once the final line finishes.
  */
-export default function TextScene(props: {
+export default function TextOverlay(props: {
     sequence: TextOverlayLine[],
     id?: string
     onComplete?: () => void,
@@ -103,28 +103,38 @@ export default function TextScene(props: {
             >
                 {displayWithLineBreaks()}
             </p>
+            <Show when={isFinished()}>
+                <p
+                    style={{
+                        'position': 'absolute',
+                        'bottom': '0px',
+                        'right': '0px',
+                        'color': 'gray',
+                        'animation-delay': '3s'
+                    }}
+                    class='fademein'
+                >
+                    [ Click to continue ]
+                </p>
+            </Show>
         </div>
     )
 }
 
-
-// TODO: DOCUMENT THIS AND THE TYPE BETTER SO YOU ACTUALLY REMEMBER HOW TO WRITE THESE LOL
 /**
- * Pushes a `TextScene` layer that renders the provided sequence and resolves
- * once the overlay is dismissed by the player.
- * 
+ * Starts a new text overlay cutscene as a UI layer.
+ * @param sequence - An array of TextOverlayLines, which are either `['text', 'color']`, or `{segments: ['text', 'color'], sideEffect: () => void}`
+ * @param skipFadeIn - Optional skip of the fade in effect.
+ * @returns a promise that resolves when the text is completed. 
  */
 export function playTextOverlay(sequence: TextOverlayLine[], skipFadeIn = false) {
     const id = "text-scene" + nanoid();
 
-    let resolveEnd: (() => void);
-    const endTextPromise = new Promise<void>(resolve => {
-        resolveEnd = resolve;
-    })
+    const { promise: endTextPromise, resolve: resolveEnd } = Promise.withResolvers();
 
     pushUILayer({
         id,
-        component: () => TextScene({ sequence, id, onComplete: resolveEnd, skipFadeIn }),
+        component: () => TextOverlay({ sequence, id, onComplete: resolveEnd as () => void, skipFadeIn }),
         blockBehind: true,
         lock: 'all'
     });
