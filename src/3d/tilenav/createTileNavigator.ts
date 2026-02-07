@@ -25,10 +25,10 @@ export enum NavAction {
 const keyToActions: Record<string, NavAction[]> = {
     w: [NavAction.StepForward],
     s: [NavAction.StepBack],
-    q: [NavAction.StrafeLeft],
-    e: [NavAction.StrafeRight],
-    a: [NavAction.TurnLeft],
-    d: [NavAction.TurnRight]
+    a: [NavAction.StrafeLeft],
+    d: [NavAction.StrafeRight],
+    q: [NavAction.TurnLeft],
+    e: [NavAction.TurnRight]
 } as const;
 
 export type NavActionEvent =

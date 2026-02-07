@@ -24,6 +24,8 @@
     display: block;
     overflow: hidden;
     outline: black solid 2px;
+
+    pointer-events: none;
 }
 
 .nav-compass-grid {
