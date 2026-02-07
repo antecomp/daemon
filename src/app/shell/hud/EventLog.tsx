@@ -4,6 +4,8 @@ import tr from "@/assets/ui/corners/da/tr.png"
 import tl_el from "./assets/tl_el.png"
 import { createEffect, on, createSignal, For } from "solid-js";
 import { LOGIN_MESSAGE } from "@/config/init.config";
+import { playSound } from "@/shared/utils/playSound";
+import notif_sound from '@/assets/sfx/misc/notif.ogg';
 
 const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([
     {id: 0, text: LOGIN_MESSAGE, color: '#cfb886ff'}
@@ -13,7 +15,7 @@ const recentMessages = new Map<string, number>();
  * Append a message to the "EventLog" which is the small text box at the bottom of the screen.
  * @param msg Message to append
  */
-export const addLogMessage = (text: string, color = "#aaa", options?: { dedupeMs?: number }) => {
+export const addLogMessage = (text: string, color = "#aaa", options?: { dedupeMs?: number, silent?: boolean }) => {
     const dedupeMs = options?.dedupeMs ?? 1000;
     if (dedupeMs > 0) {
         const now = performance.now();
@@ -23,6 +25,9 @@ export const addLogMessage = (text: string, color = "#aaa", options?: { dedupeMs
             return;
         }
         recentMessages.set(key, now);
+    }
+    if(!options?.silent) {
+        playSound(notif_sound);
     }
     setLogMessages((prev) => [...prev.slice(-15), { id: performance.now(), text, color }]);
 };
