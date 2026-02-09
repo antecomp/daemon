@@ -78,6 +78,8 @@ export interface OpponentProfile {
         icon: AssetURL;
         lexicon: Partial<MoveLexicon>;
 
+        initMessage?: string,
+
         sprite: AssetURL;
         spriteOffset?: Point;
 

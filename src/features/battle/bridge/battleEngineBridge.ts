@@ -3,7 +3,7 @@ import { BattleReactions } from "@/core/battle/model/battleReactions";
 import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
-import { Accessor, createContext, createSignal, useContext } from "solid-js";
+import { Accessor, createContext, createSignal, onMount, useContext } from "solid-js";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations/uiAnimations";
 import { playSound } from "@/shared/utils/playSound";
@@ -32,6 +32,8 @@ import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
+    /** Opening Animation */
+    INIT,
     /** Waiting for user input (building sequence) */
     WAITING,
     /** User input of correct size, waiting for "execute" */
@@ -63,7 +65,7 @@ export const useBattleUIState = () => {
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
 
-    const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.WAITING);
+    const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.INIT);
 
     // Keeping these seperate instead of using Sides as they are forwarded to different UI components.
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
@@ -121,6 +123,14 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
                 })
         );
     }
+
+    onMount(async () => {
+        console.log(refRegistry);
+        refRegistry.battleView && (refRegistry.battleView.style.opacity = "0"); // Setting this here causes no flash-in glitch from what I can tell.
+        await sleep(10000); // Either just wait for animations, or consider adding a prompt for the player. 
+        refRegistry.battleView && (refRegistry.battleView.style.opacity = "1"); // e.g for testing.
+        engine.setupRound();
+    })
 
     const reactions: BattleReactions = {
 
@@ -276,7 +286,6 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             }
         }
     };
-
 
     const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, {logger(m) {appendActionMessage(m, 'default')}});
 

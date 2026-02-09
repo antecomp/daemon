@@ -5,7 +5,6 @@ import './ui/styles/battle.css';
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
-import { onMount } from 'solid-js';
 import { BattleUIState, BattleUIStateContext, createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
@@ -23,6 +22,7 @@ import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
 //import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
+import { Show } from 'solid-js';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -36,27 +36,25 @@ export default function Battle(props: {
     // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific.
     const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
 
-    const {startMeltAnimation, filterID, filterSVG} = createMeltingEffect();
+    const { startMeltAnimation, filterID, filterSVG } = createMeltingEffect();
 
-    const {overlayAnimRequests, requestOverlayAnimation} = createOverlayAnimationQueue();
+    const { overlayAnimRequests, requestOverlayAnimation } = createOverlayAnimationQueue();
 
-    const {engine, ...bridge} = createUIBridgedBattleEngine(props.opponentProfile, {opponent: opponentLexicon, player: playerLexicon}, props.onEnd, startMeltAnimation, requestOverlayAnimation);
-
-    onMount(engine.setupRound);
+    const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, { opponent: opponentLexicon, player: playerLexicon }, props.onEnd, startMeltAnimation, requestOverlayAnimation);
 
     //createMusicTrack({src: 'PWL/blackscorpionmusic-black-scorpion-music-matrix.mp3'});
 
     return (
-        <BattleRefRegistryCTX.Provider value={{attachToRegistry: bridge.attachToRegistry}}>
-            <BattleUIStateContext.Provider value={{...bridge}}>
+        <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>
+            <BattleUIStateContext.Provider value={{ ...bridge }}>
                 {filterSVG}
-                <div 
+                <div
                     class="battle-container"
                     style={{ filter: `url(#${filterID})` }}
-                    classList={{"battle-end": bridge.battleUIState() === BattleUIState.END}}
+                    classList={{ "battle-end": bridge.battleUIState() === BattleUIState.END }}
                 >
-                    <ActionMessages messages={bridge.actionMessages}/>
-                    <CornerRect ref={(r: HTMLElement) => bridge.attachToRegistry('battleView', r)} class="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]} style={{'border-bottom': 'none'}}>
+                    <ActionMessages messages={bridge.actionMessages} />
+                    <CornerRect ref={(r: HTMLElement) => bridge.attachToRegistry('battleView', r)} class="battle-view" borderSize={2} borderType='solid white' corners={[vtl, vtr]} style={{ 'border-bottom': 'none' }}>
                         <OpponentStatusBar
                             name={props.opponentProfile.display.name}
                             icon={props.opponentProfile.display.icon}
@@ -68,18 +66,25 @@ export default function Battle(props: {
                         <BattleCanvas
                             {...props.opponentProfile.display}
                         />
-                        <OpponentSprite
-                            {...props.opponentProfile.display}
-                        />
-                        <OverlayAnimator overlayAnimationRequests={overlayAnimRequests}/>
                     </CornerRect>
                     <Actionbar
                         lexicon={playerLexicon}
-                        executeRound={engine.executeRound} 
+                        executeRound={engine.executeRound}
                         forceBattleEnd={engine.handleBattleEnd}
                         {...bridge}
                     />
-                    <CurrentClash moves={bridge.currentClash()} lexicons={{player: playerLexicon, opponent: opponentLexicon}}/>
+                    <CurrentClash moves={bridge.currentClash()} lexicons={{ player: playerLexicon, opponent: opponentLexicon }} />
+                    <OpponentSprite
+                        {...props.opponentProfile.display}
+                    />
+                    <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} />
+
+                    <Show when={bridge.battleUIState() === BattleUIState.INIT}>
+                        <div class="opponent-init-message">
+                            {props.opponentProfile.display.initMessage ?? "a " + props.opponentProfile.display.name + " attacks!"}
+                        </div>
+                    </Show>
+
                 </div>
             </BattleUIStateContext.Provider>
         </BattleRefRegistryCTX.Provider>
