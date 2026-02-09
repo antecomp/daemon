@@ -80,8 +80,10 @@ export default function Battle(props: {
                     <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} />
 
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
-                        <div class="opponent-init-message">
-                            {props.opponentProfile.display.initMessage ?? "a " + props.opponentProfile.display.name + " attacks!"}
+                        <div class="opponent-init-message" ref={r => bridge.attachToRegistry('initMessage', r)}>
+                            {props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}
+                            <br />
+                            Initializing DAEMONVEIL...
                         </div>
                     </Show>
 

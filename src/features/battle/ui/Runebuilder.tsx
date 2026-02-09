@@ -36,7 +36,7 @@ export default function Runebuilder(props: {
                 <circle
                     cx={CENTER} cy={CENTER}
                     r={RUNEBUILDER_RADIUS}
-                    stroke={(battleUIState() != BattleUIState.WAITING) ? "white" : "#aaa"}
+                    stroke={(battleUIState() == BattleUIState.READY) ? "white" : "#aaa"}
                     stroke-width="2"
                     fill="black"
                     class="main-rb-circle"
@@ -75,7 +75,7 @@ export default function Runebuilder(props: {
                             runePositions.set(runename, {x,y});
 
                             return (
-                                <>
+                                <g class='rb-rune'>
                                     <circle
                                         cx={x} cy={y}
                                         r={RUNEBUILDER_RADIUS / 4}
@@ -91,7 +91,7 @@ export default function Runebuilder(props: {
                                         y={y - LARGE_ICON_SIZE / 2}
                                         preserveAspectRatio="xMidYMid meet"
                                     />
-                                </>
+                                </g>
                             )
                         }}
                     </For>

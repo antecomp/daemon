@@ -29,11 +29,14 @@ import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
+import battleOpeningAnimation from "../animation/opening-animation";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
-    /** Opening Animation */
+    /** Openining Prompt */
     INIT,
+    /** Opening Animation */
+    OPENING,
     /** Waiting for user input (building sequence) */
     WAITING,
     /** User input of correct size, waiting for "execute" */
@@ -126,9 +129,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
     onMount(async () => {
         console.log(refRegistry);
-        refRegistry.battleView && (refRegistry.battleView.style.opacity = "0"); // Setting this here causes no flash-in glitch from what I can tell.
-        await sleep(10000); // Either just wait for animations, or consider adding a prompt for the player. 
-        refRegistry.battleView && (refRegistry.battleView.style.opacity = "1"); // e.g for testing.
+        await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
     })
 

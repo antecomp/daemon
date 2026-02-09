@@ -16,7 +16,8 @@ export type BattleRefNames = [
     "actionBarLeft",
     "runeBuilder",
     "battleView",
-    "battleBG"
+    "battleBG",
+    'initMessage'
 ];
 
 interface BattleRefRegistry {

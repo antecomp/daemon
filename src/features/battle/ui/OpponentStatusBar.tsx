@@ -55,7 +55,7 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
     const sequenceViewOpponentRef = createBattleRefAttacher('sequenceViewOpponent');
     const {showTooltip, hideTooltip, TooltipComponent } = createTooltip();
 
-    const opponentStatusBarRef = createBattleRefAttacher('opponentSprite');
+    const opponentStatusBarRef = createBattleRefAttacher('opponentStatusbar');
 
     return (
         <>

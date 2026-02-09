@@ -6,7 +6,7 @@ import sleep from "./sleep";
  * @argument options - Keyframe options: https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#parameters
  */
 const animateAsync = async (
-    element: HTMLElement,
+    element: HTMLElement | SVGElement,
     keyframes: Keyframe[] | PropertyIndexedKeyframes,
     options?: number | KeyframeAnimationOptions
   ): Promise<Animation> => {
