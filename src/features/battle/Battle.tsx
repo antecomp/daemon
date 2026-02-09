@@ -21,7 +21,8 @@ import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-import { createMusicTrack } from '@/core/audio/createMusicTrack';
+//import { createMusicTrack } from '@/core/audio/createMusicTrack';
+import OpponentSprite from './ui/OpponentSprite';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -65,6 +66,9 @@ export default function Battle(props: {
                             currentlyExecutingMoveIndex={bridge.currentlyExecutingMoveIndex}
                         />
                         <BattleCanvas
+                            {...props.opponentProfile.display}
+                        />
+                        <OpponentSprite
                             {...props.opponentProfile.display}
                         />
                         <OverlayAnimator overlayAnimationRequests={overlayAnimRequests}/>

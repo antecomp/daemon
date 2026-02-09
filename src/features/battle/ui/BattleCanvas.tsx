@@ -1,7 +1,7 @@
 import { Point } from "@/shared/types/3d.types";
 import { AssetURL } from "@/shared/types/misc.types";
 import { onMount, useContext } from "solid-js";
-import { BattleRefRegistryCTX, createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry";
+import { BattleRefRegistryCTX } from "../animation/uiAnimations/battleUIRefRegistry";
 
 import { SCENE_DIMENSIONS, SIDEBAR_WIDTH } from "@/config/ui.config";
 import createShaderPlane from "@/shared/hooks/createShaderPlane";
@@ -23,22 +23,12 @@ export default function BattleCanvas(props: {
     const {attachToRegistry} = useContext(BattleRefRegistryCTX)!;
     onMount(() => createShaderPlane(canvasRef, props.backgroundShader, props.backgroundShaderTexture))
 
-    const opponentSpriteRef = createBattleRefAttacher('opponentSprite');
-
     return (
         <>
             <canvas
                 ref={(el) => {canvasRef = el; attachToRegistry('battleBG', el)}}
                 class="battle-bg"
                 {...BATTLE_CANVAS_DIMENSIONS}
-            />
-            <img
-                ref={opponentSpriteRef}
-                src={props.sprite}
-                class="battle-sprite"
-                style={{
-                    translate: props.spriteOffset ? `${props.spriteOffset.x}px ${props.spriteOffset.y}px` : "none",
-                }}
             />
         </>
     )
