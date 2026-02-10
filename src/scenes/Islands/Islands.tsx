@@ -1,38 +1,36 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { GltfModel, Scene } from "lume";
-
 import { createSignal, Show } from 'solid-js';
 
-import islands_glb from './assets/malice.glb';
 import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NEONM.json'
 import PlayerCam from "@/3d/camera/PlayerCam";
 import NavCompass from "@/3d/tilenav/NavCompass";
 import { NavMap } from "@/3d/tilenav/tilenav.types";
 
-import test_girl_sprite from '../Test/assets/girl2.png';
 import Billboard from "@/3d/components/Billboard";
 import Clouds from "@/shared/components/Clouds/Clouds";
 import AtTile from "@/3d/tilenav/AtTile";
-//import { createMusicTrack } from "@/core/audio/createMusicTrack";
+
+import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_CROW } from "@/data/battles/crow";
-import { BattleOutcome } from "@/core/battle/model/battle";
-import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { OPPONENT_ANGEL } from "@/data/battles/angel";
+import { BattleOutcome } from "@/core/battle/model/battle";
+
+import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
+//import test_girl_sprite from '../Test/assets/girl2.png';
 
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
   useDGShader(() => sceneRef, 'quantized');
 
-  const { cameraControlSignals, navController } = createTileNavigator(
-    NM as NavMap
-  );
+  const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
 
   //createMusicTrack({ src: "PWL/erokia-496757.wav" });
 
@@ -49,7 +47,6 @@ export default function Islands() {
         />
 
         <lume-ambient-light intensity="6.5" />
-        {/* <lume-directional-light intensity="2" position="0 10 0" align-point="0.5 0.5"/> */}
         <lume-gltf-model
           src={islands_glb}
           align-point='0.5 0.5'
@@ -82,12 +79,12 @@ export default function Islands() {
           nc={navController}
         >
           <Billboard
-            id="crow"
             texture={fox_sprite}
             scale={60}
             position='0 -25 0'
             interactions={[
-              () => startBattle(OPPONENT_ANGEL).then(outcome => setDefeatedCrow(outcome === BattleOutcome.PlayerVictory)),
+              // Just using this to test battle trigger, I haven't written a fox opponent yet.
+              () => startBattle(OPPONENT_ANGEL),
             ]}
           />
         </AtTile>
