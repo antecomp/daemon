@@ -3,13 +3,11 @@ import { BattleRefNames } from "./uiAnimations/battleUIRefRegistry";
 import { Setter } from "solid-js";
 import { BattleUIState } from "../bridge/battleEngineBridge";
 import animateAsync from "@/shared/utils/animateAsync";
-import sleep from "@/shared/utils/sleep";
 
 // Yes, I know this is a bit hacky and hands on, but its better than a bunch of CSS rules and it's properly promise-based.
 
-const FADE_IN_KEYFRAMES = [{opacity: 0}, {opacity: 1}];
+const FADE_IN_KEYFRAMES = [{ opacity: 0 }, { opacity: 1 }];
 
-// TODO
 export default async function battleOpeningAnimation(rr: Registry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
     // Guard clause for everything. Let's just fail the animation if we're missing anything.
     if (!(
@@ -38,7 +36,6 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
     rr.battleView.style.opacity = '0';
     rr.actionBar.style.opacity = '0'
     rr.initMessage.style.opacity = '0';
-
     multbars.style.opacity = '0';
 
     rbRunes.forEach(rune => rune.style.opacity = '0');
@@ -46,9 +43,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
 
     // This part will likely be handed off to a different handler later, i.e player click instead.
     //await sleep(2000);
-    await animateAsync(rr.initMessage, [
-        { opacity: 0 }, { opacity: 1 }
-    ],
+    await animateAsync(rr.initMessage, FADE_IN_KEYFRAMES,
         {
             fill: 'forwards',
             duration: 250,
@@ -72,10 +67,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
 
     // Fade in base UI.
     await Promise.all([
-        animateAsync(rr.battleView, [
-            { opacity: 0 },
-            { opacity: 1 }
-        ],
+        animateAsync(rr.battleView, FADE_IN_KEYFRAMES,
             {
                 fill: 'forwards',
                 duration: 1000
@@ -92,9 +84,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
     ]);
 
     for (const rune of rbRunes) {
-        await animateAsync(rune, [
-            { opacity: 0 }, { opacity: 1 }
-        ],
+        await animateAsync(rune, FADE_IN_KEYFRAMES,
             {
                 fill: 'forwards',
                 duration: 200
@@ -103,9 +93,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
     }
 
     for (const actionButton of rbActionButtons) {
-        await animateAsync(actionButton, [
-            { opacity: 0 }, { opacity: 1 }
-        ],
+        await animateAsync(actionButton, FADE_IN_KEYFRAMES,
             {
                 fill: 'forwards',
                 duration: 200
@@ -113,16 +101,12 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
         )
     }
 
-    // await animateAsync(oppIcon, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300});
-    // await animateAsync(oppNametag, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300});
-    // await animateAsync(oppStatbar, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300});
-
     await Promise.all([
-        animateAsync(fchBar, [{ opacity: 0 }, { opacity: 1 }], { fill: 'forwards', duration: 300 }),
-        animateAsync(multbars, [{ opacity: 0 }, { opacity: 1 }], { fill: 'forwards', duration: 300, delay: 100 }),
-        animateAsync(oppIcon, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300})
-            .then(_ => animateAsync(oppNametag, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300}))
-            .then(_ => animateAsync(oppStatbar, FADE_IN_KEYFRAMES, {fill: 'forwards', duration: 300}))
+        animateAsync(fchBar, FADE_IN_KEYFRAMES, { fill: 'forwards', duration: 300 }),
+        animateAsync(multbars, FADE_IN_KEYFRAMES, { fill: 'forwards', duration: 300, delay: 100 }),
+        animateAsync(oppIcon, FADE_IN_KEYFRAMES, { fill: 'forwards', duration: 300 })
+            .then(_ => animateAsync(oppNametag, FADE_IN_KEYFRAMES, { fill: 'forwards', duration: 300 }))
+            .then(_ => animateAsync(oppStatbar, FADE_IN_KEYFRAMES, { fill: 'forwards', duration: 300 }))
     ])
 
     fchBar.style.removeProperty('background-position');
