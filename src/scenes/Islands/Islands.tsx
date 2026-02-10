@@ -16,11 +16,14 @@ import Clouds from "@/shared/components/Clouds/Clouds";
 import AtTile from "@/3d/tilenav/AtTile";
 //import { createMusicTrack } from "@/core/audio/createMusicTrack";
 
-import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_CROW } from "@/data/battles/crow";
 import { BattleOutcome } from "@/core/battle/model/battle";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
+import { OPPONENT_ANGEL } from "@/data/battles/angel";
+
+import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
+import fox_sprite from '@/assets/artwork/dæmons/fox.png';
 
 export default function Islands() {
   let islands_ref!: GltfModel;
@@ -72,6 +75,23 @@ export default function Islands() {
             />
           </AtTile>
         </Show>
+
+        <AtTile
+          pos='-6,-10'
+          nm={navController.navMap}
+          nc={navController}
+        >
+          <Billboard
+            id="crow"
+            texture={fox_sprite}
+            scale={60}
+            position='0 -25 0'
+            interactions={[
+              () => startBattle(OPPONENT_ANGEL).then(outcome => setDefeatedCrow(outcome === BattleOutcome.PlayerVictory)),
+            ]}
+          />
+        </AtTile>
+
 
         <Clouds
           size="10000 10000 1"
