@@ -15,6 +15,7 @@ const CROW_PLANBANK = {
 export const OPPONENT_CROW: OpponentProfile = {
     display: {
         name: "Puritanical Corvus",
+        initMessage: "A Puritanical Corvus swoops forward!",
         icon, sprite, backgroundShader,
         spriteOffset: { x: -10, y: 8 },
         lexicon: {

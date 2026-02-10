@@ -1,0 +1,51 @@
+.battle-init-message {
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+
+    opacity: 0;
+    animation: fade-in forwards 2s;
+    animation-delay: 1s;
+
+    span {
+        display: grid;
+        place-items: center;
+        background-color: white;
+        color: black;
+        transform: perspective(0px);
+        white-space: nowrap;
+        /* width: 0px; */
+        /* I dont want to talk about it. */
+        /* margin-left: -1px; */
+        /* margin-right: -1px; */
+        overflow: hidden;
+        padding: 1px;
+
+        max-width: 0px;
+        animation: kms 3s forwards linear;
+        animation-delay: 2s;
+    }
+    
+    .battle-init-bottom {
+        position: absolute;
+        bottom: 0;
+        transform: translateY(100%);
+        height: fit-content;
+    }
+
+    img {
+        margin: 0 -1px;
+    }
+}
+
+@keyframes kms {
+    from {
+        max-width: 0px;
+    }
+    to {
+        max-width: 500px;
+    }
+}

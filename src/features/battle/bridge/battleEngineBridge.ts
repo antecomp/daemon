@@ -29,7 +29,7 @@ import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
-import battleOpeningAnimation from "../animation/opening-animation";
+import battleOpeningAnimation from "../animation/battle-opening-animation";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -129,8 +129,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
     onMount(async () => {
         console.log(refRegistry);
-        await battleOpeningAnimation(refRegistry, setBattleUIState);
-        engine.setupRound();
+        //await battleOpeningAnimation(refRegistry, setBattleUIState);
+        //engine.setupRound();
     })
 
     const reactions: BattleReactions = {

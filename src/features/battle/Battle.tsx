@@ -23,6 +23,7 @@ import CurrentClash from './ui/CurrentClash';
 //import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
+import InitMessage from './ui/InitMessage';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -78,15 +79,9 @@ export default function Battle(props: {
                         {...props.opponentProfile.display}
                     />
                     <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} />
-
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
-                        <div class="opponent-init-message" ref={r => bridge.attachToRegistry('initMessage', r)}>
-                            {props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}
-                            <br />
-                            Initializing DAEMONVEIL...
-                        </div>
+                        <InitMessage message={props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}/>
                     </Show>
-
                 </div>
             </BattleUIStateContext.Provider>
         </BattleRefRegistryCTX.Provider>
