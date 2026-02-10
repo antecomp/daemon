@@ -3,6 +3,7 @@ import { BattleRefNames } from "./uiAnimations/battleUIRefRegistry";
 import { Setter } from "solid-js";
 import { BattleUIState } from "../bridge/battleEngineBridge";
 import animateAsync from "@/shared/utils/animateAsync";
+import sleep from "@/shared/utils/sleep";
 
 // Yes, I know this is a bit hacky and hands on, but its better than a bunch of CSS rules and it's properly promise-based.
 
@@ -32,25 +33,51 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
     const oppStatbar = rr.opponentStatusbar.querySelector('.statbar') as HTMLElement | null;
     if (!(fchBar && multbars && oppIcon && oppNametag && oppStatbar)) return;
 
+    const initMessageBottom = rr.initMessage.querySelector('.battle-init-bottom') as HTMLElement | null;
+    const initMessageText = rr.initMessage.querySelector('span');
+    if (!(initMessageBottom && initMessageText)) return;
+
     // Setting this here causes no flash-in glitch from what I can tell.
     rr.battleView.style.opacity = '0';
     rr.actionBar.style.opacity = '0'
     rr.initMessage.style.opacity = '0';
+    initMessageBottom.style.opacity = '0';
     multbars.style.opacity = '0';
+    initMessageText.style.maxWidth = '0px';
 
     rbRunes.forEach(rune => rune.style.opacity = '0');
     rbActionButtons.forEach(btn => btn.style.opacity = '0');
 
-    // This part will likely be handed off to a different handler later, i.e player click instead.
-    //await sleep(2000);
-    await animateAsync(rr.initMessage, FADE_IN_KEYFRAMES,
-        {
+
+
+
+    await sleep(500);
+
+    await Promise.all([
+        animateAsync(rr.initMessage, FADE_IN_KEYFRAMES,
+            {
+                fill: 'forwards',
+                duration: 500,
+            }
+        ),
+        animateAsync(initMessageText, [{ 'maxWidth': '0px' }, { 'maxWidth': '500px' }], {
             fill: 'forwards',
-            duration: 250,
-            delay: 500,
-            endDelay: 2000
-        }
-    )
+            duration: 750
+        })
+    ])
+
+    await animateAsync(initMessageBottom, FADE_IN_KEYFRAMES, {
+        fill: 'forwards', duration: 250
+    })
+
+    await sleep(1500);
+
+    await animateAsync(rr.initMessage, [{opacity: 1}, {opacity: 0}], {
+        fill: 'forwards',
+        duration: 500,
+    })
+
+
 
     // This UI state closes the init prompt and indicates the opening animation has started.
     setBattleUIState(BattleUIState.OPENING);
@@ -87,7 +114,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
         await animateAsync(rune, FADE_IN_KEYFRAMES,
             {
                 fill: 'forwards',
-                duration: 200
+                duration: 150
             }
         )
     }

@@ -20,7 +20,7 @@ import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-//import { createMusicTrack } from '@/core/audio/createMusicTrack';
+import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
@@ -43,7 +43,7 @@ export default function Battle(props: {
 
     const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, { opponent: opponentLexicon, player: playerLexicon }, props.onEnd, startMeltAnimation, requestOverlayAnimation);
 
-    //createMusicTrack({src: 'PWL/blackscorpionmusic-black-scorpion-music-matrix.mp3'});
+    createMusicTrack({src: 'PWL/blackscorpionmusic-black-scorpion-music-matrix.mp3'});
 
     return (
         <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>

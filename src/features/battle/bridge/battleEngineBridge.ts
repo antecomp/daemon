@@ -129,8 +129,8 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
     onMount(async () => {
         console.log(refRegistry);
-        //await battleOpeningAnimation(refRegistry, setBattleUIState);
-        //engine.setupRound();
+        await battleOpeningAnimation(refRegistry, setBattleUIState);
+        engine.setupRound();
     })
 
     const reactions: BattleReactions = {

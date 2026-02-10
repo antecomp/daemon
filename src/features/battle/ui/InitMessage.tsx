@@ -10,8 +10,8 @@ export default function InitMessage(props: {message: string}) {
 
     return <div class="battle-init-message" ref={ref}>
         <img src={left} />
-        <span>{props.message}</span>
+        <span><p>{props.message}</p></span>
         <img style={{'z-index': '20'}} src={right} />
-        <img class="battle-init-bottom" src={bottom} />
+        <p class="battle-init-bottom">INITIALIZING RUNEBINDER...</p>
     </div>
 }

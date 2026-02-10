@@ -14,6 +14,7 @@ const BNUY_PLANBANK = {
 export const OPPONENT_BNUY: OpponentProfile = {
     display: {
         name: "Actionable Threat",
+        initMessage: "An Actionable Threat Leaps Into Action",
         icon: bnuy_icon,
         sprite: bnuy_sprite,
         lexicon: {
