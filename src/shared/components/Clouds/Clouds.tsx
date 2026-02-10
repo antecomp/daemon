@@ -34,7 +34,7 @@ export default function Clouds(props: { size: LumePosition, position: LumePositi
             uniforms='{
                 "time": { "value": 0.0 }
             }'
-            opacity={0.5}
+            // opacity={0.5}
             rotation='90 0 90'
             position={props.position}
             sidedness="double"

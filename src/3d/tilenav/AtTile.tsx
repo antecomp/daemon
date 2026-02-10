@@ -13,6 +13,7 @@ interface OnTileProps extends ParentProps {
     nc: NavController
 }
 
+/** TODO: Document */
 export default function AtTile(props: OnTileProps) {
 
     let releaseTileOccupancy: (() => void) | null = null;

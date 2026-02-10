@@ -284,11 +284,6 @@ export default function NavTilePainter() {
                 console.log(tileLoc);
                 navigator.clipboard.writeText(String(tileLoc));
                 break;
-            case 'o':
-                const hc = hoveredTile();
-                if (!hc || !nm.tiles[hc]) return;
-                setNm('tiles', hc, 'occupied', prev => !prev);
-                break;
             case 'f':
                 setTileSound();
                 break;
@@ -389,7 +384,6 @@ export default function NavTilePainter() {
                                         'selected': isSelected(),
                                         'exists': tile() != undefined,
                                         'is-spawn': nm.config.spawn === coordKey(),
-                                        'is-occupied': tile()?.occupied ?? false
                                     }}
                                     style={{
                                         'border-top-color': (edges() & NavTileMask.EDGE_UP) !== 0 ? '#c40000' : '',

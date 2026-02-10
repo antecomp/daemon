@@ -10,6 +10,7 @@ import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 interface BillboardProps extends InteractableComponent {
     texture: AssetURL,
     scale?: number,
+    id?: string,
     position: LumePosition
 }
 
@@ -133,10 +134,11 @@ export default function Billboard(props: BillboardProps) {
             texture={props.texture}
             position={props.position}
             ref={me}
+            id={props.id}
             // Makes transparent parts of the image transparent while maintaining opacity of other pieces. 
             // Without this our billboard has black background.
             opacity="0.9999999999999999" // Weird artifacts when lower than this.
-
+        
             cast-shadow="false"
             // enable all of these for a correct shadow.
             // cast-shadow
