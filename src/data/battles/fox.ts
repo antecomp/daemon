@@ -1,0 +1,52 @@
+import { PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
+import pick from "@/shared/utils/pick";
+
+import sprite from '@/assets/artwork/dæmons/combat_fox.png';
+import icon from '@/assets/artwork/dæmons/fox_icon.png';
+import backgroundShader from '@/assets/background-shaders/disgrid.glsl'
+import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+
+const FOX_MOVEBANK = {
+    ...pick(PLANNED_MOVE_REGISTRY, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
+    idleAgain: PLANNED_MOVE_REGISTRY.idle,
+    attackAgain: PLANNED_MOVE_REGISTRY.attack
+}
+
+export const OPPONENT_FOX: OpponentProfile = {
+    display: {
+        sprite, icon, backgroundShader,
+        name: "Rogue Zenko",
+        initMessage: "The Rogue Zenko bares its teeth!",
+        lexicon: {
+            attack: { label: "bite" },
+            idle: { label: "growl" },
+            heal: { label: "rest" }
+        },
+        spriteOffset: { x: 0, y: 30 },
+        moveUISideEffectOverrides: {
+            'idle': {
+                add: [{
+                    place: 1,
+                    run({ appendActionMessage }) {
+                        appendActionMessage("The Rogue Zenko growls loudly.")
+                    }
+                }]
+            }
+        }
+    },
+
+    logic: {
+        stats: { maxHealth: 15 },
+        ai: {
+            getSequence() {
+                return buildSequenceFromWeightMap(FOX_MOVEBANK, {
+                    evade: { attack: 2, attackAgain: 2 }, // Take advantage of mania
+                    prepare: { attack: 3, attackAgain: 3, heal: 2, overwhelm: 2, evade: 2, idle: 0.5 },
+                    attack: { repeat: 2 },
+                    attackAgain: { repeat: 2 }
+                })
+            }
+        }
+    }
+}

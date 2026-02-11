@@ -54,7 +54,7 @@ export type DialogueNode = {
     options: DialogueOption[]
     next?: DialogueNode | ((ctx?: DialogueContext) => DialogueNode)
     sideEffect?: (ctx?: DialogueContext) => void,
-    waitFor?: (ctx?: DialogueContext) => Promise<void>
+    waitFor?: (ctx?: DialogueContext) => Promise<unknown>
 }
 
 // Theres probably a better name for this type lol.

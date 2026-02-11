@@ -23,6 +23,9 @@ import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
+import { OPPONENT_FOX } from "@/data/battles/fox";
+import { DialogueService } from "@/core/dialogue/dialogueService";
+import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';
 
 export default function Islands() {
@@ -35,6 +38,7 @@ export default function Islands() {
   //createMusicTrack({ src: "PWL/erokia-496757.wav" });
 
   const [defeatedCrow, setDefeatedCrow] = createSignal(false);
+  const [defeatedFox, setDefeatedFox] = createSignal(false);
 
   return (
     <>
@@ -73,21 +77,24 @@ export default function Islands() {
           </AtTile>
         </Show>
 
-        <AtTile
-          pos='-6,-10'
-          nm={navController.navMap}
-          nc={navController}
-        >
-          <Billboard
-            texture={fox_sprite}
-            scale={60}
-            position='0 -25 0'
-            interactions={[
-              // Just using this to test battle trigger, I haven't written a fox opponent yet.
-              () => startBattle(OPPONENT_ANGEL),
-            ]}
-          />
-        </AtTile>
+        <Show when={!defeatedFox()}>
+          <AtTile
+            pos='-6,-10'
+            nm={navController.navMap}
+            nc={navController}
+          >
+            <Billboard
+              texture={fox_sprite}
+              scale={60}
+              position='0 -25 0'
+              interactions={[
+                () => addLogMessage("As you reach out, the fox snarls loudly."),
+                () => DialogueService.startDialogue(fox_dialogue, { ctx: { actions: { removeFox() { setDefeatedFox(true) } } } }),
+                () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensly.")
+              ]}
+            />
+          </AtTile>
+        </Show>
 
 
         <Clouds

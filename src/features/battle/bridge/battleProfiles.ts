@@ -87,6 +87,7 @@ export interface OpponentProfile {
         backgroundShaderTexture?: AssetURL;
 
         // UI-Based Contextual Behaviors.
+        // TODO: DOCUMENT.
         behaviors?: {
             preRound?: OpponentDisplayBehavior[]
             postRound?: OpponentDisplayBehavior[],
@@ -96,6 +97,7 @@ export interface OpponentProfile {
             }
         }
 
+        // TODO: DOCUMENT.
         moveUISideEffectOverrides?: OpponentMoveOverrides;
     };
 

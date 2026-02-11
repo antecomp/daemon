@@ -51,6 +51,7 @@ import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import spawnPopup from "@/app/shell/popup/Popup";
 import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
+import { OPPONENT_FOX } from "@/data/battles/fox.ts";
 
 export default function DevMenu() {
 
@@ -78,7 +79,7 @@ export default function DevMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>

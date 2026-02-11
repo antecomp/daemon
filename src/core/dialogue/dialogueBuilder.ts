@@ -208,7 +208,7 @@ export class DialogueNodeBuilder {
      * @param wf The async blocking method to attach, takes DialogueContext as an argument.
      * @returns `this` (to chain)
      */
-    makeNodeWaitFor(wf: (ctx?: DialogueContext) => Promise<void>): DialogueNodeBuilder {
+    makeNodeWaitFor(wf: (ctx?: DialogueContext) => Promise<unknown>): DialogueNodeBuilder {
         this.node.waitFor = wf;
         return this;
     }
