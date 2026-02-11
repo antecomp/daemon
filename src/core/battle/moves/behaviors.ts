@@ -1,5 +1,5 @@
 import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext } from "../model/move.types";
-import { PASSTHROUGH_MULTPLIERS } from "../model/battle";
+import { PASSTHROUGH_MULTIPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
 import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
 import { Status } from "../model/status";
@@ -28,7 +28,7 @@ export function multiplierPipeline(...pipeline: DamageMultiplierFunction[]): Dam
     return (context) => {
         return pipeline.reduce(
             (currentMults, step) => combineMultiplierSets(currentMults, step(context)),
-            PASSTHROUGH_MULTPLIERS
+            PASSTHROUGH_MULTIPLIERS
         );
     };
 
@@ -66,7 +66,7 @@ export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome
     if(preEffectOutcome == MoveSideEffectOutcome.Success) {
         return {incoming: 0, outgoing: 1}
     } else {
-        return PASSTHROUGH_MULTPLIERS
+        return PASSTHROUGH_MULTIPLIERS
     }
 }
 

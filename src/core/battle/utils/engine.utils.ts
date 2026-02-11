@@ -1,4 +1,4 @@
-import { DamageMultipliers, PASSTHROUGH_MULTPLIERS } from "../model/battle";
+import { DamageMultipliers, PASSTHROUGH_MULTIPLIERS } from "../model/battle";
 import { Combatant } from "../model/combatant";
 import { Move, MoveType, DamageMultiplierContext, PreMoveContext, PostMoveContext, MoveSideEffectOutcome } from "../model/move.types";
 import { PlannedSequence } from "../model/plannedMove";
@@ -15,7 +15,7 @@ export function combineMultiplierSets(...sets: DamageMultipliers[]) {
             outgoing: acc.outgoing * set.outgoing,
             incoming: acc.incoming * set.incoming
         }
-    }, PASSTHROUGH_MULTPLIERS)
+    }, PASSTHROUGH_MULTIPLIERS)
 }
 
 /** Base multiplier registry, these are used as the initial values for the multipliers in the mult pipeline (reduce).
@@ -51,14 +51,14 @@ export function getBaseMultipliers(type: MoveType): DamageMultipliers {
 export function computeStatusMultipliers(statusList: [Status, number][]) {
     return statusList.reduce(
         (multacc, [status, level]) => combineMultiplierSets(multacc, status.getStatusMultipliers(level)),
-        PASSTHROUGH_MULTPLIERS
+        PASSTHROUGH_MULTIPLIERS
     )
 }
 
 /* Simple method to group and combine all multiplier calculations together. */
 export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
     const initialMultipliers = getBaseMultipliers(move.type);
-    const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? PASSTHROUGH_MULTPLIERS;
+    const moveMulitpliers = move.behaviors.damageMultipliers?.(ctx) ?? PASSTHROUGH_MULTIPLIERS;
     const statusMultipliers = computeStatusMultipliers(ctx.self.activeStatuses);
 
     return combineMultiplierSets(initialMultipliers, moveMulitpliers, statusMultipliers)

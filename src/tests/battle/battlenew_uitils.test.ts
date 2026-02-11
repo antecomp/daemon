@@ -4,7 +4,7 @@ import { Combatant } from "@/core/battle/model/combatant";
 import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal } from "@/core/battle/model/move.types";
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
-import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";
+import { PASSTHROUGH_MULTIPLIERS } from "@/core/battle/model/battle";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battle/moves/behaviors";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battle/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
@@ -246,17 +246,17 @@ describe("BattleEngine Utility Functions", () => {
     test("Calculate And Apply Damage", () => {
         let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
         
-        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, PASSTHROUGH_MULTPLIERS));
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTIPLIERS, PASSTHROUGH_MULTIPLIERS));
         expect(dolls.player.health).toBe(9);
         expect(dolls.opponent.health).toBe(9);
 
         dolls = makeSidesMap(new Combatant(10), new Combatant(10));
-        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, {incoming: 5, outgoing: 10}));
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTIPLIERS, {incoming: 5, outgoing: 10}));
         expect(dolls.player.health).toBe(0);
         expect(dolls.opponent.health).toBe(5);
 
         dolls = makeSidesMap(new Combatant(10), new Combatant(10));
-        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, PASSTHROUGH_MULTPLIERS));
+        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, PASSTHROUGH_MULTIPLIERS));
         expect(dolls.player.health).toBe(8);
         expect(dolls.opponent.health).toBe(7);
 
@@ -306,8 +306,8 @@ describe("BattleEngine Utility Functions", () => {
             preEffectOutcome: undefined,
             damageDealt: 0,
             damageTaken: 0,
-            theirMults: PASSTHROUGH_MULTPLIERS,
-            ourMults: PASSTHROUGH_MULTPLIERS
+            theirMults: PASSTHROUGH_MULTIPLIERS,
+            ourMults: PASSTHROUGH_MULTIPLIERS
         }));
 
         moves.player.behaviors.postEffect = successEffect;

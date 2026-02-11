@@ -1,6 +1,6 @@
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { BattleReactions } from "@/core/battle/model/battleReactions";
-import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS } from "@/core/battle/model/battle";
+import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS_BY_SIDE } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { Accessor, createContext, createSignal, onMount, useContext } from "solid-js";
@@ -89,7 +89,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
     const [currentMoveClash, setCurrentMoveClash] = createSignal<Sides<{moveName: MoveLexeme, tags: MoveTags | undefined}> | undefined>();
 
-    const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(ZERO_MULTIPLIERS);
+    const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(ZERO_MULTIPLIERS_BY_SIDE);
 
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
     attachToConsole(refRegistry, "BATTLE_REF_REGISTRY");
@@ -212,7 +212,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         },
 
         async MoveEnd({combatants}) {
-            setDisplayMults(ZERO_MULTIPLIERS)
+            setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             refreshCombatantInfo(combatants);
             await sleep(MOVE_DELAY);
         },
@@ -228,7 +228,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async BattleEnd({outcome, combatants}) {
             setBattleUIState(BattleUIState.END);
-            setDisplayMults(ZERO_MULTIPLIERS);
+            setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(combatants);
             
             switch(outcome) {
