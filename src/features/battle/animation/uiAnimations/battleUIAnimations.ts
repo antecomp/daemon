@@ -1,6 +1,6 @@
 import animateAsync from "@/shared/utils/animateAsync";
 
-export async function animateOpponentDamageFlash(spriteRef: HTMLElement | undefined) {
+async function damageFlash(spriteRef: HTMLElement | undefined) {
     if (!spriteRef) return;
 
     await animateAsync(spriteRef, [
@@ -14,7 +14,7 @@ export async function animateOpponentDamageFlash(spriteRef: HTMLElement | undefi
     )    
 }
 
-export async function animateOpponentDeathFade(spriteRef: HTMLElement | undefined) {
+async function fadeToBlackAndTransparent(spriteRef: HTMLElement | undefined) {
     if (!spriteRef) return;
 
     await animateAsync(spriteRef, 
@@ -25,7 +25,7 @@ export async function animateOpponentDeathFade(spriteRef: HTMLElement | undefine
     )
 }
 
-export async function fadeElementOut(ref: HTMLElement | undefined) {
+async function fadeElementOut(ref: HTMLElement | undefined) {
     if (!ref) return;
 
     await animateAsync(ref,
@@ -34,7 +34,7 @@ export async function fadeElementOut(ref: HTMLElement | undefined) {
     )
 }
 
-export async function fadeElementIn(ref: HTMLElement | undefined) {
+async function fadeElementIn(ref: HTMLElement | undefined) {
     if (!ref) return;
 
     await animateAsync(ref, 
@@ -42,3 +42,12 @@ export async function fadeElementIn(ref: HTMLElement | undefined) {
         { duration: 500, endDelay: 250, fill: "forwards" }
     )
 }
+
+/** Collection of asynchronous animations that are used to animate the battle UI. */
+export default {
+    /** Takes in a ref to some Element and plays a damage flash/flicker animation for it */
+    damageFlash, 
+    fadeToBlackAndTransparent, 
+    fadeElementIn, 
+    fadeElementOut
+} as const

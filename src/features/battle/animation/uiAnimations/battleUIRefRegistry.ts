@@ -40,3 +40,5 @@ export function createBattleRefAttacher(as: BattleRefNames[number]) {
     const {attachToRegistry} = useContext(BattleRefRegistryCTX)!;
     return (ref: HTMLElement) => attachToRegistry(as, ref);
 }
+
+// Note that the actual runtime registry is generated in battleEngineBridge!

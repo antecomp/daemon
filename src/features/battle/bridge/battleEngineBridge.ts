@@ -5,7 +5,7 @@ import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
 import { Accessor, createContext, createSignal, onMount, useContext } from "solid-js";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
-import { animateOpponentDamageFlash, animateOpponentDeathFade, fadeElementIn, fadeElementOut } from "../animation/uiAnimations/uiAnimations";
+import battleUIAnimations from "../animation/uiAnimations/battleUIAnimations";
 import { playSound } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
@@ -137,9 +137,9 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
         async RoundPrepared({opponentPlan}) {
             setBattleUIState(BattleUIState.WAITING);
-            await fadeElementOut(refRegistry.sequenceViewOpponent);
+            await battleUIAnimations.fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
-            await fadeElementIn(refRegistry.sequenceViewOpponent);
+            await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
             console.log(opponentPlan.map(plan => plan.name));
         },
 
@@ -147,9 +147,9 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             setBattleUIState(BattleUIState.EXECUTING);
             await handleOpponentUIBehaviors('preRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
             refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
-            await fadeElementOut(refRegistry.sequenceViewOpponent);
+            await battleUIAnimations.fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
-            await fadeElementIn(refRegistry.sequenceViewOpponent);
+            await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
         async MoveStart({moveIndex, sequences}){
@@ -197,7 +197,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             if(damagesDealt.player > 0) {
                 playSound(opponent_pain_sfx);
-                animateOpponentDamageFlash(refRegistry.opponentSprite);
+                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
             };
 
             if(damagesDealt.opponent > 0) {
@@ -235,7 +235,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.
                     playSound(opponent_death_sound);
-                    await animateOpponentDeathFade(refRegistry.opponentSprite);
+                    await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                 break;
                 case BattleOutcome.OpponentVictory:
                     // Player death sound here.
@@ -243,7 +243,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
                     // Consider switching back to fading with code animation so we can await it
                 break;
                 case BattleOutcome.Draw:
-                    await animateOpponentDeathFade(refRegistry.opponentSprite);
+                    await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     // Do some sort of unique other animation or event in case of draw here.
             }
             
