@@ -10,7 +10,7 @@ declare global {
         'status:prepare': {level: number}
         'mechanic:mania': {manic: boolean},
         'mechanic:focus': {lost: boolean},
-        'mechanic:observe': {}
+        'mechanic:observe': {} // Literally just make this part of the animtion response to the move itself what are you doing blud.
     }
 }
 
@@ -87,6 +87,7 @@ export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect)
             return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
         } else {
 	    // Emission grabbed by UI to send "Lost focus, unable to... message"
+        // This either should be moved to a clashLog entry or some better system
             ctx.emit({
                 type: 'mechanic:focus',
                 payload: {lost: true}
