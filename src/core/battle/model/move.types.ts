@@ -53,8 +53,18 @@ export type MoveSignal = {
  * Passed as part of context to subsequent evaluation stages (multiplierPipeline, postEffect, move end emitter)
  * 
  * Feel free to extend this enum if additional outcome indicators are needed.  */
-export enum MoveSideEffectOutcome {
-    Success, Failure,
+// export enum MoveSideEffectOutcome {
+//     Success, Failure,
+// }
+
+export type MoveSideEffectOutcome = {
+    status: 'success' | 'failure',
+    reason: "focus" | "rng" | "clash" | "mechanic" // add more as needed. consider merging focus as mechanic.
+    //meta: unknown // extend this type with additional metadata if necessary. Try to avoid though.
+}
+
+export function reportMoveOutcome(status: MoveSideEffectOutcome['status'], reason: MoveSideEffectOutcome['reason']): MoveSideEffectOutcome {
+    return {status, reason}
 }
 
 export interface PreMoveContext {

@@ -1,4 +1,4 @@
-import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierWrapper, MoveSideEffectWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext } from "../model/move.types";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierWrapper, MoveSideEffectWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext, reportMoveOutcome } from "../model/move.types";
 import { PASSTHROUGH_MULTIPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
 import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
@@ -59,11 +59,11 @@ export const EvadeRoll: PreMoveSideEffect = ({self}) => {
     const success = Math.random() <= chance;
 
     // This result will be added to the context of subsequent operations (damage mults, post effect)
-    return [MoveSideEffectOutcome.Failure, MoveSideEffectOutcome.Success][Number(success)]
+    return [reportMoveOutcome('failure', 'rng'), reportMoveOutcome('success', 'rng')][Number(success)]
 }
 
 export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome}) => {
-    if(preEffectOutcome == MoveSideEffectOutcome.Success) {
+    if(preEffectOutcome?.status == 'success') {
         return {incoming: 0, outgoing: 1}
     } else {
         return PASSTHROUGH_MULTIPLIERS
@@ -71,28 +71,26 @@ export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome
 }
 
 export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults, emit}) => {
-    if(preEffectOutcome == MoveSideEffectOutcome.Success) {
+    if(preEffectOutcome?.status) {
         if(damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus);
             emit({type: 'mechanic:mania', payload: {'manic': true}});
-            return MoveSideEffectOutcome.Success
         }
     }
-    return MoveSideEffectOutcome.Failure
+    return preEffectOutcome;
 }
 
 export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect) => {
     return (ctx) => {
         if(ctx.damageTaken <= 0) {
-            return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
+            return effect(ctx) ?? reportMoveOutcome('success', 'focus'); // get outcome from effect or default to success.
         } else {
-	    // Emission grabbed by UI to send "Lost focus, unable to... message"
-        // This either should be moved to a clashLog entry or some better system
+            // REMOVE THIS LATER.
             ctx.emit({
                 type: 'mechanic:focus',
                 payload: {lost: true}
             })
-            return MoveSideEffectOutcome.Failure
+            return reportMoveOutcome('failure', 'focus');
         }
     }
 }
