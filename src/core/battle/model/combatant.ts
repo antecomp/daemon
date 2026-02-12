@@ -46,7 +46,7 @@ export class Combatant {
     get healthPercent() {
         return this._health / this.maxHealth * 100;
     }
-    
+
     get health() {
         return this._health;
     }
@@ -65,7 +65,7 @@ export class Combatant {
      * @param duration - The duration of the status effect (default is 1).
      */
     addStatus(status: Status, duration: number = 1) {
-        if(this.statuses.has(status.name)) {
+        if (this.statuses.has(status.name)) {
             this.statuses.get(status.name)!.durationStack.push(duration);
         } else {
             this.statuses.set(status.name, {
@@ -76,8 +76,8 @@ export class Combatant {
     }
 
     tickStatuses() {
-        for(const [_, entry] of this.statuses) {
-            entry.durationStack = entry.durationStack.map(dur => dur -1);
+        for (const [_, entry] of this.statuses) {
+            entry.durationStack = entry.durationStack.map(dur => dur - 1);
         }
     }
 
@@ -97,7 +97,7 @@ export class Combatant {
     /** Returns an array of active (non zero duration) Statuses, along with their level as a tuple */
     get activeStatuses() {
         const rtn = [] as [Status, number][];
-        for(const [_, entry] of this.statuses) {
+        for (const [_, entry] of this.statuses) {
             const stat = entry.status;
             const level = entry.durationStack.filter(dur => dur > 0).length;
             if (level == 0) continue;
@@ -108,7 +108,7 @@ export class Combatant {
 
     getStatusLevel(name: string): number {
         const entry = this.statuses.get(name);
-        if(!entry) return 0;
+        if (!entry) return 0;
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
@@ -120,7 +120,7 @@ export class Combatant {
         const entry = this.statuses.get(name);
         if (!entry) return 0;
         return entry.durationStack.filter(dur => dur >= 0).length;
-    }    
+    }
 
     /**
      * Extends the duration of an existing status effect on the combatant.
@@ -148,8 +148,12 @@ export class Combatant {
      * based on their duration stacks.
      */
     reapExpiredStatuses() {
+        const keysToDelete = [];
         for (const [key, s] of this.statuses) {
-            if(!s.durationStack.some(dur => dur >0)) this.statuses.delete(key);
+            if (!s.durationStack.some(dur => dur > 0)) {
+                keysToDelete.push(key);
+            }
         }
+        for (const key of keysToDelete) this.statuses.delete(key);
     }
 }
