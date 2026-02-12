@@ -76,6 +76,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         
         // This is going to fire every SE at once, which is probably what you want but be aware that your 
         // array order will have no meaning on execution order.
+        // we can instead change this for a for of with the await inside...
         await Promise.all(
             behaviors
                 .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))

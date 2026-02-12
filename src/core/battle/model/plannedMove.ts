@@ -7,7 +7,7 @@ import { Move } from "./move.types";
  * @param workingPlan - The array of current planned moves.
  * @returns `true` if the move at the specified index is valid, otherwise `false`.
  */
-export type MoveValidator = (workingPlan: PlannedMove[]) => boolean;
+export type PlannedMoveValidator = (workingPlan: PlannedMove[]) => boolean;
 
 /**
  * A function type that creates a `Move` instance based on the provided planning context.
@@ -32,7 +32,7 @@ export type PlannedMoveInstantiator = (
 export interface PlannedMove {
     /** Similar to the name for a plain Move, just used for logical checks and internal tracking. Can be used for mappings in BattleEvent emissions. */
     name: string;
-    canPerform?: MoveValidator;
+    canPerform?: PlannedMoveValidator;
     instantiate: PlannedMoveInstantiator; // Always using a function to reduce typechecking mess. More consistent code.
 }
 
