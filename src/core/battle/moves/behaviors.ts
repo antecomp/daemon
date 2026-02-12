@@ -1,4 +1,4 @@
-import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierConditionalWrapper, MoveSideEffectConditionalWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext } from "../model/move.types";
+import { DamageMultiplierFunction, MoveSideEffectOutcome, MoveMultiplierWrapper, MoveSideEffectWrapper, MoveType, PostMoveSideEffect, PreMoveSideEffect, PostMoveContext, PreMoveContext } from "../model/move.types";
 import { PASSTHROUGH_MULTIPLIERS } from "../model/battle";
 import { ManiaStatus } from "../statuses/statuses";
 import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
@@ -81,7 +81,7 @@ export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, pre
     return MoveSideEffectOutcome.Failure
 }
 
-export const RequiresFocus: MoveSideEffectConditionalWrapper<PostMoveSideEffect> = (effect) => {
+export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect) => {
     return (ctx) => {
         if(ctx.damageTaken <= 0) {
             return effect(ctx) ?? MoveSideEffectOutcome.Success; // get outcome from effect or default to success.
@@ -119,7 +119,7 @@ export const OnlyDoDamageOnDefensive: DamageMultiplierFunction = ({ moves }) => 
     };
 };
 
-export const NegatedByOverwhelm: MoveMultiplierConditionalWrapper = (mul) => {
+export const NegatedByOverwhelm: MoveMultiplierWrapper = (mul) => {
     return (ctx) => {
         if (ctx.moves.theirs.type == MoveType.Overwhelming) {
             return getBaseMultipliers(MoveType.Defensive); // skip

@@ -12,8 +12,11 @@ import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { ActionMessageAppender } from "../ui/ActionMessages";
 import { OpponentProfile } from "../bridge/battleProfiles";
 import { SparseRecord } from "@/shared/types/misc.types";
+import { Registry } from "@/shared/utils/refRegistry";
+import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 
 export type MoveUISideEffectDeps = {
+    refRegistry: Registry<BattleRefNames>,
     requestOverlayAnimation: OverlayAnimationRequester,
     appendActionMessage: ActionMessageAppender
 }
@@ -76,6 +79,7 @@ export async function runMoveUISideEffects(
     }
 }
 
+/** TODO: DOCUMENT */
 export type MoveUISideEffectOverride = 
     | {replace: MoveUISideEffectEntry[] }    // full replacement
     | {add: MoveUISideEffectEntry[]};                       // append/merge

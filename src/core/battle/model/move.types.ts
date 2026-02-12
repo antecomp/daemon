@@ -87,8 +87,8 @@ export type DamageMultiplierFunction = (context: DamageMultiplierContext) => Dam
 export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void;
 
 // Wrapper methods for DamageMultiplierFunction and MoveSideEffect to add common conditionals.
-export type MoveMultiplierConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
-export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
+export type MoveMultiplierWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
+export type MoveSideEffectWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 
 /**

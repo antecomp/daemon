@@ -97,7 +97,7 @@ export interface OpponentProfile {
             }
         }
 
-        // TODO: DOCUMENT.
+        /** TODO: DOCUMENT. */
         moveUISideEffectOverrides?: OpponentMoveOverrides;
     };
 

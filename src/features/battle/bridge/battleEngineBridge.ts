@@ -186,7 +186,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
 
             await runMoveUISideEffects(
                 mergedSEs, 
-                {appendActionMessage, requestOverlayAnimation},
+                {appendActionMessage, requestOverlayAnimation, refRegistry},
                 {combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags}
             )
         },
