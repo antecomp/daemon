@@ -16,5 +16,5 @@ export const generateHint = (seq: PlannedMove[]): (string | null)[] => {
 };
 
 export function getStatusIconsOfCombatant(combatant: Combatant): (AssetURL | undefined)[] {
-    return combatant.activeStatuses.map(([status]) => STATUS_LEXICON[status.name].icon);
+    return combatant.activeStatuses.map(([status]) => STATUS_LEXICON?.[status.name]?.icon);
 }

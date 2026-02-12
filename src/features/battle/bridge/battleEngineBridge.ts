@@ -14,7 +14,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, NOTIFICATION_CLEAR_STAGGER, NOTIFICATION_LIFESPAN, PRE_ANIMATION_DELAY } from "../config/timings.config";
+import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "../config/timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
@@ -28,7 +28,7 @@ import { DEFAULT_MOVE_EMISSION_RESPONSES, runEmissionSE } from "../effects/moveE
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
-import { ActionMessage, ActionMessageAppender } from "../ui/ActionMessages";
+import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
@@ -94,13 +94,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
     const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
     attachToConsole(refRegistry, "BATTLE_REF_REGISTRY");
 
-    const [actionMessages, setActionMessages] = createSignal<ActionMessage[]>([]);
-    const appendActionMessage: ActionMessageAppender = (text, iconName) => {
-        const currentLength = actionMessages().length;
-        setActionMessages(prev => [...prev, { text, iconName}]);
-        const removalDelay = NOTIFICATION_LIFESPAN + currentLength * NOTIFICATION_CLEAR_STAGGER;
-        setTimeout(() => setActionMessages(prev => prev.slice(1)), removalDelay);
-    }
+    const {actionMessages, appendActionMessage} = createActionMessageStack();
 
     const opponentRanBehaviors = {
         preRound: new Set<string>(),

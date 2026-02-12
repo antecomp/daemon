@@ -36,6 +36,7 @@ export type MoveUISideEffect = (
     ctx: MoveUISideEffectCTX
 ) => Promise<void> | void;
 
+/** TODO: Document */
 export type MoveUISideEffectEntry = {
     place: number,
     run: MoveUISideEffect,
