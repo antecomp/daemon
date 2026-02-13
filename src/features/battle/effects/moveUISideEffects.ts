@@ -12,16 +12,14 @@ import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { ActionMessageAppender } from "../ui/ActionMessages";
 import { OpponentProfile } from "../bridge/battleProfiles";
 import { SparseRecord } from "@/shared/types/misc.types";
-import { Registry } from "@/shared/utils/refRegistry";
+import { RefRegistry } from "@/shared/utils/refRegistry";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
-import { Obligations } from "@/shared/utils/obligation";
 
 export type MoveUISideEffectDeps = {
-    refRegistry: Registry<BattleRefNames>,
+    refRegistry: RefRegistry<BattleRefNames>,
     requestOverlayAnimation: OverlayAnimationRequester,
     appendActionMessage: ActionMessageAppender,
-    // TODO: Change this to be helper methods that just run the obligation instead.
-    animationObligations: Obligations
+    //animationObligations: Obligations
 }
 
 export type MoveUISideEffectCTX = {

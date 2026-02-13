@@ -1,8 +1,8 @@
 import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "./battle";
 import { Combatant } from "./combatant";
-import { MoveSideEffectOutcome, Move } from "./move.types";
-import { PlannedSequence } from "./plannedMove";
+import { MoveSideEffectOutcome, Move, PostMoveContext } from "./move.types";
+import { PlannedMove, PlannedSequence } from "./plannedMove";
 
 /** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
 export type BattleEvent =
@@ -57,7 +57,11 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant> // In case of extra damage / healing + reading statuses
     };
     MoveEnd: {
-        combatants: Sides<Combatant>
+        combatants: Sides<Combatant>,
+        moves: Sides<Move>,
+        plannedMoves: Sides<PlannedMove>,
+        postCtx: Sides<PostMoveContext>,
+        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
     };
     RoundEnd: {
         combatants: Sides<Combatant>

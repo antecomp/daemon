@@ -116,6 +116,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
 
             const moves = mapSides(sequences, seq => seq[moveIndex]);
+            const plannedMoves = mapSides(plans, plan => plan[moveIndex]);
 
             await emitBattleEvent('MoveStart', {moveIndex, sequences, moves, plans, combatants})
 
@@ -162,7 +163,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
 
-            await emitBattleEvent('MoveEnd', {combatants});
+            await emitBattleEvent('MoveEnd', {combatants, postCtx, postEffectOutcomes, moves, plannedMoves});
         }
 
         await handleOpponentBehaviors('postRound', {combatants}, {combatants, engineDeps: deps});

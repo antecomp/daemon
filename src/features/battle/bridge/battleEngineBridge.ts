@@ -27,7 +27,6 @@ import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
-import { Obligations } from "@/shared/utils/obligation";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -104,11 +103,6 @@ export function createUIBridgedBattleEngine(
 
     const { actionMessages, appendActionMessage } = createActionMessageStack();
 
-    // THIS NEEDS TO BE RESET EVERY MOVE!!!!
-    // Obligations to enforce that damage effects play either
-    // as part of a drama animation or by the end.
-    let animationObligations = new Obligations();
-
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
         postRound: new Set<string>()
@@ -153,25 +147,10 @@ export function createUIBridgedBattleEngine(
             await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        async MoveStart({ moveIndex, sequences, combatants }) {
+        async MoveStart({ moveIndex, sequences }) {
             setCurrentlyExecutingMoveIndex(moveIndex);
 
             setCurrentMoveClash(mapSides(sequences, (s) => ({ moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags })));
-
-            // Just putting it here for now to test -- will be moved to drama handler later.
-            function opponentDamageEffect() {
-                playSound(opponent_pain_sfx);
-                // THIS IS STALE AND WILL NOT WORK.
-                //setOpponentHealthPercentage(combatants.opponent.healthPercent);
-                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
-            }
-            function playerDamageEffect() {
-                playSound(player_pain_sfx);
-                setPlayerHealthPercentage(combatants.player.healthPercent);
-                deps.startMeltAnimation?.(true, 20, 0.5);
-            }
-
-            animationObligations = new Obligations({opponentDamageEffect, playerDamageEffect});
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
@@ -203,7 +182,7 @@ export function createUIBridgedBattleEngine(
             // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
             await runMoveUISideEffects(
                 mergedSEs,
-                { appendActionMessage, ...deps, refRegistry, animationObligations },
+                { appendActionMessage, ...deps, refRegistry },
                 { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
             )
         },
@@ -212,25 +191,15 @@ export function createUIBridgedBattleEngine(
 
             refreshCombatantInfo(combatants);
 
-            // If the player took damage, and we haven't already animated that happening...
-            if(damagesDealt.opponent > 0 && !animationObligations.isObligationResolved('playerDamageEffect')) {
-                animationObligations.run('playerDamageEffect');
+            if (damagesDealt.player > 0) {
+                playSound(opponent_pain_sfx);
+                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+            };
+
+            if (damagesDealt.opponent > 0) {
+                playSound(player_pain_sfx);
+                deps.startMeltAnimation?.(true, 20, 0.5);
             }
-
-            // Similar idea for opponent, if the opponent took damage and we haven't animated it yet...
-            if(damagesDealt.player > 0 && !animationObligations.isObligationResolved('opponentDamageEffect')) {
-                animationObligations.run('opponentDamageEffect');
-            }
-
-            // if (damagesDealt.player > 0) {
-            //     playSound(opponent_pain_sfx);
-            //     battleUIAnimations.damageFlash(refRegistry.opponentSprite);
-            // };
-
-            // if (damagesDealt.opponent > 0) {
-            //     playSound(player_pain_sfx);
-            //     deps.startMeltAnimation?.(true, 20, 0.5);
-            // }
 
         },
 

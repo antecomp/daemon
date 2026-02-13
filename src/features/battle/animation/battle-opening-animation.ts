@@ -1,4 +1,4 @@
-import { Registry } from "@/shared/utils/refRegistry";
+import { RefRegistry } from "@/shared/utils/refRegistry";
 import { BattleRefNames } from "./uiAnimations/battleUIRefRegistry";
 import { Setter } from "solid-js";
 import { BattleUIState } from "../bridge/battleEngineBridge";
@@ -9,7 +9,7 @@ import sleep from "@/shared/utils/sleep";
 
 const FADE_IN_KEYFRAMES = [{ opacity: 0 }, { opacity: 1 }];
 
-export default async function battleOpeningAnimation(rr: Registry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
+export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
     // Guard clause for everything. Let's just fail the animation if we're missing anything.
     if (!(
         rr.battleView
