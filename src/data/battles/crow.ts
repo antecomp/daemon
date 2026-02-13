@@ -1,15 +1,26 @@
 import icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
 import sprite from '@/assets/artwork/dæmons/crow_sketch_4.png';
 import backgroundShader from '@/assets/background-shaders/stars.glsl'
-import { planMove, PLANNED_MOVE_REGISTRY } from '@/core/battle/moves/plannedMoves';
+import { planMove, COMMON_PLANNED_MOVES } from '@/core/battle/moves/plannedMoves';
 import pick from '@/shared/utils/pick';
 import { attack } from '@/core/battle/moves/moves';
 import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import { buildSequenceFromWeightMap } from '@/core/battle/ai/weightedSequenceAI';
+import { Move, MoveType } from '@/core/battle/model/move.types';
+import { HealSelf } from '@/core/battle/moves/behaviors';
+
+// Test - heal without requiring focus.
+const roostMove: Move = {
+    name: 'roost',
+    type: MoveType.Passive,
+    behaviors: {
+        postEffect: HealSelf
+    }
+}
 
 const CROW_PLANBANK = {
-    ...pick(PLANNED_MOVE_REGISTRY, ['attack', 'prepare', 'defend', 'observe', 'overwhelm']),
-    attack1: planMove(attack), attack2: planMove(attack)
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm']),
+    attack1: planMove(attack), attack2: planMove(attack), roost: planMove(roostMove)
 }
 
 export const OPPONENT_CROW: OpponentProfile = {
@@ -22,6 +33,10 @@ export const OPPONENT_CROW: OpponentProfile = {
             attack: {
                 label: 'claw'
             },
+            // TODO: FIGURE OUT WHY THIS IS NOT MERGING IN.
+            roost: {
+                label: 'roost'
+            }
         },
     },
     logic: {

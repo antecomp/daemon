@@ -1,4 +1,4 @@
-import { PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import pick from "@/shared/utils/pick";
 
@@ -8,9 +8,9 @@ import backgroundShader from '@/assets/background-shaders/disgrid.glsl'
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 
 const FOX_MOVEBANK = {
-    ...pick(PLANNED_MOVE_REGISTRY, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
-    idleAgain: PLANNED_MOVE_REGISTRY.idle,
-    attackAgain: PLANNED_MOVE_REGISTRY.attack
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
+    idleAgain: COMMON_PLANNED_MOVES.idle,
+    attackAgain: COMMON_PLANNED_MOVES.attack
 }
 
 export const OPPONENT_FOX: OpponentProfile = {

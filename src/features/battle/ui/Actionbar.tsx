@@ -26,7 +26,7 @@ import { PlayerRuneName, PLAYER_RUNE_REGISTRY } from '@/core/battle/moves/player
 import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
-import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
+import { FALLBACK_MOVE_DISPLAY_ENTRY, MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 import { AssetURL } from '@/shared/types/misc.types'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
@@ -37,13 +37,13 @@ function SelectedMove(props: {
     isExecuting: boolean
 }) {
 
-    const entry = props.lexicon[props.moveName];
+    const entry = () => props.lexicon[props.moveName] ?? {...FALLBACK_MOVE_DISPLAY_ENTRY, label: props.moveName};
 
     return (
         <span class="player-move" classList={{executing: props.isExecuting}}>
             <div>
-                <img src={entry.icon}/>
-                {entry.label}
+                <img src={entry().icon}/>
+                {entry().label}
             </div>
         </span>
     )

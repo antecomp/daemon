@@ -1,6 +1,6 @@
 import './styles/current-clash.css';
 import { Sides } from "@/core/battle/utils/sides.utils";
-import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
+import { MoveLexeme, MoveLexicon, STOCK_MOVE_ICONS } from "../lexicon/moveLexicon";
 import { Show } from 'solid-js';
 import { MoveTags } from '@/core/battle/model/move.types';
 
@@ -12,12 +12,13 @@ import ct_b from '../assets/clash_thing_bot.png';
 import ct_t from '../assets/clash_thing_top.png';
 
 export default function CurrentClash(props: {moves: Sides<{moveName: MoveLexeme, tags: MoveTags | undefined}> | undefined, lexicons: Sides<MoveLexicon>}) {
+    
     return (
     <Show when={props.moves !== undefined}>
         <div class="current-move-clash">
             <img src={ct_t} style={{'position': 'absolute', 'top': '-50px'}}/>
             <div class="opponent-side-of-clash">
-                <img src={props.lexicons.opponent[props.moves!.opponent.moveName].largeIcon}/>
+                <img src={props.lexicons.opponent[props.moves!.opponent.moveName]?.largeIcon ?? STOCK_MOVE_ICONS.large}/>
                 <div>
                     <Show when={props.moves?.opponent.tags?.includes('repeated')}>
                         <img src={apprentice_icon}/>
@@ -29,7 +30,7 @@ export default function CurrentClash(props: {moves: Sides<{moveName: MoveLexeme,
             </div>
             <img src={clash_arrow_img} class="battle-clash-arrow"/>
             <div class="player-side-of-clash">
-                <img src={props.lexicons.player[props.moves!.player.moveName].largeIcon} />
+                <img src={props.lexicons.player[props.moves!.player.moveName]?.largeIcon ?? STOCK_MOVE_ICONS.large} />
                 <div>
                     <Show when={props.moves?.player.tags?.includes('repeated')}>
                         <img src={apprentice_icon}/>

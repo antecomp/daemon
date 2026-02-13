@@ -11,7 +11,7 @@
 import { OpponentAI, OpponentStats } from '@/core/battle/ai/opponentAI.types';
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
-import { MoveLexicon } from '../lexicon/moveLexicon';
+import { MoveLexiconOverrides } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
@@ -74,7 +74,7 @@ export interface OpponentProfile {
     display: {
         name: string;
         icon: AssetURL;
-        lexicon: Partial<MoveLexicon>;
+        lexicon: MoveLexiconOverrides;
 
         initMessage?: string,
 
@@ -119,6 +119,6 @@ export interface PlayerProfile {
  * Feel free to add additional display properties as needed
  */
     display: {
-        lexicon: Partial<MoveLexicon>;
+        lexicon: MoveLexiconOverrides;
     };
 }

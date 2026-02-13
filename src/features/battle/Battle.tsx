@@ -9,7 +9,7 @@ import { BattleUIState, BattleUIStateContext, createUIBridgedBattleEngine } from
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
-import { BASE_MOVE_LEXICON, MoveLexicon, PLAYER_BASE_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
+import { COMMON_MOVE_LEXICON, MoveLexicon, PLAYER_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
@@ -31,11 +31,11 @@ export default function Battle(props: {
     onEnd: (outcome: BattleOutcome) => void;
 }) {
 
-    const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
+    const playerLexicon = twoLevelMerge(PLAYER_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
     // Using two level merge allows opponents to change the label for moves without having to also redeclare stuff
     // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific.
-    const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
+    const opponentLexicon = twoLevelMerge(COMMON_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
 
     const { startMeltAnimation, filterID, filterSVG } = createMeltingEffect();
 

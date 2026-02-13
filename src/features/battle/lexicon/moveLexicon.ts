@@ -1,4 +1,4 @@
-
+// TODO: CHANGE THIS TO A META GLOB INSTEAD OF 24 IMPORT LINES??!?!??!?!?!?!?!?!??!?!
 import apprentice_icon_ex from '../assets/icons/runes/apprentice_ex.png'
 import candle_icon_ex from '../assets/icons/runes/candle_ex.png'
 import chain_icon_ex from '../assets/icons/runes/chain_ex.png'
@@ -17,16 +17,46 @@ import mage_icon from '../assets/icons/runes/mage.png'
 import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
 import priestess_icon from '../assets/icons/runes/priestess.png'
 import trickster_icon from '../assets/icons/runes/trickster.png'
-import stock_icon from "../assets/icons/runes/candle.png"
 import lantern_icon from '@/features/battle/assets/icons/runes/lantern.png';
+import lantern_icon_ex from '@/features/battle/assets/icons/runes/lantern_ex.png';
 
-import { AssetURL } from "@/shared/types/misc.types"
-import { PLANNED_MOVE_REGISTRY } from '@/core/battle/moves/plannedMoves'
+import stock_icon from "../assets/icons/runes/stock.png"
+import stock_icon_ex from '../assets/icons/runes/stock_ex.png'
 
-export type MoveDisplayEntry = { label: string; icon?: AssetURL; largeIcon?: AssetURL; lore?: string; description?: string };
+export const STOCK_MOVE_ICONS = {
+    small: stock_icon,
+    large: stock_icon_ex
+} as const;
 
-// map planned moves by ID to their associated UI fallback data.
-export const BASE_MOVE_LEXICON = {
+import { AssetURL, SuggestedString } from "@/shared/types/misc.types"
+import { COMMON_PLANNED_MOVES } from '@/core/battle/moves/plannedMoves'
+
+export type MoveDisplayEntry = { label: string; icon: AssetURL; largeIcon: AssetURL; lore?: string; description?: string };
+export type MoveDisplayOverride = Partial<MoveDisplayEntry>;
+
+/** Known Move/Plan names that are defined in the BASE_MOVE_LEXICON */
+export type MoveLexeme = SuggestedString<keyof (typeof COMMON_PLANNED_MOVES)>;
+
+// Don't make this one partial, I want to to guarantee at least the common moves are covered.
+/** Mapping of a move by id to a MoveDisplayEntry (UI info such as the labels and icons) */
+export type MoveLexicon = {
+    [moveName in MoveLexeme]: MoveDisplayEntry
+}
+
+/**
+ * Partial MoveLexicon which will be merged in to override Move Lexicon info
+ */
+export type MoveLexiconOverrides = Partial<{
+    [moveName in MoveLexeme]: MoveDisplayOverride;
+}>
+
+export const FALLBACK_MOVE_DISPLAY_ENTRY: MoveDisplayEntry = {
+    label: 'MISSINGENTRY',
+    icon: stock_icon,
+    largeIcon: stock_icon_ex,
+}
+
+export const COMMON_MOVE_LEXICON: MoveLexicon = {
     repeat: {
         label: "repeat",
         icon: apprentice_icon,
@@ -64,8 +94,8 @@ export const BASE_MOVE_LEXICON = {
 
     attack: {
         label: "attack",
-        icon: candle_icon,
-        largeIcon: candle_icon_ex,
+        icon: stock_icon,
+        largeIcon: stock_icon_ex,
         description: 'Deal damage.'
     },
 
@@ -86,6 +116,7 @@ export const BASE_MOVE_LEXICON = {
     idle: {
         label: "idle",
         icon: stock_icon,
+        largeIcon: stock_icon_ex,
         description: 'Do nothing.'
     },
 
@@ -98,14 +129,14 @@ export const BASE_MOVE_LEXICON = {
     observe: {
         label: 'observe',
         icon: lantern_icon,
+        largeIcon: lantern_icon_ex,
         description: 'Makes opponent vulnerable.'
     }
-} as const satisfies Record<keyof typeof PLANNED_MOVE_REGISTRY, MoveDisplayEntry>;
-// ^ fancy type logic to ensure base lexicon conforms to that record shape, while still being able to use "typeof" on it!
+}
 
-export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
+export const PLAYER_MOVE_LEXICON: MoveLexicon = {
 
-    ...BASE_MOVE_LEXICON,
+    ...COMMON_MOVE_LEXICON,
 
     repeat: {
         label: "apprentice",
@@ -171,13 +202,3 @@ export const PLAYER_BASE_MOVE_LEXICON: MoveLexicon = {
         description: 'Perform same action as opponent.'
     },
 }
-
-/** 
- * Map of known move lexicon definitions (from BASE_MOVE_LEXICON) to MoveDisplayEntries.
- */
-export type MoveLexicon = {
-    [moveName in keyof typeof BASE_MOVE_LEXICON]: MoveDisplayEntry
-}
-
-/** Known Move/Plan names that are defined in the BASE_MOVE_LEXICON */
-export type MoveLexeme = keyof (typeof BASE_MOVE_LEXICON);

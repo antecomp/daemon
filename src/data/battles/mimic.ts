@@ -2,13 +2,13 @@ import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import mimicry_icon from "@/assets/artwork/dæmons/mimicry_icon.png"
 import mimicry_sprite from "@/assets/artwork/dæmons/mimicry.png"
 import distortedGridShader from '@/assets/background-shaders/disgrid.glsl'
-import { mirrorPlan, PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { mirrorPlan, COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { ManiaStatus } from '@/core/battle/statuses/statuses';
 
 const mimicry_planbank = {
-    ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
+    ...pick(COMMON_PLANNED_MOVES, ['evade', 'defend', 'repeat', 'mirror', 'attack']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
@@ -48,9 +48,9 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {
-                        ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'attack']),
-                        attack2: PLANNED_MOVE_REGISTRY.attack,
-                        attack3: PLANNED_MOVE_REGISTRY.attack
+                        ...pick(COMMON_PLANNED_MOVES, ['evade', 'defend', 'repeat', 'attack']),
+                        attack2: COMMON_PLANNED_MOVES.attack,
+                        attack3: COMMON_PLANNED_MOVES.attack
                     }
 
                     return buildSequenceFromWeightMap(

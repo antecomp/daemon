@@ -16,14 +16,12 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_CROW } from "@/data/battles/crow";
-import { OPPONENT_ANGEL } from "@/data/battles/angel";
 import { BattleOutcome } from "@/core/battle/model/battle";
 
 import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
-import { OPPONENT_FOX } from "@/data/battles/fox";
 import { DialogueService } from "@/core/dialogue/dialogueService";
 import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';

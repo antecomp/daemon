@@ -22,7 +22,7 @@ import { mapObject } from "./mapObject";
  *
 */
 export default function twoLevelMerge<
-    I extends Record<string, (Record<string, any>)>>(
+    I extends Record<string, (Record<string, any> | undefined)>>(
     a: I, 
     b: {[P in keyof I]?: Partial<I[P]>} // What is this god forsaken type
 ) {

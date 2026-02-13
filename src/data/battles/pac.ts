@@ -2,7 +2,7 @@ import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import sprite from '@/assets/artwork/dæmons/pac.gif';
 import icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
 import backgroundShader from '@/assets/background-shaders/vortex.glsl';
-import { PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import animateAsync from "@/shared/utils/animateAsync";
 
 export const OPPONENT_PAC: OpponentProfile = {
@@ -32,7 +32,7 @@ export const OPPONENT_PAC: OpponentProfile = {
         stats: { maxHealth: 30 },
         ai: {
             getSequence() {
-                const attck = PLANNED_MOVE_REGISTRY.attack
+                const attck = COMMON_PLANNED_MOVES.attack
                 return [attck, attck, attck, attck, attck];
             }
         }

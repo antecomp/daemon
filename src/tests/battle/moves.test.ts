@@ -1,7 +1,7 @@
 import { OpponentAI, OpponentStats } from "@/core/battle/ai/opponentAI.types";
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { PlannedMove, PlannedSequence } from "@/core/battle/model/plannedMove";
-import { PLANNED_MOVE_REGISTRY as PLN } from "@/core/battle/moves/plannedMoves";
+import { COMMON_PLANNED_MOVES as PLN } from "@/core/battle/moves/plannedMoves";
 import { describe, expect, test } from "vitest";
 
 const IDLE = PLN.idle;
