@@ -18,7 +18,7 @@ describe("AddObligation", () => {
     test("Can add obligation with named function", () => {
         function someFunc(){};
         const obl = new Obligations();
-        obl.addObligation(someFunc);
+        obl.setObligation(someFunc);
         expect(() => obl.run('someFunc')).not.toThrowError();
     });
 
@@ -26,15 +26,15 @@ describe("AddObligation", () => {
         function someFunc(){};
         const funcName = "JFDHS";
         const obl = new Obligations();
-        obl.addObligation(someFunc, funcName);
+        obl.setObligation(someFunc, funcName);
         expect(() => obl.run(funcName)).not.toThrowError();
         expect(() => obl.run('someFunc')).toThrowError();
     });
 
     test("addObligation requires name for anonymous functions", () => {
         const obl = new Obligations();
-        expect(() => obl.addObligation(() => {})).toThrowError();
-        expect(() => obl.addObligation(() => {}, "name")).not.toThrowError();
+        expect(() => obl.setObligation(() => {})).toThrowError();
+        expect(() => obl.setObligation(() => {}, "name")).not.toThrowError();
     })
 })
 
@@ -55,8 +55,8 @@ describe("Can run obligations", () => {
         const someFunc = () => { x += 1 };
         const anotherFunc = () => { x += 2 };
         const obl = new Obligations();
-        obl.addObligation(someFunc);
-        obl.addObligation(anotherFunc);
+        obl.setObligation(someFunc);
+        obl.setObligation(anotherFunc);
         obl.run('someFunc');
         obl.run('anotherFunc');
         expect(x).toBe(3);
@@ -67,7 +67,7 @@ describe("Can run obligations", () => {
         const someFunc = () => { x += 1 };
         const anotherFunc = () => { x += 2 };
         const obl = new Obligations(someFunc);
-        obl.addObligation(anotherFunc);
+        obl.setObligation(anotherFunc);
         obl.run('someFunc');
         obl.run('someFunc');
         obl.run('anotherFunc');
@@ -81,8 +81,8 @@ describe("resolveObligations", () => {
         const mock1 = vi.fn();
         const mock2 = vi.fn();
         const obl = new Obligations();
-        obl.addObligation(mock1, 'mock1');
-        obl.addObligation(mock2, 'mock2');
+        obl.setObligation(mock1, 'mock1');
+        obl.setObligation(mock2, 'mock2');
         obl.resolveObligations();
         expect(mock1).toHaveBeenCalled();
         expect(mock2).toHaveBeenCalled();
@@ -92,8 +92,8 @@ describe("resolveObligations", () => {
         const mock1 = vi.fn();
         const mock2 = vi.fn();
         const obl = new Obligations();
-        obl.addObligation(mock1, 'mock1');
-        obl.addObligation(mock2, 'mock2');
+        obl.setObligation(mock1, 'mock1');
+        obl.setObligation(mock2, 'mock2');
         obl.run('mock1');
         obl.resolveObligations();
         expect(mock1).toHaveBeenCalledOnce();
