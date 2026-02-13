@@ -9,7 +9,7 @@ import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/o
 export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
     attack: [{
         place: 1,
-        async run({requestOverlayAnimation, animationObligations}, {combatants, moveTags}) {
+        async run({requestOverlayAnimation}, {combatants, moveTags}) {
             // Forward up promise from this instead of making a new one with await.
 
             playSound(slash_sfx);
@@ -22,12 +22,6 @@ export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
                 await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
-
-            // This will incorrectly run when evaded, another issue of the existing side effect system
-            // this will be resolved when we switch to the drama system, this is just to test the obligaions.
-            await animationObligations.run('opponentDamageEffect');
-            await sleep(1000);
-
         } 
     }],
 

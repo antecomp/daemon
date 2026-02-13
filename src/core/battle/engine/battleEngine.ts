@@ -45,19 +45,19 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         await reactions[event]?.(payload);
     }
 
-    function handleDeathIfNeeded(): boolean {
+    // Checks if we've hit any game end state (deaths).
+    // returns the corresponding outcome, or "null" if not applicable.
+    function outcomeCheck() {
         const playerDead = combatants.player.isDead;
         const opponentDead = combatants.opponent.isDead;
-        if (!playerDead && !opponentDead) return false;
+        if (!playerDead && !opponentDead) return null;
 
-        const outcome = playerDead
+        return playerDead
             ? (opponentDead ? BattleOutcome.Draw : BattleOutcome.OpponentVictory)
             : BattleOutcome.PlayerVictory;
-        handleBattleEnd(outcome); 
-        return true; // bool check used to break loop in executeRound.
     }
 
-    // Why is this its own function?
+    // Also exists as it's own function for the Eject event.
     async function handleBattleEnd(outcome: BattleOutcome) {
         await emitBattleEvent('BattleEnd', {outcome, combatants});
     }
@@ -142,8 +142,12 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 
-            // handleDeathIfNeeded returns true if there was a death. If so, we want to end all execution here.
-            if (handleDeathIfNeeded()) return;
+            // death.
+            const outcome = outcomeCheck();
+            if(outcome !== null) {
+                await emitBattleEvent('BattleEnd', {outcome, combatants});
+                return;
+            }
 
             await emitBattleEvent('DamagesApplied', {combatants, damagesDealt})
 
