@@ -18,7 +18,7 @@ import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
-import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
+import { MoveLexeme } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
@@ -63,7 +63,17 @@ export const useBattleUIState = () => {
 };
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
-export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+export function createUIBridgedBattleEngine(
+    opponentProfile: OpponentProfile,
+    deps: {
+        startMeltAnimation?: MeltAnimationFn,
+        requestOverlayAnimation: OverlayAnimationRequester
+    },
+    config: {
+        onEnd: (res: BattleOutcome) => void,
+        skipOpeningAnimation?: boolean
+    }
+) {
 
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.INIT);
 
@@ -71,7 +81,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
     const [playerHealthPercentage, setPlayerHealthPercentage] = createSignal(100);
     const [opponentHealthPercentage, setOpponentHealthPercentage] = createSignal(100);
 
-    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<(AssetURL | undefined)[]>>({player: [], opponent: []});
+    const [currentStatusIcons, setCurrentStatusIcons] = createSignal<Sides<(AssetURL | undefined)[]>>({ player: [], opponent: [] });
 
     function refreshCombatantInfo(combatants: Sides<Combatant>) {
         setOpponentHealthPercentage(combatants.opponent.healthPercent);
@@ -84,14 +94,14 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
 
     const [currentlyExecutingMoveIndex, setCurrentlyExecutingMoveIndex] = createSignal<null | number>(null);
-    const [currentMoveClash, setCurrentMoveClash] = createSignal<Sides<{moveName: MoveLexeme, tags: MoveTags | undefined}> | undefined>();
+    const [currentMoveClash, setCurrentMoveClash] = createSignal<Sides<{ moveName: MoveLexeme, tags: MoveTags | undefined }> | undefined>();
 
     const [displayMults, setDisplayMults] = createSignal<Sides<DamageMultipliers>>(ZERO_MULTIPLIERS_BY_SIDE);
 
-    const {refRegistry, attachToRegistry} = createRefRegistry<BattleRefNames>();
+    const { refRegistry, attachToRegistry } = createRefRegistry<BattleRefNames>();
     attachToConsole(refRegistry, "BATTLE_REF_REGISTRY");
 
-    const {actionMessages, appendActionMessage} = createActionMessageStack();
+    const { actionMessages, appendActionMessage } = createActionMessageStack();
 
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
@@ -100,7 +110,7 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
 
     async function handleOpponentUIBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
         const behaviors = opponentProfile.display.behaviors?.[stage];
-        if(!behaviors) return;    
+        if (!behaviors) return;
 
         for (const behavior of behaviors) {
             if (behavior.when && !behavior.when(predicateArgs)) continue;
@@ -114,13 +124,13 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
 
     onMount(async () => {
         console.log(refRegistry);
-        await battleOpeningAnimation(refRegistry, setBattleUIState);
+        if(!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
     })
 
     const reactions: BattleReactions = {
 
-        async RoundPrepared({opponentPlan}) {
+        async RoundPrepared({ opponentPlan }) {
             setBattleUIState(BattleUIState.WAITING);
             await battleUIAnimations.fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
@@ -128,29 +138,29 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
             console.log(opponentPlan.map(plan => plan.name));
         },
 
-        async RoundStart({plans, combatants}) {
+        async RoundStart({ plans, combatants }) {
             setBattleUIState(BattleUIState.EXECUTING);
-            await handleOpponentUIBehaviors('preRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
+            await handleOpponentUIBehaviors('preRound', { combatants }, { appendActionMessage, ...deps });
             refreshCombatantInfo(combatants); // Opponent Preround Behaviors can update Combatants state!
             await battleUIAnimations.fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(plans.opponent.map(plan => plan.name));
             await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        async MoveStart({moveIndex, sequences}){
+        async MoveStart({ moveIndex, sequences }) {
             setCurrentlyExecutingMoveIndex(moveIndex);
 
-            setCurrentMoveClash(mapSides(sequences, (s) => ({moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags})));
+            setCurrentMoveClash(mapSides(sequences, (s) => ({ moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags })));
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
         },
 
-        PreEffectResolved({combatants}) {
+        PreEffectResolved({ combatants }) {
             refreshCombatantInfo(combatants);
         },
 
-        async MultipliersComputed({damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex}) {
+        async MultipliersComputed({ damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex }) {
             // Hacky but it works - If the move is the result of a mirror, play the mirror anim instead!
             const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
             const moveTags = mapSides(moves, x => x.tags ?? []);
@@ -165,87 +175,87 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
             )[moveNames.opponent] ?? [];
 
             // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
-            const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? []; 
+            const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? [];
 
             const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
 
             await runMoveUISideEffects(
-                mergedSEs, 
-                {appendActionMessage, requestOverlayAnimation, refRegistry},
-                {combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags}
+                mergedSEs,
+                { appendActionMessage, ...deps, refRegistry },
+                { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
             )
         },
 
-        async DamagesApplied({combatants, damagesDealt}) {
+        async DamagesApplied({ combatants, damagesDealt }) {
 
             refreshCombatantInfo(combatants);
 
-            if(damagesDealt.player > 0) {
+            if (damagesDealt.player > 0) {
                 playSound(opponent_pain_sfx);
                 battleUIAnimations.damageFlash(refRegistry.opponentSprite);
             };
 
-            if(damagesDealt.opponent > 0) {
+            if (damagesDealt.opponent > 0) {
                 playSound(player_pain_sfx);
-                startMeltAnimation?.(true, 20, 0.5);
+                deps.startMeltAnimation?.(true, 20, 0.5);
             }
 
         },
 
-        PostEffectResolved({combatants}) {
+        PostEffectResolved({ combatants }) {
             refreshCombatantInfo(combatants)
         },
 
-        async MoveEnd({combatants}) {
+        async MoveEnd({ combatants }) {
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             refreshCombatantInfo(combatants);
             await sleep(MOVE_DELAY);
         },
 
-        async RoundEnd({combatants}) {
+        async RoundEnd({ combatants }) {
             setBattleUIState(BattleUIState.WAITING);
             setCurrentlyExecutingMoveIndex(null);
             refreshCombatantInfo(combatants);
             setCurrentMoveClash(undefined);
-            await handleOpponentUIBehaviors('postRound', {combatants}, {appendActionMessage, requestOverlayAnimation});
+            await handleOpponentUIBehaviors('postRound', { combatants }, { appendActionMessage, ...deps });
             engine.setupRound();
         },
 
-        async BattleEnd({outcome, combatants}) {
+        async BattleEnd({ outcome, combatants }) {
             setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(combatants);
-            
-            switch(outcome) {
+
+            switch (outcome) {
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.
                     playSound(opponent_death_sound);
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
-                break;
+                    break;
                 case BattleOutcome.OpponentVictory:
                     // Player death sound here.
-                    startMeltAnimation(false, 20, 5);
+                    deps.startMeltAnimation?.(false, 20, 5);
                     // Consider switching back to fading with code animation so we can await it
-                break;
+                    break;
                 case BattleOutcome.Draw:
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
-                    // Do some sort of unique other animation or event in case of draw here.
+                // Do some sort of unique other animation or event in case of draw here.
             }
-            
+
             await sleep(BATTLE_END_SLEEP_TIME);
-            onEnd(outcome);
+            config.onEnd(outcome);
         }
     };
 
-    const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, {logger(m) {appendActionMessage(m, 'default')}});
+    const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, { logger(m) { appendActionMessage(m, 'default') } });
 
     attachToConsole(engine, 'DG_BATTLE_ENGINE');
 
     return {
         displayMults,
         battleUIState, setBattleUIState,
-        playerHealthPercentage, opponentHealthPercentage, 
-        opponentPlanPreview, 
+        playerHealthPercentage, opponentHealthPercentage,
+        opponentPlanPreview,
         currentlyExecutingMoveIndex, currentClash: currentMoveClash,
         attachToRegistry,
         currentStatusIcons,
