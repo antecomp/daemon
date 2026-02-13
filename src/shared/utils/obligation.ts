@@ -27,21 +27,14 @@ export class Obligations {
      * Creates a new obligations collection from named functions.
      *
      * @param funcs Functions to register by their declared names.
-     * @throws Error When any provided function is anonymous. (Name needed to track what has run)
      */
-    constructor(...funcs: AnyFunction[]) {
-        funcs.forEach(func => {
-            const name = this.nameOfFunc(func);
-            if(!name) {
-                throw new Error("Cannot initialize Obligation with anonymous functions. Use addObligation instead.");
-            }
-            this.funcs.set(func.name, func)
-        });
+    constructor(funcs?: Record<string, AnyFunction>) {
+        if(!funcs) return;
+        for(const [funcName, func] of Object.entries(funcs)) {
+            this.funcs.set(funcName, func);
+        }
     }
 
-    // TODO: CONSIDER CHANGING THIS TO TAKE A RECORD INSTEAD OF ARGS ARRAY
-    // THAT WLL NATURALLY ENFORCE THE NICE KEY-SETTING + REQUIRE KEY FOR ANONYMOUS.
-    // SHOULD EVEN BE ABLE TO MAKE TYPE SUGGESTIONS THAT WAY.
     /**
      * Adds a required function to the collection.
      *

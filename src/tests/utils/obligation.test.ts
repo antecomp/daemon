@@ -5,13 +5,8 @@ describe("Obligation constructor", () => {
     test("Initializes with proper input", () => {
         function someFunc(arg: number) { return arg };
         const anotherFunc = () => { };
-        expect(() => new Obligations(someFunc, anotherFunc)).not.toThrowError();
+        expect(() => new Obligations({someFunc, anotherFunc})).not.toThrowError();
     });
-
-    test("Constructor throws for anonymous functions", () => {
-        expect(() => new Obligations(() => { })).toThrowError();
-        expect(() => new Obligations(function () { })).toThrowError();
-    })
 });
 
 describe("AddObligation", () => {
@@ -44,7 +39,7 @@ describe("Can run obligations", () => {
         let x = 0;
         const someFunc = () => { x += 1 };
         const anotherFunc = () => { x += 2 };
-        const obl = new Obligations(someFunc, anotherFunc);
+        const obl = new Obligations({someFunc, anotherFunc});
         obl.run('someFunc');
         obl.run('anotherFunc');
         expect(x).toBe(3);
@@ -66,7 +61,7 @@ describe("Can run obligations", () => {
         let x = 0;
         const someFunc = () => { x += 1 };
         const anotherFunc = () => { x += 2 };
-        const obl = new Obligations(someFunc);
+        const obl = new Obligations({someFunc});
         obl.setObligation(anotherFunc);
         obl.run('someFunc');
         obl.run('someFunc');
@@ -109,14 +104,14 @@ describe("isObligatinResolved", () => {
 
     test("True when obligation has been called", () => {
         const func = () => {};
-        const obl = new Obligations(func);
+        const obl = new Obligations({func});
         obl.run('func');
         expect(obl.isObligationResolved('func')).toBe(true);
     });
 
     test("False when obligation has not been called", () => {
         const func = () => {};
-        const obl = new Obligations(func);
+        const obl = new Obligations({func});
         expect(obl.isObligationResolved('func')).toBe(false);
     })
 })

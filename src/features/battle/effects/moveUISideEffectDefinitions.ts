@@ -9,19 +9,25 @@ import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/o
 export const PLAYER_MOVE_UI_EFFECTS: MoveUISideEffectMap = {
     attack: [{
         place: 1,
-        run({requestOverlayAnimation}, {combatants, moveTags}) {
+        async run({requestOverlayAnimation, animationObligations}, {combatants, moveTags}) {
             // Forward up promise from this instead of making a new one with await.
 
             playSound(slash_sfx);
 
             if(combatants.player.getStatusLevel('mania') > 0) {
-                return requestOverlayAnimation('slash_elag');
+                await requestOverlayAnimation('slash_elag');
             } else if (moveTags.player.includes('repeated')) { 
-                return requestOverlayAnimation('slash_repeat');
+                await requestOverlayAnimation('slash_repeat');
             } else {
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
-                return requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
+                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
+
+            // This will incorrectly run when evaded, another issue of the existing side effect system
+            // this will be resolved when we switch to the drama system, this is just to test the obligaions.
+            await animationObligations.run('opponentDamageEffect');
+            await sleep(1000);
+
         } 
     }],
 

@@ -105,7 +105,10 @@ export function createUIBridgedBattleEngine(
     const { actionMessages, appendActionMessage } = createActionMessageStack();
 
     // THIS NEEDS TO BE RESET EVERY MOVE!!!!
+    // Obligations to enforce that damage effects play either
+    // as part of a drama animation or by the end.
     let animationObligations = new Obligations();
+
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
         postRound: new Set<string>()
@@ -150,7 +153,7 @@ export function createUIBridgedBattleEngine(
             await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
         },
 
-        async MoveStart({ moveIndex, sequences }) {
+        async MoveStart({ moveIndex, sequences, combatants }) {
             setCurrentlyExecutingMoveIndex(moveIndex);
 
             setCurrentMoveClash(mapSides(sequences, (s) => ({ moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags })));
@@ -158,14 +161,17 @@ export function createUIBridgedBattleEngine(
             // Just putting it here for now to test -- will be moved to drama handler later.
             function opponentDamageEffect() {
                 playSound(opponent_pain_sfx);
+                // THIS IS STALE AND WILL NOT WORK.
+                //setOpponentHealthPercentage(combatants.opponent.healthPercent);
                 battleUIAnimations.damageFlash(refRegistry.opponentSprite);
             }
             function playerDamageEffect() {
                 playSound(player_pain_sfx);
+                setPlayerHealthPercentage(combatants.player.healthPercent);
                 deps.startMeltAnimation?.(true, 20, 0.5);
             }
 
-            animationObligations = new Obligations(opponentDamageEffect, playerDamageEffect);
+            animationObligations = new Obligations({opponentDamageEffect, playerDamageEffect});
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
@@ -197,7 +203,7 @@ export function createUIBridgedBattleEngine(
             // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
             await runMoveUISideEffects(
                 mergedSEs,
-                { appendActionMessage, ...deps, refRegistry },
+                { appendActionMessage, ...deps, refRegistry, animationObligations },
                 { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
             )
         },

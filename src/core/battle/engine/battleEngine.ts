@@ -117,7 +117,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const moves = mapSides(sequences, seq => seq[moveIndex]);
 
-            await emitBattleEvent('MoveStart', {moveIndex, sequences, moves, plans})
+            await emitBattleEvent('MoveStart', {moveIndex, sequences, moves, plans, combatants})
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 deps,
