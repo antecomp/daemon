@@ -1,7 +1,6 @@
 import { createBattleRefAttacher } from "../animation/uiAnimations/battleUIRefRegistry"
 import './styles/battle-init.css';
 import left from '../assets/init_left.png';
-import bottom from '../assets/init_message.png';
 import right from '../assets/init_right.png';
 
 export default function InitMessage(props: {message: string}) {

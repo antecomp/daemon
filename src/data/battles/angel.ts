@@ -50,19 +50,6 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                     when() { return false }
                 }
             ],
-            moveEmissionHandlers: {
-                add: {
-                    'status:prepare'(_, {appendActionMessage}, {perspective}) {
-                        if(perspective == 'opponent') appendActionMessage("Angel added this prepare notification!");
-                    }
-                },
-                replace: {
-                    'mechanic:focus'(_, {appendActionMessage, defaultSE}) {
-                        appendActionMessage('Debug Angel Completely Overrode This Focus Lost Notif');
-                        defaultSE?.();
-                    }
-                }
-            }
         },
         moveUISideEffectOverrides: {
             'defend': {

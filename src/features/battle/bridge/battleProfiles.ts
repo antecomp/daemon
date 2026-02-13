@@ -17,7 +17,6 @@ import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
 import { OpponentMoveOverrides } from '../effects/moveUISideEffects';
 import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
-import { EmissionSEMap } from '../effects/moveEmissionResponses';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -71,7 +70,6 @@ export interface OpponentProfile {
      * @property {behaviors} - UI-based behaviors (side effects) to run for the opponent.
      * - `preRound` - side effects that run before each round
      * - `postRound` - side effects that run after each round
-     * - `moveEmissionHandler` - A method that captures move emissions and runs some side effect.
      */
     display: {
         name: string;
@@ -91,10 +89,6 @@ export interface OpponentProfile {
         behaviors?: {
             preRound?: OpponentDisplayBehavior[]
             postRound?: OpponentDisplayBehavior[],
-            moveEmissionHandlers?: {
-                replace?: EmissionSEMap, // overrides defaults (warning: this effects what shows for player)
-                add?: EmissionSEMap // runs in addition to the defaults.
-            }
         }
 
         /** TODO: DOCUMENT. */

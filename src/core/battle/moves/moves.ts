@@ -28,8 +28,7 @@ export const observe: Move = {
             // extend before apply.
             extendStatusOf('them', VulnerableStatus),
             //applyStatusTo('them', VulnerableStatus)
-            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)},
-            (ctx) => {ctx.emit({type: 'mechanic:observe', payload: {}})} 
+            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)}, 
         )
     }
 }
@@ -62,7 +61,6 @@ export const prepare: Move = {
             effectPipeline(
                 extendStatusOf('self', PreparedStatus),
                 applyStatusTo('self', PreparedStatus),
-                ({emit, self}) => {emit({type: 'status:prepare', payload: {'level': self.getStatusLevel('prepared')}})}
             )
         )
     }

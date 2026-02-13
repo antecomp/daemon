@@ -11,7 +11,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
-import { mapSides, oppositeSide, Sides } from "@/core/battle/utils/sides.utils";
+import { mapSides, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "../config/timings.config";
@@ -24,9 +24,6 @@ import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProf
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
-import { DEFAULT_MOVE_EMISSION_RESPONSES, runEmissionSE } from "../effects/moveEmissionResponses";
-import { MAIN_CHARACTER_NAME } from "@/config/init.config";
-import { capitalizeWords } from "@/shared/utils/stringUtils";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
@@ -66,7 +63,7 @@ export const useBattleUIState = () => {
 };
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
-export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
+export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _lexicons: Sides<MoveLexicon>, onEnd: (res: BattleOutcome) => void, startMeltAnimation: MeltAnimationFn, requestOverlayAnimation: OverlayAnimationRequester) {
 
     const [battleUIState, setBattleUIState] = createSignal<BattleUIState>(BattleUIState.INIT);
 
@@ -100,7 +97,6 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
         preRound: new Set<string>(),
         postRound: new Set<string>()
     }
-    const moveEmissionHandlers = opponentProfile.display.behaviors?.moveEmissionHandlers;
 
     async function handleOpponentUIBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
         const behaviors = opponentProfile.display.behaviors?.[stage];
@@ -243,42 +239,6 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, le
             
             await sleep(BATTLE_END_SLEEP_TIME);
             onEnd(outcome);
-        },
-
-        MoveEmission: (data) => {
-            const emissionCtx = {
-                perspective: data.perspective,
-                moveName: data.moveName,
-                lexicons,
-                nameOfAffected: (flip: true | undefined) => {
-                    const p = flip ? oppositeSide(data.perspective) : data.perspective;
-                    return p === 'player' ? MAIN_CHARACTER_NAME : capitalizeWords(opponentProfile.display.name);
-                }
-            };
-
-            const baseDeps = {appendActionMessage, requestOverlayAnimation};
-            const defaultHandlerExists = Boolean(
-                DEFAULT_MOVE_EMISSION_RESPONSES[data.signal.type as keyof typeof DEFAULT_MOVE_EMISSION_RESPONSES]
-            );
-            const emissionDeps = defaultHandlerExists
-                ? {...baseDeps, defaultSE: () => runEmissionSE(DEFAULT_MOVE_EMISSION_RESPONSES, data.signal, baseDeps, emissionCtx)}
-                : baseDeps;
-
-            runEmissionSE(
-                {...DEFAULT_MOVE_EMISSION_RESPONSES, ...moveEmissionHandlers?.replace},
-                data.signal,
-                emissionDeps,
-                emissionCtx
-            );
-
-            if(moveEmissionHandlers?.add) {
-                runEmissionSE(
-                    moveEmissionHandlers.add,
-                    data.signal,
-                    emissionDeps,
-                    emissionCtx
-                );
-            }
         }
     };
 

@@ -1,7 +1,7 @@
-import { Side, Sides } from "../utils/sides.utils";
+import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "./battle";
 import { Combatant } from "./combatant";
-import { MoveSideEffectOutcome, Move, MoveSignal } from "./move.types";
+import { MoveSideEffectOutcome, Move } from "./move.types";
 import { PlannedSequence } from "./plannedMove";
 
 /** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
@@ -16,7 +16,6 @@ export type BattleEvent =
     | "MoveEnd"
     | "RoundEnd"
     | "BattleEnd"
-    | "MoveEmission" // Random Emissions from move side effects.
 
 /** Payload shape for each of the battle events (lifecycle stages). Provided by battleEngine.
  * Update as needed.
@@ -66,14 +65,6 @@ export type BattleEventPayload = {
         outcome: BattleOutcome
         combatants: Sides<Combatant>
     };
-
-    MoveEmission: {
-        moveName: string
-        signal: MoveSignal,
-        perspective: Side
-        // Consider adding a 'phase' section?
-        // feel free to add other stuff like index or whatever. 
-    }
 }
 
 /** Callback signature executed when a specific battle event fires. */

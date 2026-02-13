@@ -4,16 +4,6 @@ import { ManiaStatus } from "../statuses/statuses";
 import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
 import { Status } from "../model/status";
 
-declare global {
-    interface MoveSignalMap {
-        'effect:heal': {amount: number, capped: boolean},
-        'status:prepare': {level: number}
-        'mechanic:mania': {manic: boolean},
-        'mechanic:focus': {lost: boolean},
-        'mechanic:observe': {} // Literally just make this part of the animtion response to the move itself what are you doing blud.
-    }
-}
-
 export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pipeline: ((ctx: T) => MoveSideEffectOutcome | void)[]): ((ctx: T) => MoveSideEffectOutcome | void) {
     return (ctx) => {
         let result: MoveSideEffectOutcome | undefined = undefined;
@@ -70,11 +60,10 @@ export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome
     }
 }
 
-export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults, emit}) => {
-    if(preEffectOutcome?.status) {
+export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults}) => {
+    if(preEffectOutcome?.status == 'success') {
         if(damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus);
-            emit({type: 'mechanic:mania', payload: {'manic': true}});
         }
     }
     return preEffectOutcome;
@@ -85,23 +74,14 @@ export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect)
         if(ctx.damageTaken <= 0) {
             return effect(ctx) ?? reportMoveOutcome('success', 'focus'); // get outcome from effect or default to success.
         } else {
-            // REMOVE THIS LATER.
-            ctx.emit({
-                type: 'mechanic:focus',
-                payload: {lost: true}
-            })
             return reportMoveOutcome('failure', 'focus');
         }
     }
 }
 
-export const HealSelf: PostMoveSideEffect = ({self, emit}) => {
+export const HealSelf: PostMoveSideEffect = ({self}) => {
     const healAmount = 2 * (1 + self.getStatusLevelIncludingExpired('prepared'));
     self.heal(healAmount);
-    emit({
-        type: 'effect:heal',
-        payload: {'amount': healAmount, capped: self.health == self.maxHealth}
-    })
 }
 
 export const ReduceIncomingDamage: DamageMultiplierFunction = ({self}) => {

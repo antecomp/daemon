@@ -1,7 +1,7 @@
 import { idle as idleMove, nothingMove } from "@/core/battle/moves/moves";
 import { DamageMultipliers } from "@/core/battle/model/battle";
 import { Combatant } from "@/core/battle/model/combatant";
-import { DamageMultiplierFunction, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal, reportMoveOutcome } from "@/core/battle/model/move.types";
+import { DamageMultiplierFunction, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, reportMoveOutcome } from "@/core/battle/model/move.types";
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
 import { PASSTHROUGH_MULTIPLIERS } from "@/core/battle/model/battle";
@@ -165,9 +165,6 @@ describe("BattleEngine Utility Functions", () => {
         const ctx: DamageMultiplierContext = {
             preEffectOutcome: undefined,
             deps: {logger(m) {console.log(m)}},
-            emit(signal: MoveSignal) {
-                console.log("Move emitted signal: " + signal);
-            },
             self: doll,
             them: oppdoll,
             moves: {
@@ -285,7 +282,6 @@ describe("BattleEngine Utility Functions", () => {
             deps: {
                 logger(m) {console.log(m)}
             },
-            emit(s){console.log('move emitted signal' + s)}
         }));
 
         moves.player.behaviors.preEffect = successEffect;
@@ -483,7 +479,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
         const result = effectPipeline(dummyPreEffect, dummyPreEffect)(ctx);
         expect(dummyPreEffect).toHaveBeenCalledTimes(2);
@@ -503,7 +498,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         let result = effectPipeline(failEffect, sucEffect, undefEffect)(ctx);
@@ -521,7 +515,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         let result = effectPipeline(undefEffect, undefEffect, undefEffect)(ctx);
@@ -555,7 +548,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: move
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         doll.addStatus(new MockStatus, 1);
@@ -592,7 +584,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: move
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         runMovePreEffect(move, ctx);
