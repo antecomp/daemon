@@ -100,3 +100,23 @@ describe("resolveObligations", () => {
         expect(mock2).toHaveBeenCalledOnce();
     })
 });
+
+describe("isObligatinResolved", () => {
+    test("throws when obligation not known", () => {
+        const obl = new Obligations();
+        expect(() => obl.isObligationResolved("dfjh")).toThrowError();
+    });
+
+    test("True when obligation has been called", () => {
+        const func = () => {};
+        const obl = new Obligations(func);
+        obl.run('func');
+        expect(obl.isObligationResolved('func')).toBe(true);
+    });
+
+    test("False when obligation has not been called", () => {
+        const func = () => {};
+        const obl = new Obligations(func);
+        expect(obl.isObligationResolved('func')).toBe(false);
+    })
+})

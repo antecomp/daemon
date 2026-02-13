@@ -39,6 +39,9 @@ export class Obligations {
         });
     }
 
+    // TODO: CONSIDER CHANGING THIS TO TAKE A RECORD INSTEAD OF ARGS ARRAY
+    // THAT WLL NATURALLY ENFORCE THE NICE KEY-SETTING + REQUIRE KEY FOR ANONYMOUS.
+    // SHOULD EVEN BE ABLE TO MAKE TYPE SUGGESTIONS THAT WAY.
     /**
      * Adds a required function to the collection.
      *
@@ -76,5 +79,13 @@ export class Obligations {
             func();
             this.completed.push(funcName);
         }
+    }
+
+    /**
+     * Check if an obligation has already been resolved.
+     */
+    public isObligationResolved(name: string) {
+        if (!this.funcs.has(name)) throw new Error("Cannot check obligation that does not exist! (Has been added)");
+        return this.completed.includes(name);
     }
 }

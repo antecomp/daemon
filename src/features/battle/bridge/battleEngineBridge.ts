@@ -27,6 +27,7 @@ import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
+import { Obligations } from "@/shared/utils/obligation";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -89,7 +90,7 @@ export function createUIBridgedBattleEngine(
         setCurrentStatusIcons(
             mapSides(combatants, combatant => getStatusIconsOfCombatant(combatant))
         );
-    }
+    };
 
     const [opponentPlanPreview, setOpponentPlanPreview] = createSignal<(string | null)[]>([]);
 
@@ -103,6 +104,8 @@ export function createUIBridgedBattleEngine(
 
     const { actionMessages, appendActionMessage } = createActionMessageStack();
 
+    // THIS NEEDS TO BE RESET EVERY MOVE!!!!
+    let animationObligations = new Obligations();
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
         postRound: new Set<string>()
@@ -124,7 +127,7 @@ export function createUIBridgedBattleEngine(
 
     onMount(async () => {
         console.log(refRegistry);
-        if(!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
+        if (!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
     })
 
@@ -151,6 +154,18 @@ export function createUIBridgedBattleEngine(
             setCurrentlyExecutingMoveIndex(moveIndex);
 
             setCurrentMoveClash(mapSides(sequences, (s) => ({ moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags })));
+
+            // Just putting it here for now to test -- will be moved to drama handler later.
+            function opponentDamageEffect() {
+                playSound(opponent_pain_sfx);
+                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+            }
+            function playerDamageEffect() {
+                playSound(player_pain_sfx);
+                deps.startMeltAnimation?.(true, 20, 0.5);
+            }
+
+            animationObligations = new Obligations(opponentDamageEffect, playerDamageEffect);
 
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
@@ -179,6 +194,7 @@ export function createUIBridgedBattleEngine(
 
             const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
 
+            // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
             await runMoveUISideEffects(
                 mergedSEs,
                 { appendActionMessage, ...deps, refRegistry },
@@ -190,15 +206,25 @@ export function createUIBridgedBattleEngine(
 
             refreshCombatantInfo(combatants);
 
-            if (damagesDealt.player > 0) {
-                playSound(opponent_pain_sfx);
-                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
-            };
-
-            if (damagesDealt.opponent > 0) {
-                playSound(player_pain_sfx);
-                deps.startMeltAnimation?.(true, 20, 0.5);
+            // If the player took damage, and we haven't already animated that happening...
+            if(damagesDealt.opponent > 0 && !animationObligations.isObligationResolved('playerDamageEffect')) {
+                animationObligations.run('playerDamageEffect');
             }
+
+            // Similar idea for opponent, if the opponent took damage and we haven't animated it yet...
+            if(damagesDealt.player > 0 && !animationObligations.isObligationResolved('opponentDamageEffect')) {
+                animationObligations.run('opponentDamageEffect');
+            }
+
+            // if (damagesDealt.player > 0) {
+            //     playSound(opponent_pain_sfx);
+            //     battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+            // };
+
+            // if (damagesDealt.opponent > 0) {
+            //     playSound(player_pain_sfx);
+            //     deps.startMeltAnimation?.(true, 20, 0.5);
+            // }
 
         },
 
