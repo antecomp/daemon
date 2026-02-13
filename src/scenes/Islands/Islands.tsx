@@ -26,6 +26,10 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';
 
+import fox_voiceclip from '@/assets/sfx/misc/inordertopass.ogg';
+import { playSound } from "@/shared/utils/playSound";
+import { OPPONENT_FOX } from "@/data/battles/fox";
+
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
@@ -37,6 +41,8 @@ export default function Islands() {
 
   const [defeatedCrow, setDefeatedCrow] = createSignal(false);
   const [defeatedFox, setDefeatedFox] = createSignal(false);
+
+  let foxBattleTransitionStarted = false;
 
   return (
     <>
@@ -87,7 +93,14 @@ export default function Islands() {
               position='0 -25 0'
               interactions={[
                 () => addLogMessage("As you reach out, the fox snarls loudly."),
-                () => DialogueService.startDialogue(fox_dialogue, { ctx: { actions: { removeFox() { setDefeatedFox(true) } } } }),
+                () => {
+                  if(foxBattleTransitionStarted) return;
+                  foxBattleTransitionStarted = true;
+                  playSound(fox_voiceclip).then(_ => startBattle(OPPONENT_FOX)).then(outcome => {
+                    foxBattleTransitionStarted = false;
+                    if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
+                  });
+                },
                 () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensly.")
               ]}
             />

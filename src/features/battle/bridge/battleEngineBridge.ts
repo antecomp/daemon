@@ -21,12 +21,25 @@ import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../eff
 import { MoveLexeme } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
-import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+//import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
+import pickRandom from "@/shared/utils/pickRandom";
+
+const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+}) as Record<string, AssetURL>
+
+const OPPONENT_PAIN_SOUNDS: AssetURL[] = [];
+for(const [_k, i] of Object.entries(OPPONENT_PAIN_IMPORT)) {
+    OPPONENT_PAIN_SOUNDS.push(i)
+} 
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -192,7 +205,8 @@ export function createUIBridgedBattleEngine(
             refreshCombatantInfo(combatants);
 
             if (damagesDealt.player > 0) {
-                playSound(opponent_pain_sfx);
+                //playSound(opponent_pain_sfx);
+                playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
                 battleUIAnimations.damageFlash(refRegistry.opponentSprite);
             };
 

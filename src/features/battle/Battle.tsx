@@ -36,9 +36,9 @@ export default function Battle(props: {
 
     const { overlayAnimRequests, requestOverlayAnimation } = createOverlayAnimationQueue();
 
-    const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, {startMeltAnimation, requestOverlayAnimation}, {onEnd: props.onEnd, skipOpeningAnimation: true});
+    const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, {startMeltAnimation, requestOverlayAnimation}, {onEnd: props.onEnd, skipOpeningAnimation: false});
 
-    createMusicTrack({src: 'PWL/blackscorpionmusic-black-scorpion-music-matrix.mp3'});
+    createMusicTrack({src: 'PWL/battle.mp3'});
 
     return (
         <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>
