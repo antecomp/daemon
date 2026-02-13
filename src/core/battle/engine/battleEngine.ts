@@ -57,6 +57,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         return true; // bool check used to break loop in executeRound.
     }
 
+    // Why is this its own function?
     async function handleBattleEnd(outcome: BattleOutcome) {
         await emitBattleEvent('BattleEnd', {outcome, combatants});
     }

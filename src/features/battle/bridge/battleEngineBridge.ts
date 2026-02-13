@@ -102,19 +102,14 @@ export function createUIBridgedBattleEngine(opponentProfile: OpponentProfile, _l
         const behaviors = opponentProfile.display.behaviors?.[stage];
         if(!behaviors) return;    
 
-        // This is going to fire every SE at once, which is probably what you want but be aware that your 
-        // array order will have no meaning on execution order.
-        await Promise.all(
-            behaviors
-                .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
-                .map(async behavior => {
-                    if(behavior.once) {
-                        if(opponentRanBehaviors[stage].has(behavior.key)) return;
-                        opponentRanBehaviors[stage].add(behavior.key);
-                    }
-                    await behavior.run(runnerDeps);
-                })
-        );
+        for (const behavior of behaviors) {
+            if (behavior.when && !behavior.when(predicateArgs)) continue;
+            if (behavior.once) {
+                if (opponentRanBehaviors[stage].has(behavior.key)) continue;
+                opponentRanBehaviors[stage].add(behavior.key);
+            }
+            await behavior.run(runnerDeps);
+        }
     }
 
     onMount(async () => {

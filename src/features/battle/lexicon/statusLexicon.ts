@@ -18,4 +18,4 @@ export const STATUS_LEXICON = {
     mania: {
         icon: mania_icon
     }
-} as SparseRecord<string, StatusDisplayEntry> // Do not narrow this type or suffer the consequences.
+} as SparseRecord<string, StatusDisplayEntry> 
