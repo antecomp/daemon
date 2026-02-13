@@ -15,7 +15,7 @@ import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegist
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 import OverlayAnimator from './ui/OverlayAnimator';
 import { createOverlayAnimationQueue } from './animation/overlayAnimations/overlayAnimationQueue';
-import twoLevelMerge from '@/shared/utils/twoLevelMerge';
+import { twoLevelMergeWithNewEntries } from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
@@ -31,11 +31,12 @@ export default function Battle(props: {
     onEnd: (outcome: BattleOutcome) => void;
 }) {
 
-    const playerLexicon = twoLevelMerge(PLAYER_MOVE_LEXICON, props.playerProfile.display.lexicon);
+    const playerLexicon = twoLevelMergeWithNewEntries(PLAYER_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
+    // TODO: REFINE THIS MERGE METHOD. THIS WONT INHERIT STUFF LIKE THE DEFAULT ICON FOR NEW ENTRIES.
     // Using two level merge allows opponents to change the label for moves without having to also redeclare stuff
-    // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific.
-    const opponentLexicon = twoLevelMerge(COMMON_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
+    // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific to this express usage.
+    const opponentLexicon = twoLevelMergeWithNewEntries(COMMON_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
 
     const { startMeltAnimation, filterID, filterSVG } = createMeltingEffect();
 

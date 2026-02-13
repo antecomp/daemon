@@ -9,7 +9,7 @@ import { buildSequenceFromWeightMap } from '@/core/battle/ai/weightedSequenceAI'
 import { Move, MoveType } from '@/core/battle/model/move.types';
 import { HealSelf } from '@/core/battle/moves/behaviors';
 
-// Test - heal without requiring focus.
+// Test - heal without requiring focus. Verifying custom move definitions work.
 const roostMove: Move = {
     name: 'roost',
     type: MoveType.Passive,
@@ -33,7 +33,6 @@ export const OPPONENT_CROW: OpponentProfile = {
             attack: {
                 label: 'claw'
             },
-            // TODO: FIGURE OUT WHY THIS IS NOT MERGING IN.
             roost: {
                 label: 'roost'
             }
