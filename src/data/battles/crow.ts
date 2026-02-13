@@ -8,6 +8,7 @@ import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import { buildSequenceFromWeightMap } from '@/core/battle/ai/weightedSequenceAI';
 import { Move, MoveType } from '@/core/battle/model/move.types';
 import { HealSelf } from '@/core/battle/moves/behaviors';
+import { BATTLE_RUNE_IMGS } from '@/features/battle/lexicon/moveLexicon';
 
 // Test - heal without requiring focus. Verifying custom move definitions work.
 const roostMove: Move = {
@@ -34,7 +35,8 @@ export const OPPONENT_CROW: OpponentProfile = {
                 label: 'claw'
             },
             roost: {
-                label: 'roost'
+                label: 'roost',
+                icon: BATTLE_RUNE_IMGS.priestess
             }
         },
     },

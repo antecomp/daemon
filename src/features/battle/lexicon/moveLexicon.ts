@@ -1,35 +1,23 @@
-// TODO: CHANGE THIS TO A META GLOB INSTEAD OF 24 IMPORT LINES??!?!??!?!?!?!?!?!??!?!
-import apprentice_icon_ex from '../assets/icons/runes/apprentice_ex.png'
-import candle_icon_ex from '../assets/icons/runes/candle_ex.png'
-import chain_icon_ex from '../assets/icons/runes/chain_ex.png'
-import hourglass_icon_ex from '../assets/icons/runes/hourglass_ex.png'
-import mage_icon_ex from '../assets/icons/runes/mage_ex.png'
-import prae_icon_ex from '../assets/icons/runes/prae_ex.png'
-import priestess_icon_ex from '../assets/icons/runes/priestess_ex.png'
-import trickster_icon_ex from '../assets/icons/runes/trickster_ex.png'
-import nothing_ex from '@/features/battle/assets/icons/runes/nothing_ex.png';
-
-import candle_icon from '../assets/icons/runes/candle.png'
-import apprentice_icon from '../assets/icons/runes/apprentice.png'
-import chain_icon from '../assets/icons/runes/chains.png'
-import hourglass_icon from '../assets/icons/runes/hourglass.png'
-import mage_icon from '../assets/icons/runes/mage.png'
-import prae_icon from '../assets/icons/runes/PRAETORIAN.png'
-import priestess_icon from '../assets/icons/runes/priestess.png'
-import trickster_icon from '../assets/icons/runes/trickster.png'
-import lantern_icon from '@/features/battle/assets/icons/runes/lantern.png';
-import lantern_icon_ex from '@/features/battle/assets/icons/runes/lantern_ex.png';
-
-import stock_icon from "../assets/icons/runes/stock.png"
-import stock_icon_ex from '../assets/icons/runes/stock_ex.png'
-
-export const STOCK_MOVE_ICONS = {
-    small: stock_icon,
-    large: stock_icon_ex
-} as const;
-
 import { AssetURL, SuggestedString } from "@/shared/types/misc.types"
 import { COMMON_PLANNED_MOVES } from '@/core/battle/moves/plannedMoves'
+
+const ICONS_IMPORT = import.meta.glob<string>('../assets/icons/runes/*.png', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+}) as Record<string, AssetURL>;
+
+export const BATTLE_RUNE_IMGS = Object.fromEntries(
+    Object.entries(ICONS_IMPORT).map(([path, icon]) => {
+        const key = path.split('/').pop()!.replace('.png', '').toLowerCase();
+        return [key, icon];
+    })
+) as Record<string, AssetURL>;
+
+export const STOCK_MOVE_ICONS = {
+    small: BATTLE_RUNE_IMGS.stock,
+    large: BATTLE_RUNE_IMGS.stock_ex
+} as const;
 
 export type MoveDisplayEntry = { label: string; icon: AssetURL; largeIcon: AssetURL; lore?: string; description?: string };
 export type MoveDisplayOverride = Partial<MoveDisplayEntry>;
@@ -52,84 +40,84 @@ export type MoveLexiconOverrides = Partial<{
 
 export const FALLBACK_MOVE_DISPLAY_ENTRY: MoveDisplayEntry = {
     label: 'MISSINGENTRY',
-    icon: stock_icon,
-    largeIcon: stock_icon_ex,
+    icon: BATTLE_RUNE_IMGS.stock,
+    largeIcon: BATTLE_RUNE_IMGS.stock_ex,
 }
 
 export const COMMON_MOVE_LEXICON: MoveLexicon = {
     repeat: {
         label: "repeat",
-        icon: apprentice_icon,
-        largeIcon: apprentice_icon_ex,
+        icon: BATTLE_RUNE_IMGS.apprentice,
+        largeIcon: BATTLE_RUNE_IMGS.apprentice_ex,
         description: 'Repeat previous rune. Cannot be used first.'
     },
 
     evade: {
         label: "evade",
-        icon: trickster_icon,
-        largeIcon: trickster_icon_ex,
+        icon: BATTLE_RUNE_IMGS.trickster,
+        largeIcon: BATTLE_RUNE_IMGS.trickster_ex,
         description: 'Chance to negate all incoming damage. When successful, a followup attack will do extra damage.'
     },
 
     heal: {
         label: "heal",
-        icon: priestess_icon,
-        largeIcon: priestess_icon_ex,
+        icon: BATTLE_RUNE_IMGS.priestess,
+        largeIcon: BATTLE_RUNE_IMGS.priestess_ex,
         description: 'When not attacked, restore health.'
     },
 
     prepare: {
         label: "prepare",
-        icon: hourglass_icon,
-        largeIcon: hourglass_icon_ex,
+        icon: BATTLE_RUNE_IMGS.hourglass,
+        largeIcon: BATTLE_RUNE_IMGS.hourglass_ex,
         description: 'If not attacked, increase effectiveness of subsequent rune.'
     },
 
     defend: {
         label: "defend",
-        icon: prae_icon,
-        largeIcon: prae_icon_ex,
+        icon: BATTLE_RUNE_IMGS.prae,
+        largeIcon: BATTLE_RUNE_IMGS.prae_ex,
         description: 'Reduce incoming damage.'
     },
 
     attack: {
         label: "attack",
-        icon: stock_icon,
-        largeIcon: stock_icon_ex,
+        icon: BATTLE_RUNE_IMGS.stock,
+        largeIcon: BATTLE_RUNE_IMGS.stock_ex,
         description: 'Deal damage.'
     },
 
     overwhelm: {
         label: "overwhelm",
-        icon: chain_icon,
-        largeIcon: chain_icon_ex,
+        icon: BATTLE_RUNE_IMGS.chains,
+        largeIcon: BATTLE_RUNE_IMGS.chain_ex,
         description: 'Only does damage to Defensive/Evasive moves (negating their reduction). Makes user vulnerable on use.'
     },
 
     mirror: {
         label: "mirror",
-        icon: mage_icon,
-        largeIcon: mage_icon_ex,
+        icon: BATTLE_RUNE_IMGS.mage,
+        largeIcon: BATTLE_RUNE_IMGS.mage_ex,
         description: 'Perform same action as opponent.'
     },
 
     idle: {
         label: "idle",
-        icon: stock_icon,
-        largeIcon: stock_icon_ex,
+        icon: BATTLE_RUNE_IMGS.stock,
+        largeIcon: BATTLE_RUNE_IMGS.stock_ex,
         description: 'Do nothing.'
     },
 
     nothingMove: {
-        label: "YOU SHOULD NOT SEE THIS LOL!!!!",
-        icon: stock_icon,
-        largeIcon: nothing_ex
+        label: "__NOTHING__",
+        icon: BATTLE_RUNE_IMGS.stock,
+        largeIcon: BATTLE_RUNE_IMGS.nothing_ex
     },
 
     observe: {
         label: 'observe',
-        icon: lantern_icon,
-        largeIcon: lantern_icon_ex,
+        icon: BATTLE_RUNE_IMGS.lantern,
+        largeIcon: BATTLE_RUNE_IMGS.lantern_ex,
         description: 'Makes opponent vulnerable.'
     }
 }
@@ -140,64 +128,64 @@ export const PLAYER_MOVE_LEXICON: MoveLexicon = {
 
     repeat: {
         label: "apprentice",
-        icon: apprentice_icon,
-        largeIcon: apprentice_icon_ex,
+        icon: BATTLE_RUNE_IMGS.apprentice,
+        largeIcon: BATTLE_RUNE_IMGS.apprentice_ex,
         lore: `Like the flowers, knowledge comes from the rotting ones.`,
         description: 'Repeat previous rune. Cannot be used first.'
     },
 
     evade: {
         label: "trickster",
-        icon: trickster_icon,
-        largeIcon: trickster_icon_ex,
+        icon: BATTLE_RUNE_IMGS.trickster,
+        largeIcon: BATTLE_RUNE_IMGS.trickster_ex,
         lore: `Our first understanding of self comes from a two-faced fox.`,
         description: 'Chance to negate all incoming damage. When successful, a followup attack will do extra damage.'
     },
 
     heal: {
         label: "priestess",
-        icon: priestess_icon,
-        largeIcon: priestess_icon_ex,
+        icon: BATTLE_RUNE_IMGS.priestess,
+        largeIcon: BATTLE_RUNE_IMGS.priestess_ex,
         lore: `We only stay for the pretty music.`,
         description: 'When not attacked, restore health.'
     },
 
     prepare: {
         label: "hourglass",
-        icon: hourglass_icon,
-        largeIcon: hourglass_icon_ex,
+        icon: BATTLE_RUNE_IMGS.hourglass,
+        largeIcon: BATTLE_RUNE_IMGS.hourglass_ex,
         lore: `The sand is nauseous from your constant turmoil.`,
         description: 'If not attacked, increase effectiveness of subsequent rune.'
     },
 
     defend: {
         label: "praetorian",
-        icon: prae_icon,
-        largeIcon: prae_icon_ex,
+        icon: BATTLE_RUNE_IMGS.prae,
+        largeIcon: BATTLE_RUNE_IMGS.prae_ex,
         lore: `The bravest coward you'll ever meet.`,
         description: 'Reduce incoming damage.'
     },
 
     attack: {
         label: "candlelight",
-        icon: candle_icon,
-        largeIcon: candle_icon_ex,
+        icon: BATTLE_RUNE_IMGS.candle,
+        largeIcon: BATTLE_RUNE_IMGS.candle_ex,
         lore: `If moonlight heals, what does candlelight do?`,
         description: 'Deal damage.'
     },
 
     overwhelm: {
         label: "overwhelm",
-        icon: chain_icon,
-        largeIcon: chain_icon_ex,
+        icon: BATTLE_RUNE_IMGS.chains,
+        largeIcon: BATTLE_RUNE_IMGS.chain_ex,
         lore: `We are still ultimately animals.`,
         description: 'Only does damage to Defensive/Evasive moves (negating their reduction). Makes user vulnerable on use.'
     },
 
     mirror: {
         label: "mirror",
-        icon: mage_icon,
-        largeIcon: mage_icon_ex,
+        icon: BATTLE_RUNE_IMGS.mage,
+        largeIcon: BATTLE_RUNE_IMGS.mage_ex,
         lore: `Distorted truths cut like knives.`,
         description: 'Perform same action as opponent.'
     },

@@ -39,7 +39,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
 
     // Setting this here causes no flash-in glitch from what I can tell.
     rr.battleView.style.opacity = '0';
-    rr.actionBar.style.opacity = '0'
+    rr.actionBar.style.opacity = '0';
     rr.initMessage.style.opacity = '0';
     initMessageBottom.style.opacity = '0';
     multbars.style.opacity = '0';
