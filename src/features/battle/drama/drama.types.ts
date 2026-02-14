@@ -33,3 +33,7 @@ export interface DramaEntry {
     when: (data: DramaData) => boolean,
     run: (deps: DramaDependancies, data: DramaData) => Promise<void>
 }
+
+export interface Drama {
+    [id: string]: DramaEntry;
+}

@@ -21,8 +21,8 @@ import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../eff
 import { MoveLexeme } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
 
-import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
-//import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
+//import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
@@ -205,8 +205,8 @@ export function createUIBridgedBattleEngine(
             refreshCombatantInfo(combatants);
 
             if (damagesDealt.player > 0) {
-                playSound(opponent_pain_sfx);
-                //playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
+                //playSound(opponent_pain_sfx);
+                playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
                 battleUIAnimations.damageFlash(refRegistry.opponentSprite);
             };
 
