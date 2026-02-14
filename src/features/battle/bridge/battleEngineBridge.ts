@@ -175,29 +175,28 @@ export function createUIBridgedBattleEngine(
 
         async MultipliersComputed({ damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex }) {
             // Hacky but it works - If the move is the result of a mirror, play the mirror anim instead!
-            const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
-            const moveTags = mapSides(moves, x => x.tags ?? []);
+            // const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
+            // const moveTags = mapSides(moves, x => x.tags ?? []);
 
             setDisplayMults(damageMultipliers);
-
             await sleep(PRE_ANIMATION_DELAY);
 
-            const opponentMoveSEs = applyMoveUISEOverrides(
-                DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
-                opponentProfile
-            )[moveNames.opponent] ?? [];
+            // const opponentMoveSEs = applyMoveUISEOverrides(
+            //     DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
+            //     opponentProfile
+            // )[moveNames.opponent] ?? [];
 
-            // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
-            const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? [];
+            // // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
+            // const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? [];
 
-            const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
+            // const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
 
-            // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
-            await runMoveUISideEffects(
-                mergedSEs,
-                { appendActionMessage, ...deps, refRegistry },
-                { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
-            )
+            // // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
+            // await runMoveUISideEffects(
+            //     mergedSEs,
+            //     { appendActionMessage, ...deps, refRegistry },
+            //     { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
+            // )
         },
 
         async DamagesApplied({ combatants, damagesDealt }) {

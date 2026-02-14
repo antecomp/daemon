@@ -5,10 +5,12 @@ import Battle from "./Battle";
 import TransitionVideo from "@/shared/ui/primitives/TransitionVideo";
 import battle_transition_video from '@/assets/ui/misc/battle transition.webm'
 import sleep from "@/shared/utils/sleep";
+import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 
 
 const plyr: PlayerProfile = {
     display: {
+        name: MAIN_CHARACTER_NAME,
         lexicon: {}
     }
 }

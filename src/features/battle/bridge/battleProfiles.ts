@@ -119,6 +119,7 @@ export interface PlayerProfile {
  * Feel free to add additional display properties as needed
  */
     display: {
+        name: string,
         lexicon: MoveLexiconOverrides;
     };
 }

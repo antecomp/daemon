@@ -13,6 +13,7 @@ import { OPPONENT_CROW } from '@/data/battles/crow';
 
 const plyr: PlayerProfile = {
     display: {
+        name: 'The Player',
         lexicon: {
             attack: {
                 label: 'overwritten'
