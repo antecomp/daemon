@@ -11,17 +11,18 @@ import { HealSelf } from '@/core/battle/moves/behaviors';
 import { BATTLE_RUNE_IMGS } from '@/features/battle/lexicon/moveLexicon';
 
 // Test - heal without requiring focus. Verifying custom move definitions work.
-const roostMove: Move = {
-    name: 'roost',
-    type: MoveType.Passive,
-    behaviors: {
-        postEffect: HealSelf
-    }
-}
+// const roostMove: Move = {
+//     name: 'roost',
+//     type: MoveType.Passive,
+//     behaviors: {
+//         postEffect: HealSelf
+//     }
+// }
 
 const CROW_PLANBANK = {
     ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm']),
-    attack1: planMove(attack), attack2: planMove(attack), roost: planMove(roostMove)
+    attack1: planMove(attack), attack2: planMove(attack), 
+    //roost: planMove(roostMove)
 }
 
 export const OPPONENT_CROW: OpponentProfile = {
