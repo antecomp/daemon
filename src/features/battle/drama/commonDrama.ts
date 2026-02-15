@@ -1,5 +1,6 @@
 import slash_sfx from '@/assets/sfx/battle/candle.wav';
 import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
+import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
 
 import animateAsync from "@/shared/utils/animateAsync";
 import { DramaTable, PLACES } from "./drama.types";
@@ -77,11 +78,20 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             await requestOverlayAnimation('observe');
             appendActionMessage(playerProfile.display.name + " feels watched.")
         }
+    },
+
+    'opp-attack': {
+        place: PLACES.CLASH_TWO,
+        when: ({moves}) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
+        run: async ({requestOverlayAnimation}) => {
+            await sleep(500);
+            playSound(opp_attack_noise);
+            await requestOverlayAnimation('opp-attack');
+        }
     }
 }
 
 const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
-    // TODO Slash
     'player-slash': {
         place: PLACES.CLASH_ONE,
         // When we attack using repeat or candle, but not mirror.
@@ -91,7 +101,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves }) {
             playSound(slash_sfx);
 
-            // Change how this works. Prep should take precedence over other anim types.
+            // TODO: Change how this works. Prep should take precedence over other anim types.
             if (combatants.player.getStatusLevel('mania') > 0) {
                 await requestOverlayAnimation('slash_elag');
             } else if (moves.player.tags?.includes('repeated')) {
@@ -117,12 +127,22 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
 
     // TODO: How do we indicate the amount healed? Maybe we don't?
     // Perhaps snapshots should also be of the combatants to diff?
+    // Or use the event stack idea where the combatant class can notify these calls.
     'player-heal': {
         place: PLACES.POST_CLASH,
         when: ({ moves, postEffectOutcomes }) =>
             moves.player.name == 'heal'
             && postEffectOutcomes.player?.status == 'success',
         run: ({ appendActionMessage }, { playerProfile }) => appendActionMessage(`${playerProfile.display.name} ` + ' finds her resolve. F-CH restored.')
+    },
+
+    'player-defend': {
+        place: PLACES.CLASH_TWO,
+        when: ({moves, postCtx}) =>
+            moves.player.name == 'defend'
+            && postCtx.opponent.ourMults.outgoing > 0
+            && moves.opponent.type !== MoveType.Overwhelming,
+        run: ({appendActionMessage}, { playerProfile }) => appendActionMessage(`${playerProfile.display.name} braves the hit!`)
     }
 }
 

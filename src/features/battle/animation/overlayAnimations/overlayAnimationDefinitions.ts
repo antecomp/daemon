@@ -6,6 +6,7 @@ import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash
 import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe.webm';
+import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack.webm';
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 import { OverlayAnimData } from './overlayAnimations.types'
@@ -59,6 +60,12 @@ export const overlayAnimationDefinitions = {
         width: 618,
         height: 312,
         blendMode: 'normal'
+    },
+
+    'opp-attack': {
+        src: opp_attack,
+        width: 502,
+        height: 524
     }
 } as const satisfies Record<string, OverlayAnimData>
 
