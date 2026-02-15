@@ -8,16 +8,17 @@ import { playSound } from "@/shared/utils/playSound";
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
+import { defineSideDrama } from './drama';
 
 const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
-    'opp-focus': {
-        place: PLACES.CLASH_ONE,
-        when: ({ postEffectOutcomes }) =>
-            postEffectOutcomes.opponent?.status == 'failure'
-            && postEffectOutcomes.opponent?.reason == 'focus',
-        run: ({ appendActionMessage }, { opponentProfile, moves, lexicons }) =>
-            appendActionMessage(`Broke the focus for ${opponentProfile.display.name}! Prevent their ${lexicons.opponent?.[moves.opponent.name].label}`)
-    },
+    // 'opp-focus': {
+    //     place: PLACES.CLASH_ONE,
+    //     when: ({ postEffectOutcomes }) =>
+    //         postEffectOutcomes.opponent?.status == 'failure'
+    //         && postEffectOutcomes.opponent?.reason == 'focus',
+    //     run: ({ appendActionMessage }, { opponentProfile, moves, lexicons }) =>
+    //         appendActionMessage(`Broke the focus for ${opponentProfile.display.name}! Prevent their ${lexicons.opponent?.[moves.opponent.name].label}`)
+    // },
 
     'opp-shield': {
         place: PLACES.CLASH_ONE,
@@ -25,8 +26,8 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             moves.opponent.name == 'defend'
             && postCtx.player.ourMults.outgoing > 0
             && moves.player.type !== MoveType.Overwhelming,
-        run: ({ requestOverlayAnimation, appendActionMessage }, { opponentProfile }) => {
-            appendActionMessage(opponentProfile.display.name + " endures your attack!");
+        run: ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
+            appendActionMessage(profiles.opponent.display.name + " endures your attack!");
             return requestOverlayAnimation('shield')
         }
     },
@@ -36,9 +37,9 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         when: ({ moves }) =>
             moves.opponent.name == 'evade',
         //&& postEffectOutcomes.opponent?.status == 'success',
-        run: async ({ refRegistry, appendActionMessage }, { opponentProfile, postEffectOutcomes, postCtx }) => {
+        run: async ({ refRegistry, appendActionMessage }, { profiles, postEffectOutcomes, postCtx }) => {
             if (postEffectOutcomes.opponent?.status == 'success') {
-                appendActionMessage(opponentProfile.display.name + " dodges swiftly! " + opponentProfile.display.name + " feels invigorated!");
+                appendActionMessage(profiles.opponent.display.name + " dodges swiftly! " + profiles.opponent.display.name + " feels invigorated!");
                 const oppSprite = refRegistry.opponentSprite;
                 if (!oppSprite) return;
                 // Could even animate it shifting to one direction here.
@@ -52,7 +53,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
                 && postEffectOutcomes.opponent.status == 'failure'
                 && postCtx.opponent.damageTaken > 0
             ) {
-                appendActionMessage(`${opponentProfile.display.name} couldn't avoid your attack in time!`)
+                appendActionMessage(`${profiles.opponent.display.name} couldn't avoid your attack in time!`)
             }
         }
     },
@@ -74,9 +75,9 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-observe': {
         place: PLACES.POST_CLASH,
         when: ({ moves }) => moves.opponent.name == 'observe',
-        run: async ({ requestOverlayAnimation, appendActionMessage }, { playerProfile }) => {
+        run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
             await requestOverlayAnimation('observe');
-            appendActionMessage(playerProfile.display.name + " feels watched.")
+            appendActionMessage(profiles.player.display.name + " feels watched.")
         }
     },
 
@@ -127,8 +128,8 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
     'player-observe': {
         place: PLACES.POST_CLASH,
         when: ({ moves }) => moves.player.name == 'observe',
-        run: ({ appendActionMessage }, { playerProfile, opponentProfile }) =>
-            appendActionMessage(`${playerProfile.display.name} keenly observes ${opponentProfile.display.name}`)
+        run: ({ appendActionMessage }, { profiles }) =>
+            appendActionMessage(`${profiles.player.display.name} keenly observes ${profiles.opponent.display.name}`)
     },
 
     // TODO: How do we indicate the amount healed? Maybe we don't?
@@ -139,7 +140,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, postEffectOutcomes }) =>
             moves.player.name == 'heal'
             && postEffectOutcomes.player?.status == 'success',
-        run: ({ appendActionMessage }, { playerProfile }) => appendActionMessage(`${playerProfile.display.name} ` + ' finds her resolve. F-CH restored.')
+        run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.player.display.name} ` + ' finds her resolve. F-CH restored.')
     },
 
     'player-defend': {
@@ -148,11 +149,22 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             moves.player.name == 'defend'
             && postCtx.opponent.ourMults.outgoing > 0
             && moves.opponent.type !== MoveType.Overwhelming,
-        run: ({appendActionMessage}, { playerProfile }) => appendActionMessage(`${playerProfile.display.name} braves the hit!`)
+        run: ({appendActionMessage}, { profiles }) => appendActionMessage(`${profiles.player.display.name} braves the hit!`)
     }
 }
 
+const SHARED_DRAMAS: DramaTable = {
+    ...defineSideDrama('focus', {
+        place: PLACES.POST_CLASH,
+        when: ({postEffectOutcomes}, side) => postEffectOutcomes[side]?.reason == 'focus' && postEffectOutcomes[side]?.status == 'failure',
+        run: ({appendActionMessage}, {moves, lexicons, profiles}, side) => {
+            appendActionMessage(
+                `${profiles[side].display.name} lost focus and was unable to use ${lexicons[side][moves[side].name].label}.`
+            )
+        }
+    })
+}
 
 
-const COMMON_DRAMA_TABLE: DramaTable = { ...COMMON_OPPONENT_MOVE_DRAMAS, ...COMMON_PLAYER_MOVE_DRAMAS };
+const COMMON_DRAMA_TABLE: DramaTable = { ...COMMON_OPPONENT_MOVE_DRAMAS, ...COMMON_PLAYER_MOVE_DRAMAS, ...SHARED_DRAMAS };
 export default COMMON_DRAMA_TABLE;

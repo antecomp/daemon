@@ -9,8 +9,9 @@ import { Sides } from "@/core/battle/utils/sides.utils";
 
 /** Indicates the type of data that is handed to the drama to make decisions / branch responses */
 export type DramaData = BattleEventPayload['MoveEnd'] & {
-    opponentProfile: OpponentProfile
-    playerProfile: PlayerProfile,
+    // opponentProfile: OpponentProfile
+    // playerProfile: PlayerProfile,
+    profiles: {player: PlayerProfile, opponent: OpponentProfile}
     // compiled lexicon.
     lexicons: Sides<MoveLexicon>
 }; // TODO: Indicate Game End State? Diff Drama for death.
