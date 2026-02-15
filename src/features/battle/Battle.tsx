@@ -21,6 +21,7 @@ import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
 import { extendLexicon } from './bridge/battleEngineBridge.util';
+import { makeSidesMap } from '@/core/battle/utils/sides.utils';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -36,7 +37,12 @@ export default function Battle(props: {
 
     const { overlayAnimRequests, requestOverlayAnimation } = createOverlayAnimationQueue();
 
-    const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, props.playerProfile, {startMeltAnimation, requestOverlayAnimation}, {onEnd: props.onEnd, skipOpeningAnimation: true});
+    const { engine, ...bridge } = createUIBridgedBattleEngine(
+        props.opponentProfile, 
+        props.playerProfile, 
+        {startMeltAnimation, requestOverlayAnimation, lexicons: makeSidesMap(playerLexicon, opponentLexicon)}, 
+        {onEnd: props.onEnd, skipOpeningAnimation: true}
+    );
 
     //createMusicTrack({src: 'PWL/battle.mp3'});
 

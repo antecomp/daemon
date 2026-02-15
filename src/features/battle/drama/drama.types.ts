@@ -4,11 +4,15 @@ import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { ActionMessageAppender } from "../ui/ActionMessages";
 import { OpponentProfile, PlayerProfile } from "../bridge/battleProfiles";
+import { MoveLexicon } from "../lexicon/moveLexicon";
+import { Sides } from "@/core/battle/utils/sides.utils";
 
 /** Indicates the type of data that is handed to the drama to make decisions / branch responses */
 export type DramaData = BattleEventPayload['MoveEnd'] & {
     opponentProfile: OpponentProfile
-    playerProfile: PlayerProfile
+    playerProfile: PlayerProfile,
+    // compiled lexicon.
+    lexicons: Sides<MoveLexicon>
 }; // TODO: Indicate Game End State? Diff Drama for death.
 
 /** Obligated UI actions. These can be executed early, or will be automatically done at the end of the drama if no drama code runs them. */

@@ -9,6 +9,15 @@ import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
 
 const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
+    'opp-focus': {
+        place: PLACES.CLASH_ONE,
+        when: ({postEffectOutcomes}) => 
+            postEffectOutcomes.opponent?.status == 'failure' 
+            && postEffectOutcomes.opponent?.reason == 'focus',
+        run: ({appendActionMessage}, {opponentProfile, moves, lexicons}) => 
+            appendActionMessage(`Broke the focus for ${opponentProfile.display.name}! Prevent their ${lexicons.opponent?.[moves.opponent.name].label}`)
+    },
+
     'opp-shield': {
         place: PLACES.CLASH_ONE,
         when: ({ moves, postCtx }) =>
@@ -39,7 +48,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         place: PLACES.CLASH_ONE,
         // When opponent deals damage as result of mirror...
         when: ({ moves, postCtx }) =>
-            //plannedMoves.opponent.name == 'mirror'
+            //plannedMoves.opponent.name == 'mirror' // (fails on repeat, use below)
             moves.opponent.tags?.includes('mirrored')
             && postCtx.opponent.damageDealt > 0,
         run: async ({ requestOverlayAnimation, dramaObligations }) => {

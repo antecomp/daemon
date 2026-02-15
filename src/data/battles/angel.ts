@@ -102,12 +102,12 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                 )
             },
             behaviors: {
-                preRound: [{
-                    key: 'example',
-                    run({combatants}){
-                        combatants.opponent.health > 1 && combatants.opponent.takeDamage(1);
-                    }   
-                }]
+                // preRound: [{
+                //     key: 'example',
+                //     run({combatants}){
+                //         combatants.opponent.health > 1 && combatants.opponent.takeDamage(1);
+                //     }   
+                // }]
             }
         },
 

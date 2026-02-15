@@ -16,9 +16,7 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
 import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "../config/timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
-import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
-import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
-import { MoveLexeme } from "../lexicon/moveLexicon";
+import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile, PlayerProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
@@ -28,7 +26,6 @@ import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
-import pickRandom from "@/shared/utils/pickRandom";
 import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE from "../drama/commonDrama";
 import { DramaData, DramaDependancies, DramaEntry } from "../drama/drama.types";
@@ -84,7 +81,8 @@ export function createUIBridgedBattleEngine(
     playerProfile: PlayerProfile,
     deps: {
         startMeltAnimation?: MeltAnimationFn,
-        requestOverlayAnimation: OverlayAnimationRequester
+        requestOverlayAnimation: OverlayAnimationRequester,
+        lexicons: Sides<MoveLexicon>
     },
     config: {
         onEnd: (res: BattleOutcome) => void,
@@ -177,52 +175,10 @@ export function createUIBridgedBattleEngine(
             refreshCombatantInfo(combatants);
         },
 
-        async MultipliersComputed({ damageMultipliers, preEffectOutcomes, combatants, plannedSequences, moves, moveIndex }) {
-            // Hacky but it works - If the move is the result of a mirror, play the mirror anim instead!
-            // const moveNames = mapSides(moves, x => (x.tags?.includes('mirrored')) ? 'mirror' : x.name);
-            // const moveTags = mapSides(moves, x => x.tags ?? []);
-
+        async MultipliersComputed({ damageMultipliers }) {
             setDisplayMults(damageMultipliers);
             await sleep(PRE_ANIMATION_DELAY);
-
-            // const opponentMoveSEs = applyMoveUISEOverrides(
-            //     DEFAULT_OPPONENT_MOVE_UI_EFFECTS,
-            //     opponentProfile
-            // )[moveNames.opponent] ?? [];
-
-            // // Just using defaults straight up for now -- I doubt I will have any weird overrides for player moves.
-            // const playerMoveSEs = PLAYER_MOVE_UI_EFFECTS[moveNames.player] ?? [];
-
-            // const mergedSEs = [...playerMoveSEs, ...opponentMoveSEs];
-
-            // // REPLACE THIS WITH DRAMA SYSTEM. OR, MORE LIKELY, MOVE THE DRAMA STUFF TO THE MOVE END.
-            // await runMoveUISideEffects(
-            //     mergedSEs,
-            //     { appendActionMessage, ...deps, refRegistry },
-            //     { combatants, damageMultipliers, preEffectOutcomes, moveNames, plannedSequences, moveIndex, moveTags }
-            // )
         },
-
-        // async DamagesApplied({ combatants, damagesDealt }) {
-
-        //     //refreshCombatantInfo(combatants);
-
-        //     // if (damagesDealt.player > 0) {
-        //     //     //playSound(opponent_pain_sfx);
-        //     //     playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
-        //     //     battleUIAnimations.damageFlash(refRegistry.opponentSprite);
-        //     // };
-
-        //     // if (damagesDealt.opponent > 0) {
-        //     //     playSound(player_pain_sfx);
-        //     //     deps.startMeltAnimation?.(true, 20, 0.5);
-        //     // }
-
-        // },
-
-        // PostEffectResolved({ combatants }) {
-        //     //refreshCombatantInfo(combatants)
-        // },
 
         async MoveEnd(data) {
 
@@ -250,7 +206,7 @@ export function createUIBridgedBattleEngine(
                 playerDamage() { dramaObli.run('playerDamage') }
             }
 
-            const dramaData: DramaData = { ...data, opponentProfile, playerProfile }
+            const dramaData: DramaData = { ...data, ...deps, opponentProfile, playerProfile }
             const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, dramaObligations }
 
             // Merge in profile dramas here. Skipping for now.
@@ -258,7 +214,7 @@ export function createUIBridgedBattleEngine(
 
             // Filter by applicable dramas.
             const activeDramas = Object.entries(dramaTable)
-                .filter(([, dre]) => dre.when({ ...data, opponentProfile, playerProfile }))
+                .filter(([, dre]) => dre.when(dramaData))
 
             // Merge same-place drama entries.
             const byPlace = new Map<number, Array<{ id: string, dre: DramaEntry }>>();
