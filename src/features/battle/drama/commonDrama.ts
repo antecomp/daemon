@@ -11,10 +11,10 @@ import { MoveType } from '@/core/battle/model/move.types';
 const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-focus': {
         place: PLACES.CLASH_ONE,
-        when: ({postEffectOutcomes}) => 
-            postEffectOutcomes.opponent?.status == 'failure' 
+        when: ({ postEffectOutcomes }) =>
+            postEffectOutcomes.opponent?.status == 'failure'
             && postEffectOutcomes.opponent?.reason == 'focus',
-        run: ({appendActionMessage}, {opponentProfile, moves, lexicons}) => 
+        run: ({ appendActionMessage }, { opponentProfile, moves, lexicons }) =>
             appendActionMessage(`Broke the focus for ${opponentProfile.display.name}! Prevent their ${lexicons.opponent?.[moves.opponent.name].label}`)
     },
 
@@ -25,7 +25,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             && postCtx.player.ourMults.outgoing > 0
             && moves.player.type !== MoveType.Overwhelming,
         run: ({ requestOverlayAnimation, appendActionMessage }, { opponentProfile }) => {
-            appendActionMessage(opponentProfile.display.name + " endures the hit!");
+            appendActionMessage(opponentProfile.display.name + " endures your attack!");
             return requestOverlayAnimation('shield')
         }
     },
@@ -33,14 +33,26 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-evade': {
         place: PLACES.CLASH_ONE,
         when: ({ moves, postEffectOutcomes }) =>
-            moves.opponent.name == 'evade'
-            && postEffectOutcomes.opponent?.status == 'success',
-        run: ({ refRegistry, appendActionMessage }, { opponentProfile }) => {
-            appendActionMessage(opponentProfile.display.name + " dodges swiftly! " + opponentProfile.display.name + " feels invigorated!");
-            const oppSprite = refRegistry.opponentSprite;
-            if (!oppSprite) return;
-            // Could even animate it shifting to one direction here.
-            return animateAsync(oppSprite, [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }], { duration: 500 });
+            moves.opponent.name == 'evade',
+        //&& postEffectOutcomes.opponent?.status == 'success',
+        run: async ({ refRegistry, appendActionMessage }, { opponentProfile, postEffectOutcomes, postCtx }) => {
+            if (postEffectOutcomes.opponent?.status == 'success') {
+                appendActionMessage(opponentProfile.display.name + " dodges swiftly! " + opponentProfile.display.name + " feels invigorated!");
+                const oppSprite = refRegistry.opponentSprite;
+                if (!oppSprite) return;
+                // Could even animate it shifting to one direction here.
+                await animateAsync(oppSprite, [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }], { duration: 500 });
+            }
+
+            // This should only fire if it fails for RNG and we took damage
+            // failure due to overwhelm should have a differet reason.
+            if (
+                postEffectOutcomes.opponent?.reason == 'rng'
+                && postEffectOutcomes.opponent.status == 'failure'
+                && postCtx.opponent.damageTaken > 0
+            ) {
+                appendActionMessage(`${opponentProfile.display.name} couldn't get away in time!`)
+            }
         }
     },
 
@@ -51,7 +63,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             //plannedMoves.opponent.name == 'mirror' // (fails on repeat, use below)
             moves.opponent.tags?.includes('mirrored')
             && postCtx.opponent.damageDealt > 0,
-        run: async ({ requestOverlayAnimation, dramaObligations }) => {
+        run: async ({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }) => {
             sleep(500).then(() => playSound(deflect_noise));
             await requestOverlayAnimation('mirror');
             dramaObligations.playerDamage();
@@ -76,7 +88,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, plannedMoves }) =>
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
-        async run({ requestOverlayAnimation, dramaObligations }, { combatants, moves }) {
+        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves }) {
             playSound(slash_sfx);
 
             // Change how this works. Prep should take precedence over other anim types.

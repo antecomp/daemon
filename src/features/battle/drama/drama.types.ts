@@ -26,7 +26,7 @@ export type DramaDependancies = {
     refRegistry: RefRegistry<BattleRefNames>
     requestOverlayAnimation: OverlayAnimationRequester,
     appendActionMessage: ActionMessageAppender
-    dramaObligations: DramaObligations
+    fufillDramaObligation: DramaObligations
 }
 
 /** A DramaEntry represents a single "case" of a Dramatization action

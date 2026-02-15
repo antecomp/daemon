@@ -201,13 +201,13 @@ export function createUIBridgedBattleEngine(
 
             const dramaObli = new Obligations({ opponentDamage, playerDamage });
             // Runner to fufill drama obligations. Seriously consider changing this name.
-            const dramaObligations = {
+            const fufillDramaObligation = {
                 opponentDamage() { dramaObli.run('opponentDamage') },
                 playerDamage() { dramaObli.run('playerDamage') }
             }
 
             const dramaData: DramaData = { ...data, ...deps, opponentProfile, playerProfile }
-            const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, dramaObligations }
+            const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, fufillDramaObligation }
 
             // Merge in profile dramas here. Skipping for now.
             const dramaTable = COMMON_DRAMA_TABLE;
