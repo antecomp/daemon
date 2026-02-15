@@ -112,7 +112,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         place: PLACES.POST_CLASH,
         when: ({ moves }) => moves.player.name == 'observe',
         run: ({ appendActionMessage }, { playerProfile, opponentProfile }) =>
-            appendActionMessage(`${playerProfile.display.name} keenly observes ${opponentProfile}`)
+            appendActionMessage(`${playerProfile.display.name} keenly observes ${opponentProfile.display.name}`)
     },
 
     // TODO: How do we indicate the amount healed? Maybe we don't?

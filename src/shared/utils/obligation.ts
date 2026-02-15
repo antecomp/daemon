@@ -1,4 +1,7 @@
-import { AnyFunction } from "../types/misc.types";
+import { AnyFunction, SuggestedString } from "../types/misc.types";
+
+type ObligationFunctions = Record<string, AnyFunction>;
+type KnownObligationName<TFuncs extends ObligationFunctions> = Extract<keyof TFuncs, string>;
 
 /**
  * Tracks named functions that should each be executed at least once.
@@ -6,9 +9,9 @@ import { AnyFunction } from "../types/misc.types";
  * A function may be executed explicitly with {@link run}, or implicitly during
  * {@link resolveObligations} if it has not yet been executed.
  */
-export class Obligations {
+export class Obligations<TFuncs extends ObligationFunctions = ObligationFunctions> {
     private funcs = new Map<string, AnyFunction>();
-    private completed: string[] = [];
+    private completed = new Set<string>();
 
     /**
      * Resolves a function's usable name.
@@ -28,7 +31,7 @@ export class Obligations {
      *
      * @param funcs Functions to register by their declared names.
      */
-    constructor(funcs?: Record<string, AnyFunction>) {
+    constructor(funcs?: TFuncs) {
         if(!funcs) return;
         for(const [funcName, func] of Object.entries(funcs)) {
             this.funcs.set(funcName, func);
@@ -52,15 +55,17 @@ export class Obligations {
      * Executes one registered function and marks it as completed.
      *
      * @param name Registered function name.
-     * @param args Arguments passed to the function as a single array parameter.
+     * @param args Arguments passed to the function.
      * @returns The target function's return value.
      * @throws Error When no function exists for `name`.
      */
+    public run<K extends KnownObligationName<TFuncs>>(name: K, ...args: Parameters<TFuncs[K]>): ReturnType<TFuncs[K]>;
+    public run(name: SuggestedString<KnownObligationName<TFuncs>>, ...args: any[]): any;
     public run(name: string, ...args: any[]): any {
         const func = this.funcs.get(name);
         if(!func) throw new Error("Cannot run Obligation, function name not found. (Has it been added?)");
-        this.completed.push(name);
-        return func(args);
+        this.completed.add(name);
+        return func(...args);
     }
 
     /**
@@ -68,17 +73,17 @@ export class Obligations {
      */
     public resolveObligations(): void {
         for(const [funcName, func] of this.funcs) {
-            if(this.completed.includes(funcName)) continue;
+            if(this.completed.has(funcName)) continue;
             func();
-            this.completed.push(funcName);
+            this.completed.add(funcName);
         }
     }
 
     /**
      * Check if an obligation has already been resolved.
      */
-    public isObligationResolved(name: string) {
+    public isObligationResolved(name: SuggestedString<KnownObligationName<TFuncs>>) {
         if (!this.funcs.has(name)) throw new Error("Cannot check obligation that does not exist! (Has been added)");
-        return this.completed.includes(name);
+        return this.completed.has(name);
     }
 }

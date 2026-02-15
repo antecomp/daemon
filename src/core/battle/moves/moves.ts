@@ -1,4 +1,4 @@
-import { Move, MoveType } from "../model/move.types";
+import { Move, MoveType, reportMoveOutcome } from "../model/move.types";
 import { applyStatusTo, effectPipeline, extendStatusOf, FailOnOverwhelm, multiplierPipeline } from "./behaviors";
 import { NegatedByOverwhelm } from "./behaviors";
 import { OnlyDoDamageOnDefensive } from "./behaviors";
@@ -70,7 +70,8 @@ export const defend: Move = {
     name: 'defend',
     type: MoveType.Defensive,
     behaviors: {
-        damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage)
+        damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage),
+        postEffect: FailOnOverwhelm(() => reportMoveOutcome('success', 'clash'))
     }
 }
 
