@@ -198,7 +198,6 @@ export function createUIBridgedBattleEngine(
                     deps.startMeltAnimation?.(true, 20, 0.5);
                 }
             }
-
             const dramaObli = new Obligations({ opponentDamage, playerDamage });
             // Runner to fufill drama obligations. Seriously consider changing this name.
             const fufillDramaObligation = {
@@ -232,7 +231,6 @@ export function createUIBridgedBattleEngine(
                     dre.run(dramaDeps, dramaData)
                 ))
             }
-
 
             dramaObli.resolveObligations();
 

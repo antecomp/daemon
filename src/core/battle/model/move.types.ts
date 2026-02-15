@@ -20,7 +20,7 @@ export type MoveTags = ('mirrored' | 'repeated')[];
  * This outcome can also be tagged with a generic reason which can be used to hint to UI (or other handlers) the cause of the outcome setting.
  */
 export type MoveSideEffectOutcome = {
-    status: 'success' | 'failure',
+    status: 'success' | 'failure' | 'meaningless',
     reason: "focus" | "rng" | "clash" | "mechanic" // add more as needed. consider merging focus as mechanic.
     //meta: unknown // extend this type with additional metadata if necessary. Try to avoid though.
 }

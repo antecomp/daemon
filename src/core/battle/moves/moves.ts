@@ -1,5 +1,5 @@
 import { Move, MoveType } from "../model/move.types";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "./behaviors";
+import { applyStatusTo, effectPipeline, extendStatusOf, FailOnOverwhelm, multiplierPipeline } from "./behaviors";
 import { NegatedByOverwhelm } from "./behaviors";
 import { OnlyDoDamageOnDefensive } from "./behaviors";
 import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./behaviors";
@@ -37,7 +37,7 @@ export const evade: Move = {
     name: 'evade',
     type: MoveType.Defensive,
     behaviors: {
-        preEffect: EvadeRoll,
+        preEffect: FailOnOverwhelm(EvadeRoll),
         damageMultipliers: NegatedByOverwhelm(EvadeDamageReduction),
         postEffect: SuccessfulEvadeBonus
     }

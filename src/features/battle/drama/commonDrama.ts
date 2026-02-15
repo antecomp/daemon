@@ -32,7 +32,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
 
     'opp-evade': {
         place: PLACES.CLASH_ONE,
-        when: ({ moves, postEffectOutcomes }) =>
+        when: ({ moves }) =>
             moves.opponent.name == 'evade',
         //&& postEffectOutcomes.opponent?.status == 'success',
         run: async ({ refRegistry, appendActionMessage }, { opponentProfile, postEffectOutcomes, postCtx }) => {
@@ -51,7 +51,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
                 && postEffectOutcomes.opponent.status == 'failure'
                 && postCtx.opponent.damageTaken > 0
             ) {
-                appendActionMessage(`${opponentProfile.display.name} couldn't get away in time!`)
+                appendActionMessage(`${opponentProfile.display.name} couldn't avoid your attack in time!`)
             }
         }
     },

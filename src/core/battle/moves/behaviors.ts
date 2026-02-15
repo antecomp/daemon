@@ -36,14 +36,14 @@ export function applyStatusTo<T extends PostMoveContext | PreMoveContext>(who: '
     };
 }
 
-export const PreparedAttackBonus: DamageMultiplierFunction = ({self}) => {
+export const PreparedAttackBonus: DamageMultiplierFunction = ({ self }) => {
     return {
         incoming: 1,
         outgoing: 2 ** self.getStatusLevel('prepared')
     }
 }
 
-export const EvadeRoll: PreMoveSideEffect = ({self}) => {
+export const EvadeRoll: PreMoveSideEffect = ({ self }) => {
     const chance = 0.5 + (0.25 * self.getStatusLevel('prepared'));
 
     const success = Math.random() <= chance;
@@ -52,21 +52,21 @@ export const EvadeRoll: PreMoveSideEffect = ({self}) => {
     return [reportMoveOutcome('failure', 'rng'), reportMoveOutcome('success', 'rng')][Number(success)]
 }
 
-export const EvadeDamageReduction: DamageMultiplierFunction = ({preEffectOutcome}) => {
-    if(preEffectOutcome?.status == 'success') {
-        return {incoming: 0, outgoing: 1}
+export const EvadeDamageReduction: DamageMultiplierFunction = ({ preEffectOutcome }) => {
+    if (preEffectOutcome?.status == 'success') {
+        return { incoming: 0, outgoing: 1 }
     } else {
         return PASSTHROUGH_MULTIPLIERS
     }
 }
 
-export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, preEffectOutcome, theirMults}) => {
-    if(preEffectOutcome?.status == 'success') {
-        if(damageTaken === 0 && theirMults.outgoing > 0) {
+export const SuccessfulEvadeBonus: PostMoveSideEffect = ({ self, damageTaken, preEffectOutcome, theirMults }) => {
+    if (preEffectOutcome?.status == 'success') {
+        if (damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus);
             return preEffectOutcome
         } else {
-            return {status: 'failure', reason: 'mechanic'};
+            return { status: 'meaningless', reason: 'clash' };
         }
     }
     return preEffectOutcome;
@@ -74,7 +74,7 @@ export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, pre
 
 export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect) => {
     return (ctx) => {
-        if(ctx.damageTaken <= 0) {
+        if (ctx.damageTaken <= 0) {
             return effect(ctx) ?? reportMoveOutcome('success', 'focus'); // get outcome from effect or default to success.
         } else {
             return reportMoveOutcome('failure', 'focus');
@@ -82,12 +82,12 @@ export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect)
     }
 }
 
-export const HealSelf: PostMoveSideEffect = ({self}) => {
+export const HealSelf: PostMoveSideEffect = ({ self }) => {
     const healAmount = 2 * (1 + self.getStatusLevelIncludingExpired('prepared'));
     self.heal(healAmount);
 }
 
-export const ReduceIncomingDamage: DamageMultiplierFunction = ({self}) => {
+export const ReduceIncomingDamage: DamageMultiplierFunction = ({ self }) => {
     return {
         incoming: 0.5 ** (self.getStatusLevel('prepared') + 1),
         outgoing: 1
@@ -110,3 +110,14 @@ export const NegatedByOverwhelm: MoveMultiplierWrapper = (mul) => {
         }
     };
 };
+
+export const FailOnOverwhelm: MoveSideEffectWrapper<PreMoveSideEffect> = (se) => {
+    return (ctx) => {
+        if(ctx.moves.theirs.type == MoveType.Overwhelming) {
+            se(ctx);
+            return reportMoveOutcome('failure', 'clash')
+        } else {
+            return se(ctx);
+        }
+    }
+}
