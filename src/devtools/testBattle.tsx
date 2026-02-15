@@ -23,7 +23,7 @@ const plyr: PlayerProfile = {
 const root = document.getElementById('root');
 render(() => (
     <main id="game-root">
-        <Battle opponentProfile={OPPONENT_MIMICRY} playerProfile={plyr} onEnd={(o) => alert('Battele End: ' + o)} />
+        <Battle opponentProfile={OPPONENT_CROW} playerProfile={plyr} onEnd={(o) => alert('Battele End: ' + o)} />
         <div id="modal-root"/>
     </main>
 )

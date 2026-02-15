@@ -20,7 +20,7 @@ import { BATTLE_RUNE_IMGS } from '@/features/battle/lexicon/moveLexicon';
 // }
 
 const CROW_PLANBANK = {
-    ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm']),
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm', 'heal']),
     attack1: planMove(attack), attack2: planMove(attack), 
     //roost: planMove(roostMove)
 }
@@ -35,9 +35,9 @@ export const OPPONENT_CROW: OpponentProfile = {
             attack: {
                 label: 'claw'
             },
-            roost: {
+            heal: {
                 label: 'roost',
-                icon: BATTLE_RUNE_IMGS.priestess
+                //icon: BATTLE_RUNE_IMGS.priestess
             }
         },
     },

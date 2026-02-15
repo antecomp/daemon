@@ -11,15 +11,6 @@ import { MoveType } from '@/core/battle/model/move.types';
 import { defineSideDrama } from './drama';
 
 const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
-    // 'opp-focus': {
-    //     place: PLACES.CLASH_ONE,
-    //     when: ({ postEffectOutcomes }) =>
-    //         postEffectOutcomes.opponent?.status == 'failure'
-    //         && postEffectOutcomes.opponent?.reason == 'focus',
-    //     run: ({ appendActionMessage }, { opponentProfile, moves, lexicons }) =>
-    //         appendActionMessage(`Broke the focus for ${opponentProfile.display.name}! Prevent their ${lexicons.opponent?.[moves.opponent.name].label}`)
-    // },
-
     'opp-shield': {
         place: PLACES.CLASH_ONE,
         when: ({ moves, postCtx }) =>
@@ -83,10 +74,10 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
 
     'opp-attack': {
         place: PLACES.CLASH_TWO,
-        when: ({moves}) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
-        run: async ({requestOverlayAnimation}, {moves}) => {
+        when: ({ moves }) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
+        run: async ({ requestOverlayAnimation }, { moves }) => {
             // Add a delay to give a feeling of retaliation here.
-            if(
+            if (
                 moves.player.type == MoveType.Aggressive &&
                 !moves.player.tags?.includes('mirrored')
             ) {
@@ -105,7 +96,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, plannedMoves }) =>
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
-        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves }) {
+        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx }) {
             playSound(slash_sfx);
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
@@ -114,9 +105,13 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
             } else {
+                // TODO: THIS WONT WORK PROPERLY - ITS LOOKING POST REAP. NEED SNAPSHOTS.
                 const preparedLevel = combatants.player.getStatusLevel('prepared');
                 await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
+
+            // ugh -- don't early run damage of opponent blocks.
+            if (postCtx.opponent.ourMults.incoming < 1) return;
 
             // Run opponent hit right after this
             dramaObligations.opponentDamage();
@@ -145,24 +140,46 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
 
     'player-defend': {
         place: PLACES.CLASH_TWO + 1,
-        when: ({moves, postCtx}) =>
+        when: ({ moves, postCtx }) =>
             moves.player.name == 'defend'
             && postCtx.opponent.ourMults.outgoing > 0
             && moves.opponent.type !== MoveType.Overwhelming,
-        run: ({appendActionMessage}, { profiles }) => appendActionMessage(`${profiles.player.display.name} braves the hit!`)
-    }
+        run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.player.display.name} braves the hit!`)
+    },
+
+    'player-evade': {
+        place: PLACES.CLASH_TWO,
+        when: ({ moves }) =>
+            moves.player.name == 'evade',
+        //&& postEffectOutcomes.opponent?.status == 'success',
+        run: async ({ appendActionMessage }, { profiles, postEffectOutcomes, postCtx }) => {
+            if (postEffectOutcomes.player?.status == 'success') {
+                appendActionMessage(profiles.player.display.name + " dodges swiftly! " + profiles.player.display.name + " feels invigorated!");
+            }
+
+            // This should only fire if it fails for RNG and we took damage
+            // failure due to overwhelm should have a differet reason.
+            if (
+                postEffectOutcomes.opponent?.reason == 'rng'
+                && postEffectOutcomes.opponent.status == 'failure'
+                && postCtx.opponent.damageTaken > 0
+            ) {
+                appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
+            }
+        }
+    },
 }
 
 const SHARED_DRAMAS: DramaTable = {
     ...defineSideDrama('focus', {
         place: PLACES.POST_CLASH,
-        when: ({postEffectOutcomes}, side) => postEffectOutcomes[side]?.reason == 'focus' && postEffectOutcomes[side]?.status == 'failure',
-        run: ({appendActionMessage}, {moves, lexicons, profiles}, side) => {
+        when: ({ postEffectOutcomes }, side) => postEffectOutcomes[side]?.reason == 'focus' && postEffectOutcomes[side]?.status == 'failure',
+        run: ({ appendActionMessage }, { moves, lexicons, profiles }, side) => {
             appendActionMessage(
                 `${profiles[side].display.name} lost focus and was unable to use ${lexicons[side][moves[side].name].label}.`
             )
         }
-    })
+    }),
 }
 
 
