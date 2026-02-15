@@ -6,19 +6,19 @@ import { ActionMessageAppender } from "../ui/ActionMessages";
 import { OpponentProfile, PlayerProfile } from "../bridge/battleProfiles";
 
 /** Indicates the type of data that is handed to the drama to make decisions / branch responses */
-type DramaData = BattleEventPayload['MoveEnd'] & {
+export type DramaData = BattleEventPayload['MoveEnd'] & {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
 }; // TODO: Indicate Game End State? Diff Drama for death.
 
 /** Obligated UI actions. These can be executed early, or will be automatically done at the end of the drama if no drama code runs them. */
-type DramaObligations = {
+export type DramaObligations = {
     opponentDamage: () => void;
     playerDamage: () => void;
 }
 
 /** Utilities handed to the drama runner to perform various UI effects and animations */
-type DramaDependancies = {
+export type DramaDependancies = {
     refRegistry: RefRegistry<BattleRefNames>
     requestOverlayAnimation: OverlayAnimationRequester,
     appendActionMessage: ActionMessageAppender
@@ -38,7 +38,7 @@ export interface DramaEntry {
     run: (deps: DramaDependancies, data: DramaData) => Promise<unknown> | void;
 }
 
-export interface Drama {
+export interface DramaTable {
     [id: string]: DramaEntry;
 }
 

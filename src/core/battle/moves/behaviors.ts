@@ -64,9 +64,10 @@ export const SuccessfulEvadeBonus: PostMoveSideEffect = ({self, damageTaken, pre
     if(preEffectOutcome?.status == 'success') {
         if(damageTaken === 0 && theirMults.outgoing > 0) {
             self.addStatus(new ManiaStatus);
+            return preEffectOutcome
         }
     }
-    return preEffectOutcome;
+    return {status: 'failure', reason: 'mechanic'};
 }
 
 export const RequiresFocus: MoveSideEffectWrapper<PostMoveSideEffect> = (effect) => {

@@ -19,16 +19,19 @@ import { OverlayAnimationRequester } from "../animation/overlayAnimations/overla
 import { applyMoveUISEOverrides, runMoveUISideEffects } from "../effects/moveUISideEffects";
 import { DEFAULT_OPPONENT_MOVE_UI_EFFECTS, PLAYER_MOVE_UI_EFFECTS } from "../effects/moveUISideEffectDefinitions";
 import { MoveLexeme } from "../lexicon/moveLexicon";
-import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile } from "./battleProfiles";
+import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile, PlayerProfile } from "./battleProfiles";
 
-//import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
-import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
+import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+//import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 import pickRandom from "@/shared/utils/pickRandom";
+import { Obligations } from "@/shared/utils/obligation";
+import COMMON_DRAMA_TABLE from "../drama/commonDrama";
+import { DramaData, DramaDependancies, DramaEntry } from "../drama/drama.types";
 
 const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
     eager: true,
@@ -37,9 +40,9 @@ const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yea
 }) as Record<string, AssetURL>
 
 const OPPONENT_PAIN_SOUNDS: AssetURL[] = [];
-for(const [_k, i] of Object.entries(OPPONENT_PAIN_IMPORT)) {
+for (const [_k, i] of Object.entries(OPPONENT_PAIN_IMPORT)) {
     OPPONENT_PAIN_SOUNDS.push(i)
-} 
+}
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -78,6 +81,7 @@ export const useBattleUIState = () => {
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(
     opponentProfile: OpponentProfile,
+    playerProfile: PlayerProfile,
     deps: {
         startMeltAnimation?: MeltAnimationFn,
         requestOverlayAnimation: OverlayAnimationRequester
@@ -199,30 +203,85 @@ export function createUIBridgedBattleEngine(
             // )
         },
 
-        async DamagesApplied({ combatants, damagesDealt }) {
+        // async DamagesApplied({ combatants, damagesDealt }) {
 
-            refreshCombatantInfo(combatants);
+        //     //refreshCombatantInfo(combatants);
 
-            if (damagesDealt.player > 0) {
-                //playSound(opponent_pain_sfx);
-                playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
-                battleUIAnimations.damageFlash(refRegistry.opponentSprite);
-            };
+        //     // if (damagesDealt.player > 0) {
+        //     //     //playSound(opponent_pain_sfx);
+        //     //     playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
+        //     //     battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+        //     // };
 
-            if (damagesDealt.opponent > 0) {
-                playSound(player_pain_sfx);
-                deps.startMeltAnimation?.(true, 20, 0.5);
+        //     // if (damagesDealt.opponent > 0) {
+        //     //     playSound(player_pain_sfx);
+        //     //     deps.startMeltAnimation?.(true, 20, 0.5);
+        //     // }
+
+        // },
+
+        // PostEffectResolved({ combatants }) {
+        //     //refreshCombatantInfo(combatants)
+        // },
+
+        async MoveEnd(data) {
+
+
+            // Obligations to animate damage if applicable
+            function opponentDamage() {
+                if (data.postCtx.opponent.damageTaken > 0) {
+                    setOpponentHealthPercentage(data.combatants.opponent.healthPercent);
+                    playSound(opponent_pain_sfx);
+                    battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+                }
+            }
+            function playerDamage() {
+                if (data.postCtx.player.damageTaken > 0) {
+                    setPlayerHealthPercentage(data.combatants.player.healthPercent);
+                    playSound(player_pain_sfx);
+                    deps.startMeltAnimation?.(true, 20, 0.5);
+                }
             }
 
-        },
+            const dramaObli = new Obligations({ opponentDamage, playerDamage });
+            // Runner to fufill drama obligations. Seriously consider changing this name.
+            const dramaObligations = {
+                opponentDamage() { dramaObli.run('opponentDamage') },
+                playerDamage() { dramaObli.run('playerDamage') }
+            }
 
-        PostEffectResolved({ combatants }) {
-            refreshCombatantInfo(combatants)
-        },
+            const dramaData: DramaData = { ...data, opponentProfile, playerProfile }
+            const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, dramaObligations }
 
-        async MoveEnd({ combatants }) {
+            // Merge in profile dramas here. Skipping for now.
+            const dramaTable = COMMON_DRAMA_TABLE;
+
+            // Filter by applicable dramas.
+            const activeDramas = Object.entries(dramaTable)
+                .filter(([, dre]) => dre.when({ ...data, opponentProfile, playerProfile }))
+
+            // Merge same-place drama entries.
+            const byPlace = new Map<number, Array<{ id: string, dre: DramaEntry }>>();
+            for (const [id, dre] of activeDramas) {
+                const arr = byPlace.get(dre.place) ?? [];
+                arr.push({ id, dre });
+                byPlace.set(dre.place, arr);
+            }
+
+            // Sort and run in ascending place order.
+            const places = [...byPlace.keys()].sort((a, b) => a - b);
+            for (const place of places) {
+                const batch = byPlace.get(place)!;
+                await Promise.all(batch.map(({ dre }) =>
+                    dre.run(dramaDeps, dramaData)
+                ))
+            }
+
+
+            dramaObli.resolveObligations();
+
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
-            refreshCombatantInfo(combatants);
+            refreshCombatantInfo(data.combatants);
             await sleep(MOVE_DELAY);
         },
 
