@@ -6,6 +6,40 @@ type StatusEntry = {
     durationStack: number[]
 }
 
+/** Represents a snapshot for state data of a combatant at a given time, rather than passing back the whole live combatant object */
+type CombatantSnapshot = {
+    health: number,
+    maxHealth: number,
+    statuses: {
+        [statusName: string]: { maxDur: number, level: number }
+    }
+};
+
+/** Returned info when mutating combatant state, provides a before and after snapshot, alongside metadata about the mutation performed. */
+type CombatantMutation =
+    {
+        before: CombatantSnapshot;
+        after: CombatantSnapshot
+    }
+    & ({
+        kind: 'statuses:tick' | 'statuses:reap';
+    }
+        | {
+            kind: 'status:add' | 'status:extend';
+            statusName: string;
+        }
+        | {
+            kind: 'damage'
+            dead: boolean,
+            amount: number
+        }
+        | {
+            kind: 'heal',
+            amount: number,
+            maxxedOut: boolean
+        });
+
+// TODO: Make unit tests for snapshot system. (!!!)
 
 /**
  * The `Combatant` class tracks the health and status effects of a combatant in the battle system. It provides methods for taking damage,
@@ -31,16 +65,48 @@ export class Combatant {
     private _health: number;
     private statuses: Map<string, StatusEntry> = new Map();
 
+    public snapshot(): CombatantSnapshot {
+        const statusSnapshot = {} as CombatantSnapshot['statuses'];
+        for (const [_, entry] of this.statuses) {
+            const statName = entry.status.name;
+            const level = entry.durationStack.length;
+            const maxDur = Math.max(...entry.durationStack);
+            statusSnapshot[statName] = { maxDur, level };
+        }
+
+        return {
+            health: this._health,
+            maxHealth: this.maxHealth, // also provided for convenience.
+            statuses: statusSnapshot,
+        }
+    }
+
     constructor(maxHealth: number) {
         this._health = this.maxHealth = maxHealth;
     }
 
-    public takeDamage(amount: number) {
+    public takeDamage(amount: number): CombatantMutation {
+        const before = this.snapshot();
         this._health = Math.max(this._health - amount, 0);
+        const after = this.snapshot();
+        return {
+            kind: 'damage',
+            // TODO: do I change this to the actual amount if we overshoot 0?
+            before, after, amount,
+            dead: this._health == 0
+        }
     }
 
-    public heal(amount: number) {
+    public heal(amount: number): CombatantMutation {
+        const before = this.snapshot();
         this._health = Math.min(this.maxHealth, this._health + amount);
+        const after = this.snapshot();
+        return {
+            kind: 'heal',
+            // TODO: do I change this to the actual amount if we overshoot maxHealth?
+            before, after, amount,
+            maxxedOut: this._health == this.maxHealth
+        }
     }
 
     get healthPercent() {
@@ -64,7 +130,8 @@ export class Combatant {
      * @param status - The status effect to add.
      * @param duration - The duration of the status effect (default is 1).
      */
-    addStatus(status: Status, duration: number = 1) {
+    addStatus(status: Status, duration: number = 1): CombatantMutation {
+        const before = this.snapshot();
         if (this.statuses.has(status.name)) {
             this.statuses.get(status.name)!.durationStack.push(duration);
         } else {
@@ -73,11 +140,23 @@ export class Combatant {
                 durationStack: [duration]
             })
         }
+        const after = this.snapshot();
+        return {
+            kind: 'status:add',
+            before, after,
+            statusName: status.name
+        }
     }
 
-    tickStatuses() {
+    tickStatuses(): CombatantMutation {
+        const before = this.snapshot();
         for (const [_, entry] of this.statuses) {
             entry.durationStack = entry.durationStack.map(dur => dur - 1);
+        }
+        const after = this.snapshot();
+        return {
+            kind: 'statuses:tick',
+            before, after
         }
     }
 
@@ -112,10 +191,12 @@ export class Combatant {
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
-    // kinda jank but needed for PostEffects that need to know the status level before ticking.
-    // better than the whole immediatePostEffect mess.
-    // Avoid using this unless you know exactly why you need this. This is a goofy hack
-    // to fix a logical error that arises from the whole status ticking thing.
+    /** Gets the level of a status, including any 0-duration instances of it (before they are reaped).
+    * * Kinda jank but needed for PostEffects that need to know the status level before ticking.
+    * * better than the whole immediatePostEffect mess.
+    * * Avoid using this unless you know exactly why you need this. 
+    * * This is a goofy hack to fix a logical error that arises from the whole status ticking thing.
+    */
     getStatusLevelIncludingExpired(name: string): number {
         const entry = this.statuses.get(name);
         if (!entry) return 0;
@@ -131,11 +212,16 @@ export class Combatant {
      * @remarks
      * If the specified status does not exist on the combatant, this method does nothing.
      */
-    extendStatus(status: string | Status, amount: number = 1) {
-        const key = (typeof status === 'string') ? status : status.name
-        const entry = this.statuses.get(key);
-        if (!entry) return;
-        entry.durationStack = entry.durationStack.map(dur => dur + amount);
+    extendStatus(status: string | Status, amount: number = 1): CombatantMutation {
+        const before = this.snapshot();
+        const statusName = (typeof status === 'string') ? status : status.name
+        const entry = this.statuses.get(statusName);
+        if (entry) entry.durationStack = entry.durationStack.map(dur => dur + amount);
+        const after = this.snapshot();
+        return {
+            kind: 'status:extend',
+            statusName, before, after
+        }
     }
 
     /**
@@ -147,7 +233,8 @@ export class Combatant {
      * This method is intended to clean up statuses that are no longer active
      * based on their duration stacks.
      */
-    reapExpiredStatuses() {
+    reapExpiredStatuses(): CombatantMutation {
+        const before = this.snapshot();
         const keysToDelete = [];
         for (const [key, s] of this.statuses) {
             if (!s.durationStack.some(dur => dur > 0)) {
@@ -155,5 +242,10 @@ export class Combatant {
             }
         }
         for (const key of keysToDelete) this.statuses.delete(key);
+        const after = this.snapshot();
+        return {
+            kind: 'statuses:reap',
+            before, after
+        }
     }
 }
