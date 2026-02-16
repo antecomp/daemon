@@ -225,11 +225,14 @@ export function createUIBridgedBattleEngine(
 
             // Sort and run in ascending place order.
             const places = [...byPlace.keys()].sort((a, b) => a - b);
+            let hasRunDrama = false;
             for (const place of places) {
                 const batch = byPlace.get(place)!;
-                await Promise.all(batch.map(({ dre }) =>
-                    dre.run(dramaDeps, dramaData)
-                ))
+                await Promise.all(batch.map(async ({ dre }) => {
+                    if (hasRunDrama && dre.preDelay) await sleep(dre.preDelay);
+                    return dre.run(dramaDeps, dramaData);
+                }))
+                hasRunDrama = true;
             }
 
             dramaObli.resolveObligations();
