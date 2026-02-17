@@ -4,7 +4,7 @@ import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
 
 import animateAsync from "@/shared/utils/animateAsync";
 import { DramaTable, PLACES } from "./drama.types";
-import { playSound } from "@/shared/utils/playSound";
+import { playSound, playSoundOnReady } from "@/shared/utils/playSound";
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
@@ -76,7 +76,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-attack': {
         place: PLACES.CLASH_TWO,
         when: ({ moves }) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
-        run: async ({ requestOverlayAnimation }, { moves }) => {
+        run: async ({ requestOverlayAnimation, fufillDramaObligation }, { moves }) => {
             // Add a delay to give a feeling of retaliation here.
             if (
                 moves.player.type == MoveType.Aggressive &&
@@ -84,8 +84,9 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             ) {
                 await sleep(500);
             }
-            playSound(opp_attack_noise);
+            await playSoundOnReady(opp_attack_noise);
             await requestOverlayAnimation('opp-attack');
+            fufillDramaObligation.playerDamage();
         }
     }
 }
@@ -98,7 +99,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
         async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory}) {
-            playSound(slash_sfx);
+            await playSoundOnReady(slash_sfx);
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
             if (combatants.player.getStatusLevel('mania') > 0) {
