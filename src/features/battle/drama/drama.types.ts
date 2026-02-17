@@ -30,21 +30,17 @@ export type DramaDependancies = {
     fufillDramaObligation: DramaObligations
 }
 
-/** A DramaEntry represents a single "case" of a Dramatization action */
+/** A DramaEntry represents a single "case" of a Dramatization action
+ * 
+ * It has a when clause to determine if it should run (predicate run given battle state through DramaData)
+ * It has a run clause to perform the dramatization action.
+ * It has a place clause to determine when to run this dramatization relative to others.
+ * - NOTE TO SELF: MAKE SURE YOU ADD 1000N CONSTANTS FOR EASY SETTING OF WHEN TO RUN THESE DRAMAS.
+ */
 export interface DramaEntry {
-    /** Relative position to other drama entries that also trigger -- higher numbers play later.
-     * Entries that share the same place play simultaneously.
-     * 
-     * Make sure to use the {@link PLACES} enum for common base position constants.
-     */
     place: number,
-    /** Predicate function that determines if the DramaEntry should run given move clash state provided through data. */
     when: (data: DramaData) => boolean | undefined,
-    /** Actual side-effect executing function to perform the dramatization associated with the condition/place above. */
     run: (deps: DramaDependancies, data: DramaData) => Promise<unknown> | void;
-
-    /** Delay (in ms) before this entry will run if and only if some entry has already run before it. */
-    preDelay?: number
 }
 
 export interface DramaTable {

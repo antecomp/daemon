@@ -69,8 +69,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
             await requestOverlayAnimation('observe');
             appendActionMessage(profiles.player.display.name + " feels watched.")
-        },
-        preDelay: 1000
+        }
     },
 
     'opp-attack': {
@@ -111,7 +110,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
                 await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
 
-            // ugh -- don't early run damage of opponent blocks. Looks better if we wait for their defense anim to finish.
+            // ugh -- don't early run damage of opponent blocks.
             if (postCtx.opponent.ourMults.incoming < 1) return;
 
             // Run opponent hit right after this
