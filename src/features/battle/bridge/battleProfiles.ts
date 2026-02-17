@@ -16,6 +16,7 @@ import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
 import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
+import { DramaTable } from '../drama/drama.types';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -89,6 +90,11 @@ export interface OpponentProfile {
             preRound?: OpponentDisplayBehavior[]
             postRound?: OpponentDisplayBehavior[],
         }
+
+        /** Custom drama definitions for this opponent. If a entry in this table shares an ID
+         * with the common drama table, it overrides it.
+          */
+        dramas?: DramaTable
     };
 
     /**

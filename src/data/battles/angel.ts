@@ -7,6 +7,9 @@ import testShader from "@/assets/background-shaders/test.glsl";
 import { mirrorPlan, COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import COMMON_DRAMA_TABLE from '@/features/battle/drama/commonDrama';
+import { PLACES } from '@/features/battle/drama/drama.types';
+import animateAsync from '@/shared/utils/animateAsync';
 
 const mimicry_planbank = {
     ...pick(COMMON_PLANNED_MOVES, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
@@ -51,22 +54,19 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                 }
             ],
         },
-        moveUISideEffectOverrides: {
-            'defend': {
-                replace: [{
-                    place: 0,
-                    run({appendActionMessage}) {
-                        appendActionMessage("THIS WILL RUN INSTEAD OF SHIELD ANIMATION!!!")
-                    }
-                }]
+        dramas: {
+            'opp-shield': {
+                ...COMMON_DRAMA_TABLE['opp-shield'],
+                run(deps, data) {
+                    deps.appendActionMessage('addition to shield by angel');
+                    return COMMON_DRAMA_TABLE['opp-shield'].run(deps,data);
+                }
             },
-            'mirror': {
-                add: [{
-                    place: 1,
-                    run({appendActionMessage}) {
-                        appendActionMessage("THIS WILL ALSO RUN WITH MIRROR - ADDITION BY ANGEL!!!");
-                    }
-                }]
+            // goofy test of a completely new method.
+            'full-spin': {
+                place: PLACES.POST_CLASH,
+                when: () => true,
+                run: ({refRegistry}) => refRegistry.opponentSprite && animateAsync(refRegistry.opponentSprite, [{rotate: '0deg'}, {rotate: '360deg'}], {duration: 3000})
             }
         }
     },

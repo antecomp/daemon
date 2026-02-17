@@ -181,8 +181,6 @@ export function createUIBridgedBattleEngine(
         },
 
         async MoveEnd(data) {
-
-
             // Obligations to animate damage if applicable
             function opponentDamage() {
                 if (data.postCtx.opponent.damageTaken > 0) {
@@ -208,8 +206,7 @@ export function createUIBridgedBattleEngine(
             const dramaData: DramaData = { ...data, ...deps, profiles: {player: playerProfile, opponent: opponentProfile} }
             const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, fufillDramaObligation }
 
-            // Merge in profile dramas here. Skipping for now.
-            const dramaTable = COMMON_DRAMA_TABLE;
+            const dramaTable = {...COMMON_DRAMA_TABLE, ...opponentProfile.display.dramas};
 
             // Filter by applicable dramas.
             const activeDramas = Object.entries(dramaTable)
