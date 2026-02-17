@@ -21,23 +21,22 @@ type CombatantMutation =
         before: CombatantSnapshot;
         after: CombatantSnapshot
     }
-    & ({
-        kind: 'statuses:tick' | 'statuses:reap';
-    }
-        | {
+    & (
+        {
+            kind: 'statuses:tick' | 'statuses:reap';
+        } | {
             kind: 'status:add' | 'status:extend';
             statusName: string;
-        }
-        | {
+        } | {
             kind: 'damage'
             dead: boolean,
             amount: number
-        }
-        | {
+        } | {
             kind: 'heal',
             amount: number,
             maxxedOut: boolean
-        });
+        }
+    );
 
 // TODO: Make unit tests for snapshot system. (!!!)
 
