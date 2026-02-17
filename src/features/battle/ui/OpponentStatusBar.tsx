@@ -3,7 +3,7 @@ import name_postcut from '../assets/name-postcut.png'
 import sbb_left from '../assets/sbb-left.png'
 import sbb_right from '../assets/sbb-right.png'
 import { AssetURL } from '@/shared/types/misc.types';
-import { Accessor, For, JSX } from 'solid-js';
+import { Accessor, createEffect, For, JSX, on } from 'solid-js';
 import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon';
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry';
 import { keyInObject } from '@/shared/utils/keyInObject';
@@ -56,6 +56,9 @@ export default function OpponentStatusBar(props: OpponentStatusBarProps) {
     const {showTooltip, hideTooltip, TooltipComponent } = createTooltip();
 
     const opponentStatusBarRef = createBattleRefAttacher('opponentStatusbar');
+
+    // Hide tooltip when plan updates.
+    createEffect(on(() => props.planPreview, () => hideTooltip()));
 
     return (
         <>
