@@ -16,7 +16,7 @@ type CombatantSnapshot = {
 };
 
 /** Returned info when mutating combatant state, provides a before and after snapshot, alongside metadata about the mutation performed. */
-type CombatantMutation =
+export type CombatantMutation =
     {
         before: CombatantSnapshot;
         after: CombatantSnapshot
