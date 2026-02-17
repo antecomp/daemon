@@ -1,13 +1,8 @@
 import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "./battle";
-import { Combatant, CombatantMutation } from "./combatant";
+import { Combatant } from "./combatant";
 import { MoveSideEffectOutcome, Move, PostMoveContext } from "./move.types";
 import { PlannedMove, PlannedSequence } from "./plannedMove";
-
-/** "History" associating CombatantMutations at a given battleevent
- * TODO: Narrow the BattleEvent usage to when the mutation is recorded.
- */
-export type CombatanMutationHistory = Record<BattleEvent, Sides<CombatantMutation>>
 
 /** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
 export type BattleEvent =
@@ -55,7 +50,7 @@ export type BattleEventPayload = {
     };
     DamagesApplied: {
         combatants: Sides<Combatant>
-        damagesDealt: Sides<number>,
+        damagesDealt: Sides<number>
     };
     PostEffectResolved: {
         postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
@@ -67,7 +62,6 @@ export type BattleEventPayload = {
         plannedMoves: Sides<PlannedMove>,
         postCtx: Sides<PostMoveContext>,
         postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
-        mutationHistory: CombatanMutationHistory
     };
     RoundEnd: {
         combatants: Sides<Combatant>
