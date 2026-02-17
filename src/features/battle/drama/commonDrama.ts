@@ -4,8 +4,7 @@ import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
 
 import animateAsync from "@/shared/utils/animateAsync";
 import { DramaTable, PLACES } from "./drama.types";
-import { playSound, playSoundOnReady } from "@/shared/utils/playSound";
-import { playSound as PS} from '@/core/audio/audio';
+import { playSound } from '@/core/audio/audio';
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
@@ -85,10 +84,11 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             ) {
                 await sleep(500);
             }
-            await playSoundOnReady(opp_attack_noise);
+            await playSound(opp_attack_noise)[0];
             await requestOverlayAnimation('opp-attack');
             fufillDramaObligation.playerDamage();
-        }
+        },
+        preDelay: 300
     }
 }
 
@@ -100,8 +100,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
         async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory}) {
-            const [slashSoundReady, _] = PS(slash_sfx); 
-            //await playSoundOnReady(slash_sfx);
+            const [slashSoundReady, _] = playSound(slash_sfx); 
             await slashSoundReady;
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
@@ -140,7 +139,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             && combatantHistory.MoveEnd.player.health > combatantHistory.DamagesApplied.player.health,
         run: ({ appendActionMessage }, { profiles, combatantHistory, combatants }) => {
             const deltaPercent = Math.round(100 * (combatantHistory.MoveEnd.player.health - combatantHistory.DamagesApplied.player.health) / combatants.player.maxHealth);
-            appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`)
+            appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`, 'heal')
         }
     },
 
@@ -160,7 +159,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         //&& postEffectOutcomes.opponent?.status == 'success',
         run: async ({ appendActionMessage }, { profiles, postEffectOutcomes, postCtx }) => {
             if (postEffectOutcomes.player?.status == 'success') {
-                appendActionMessage(profiles.player.display.name + " dodges swiftly! " + profiles.player.display.name + " feels invigorated!");
+                appendActionMessage(profiles.player.display.name + " dodges swiftly! " + profiles.player.display.name + " feels invigorated!", 'mania');
             }
 
             // This should only fire if it fails for RNG and we took damage
@@ -182,7 +181,8 @@ const SHARED_DRAMAS: DramaTable = {
         when: ({ postEffectOutcomes }, side) => postEffectOutcomes[side]?.reason == 'focus' && postEffectOutcomes[side]?.status == 'failure',
         run: ({ appendActionMessage }, { moves, lexicons, profiles }, side) => {
             appendActionMessage(
-                `${profiles[side].display.name} lost focus and was unable to use ${lexicons[side][moves[side].name].label}.`
+                `${profiles[side].display.name} lost focus and was unable to use ${lexicons[side][moves[side].name].label}.`,
+                'focus'
             )
         }
     }),

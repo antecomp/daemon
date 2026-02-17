@@ -1,10 +1,14 @@
 import attachToConsole from "@/devtools/attachToConsole";
+import { AssetURL } from "@/shared/types/misc.types";
 import { onCleanup } from "solid-js";
 
 const context = new AudioContext();
 const cache = new Map<string, AudioBuffer>();
 
-async function loadBuffer(src: string): Promise<AudioBuffer> {
+/**
+ * Loads and decodes an audio asset, memoizing the decoded buffer by source URL.
+ */
+async function loadBuffer(src: AssetURL): Promise<AudioBuffer> {
   if (cache.has(src)) return cache.get(src)!;
 
   const response = await fetch(src);
@@ -16,9 +20,17 @@ async function loadBuffer(src: string): Promise<AudioBuffer> {
 
 attachToConsole(cache, "AUDIO_CACHE");
 
-/** TODO: Document */
+/**
+ * Plays an audio asset through the shared audio context.
+ *
+ * Returns a tuple of promises:
+ * - `ready` resolves when playback has started.
+ * - `ended` resolves when playback finishes.
+ *
+ * Both promises reject if loading or decoding fails.
+ */
 export function playSound(
-  src: string,
+  src: AssetURL,
   volume = 1
 ): [ready: Promise<void>, ended: Promise<void>] {
   const { promise: ready, resolve: resolveReady, reject: rejectReady } = Promise.withResolvers<void>();
