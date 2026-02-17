@@ -1,6 +1,6 @@
 import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "./battle";
-import { Combatant } from "./combatant";
+import { Combatant, CombatantSnapshot } from "./combatant";
 import { MoveSideEffectOutcome, Move, PostMoveContext } from "./move.types";
 import { PlannedMove, PlannedSequence } from "./plannedMove";
 
@@ -61,7 +61,8 @@ export type BattleEventPayload = {
         moves: Sides<Move>,
         plannedMoves: Sides<PlannedMove>,
         postCtx: Sides<PostMoveContext>,
-        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>
+        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
+        combatantHistory: CombatantHistory
     };
     RoundEnd: {
         combatants: Sides<Combatant>
@@ -82,3 +83,8 @@ type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) =>
  * This is namely used by battleEngineBridge to update the UI, run animations, etc (blocking engine where necessary).
   */
 export type BattleReactions = Partial<{[K in BattleEvent]: BattleReaction<K>}>;
+
+/** Record of {@link CombatantSnapshot}s associating a snapshot of combatant state with battle event stages
+ * TODO: Reduce the keys to just what is actually used.
+ */
+export type CombatantHistory = Record<BattleEvent, Sides<CombatantSnapshot>>;

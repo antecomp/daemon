@@ -1,7 +1,7 @@
 import { SEQUENCE_LENGTH } from "../config/battle.config";
 import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
 import { BattleOutcome } from "../model/battle";
-import { BattleReactions } from "../model/battleReactions";
+import { BattleReactions, CombatantHistory } from "../model/battleReactions";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move.types";
 import { PlannedSequence } from "../model/plannedMove";
@@ -59,22 +59,22 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     // Also exists as it's own function for the Eject event.
     async function handleBattleEnd(outcome: BattleOutcome) {
-        await emitBattleEvent('BattleEnd', {outcome, combatants});
+        await emitBattleEvent('BattleEnd', { outcome, combatants });
     }
 
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
-        postRound: new Set<string>()        
+        postRound: new Set<string>()
     }
 
     async function handleOpponentBehaviors(
-        stage: 'preRound' | 'postRound', 
-        predicateArgs: OpponentAIBehaviorPredicateArgs, 
+        stage: 'preRound' | 'postRound',
+        predicateArgs: OpponentAIBehaviorPredicateArgs,
         runnerDeps: OpponentAIBehaviorDeps
     ) {
         const behaviors = opponentAI.behaviors?.[stage];
-        if(!behaviors) return;
-        
+        if (!behaviors) return;
+
         // This is going to fire every SE at once, which is probably what you want but be aware that your 
         // array order will have no meaning on execution order.
         // we can instead change this for a for of with the await inside...
@@ -82,8 +82,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             behaviors
                 .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
                 .map(async behavior => {
-                    if(behavior.once) {
-                        if(opponentRanBehaviors[stage].has(behavior.key)) return;
+                    if (behavior.once) {
+                        if (opponentRanBehaviors[stage].has(behavior.key)) return;
                         opponentRanBehaviors[stage].add(behavior.key);
                     }
                     await behavior.run(runnerDeps);
@@ -93,7 +93,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
     async function setupRound() {
         opponentPlan = opponentAI.getSequence(combatants.opponent, combatants.player);
-        await emitBattleEvent('RoundPrepared', {combatants, opponentPlan});
+        await emitBattleEvent('RoundPrepared', { combatants, opponentPlan });
     }
 
     async function executeRound(playerPlan: PlannedSequence) {
@@ -101,24 +101,26 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         const plans = makeSidesMap(playerPlan, opponentPlan);
 
         // Consider *not* having an await here, things like the UIState rely on RoundStart running immediately on execute.
-        await handleOpponentBehaviors('preRound', {combatants}, {combatants, engineDeps: deps});
-        
-        await emitBattleEvent('RoundStart', {plans, combatants});
+        await handleOpponentBehaviors('preRound', { combatants }, { combatants, engineDeps: deps });
+
+        await emitBattleEvent('RoundStart', { plans, combatants });
 
         const sequences: Sides<Move[]> = {
             player: initializePlannedMoves(playerPlan, opponentPlan),
             opponent: initializePlannedMoves(opponentPlan, playerPlan)
         }
 
-        if(sequences.player.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
-        if(sequences.opponent.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
-        
-        for(let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
+        if (sequences.player.length != SEQUENCE_LENGTH) throw new Error("Player Sequence of Wrong Size!");
+        if (sequences.opponent.length != SEQUENCE_LENGTH) throw new Error("Opponent Sequence of Wrong Size!");
+
+        for (let moveIndex = 0; moveIndex < SEQUENCE_LENGTH; moveIndex++) {
 
             const moves = mapSides(sequences, seq => seq[moveIndex]);
             const plannedMoves = mapSides(plans, plan => plan[moveIndex]);
+            const combatantHistory = {} as CombatantHistory;
 
-            await emitBattleEvent('MoveStart', {moveIndex, sequences, moves, plans, combatants})
+            await emitBattleEvent('MoveStart', { moveIndex, sequences, moves, plans, combatants })
+            combatantHistory.MoveStart = mapSides(combatants, s => s.snapshot());
 
             const preCtxPair = buildSidesMap<PreMoveContext>(side => ({
                 deps,
@@ -132,24 +134,27 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const preEffectOutcomes = mapSides(moves, (move, side) => runMovePreEffect(move, preCtxPair[side]))
 
-            await emitBattleEvent("PreEffectResolved", {preEffectOutcomes, combatants});
+            await emitBattleEvent("PreEffectResolved", { preEffectOutcomes, combatants });
+            combatantHistory.PreEffectResolved = mapSides(combatants, s => s.snapshot());
 
             const mulCtx = mapSides<PreMoveContext, DamageMultiplierContext>(preCtxPair, (preCtx, side) => ({ ...preCtx, preEffectOutcome: preEffectOutcomes[side] }));
-            
+
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
-            await emitBattleEvent('MultipliersComputed', {moveIndex, plannedSequences: plans,combatants, moves, damageMultipliers, preEffectOutcomes});
+            await emitBattleEvent('MultipliersComputed', { moveIndex, plannedSequences: plans, combatants, moves, damageMultipliers, preEffectOutcomes });
+            combatantHistory.MultipliersComputed =  mapSides(combatants, s => s.snapshot());
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
 
             // death.
             const outcome = outcomeCheck();
-            if(outcome !== null) {
-                await emitBattleEvent('BattleEnd', {outcome, combatants});
+            if (outcome !== null) {
+                await emitBattleEvent('BattleEnd', { outcome, combatants });
                 return;
             }
 
-            await emitBattleEvent('DamagesApplied', {combatants, damagesDealt})
+            await emitBattleEvent('DamagesApplied', { combatants, damagesDealt });
+            combatantHistory.DamagesApplied = mapSides(combatants, s => s.snapshot());
 
             const postCtx = buildSidesMap<PostMoveContext>((side) => ({
                 ...mulCtx[side],
@@ -163,24 +168,26 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
 
             const postEffectOutcomes = mapSides(moves, (_m, side) => runMovePostEffect(moves[side], postCtx[side]));
 
-            await emitBattleEvent('PostEffectResolved', {postEffectOutcomes, combatants});
+            await emitBattleEvent('PostEffectResolved', { postEffectOutcomes, combatants });
+            combatantHistory.PostEffectResolved = mapSides(combatants, s => s.snapshot());
 
             forEachSide(combatants, (combatant) => combatant.reapExpiredStatuses());
 
-            await emitBattleEvent('MoveEnd', {combatants, postCtx, postEffectOutcomes, moves, plannedMoves});
+            combatantHistory.MoveEnd = mapSides(combatants, s => s.snapshot());
+            await emitBattleEvent('MoveEnd', { combatants, postCtx, postEffectOutcomes, moves, plannedMoves, combatantHistory });
         }
 
-        await handleOpponentBehaviors('postRound', {combatants}, {combatants, engineDeps: deps});
+        await handleOpponentBehaviors('postRound', { combatants }, { combatants, engineDeps: deps });
 
-        await emitBattleEvent('RoundEnd', {combatants});
+        await emitBattleEvent('RoundEnd', { combatants });
 
     }
 
     return {
         /** Execute a round of the battle, given the players move sequence. Expects setupRound to have been run first. */
-        executeRound, 
+        executeRound,
         /** Generates a new sequence for the opponent, emits round start signals (which can be listened to for setting dependant state) */
-        setupRound, 
+        setupRound,
         /** Prematurely end a round with a provided resolution. Should only ever be executed when *not* in the middle of an execution. */
         handleBattleEnd
     }

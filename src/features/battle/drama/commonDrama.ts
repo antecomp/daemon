@@ -97,7 +97,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, plannedMoves }) =>
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
-        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx }) {
+        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory}) {
             playSound(slash_sfx);
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
@@ -106,8 +106,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
             } else {
-                // TODO: THIS WONT WORK PROPERLY - ITS LOOKING POST REAP. NEED SNAPSHOTS.
-                const preparedLevel = combatants.player.getStatusLevel('prepared');
+                const preparedLevel = combatantHistory.MultipliersComputed.player.statuses['prepared']?.level ?? 0;
                 await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
 
@@ -128,15 +127,17 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             appendActionMessage(`${profiles.player.display.name} keenly observes ${profiles.opponent.display.name}`)
     },
 
-    // TODO: How do we indicate the amount healed? Maybe we don't?
-    // Perhaps snapshots should also be of the combatants to diff?
-    // Or use the event stack idea where the combatant class can notify these calls.
+    // Todo: move to common.
     'player-heal': {
         place: PLACES.POST_CLASH,
-        when: ({ moves, postEffectOutcomes }) =>
+        when: ({ moves, postEffectOutcomes, combatantHistory }) =>
             moves.player.name == 'heal'
-            && postEffectOutcomes.player?.status == 'success',
-        run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.player.display.name} ` + ' finds her resolve. F-CH restored.')
+            && postEffectOutcomes.player?.status == 'success'
+            && combatantHistory.MoveEnd.player.health > combatantHistory.DamagesApplied.player.health,
+        run: ({ appendActionMessage }, { profiles, combatantHistory, combatants }) => {
+            const deltaPercent = Math.round(100 * (combatantHistory.MoveEnd.player.health - combatantHistory.DamagesApplied.player.health) / combatants.player.maxHealth);
+            appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`)
+        }
     },
 
     'player-defend': {

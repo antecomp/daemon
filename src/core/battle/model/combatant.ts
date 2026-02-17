@@ -6,6 +6,13 @@ type StatusEntry = {
     durationStack: number[]
 }
 
+export type CombatantSnapshot = {
+    health: number,
+    maxHealth: number,
+    statuses: {
+        [statusName: string]: { maxDur: number, level: number } | undefined
+    }
+};
 
 /**
  * The `Combatant` class tracks the health and status effects of a combatant in the battle system. It provides methods for taking damage,
@@ -112,10 +119,11 @@ export class Combatant {
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
-    // kinda jank but needed for PostEffects that need to know the status level before ticking.
-    // better than the whole immediatePostEffect mess.
-    // Avoid using this unless you know exactly why you need this. This is a goofy hack
-    // to fix a logical error that arises from the whole status ticking thing.
+    /**  kinda jank but needed for PostEffects that need to know the status level before ticking.
+    * * better than the whole immediatePostEffect mess.
+    * * Avoid using this unless you know exactly why you need this. 
+    * * This is a goofy hack to fix a logical error that arises from the whole status ticking thing.
+    */
     getStatusLevelIncludingExpired(name: string): number {
         const entry = this.statuses.get(name);
         if (!entry) return 0;
@@ -155,5 +163,22 @@ export class Combatant {
             }
         }
         for (const key of keysToDelete) this.statuses.delete(key);
+    }
+
+    /** Returns a {@link CombatantSnapshot} which represents the combatant state at a single given time. Can be used to diff for changes. */
+    public snapshot(): CombatantSnapshot {
+        const statusSnapshot = {} as CombatantSnapshot['statuses'];
+        for (const [_, entry] of this.statuses) {
+            const statName = entry.status.name;
+            const level = entry.durationStack.length;
+            const maxDur = Math.max(...entry.durationStack);
+            statusSnapshot[statName] = { maxDur, level };
+        }
+
+        return {
+            health: this._health,
+            maxHealth: this.maxHealth, // also provided for convenience.
+            statuses: statusSnapshot,
+        }
     }
 }
