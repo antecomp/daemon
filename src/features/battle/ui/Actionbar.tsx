@@ -23,11 +23,12 @@ import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
 import { PlayerRuneName, PLAYER_RUNE_REGISTRY } from '@/core/battle/moves/playerMoveRegistry'
-import { playSound } from '@/shared/utils/playSound'
+//import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
 import { FALLBACK_MOVE_DISPLAY_ENTRY, MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 import { AssetURL } from '@/shared/types/misc.types'
+import { useSound } from '@/core/audio/audio'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
@@ -83,6 +84,9 @@ export default function Actionbar(props: ActionbarProps) {
     const actionBarRef = createBattleRefAttacher('actionBar');
     const actionBarRightRef = createBattleRefAttacher('actionBarRight');
     const actionBarLeftRef = createBattleRefAttacher('actionBarLeft');
+
+    // Sound effects for updating the plan;
+    const {playSound} = useSound(rbSounds);
 
     // Just buffer the plans by name, then we will map to the actual logical object from some bank
     const [planBuffer, setPlanBuffer] = createSignal<PlayerRuneName[]>([]);

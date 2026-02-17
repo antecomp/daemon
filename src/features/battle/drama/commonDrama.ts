@@ -5,6 +5,7 @@ import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
 import animateAsync from "@/shared/utils/animateAsync";
 import { DramaTable, PLACES } from "./drama.types";
 import { playSound, playSoundOnReady } from "@/shared/utils/playSound";
+import { playSound as PS} from '@/core/audio/audio';
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
@@ -99,7 +100,9 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
         async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory}) {
-            await playSoundOnReady(slash_sfx);
+            const [slashSoundReady, _] = PS(slash_sfx); 
+            //await playSoundOnReady(slash_sfx);
+            await slashSoundReady;
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
             if (combatants.player.getStatusLevel('mania') > 0) {
@@ -151,7 +154,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
     },
 
     'player-evade': {
-        place: PLACES.CLASH_TWO,
+        place: PLACES.CLASH_TWO + 1,
         when: ({ moves }) =>
             moves.player.name == 'evade',
         //&& postEffectOutcomes.opponent?.status == 'success',
