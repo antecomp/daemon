@@ -17,9 +17,9 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             moves.opponent.name == 'defend'
             && postCtx.player.ourMults.outgoing > 0
             && moves.player.type !== MoveType.Overwhelming,
-        run: ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
+        run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
+            await requestOverlayAnimation('shield');
             appendActionMessage(profiles.opponent.display.name + " endures your attack!");
-            return requestOverlayAnimation('shield')
         }
     },
 
@@ -99,8 +99,8 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, plannedMoves }) =>
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
-        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory}) {
-            const [slashSoundReady, _] = playSound(slash_sfx); 
+        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory }) {
+            const [slashSoundReady, _] = playSound(slash_sfx);
             await slashSoundReady;
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
@@ -165,9 +165,9 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             // This should only fire if it fails for RNG and we took damage
             // failure due to overwhelm should have a differet reason.
             if (
-                postEffectOutcomes.opponent?.reason == 'rng'
-                && postEffectOutcomes.opponent.status == 'failure'
-                && postCtx.opponent.damageTaken > 0
+                postEffectOutcomes.player?.reason == 'rng'
+                && postEffectOutcomes.player.status == 'failure'
+                && postCtx.player.damageTaken > 0
             ) {
                 appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
             }
@@ -186,6 +186,24 @@ const SHARED_DRAMAS: DramaTable = {
             )
         }
     }),
+
+    ...defineSideDrama('prepare', {
+        place: PLACES.POST_CLASH,
+        when: ({ moves, postEffectOutcomes }, side) =>
+            moves[side].name == 'prepare'
+            && postEffectOutcomes[side]?.status == 'success'
+            && postEffectOutcomes[side]?.reason == 'focus',
+        run: ({ appendActionMessage }, { profiles, combatantHistory }, side) => {
+            console.log(combatantHistory);
+            const prepLevel = combatantHistory.PostEffectResolved[side].statuses.prepared?.level
+            if (!prepLevel) return;
+            if (prepLevel == 1) {
+                appendActionMessage(`${profiles[side].display.name}'s vision narrows.`)
+            } else if (prepLevel > 1) {
+                appendActionMessage(`${profiles[side].display.name} is ready for anything.`)
+            }
+        }
+    })
 }
 
 
