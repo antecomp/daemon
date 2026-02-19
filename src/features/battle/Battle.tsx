@@ -16,7 +16,7 @@ import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-import { createMusicTrack } from '@/core/audio/createMusicTrack';
+//import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
@@ -72,7 +72,7 @@ export default function Battle(props: {
                     <Actionbar
                         lexicon={playerLexicon}
                         executeRound={engine.executeRound}
-                        forceBattleEnd={engine.handleBattleEnd}
+                        forceBattleEnd={engine.forceBattleEnd}
                         {...bridge}
                     />
                     <CurrentClash moves={bridge.currentClash()} lexicons={{ player: playerLexicon, opponent: opponentLexicon }} />

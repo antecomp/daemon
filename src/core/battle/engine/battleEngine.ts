@@ -58,8 +58,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
     }
 
     // Also exists as it's own function for the Eject event.
-    async function handleBattleEnd(outcome: BattleOutcome) {
-        await emitBattleEvent('BattleEnd', { outcome, combatants });
+    async function forceBattleEnd(outcome: BattleOutcome) {
+        await emitBattleEvent('BattleForceEnd', { outcome });
     }
 
     const opponentRanBehaviors = {
@@ -142,19 +142,9 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             const damageMultipliers = mapSides(moves, (_m, side) => getPhaseMultipliers(moves[side], mulCtx[side]));
 
             await emitBattleEvent('MultipliersComputed', { moveIndex, plannedSequences: plans, combatants, moves, damageMultipliers, preEffectOutcomes });
-            combatantHistory.MultipliersComputed =  mapSides(combatants, s => s.snapshot());
+            combatantHistory.MultipliersComputed = mapSides(combatants, s => s.snapshot());
 
             const damagesDealt = calculateAndApplyDamage(combatants, damageMultipliers);
-
-            // death.
-            const outcome = outcomeCheck();
-            if (outcome !== null) {
-                await emitBattleEvent('BattleEnd', { outcome, combatants });
-                return;
-            }
-
-            await emitBattleEvent('DamagesApplied', { combatants, damagesDealt });
-            combatantHistory.DamagesApplied = mapSides(combatants, s => s.snapshot());
 
             const postCtx = buildSidesMap<PostMoveContext>((side) => ({
                 ...mulCtx[side],
@@ -163,6 +153,16 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
                 damageDealt: damagesDealt[side],
                 damageTaken: damagesDealt[oppositeSide(side)],
             }));
+
+            // death.
+            const outcome = outcomeCheck();
+            if (outcome !== null) {
+                await emitBattleEvent('BattleEnd', { outcome, combatants, postCtx, postEffectOutcomes: makeSidesMap(undefined, undefined), moves, plannedMoves, combatantHistory });
+                return;
+            }
+
+            await emitBattleEvent('DamagesApplied', { combatants, damagesDealt });
+            combatantHistory.DamagesApplied = mapSides(combatants, s => s.snapshot());
 
             forEachSide(combatants, (combatant) => combatant.tickStatuses())
 
@@ -189,6 +189,6 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
         /** Generates a new sequence for the opponent, emits round start signals (which can be listened to for setting dependant state) */
         setupRound,
         /** Prematurely end a round with a provided resolution. Should only ever be executed when *not* in the middle of an execution. */
-        handleBattleEnd
+        forceBattleEnd
     }
 }

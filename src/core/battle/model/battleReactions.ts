@@ -16,13 +16,14 @@ export type BattleEvent =
     | "MoveEnd"
     | "RoundEnd"
     | "BattleEnd"
+    | "BattleForceEnd"
 
 /** Payload shape for each of the battle events (lifecycle stages). Provided by battleEngine.
  * Update as needed.
-  */
+ */
 export type BattleEventPayload = {
     RoundPrepared: {
-        combatants: Sides<Combatant>  
+        combatants: Sides<Combatant>
         opponentPlan: PlannedSequence
     };
     RoundStart: {
@@ -68,9 +69,18 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant>
     };
     BattleEnd: {
-        outcome: BattleOutcome
+        outcome: BattleOutcome,
+        // For closing animation data
         combatants: Sides<Combatant>
+        moves: Sides<Move>,
+        plannedMoves: Sides<PlannedMove>,
+        postCtx: Sides<PostMoveContext>,
+        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
+        combatantHistory: CombatantHistory
     };
+    BattleForceEnd: {
+        outcome: BattleOutcome
+    }
 }
 
 /** Callback signature executed when a specific battle event fires. */

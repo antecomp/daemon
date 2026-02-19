@@ -272,6 +272,12 @@ export function createUIBridgedBattleEngine(
 
             await sleep(BATTLE_END_SLEEP_TIME);
             config.onEnd(outcome);
+        },
+
+        async BattleForceEnd({ outcome }) {
+            setBattleUIState(BattleUIState.END);
+            setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
+            config.onEnd(outcome);
         }
     };
 
