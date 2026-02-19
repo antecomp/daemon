@@ -17,7 +17,7 @@ const DESPERATION_HEALTH = 3;
 
 export const OPPONENT_MIMICRY: OpponentProfile = {
     display: {
-        name: "fractured mimicry",
+        name: "Fractured Mimicry",
         icon: mimicry_icon,
         lexicon: {
             'mirror': {

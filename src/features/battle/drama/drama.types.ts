@@ -6,6 +6,7 @@ import { ActionMessageAppender } from "../ui/ActionMessages";
 import { OpponentProfile, PlayerProfile } from "../bridge/battleProfiles";
 import { MoveLexicon } from "../lexicon/moveLexicon";
 import { Sides } from "@/core/battle/utils/sides.utils";
+import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 /** Indicates the type of data that is handed to the drama to make decisions / branch responses */
 export type DramaData = BattleEventPayload['MoveEnd'] & {
@@ -24,10 +25,11 @@ export type DramaObligations = {
 
 /** Utilities handed to the drama runner to perform various UI effects and animations */
 export type DramaDependancies = {
-    refRegistry: RefRegistry<BattleRefNames>
+    refRegistry: RefRegistry<BattleRefNames>,
     requestOverlayAnimation: OverlayAnimationRequester,
-    appendActionMessage: ActionMessageAppender
-    fufillDramaObligation: DramaObligations
+    appendActionMessage: ActionMessageAppender,
+    fufillDramaObligation: DramaObligations,
+    startMeltAnimation?: MeltAnimationFn
 }
 
 /** A DramaEntry represents a single "case" of a Dramatization action */
@@ -51,11 +53,6 @@ export interface DramaTable {
     [id: string]: DramaEntry;
 }
 
-// Place constants for common placements.
-// export const CLASH_ONE = 100;
-// export const CLASH_TWO = 200;
-// export const PRE_CLASH = 50;
-
 export enum PLACES {
     /** Default "clash" point where attacks merge */
     CLASH_ONE = 100,
@@ -67,4 +64,5 @@ export enum PLACES {
     POST_CLASH = 300
 }
 
-// Maybe I can make POST_CLASH not play on death?
+/** Dramatization for damage taken */
+export type DamageDrama = (deps: DramaDependancies) => Promise<void> | void;

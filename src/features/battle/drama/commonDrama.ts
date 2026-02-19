@@ -1,14 +1,19 @@
 import slash_sfx from '@/assets/sfx/battle/candle.wav';
 import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
 import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
+import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
+import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 
 import animateAsync from "@/shared/utils/animateAsync";
-import { DramaTable, PLACES } from "./drama.types";
+import { DamageDrama, DramaTable, PLACES } from "./drama.types";
 import { playSound } from '@/core/audio/audio';
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
 import { defineSideDrama } from './drama';
+import { capitalizeWords } from '@/shared/utils/stringUtils';
+import battleUIAnimations from '../animation/uiAnimations/battleUIAnimations';
+import { Sides } from '@/core/battle/utils/sides.utils';
 
 const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-shield': {
@@ -56,10 +61,10 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             //plannedMoves.opponent.name == 'mirror' // (fails on repeat, use below)
             moves.opponent.tags?.includes('mirrored')
             && postCtx.opponent.damageDealt > 0,
-        run: async ({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }) => {
+        run: async ({ requestOverlayAnimation, fufillDramaObligation }) => {
             sleep(500).then(() => playSound(deflect_noise));
             await requestOverlayAnimation('mirror');
-            dramaObligations.playerDamage();
+            fufillDramaObligation.playerDamage();
         }
     },
 
@@ -130,19 +135,6 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             appendActionMessage(`${profiles.player.display.name} keenly observes ${profiles.opponent.display.name}`)
     },
 
-    // Todo: move to common.
-    'player-heal': {
-        place: PLACES.POST_CLASH,
-        when: ({ moves, postEffectOutcomes, combatantHistory }) =>
-            moves.player.name == 'heal'
-            && postEffectOutcomes.player?.status == 'success'
-            && combatantHistory.MoveEnd.player.health > combatantHistory.DamagesApplied.player.health,
-        run: ({ appendActionMessage }, { profiles, combatantHistory, combatants }) => {
-            const deltaPercent = Math.round(100 * (combatantHistory.MoveEnd.player.health - combatantHistory.DamagesApplied.player.health) / combatants.player.maxHealth);
-            appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`, 'heal')
-        }
-    },
-
     'player-defend': {
         place: PLACES.CLASH_TWO + 1,
         when: ({ moves, postCtx }) =>
@@ -181,7 +173,7 @@ const SHARED_DRAMAS: DramaTable = {
         when: ({ postEffectOutcomes }, side) => postEffectOutcomes[side]?.reason == 'focus' && postEffectOutcomes[side]?.status == 'failure',
         run: ({ appendActionMessage }, { moves, lexicons, profiles }, side) => {
             appendActionMessage(
-                `${profiles[side].display.name} lost focus and was unable to use ${lexicons[side][moves[side].name].label}.`,
+                `${profiles[side].display.name} lost focus and was unable to use ${capitalizeWords(lexicons[side][moves[side].name].label)}.`,
                 'focus'
             )
         }
@@ -203,9 +195,37 @@ const SHARED_DRAMAS: DramaTable = {
                 appendActionMessage(`${profiles[side].display.name} is ready for anything.`)
             }
         }
+    }),
+
+    ...defineSideDrama('heal', {
+        place: PLACES.POST_CLASH,
+        when: ({ moves, postEffectOutcomes, combatantHistory }, side) =>
+            moves[side].name == 'heal'
+            && postEffectOutcomes[side]?.status == 'success'
+            && combatantHistory.MoveEnd[side].health > combatantHistory.DamagesApplied[side].health,
+        run: ({ appendActionMessage }, { profiles, combatantHistory, combatants }, side) => {
+            const deltaPercent = Math.round(100 * (combatantHistory.MoveEnd[side].health - combatantHistory.DamagesApplied[side].health) / combatants[side].maxHealth);
+            if (side == 'opponent') {
+                appendActionMessage(`${profiles.opponent.display.name} heals.`)
+            } else {
+                appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`, 'heal')
+            }
+        }
     })
 }
 
-
 const COMMON_DRAMA_TABLE: DramaTable = { ...COMMON_OPPONENT_MOVE_DRAMAS, ...COMMON_PLAYER_MOVE_DRAMAS, ...SHARED_DRAMAS };
 export default COMMON_DRAMA_TABLE;
+
+export const DEFAULT_DAMAGE_DRAMAS: Sides<DamageDrama> = {
+    player(deps) {
+        playSound(player_pain_sfx);
+        // Not awaiting, I think it overlaying on top of other animations looks cool.
+        deps.startMeltAnimation?.(true, 20, 0.5);
+    },
+
+    opponent(deps) {
+        playSound(opponent_pain_sfx);
+        battleUIAnimations.damageFlash(deps.refRegistry.opponentSprite);
+    }
+}

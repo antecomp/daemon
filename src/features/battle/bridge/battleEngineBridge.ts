@@ -9,8 +9,6 @@ import battleUIAnimations from "../animation/uiAnimations/battleUIAnimations";
 import { playSound } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
-import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
-import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import { mapSides, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
@@ -27,7 +25,7 @@ import { MoveTags } from "@/core/battle/model/move.types";
 import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 import { Obligations } from "@/shared/utils/obligation";
-import COMMON_DRAMA_TABLE from "../drama/commonDrama";
+import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
 import { DramaData, DramaDependancies, DramaEntry } from "../drama/drama.types";
 
 const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
@@ -141,7 +139,9 @@ export function createUIBridgedBattleEngine(
         console.log(refRegistry);
         if (!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
-    })
+    });
+
+    const dramaTable = { ...COMMON_DRAMA_TABLE, ...opponentProfile.display.dramas };
 
     const reactions: BattleReactions = {
 
@@ -181,21 +181,21 @@ export function createUIBridgedBattleEngine(
         },
 
         async MoveEnd(data) {
-            // Obligations to animate damage if applicable
+            
             function opponentDamage() {
                 if (data.postCtx.opponent.damageTaken > 0) {
                     setOpponentHealthPercentage(data.combatants.opponent.healthPercent);
-                    playSound(opponent_pain_sfx);
-                    battleUIAnimations.damageFlash(refRegistry.opponentSprite);
+                    DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
                 }
             }
+
             function playerDamage() {
                 if (data.postCtx.player.damageTaken > 0) {
                     setPlayerHealthPercentage(data.combatants.player.healthPercent);
-                    playSound(player_pain_sfx);
-                    deps.startMeltAnimation?.(true, 20, 0.5);
+                    DEFAULT_DAMAGE_DRAMAS.player(dramaDeps);
                 }
             }
+
             const dramaObli = new Obligations({ opponentDamage, playerDamage });
             // Runner to fufill drama obligations. Seriously consider changing this name.
             const fufillDramaObligation = {
@@ -203,10 +203,8 @@ export function createUIBridgedBattleEngine(
                 playerDamage() { dramaObli.run('playerDamage') }
             }
 
-            const dramaData: DramaData = { ...data, ...deps, profiles: {player: playerProfile, opponent: opponentProfile} }
+            const dramaData: DramaData = { ...data, ...deps, profiles: { player: playerProfile, opponent: opponentProfile } }
             const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, fufillDramaObligation }
-
-            const dramaTable = {...COMMON_DRAMA_TABLE, ...opponentProfile.display.dramas};
 
             // Filter by applicable dramas.
             const activeDramas = Object.entries(dramaTable)
@@ -236,7 +234,9 @@ export function createUIBridgedBattleEngine(
 
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             refreshCombatantInfo(data.combatants);
-            await sleep(MOVE_DELAY);
+
+            // If no dramas, advance faster (usually this is on meaningless move pairings)
+            if (places.length > 0) await sleep(MOVE_DELAY);
         },
 
         async RoundEnd({ combatants }) {
@@ -266,7 +266,8 @@ export function createUIBridgedBattleEngine(
                     break;
                 case BattleOutcome.Draw:
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
-                // Do some sort of unique other animation or event in case of draw here.
+                    // Do some sort of unique other animation or event in case of draw here.
+                    break;
             }
 
             await sleep(BATTLE_END_SLEEP_TIME);
