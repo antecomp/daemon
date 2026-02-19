@@ -46,7 +46,7 @@ export default function Battle(props: {
             lexicons: makeSidesMap(playerLexicon, opponentLexicon), profiles: {player: props.playerProfile, opponent: props.opponentProfile}
         }, 
         {
-            onEnd: props.onEnd, skipOpeningAnimation: false
+            onEnd: props.onEnd, skipOpeningAnimation: true
         }
     );
 

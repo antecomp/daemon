@@ -65,4 +65,5 @@ export enum PLACES {
 }
 
 /** Dramatization for damage taken */
-export type DamageDrama = (deps: DramaDependancies) => Promise<void> | void;
+export type DamageDramaDependancies = Omit<DramaDependancies, 'fufillDramaObligation'>;
+export type DamageDrama = (deps: DamageDramaDependancies) => Promise<void> | void;

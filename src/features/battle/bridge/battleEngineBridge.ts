@@ -1,5 +1,5 @@
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
-import { BattleReactions } from "@/core/battle/model/battleReactions";
+import { BattleEventPayload, BattleReactions } from "@/core/battle/model/battleReactions";
 import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS_BY_SIDE } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
@@ -18,7 +18,6 @@ import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile, PlayerProfile } from "./battleProfiles";
 
 import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
-//import opponent_death_sound from '@/assets/sfx/battle/yeouch.ogg'
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
@@ -26,7 +25,7 @@ import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
-import { DramaData, DramaDependancies, DramaEntry } from "../drama/drama.types";
+import { DamageDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
 
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
@@ -70,7 +69,7 @@ export function createUIBridgedBattleEngine(
     },
     data: {
         lexicons: Sides<MoveLexicon>
-        profiles: {player: PlayerProfile, opponent: OpponentProfile}
+        profiles: { player: PlayerProfile, opponent: OpponentProfile }
     },
     config: {
         onEnd: (res: BattleOutcome) => void,
@@ -132,6 +131,70 @@ export function createUIBridgedBattleEngine(
     });
 
     const dramaTable = { ...COMMON_DRAMA_TABLE, ...data.profiles.opponent.display.dramas };
+    const damageDramaDeps: DamageDramaDependancies = { ...deps, refRegistry, appendActionMessage };
+
+    // Defined here to capture all the config stuff in this scope easily.
+    function makeDramaRunner(evdata: BattleEventPayload['MoveEnd']) {
+        const dramaData: DramaData = {
+            ...data,
+            ...deps,
+            ...evdata
+        };
+
+        // this fills me with contempt.
+        const dramaObli = new Obligations({
+            opponentDamage() {
+                if (evdata.postCtx.opponent.damageTaken > 0) {
+                    setOpponentHealthPercentage(evdata.combatants.opponent.healthPercent);
+                    data.profiles.opponent.display.damageDrama ? data.profiles.opponent.display.damageDrama(damageDramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(damageDramaDeps);
+                }
+            },
+
+            playerDamage() {
+                if (evdata.postCtx.player.damageTaken > 0) {
+                    setPlayerHealthPercentage(evdata.combatants.player.healthPercent);
+                    DEFAULT_DAMAGE_DRAMAS.player(damageDramaDeps);
+                }
+            }
+        });
+
+        const fufillDramaObligation: DramaObligations = {
+            opponentDamage() { dramaObli.run('opponentDamage') },
+            playerDamage() { dramaObli.run('playerDamage') }
+        };
+
+        return async () => {
+            const dramaDeps: DramaDependancies = {
+                ...damageDramaDeps,
+                fufillDramaObligation
+            }
+
+            const activeDramas = Object.entries(dramaTable)
+                .filter(([, dre]) => dre.when(dramaData));
+
+            const byPlace = new Map<number, Array<{ id: string, dre: DramaEntry }>>();
+            for (const [id, dre] of activeDramas) {
+                const arr = byPlace.get(dre.place) ?? [];
+                arr.push({ id, dre });
+                byPlace.set(dre.place, arr);
+            }
+
+            const places = [...byPlace.keys()].sort((a, b) => a - b);
+            let hasRunDrama = false;
+            for (const place of places) {
+                const batch = byPlace.get(place)!;
+                await Promise.all(batch.map(async ({ dre }) => {
+                    if (hasRunDrama && dre.preDelay) await sleep(dre.preDelay);
+                    return dre.run(dramaDeps, dramaData);
+                }));
+                hasRunDrama = true;
+            }
+
+            dramaObli.resolveObligations();
+            //dramaObli.resetCompleted(); // ready for next call.
+            return places.length;
+        }
+    }
 
     const reactions: BattleReactions = {
 
@@ -171,62 +234,14 @@ export function createUIBridgedBattleEngine(
         },
 
         async MoveEnd(evdata) {
-            
-            function opponentDamage() {
-                if (evdata.postCtx.opponent.damageTaken > 0) {
-                    setOpponentHealthPercentage(evdata.combatants.opponent.healthPercent);
-                    data.profiles.opponent.display.damageDrama ? data.profiles.opponent.display.damageDrama(dramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
-                }
-            }
 
-            function playerDamage() {
-                if (evdata.postCtx.player.damageTaken > 0) {
-                    setPlayerHealthPercentage(evdata.combatants.player.healthPercent);
-                    DEFAULT_DAMAGE_DRAMAS.player(dramaDeps);
-                }
-            }
-
-            const dramaObli = new Obligations({ opponentDamage, playerDamage });
-            // Runner to fufill drama obligations. Seriously consider changing this name.
-            const fufillDramaObligation = {
-                opponentDamage() { dramaObli.run('opponentDamage') },
-                playerDamage() { dramaObli.run('playerDamage') }
-            }
-
-            const dramaData: DramaData = { ...evdata, ...deps, ...data }
-            const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, fufillDramaObligation }
-
-            // Filter by applicable dramas.
-            const activeDramas = Object.entries(dramaTable)
-                .filter(([, dre]) => dre.when(dramaData))
-
-            // Merge same-place drama entries.
-            const byPlace = new Map<number, Array<{ id: string, dre: DramaEntry }>>();
-            for (const [id, dre] of activeDramas) {
-                const arr = byPlace.get(dre.place) ?? [];
-                arr.push({ id, dre });
-                byPlace.set(dre.place, arr);
-            }
-
-            // Sort and run in ascending place order.
-            const places = [...byPlace.keys()].sort((a, b) => a - b);
-            let hasRunDrama = false;
-            for (const place of places) {
-                const batch = byPlace.get(place)!;
-                await Promise.all(batch.map(async ({ dre }) => {
-                    if (hasRunDrama && dre.preDelay) await sleep(dre.preDelay);
-                    return dre.run(dramaDeps, dramaData);
-                }))
-                hasRunDrama = true;
-            }
-
-            dramaObli.resolveObligations();
+            const placesRan = await makeDramaRunner(evdata)();
 
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             refreshCombatantInfo(evdata.combatants);
 
             // If no dramas, advance faster (usually this is on meaningless move pairings)
-            if (places.length > 0) await sleep(MOVE_DELAY);
+            if (placesRan > 0) await sleep(MOVE_DELAY);
         },
 
         async RoundEnd({ combatants }) {

@@ -86,4 +86,9 @@ export class Obligations<TFuncs extends ObligationFunctions = ObligationFunction
         if (!this.funcs.has(name)) throw new Error("Cannot check obligation that does not exist! (Has been added)");
         return this.completed.has(name);
     }
+
+    /** Unflag any run functions as completed. */
+    public resetCompleted(): void {
+        this.completed.clear();
+    }
 }
