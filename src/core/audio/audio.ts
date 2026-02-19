@@ -18,6 +18,10 @@ async function loadBuffer(src: AssetURL): Promise<AudioBuffer> {
   return audioBuffer;
 }
 
+export async function preloadSound(src: AssetURL) {
+  await loadBuffer(src);
+}
+
 attachToConsole(cache, "AUDIO_CACHE");
 
 /**
