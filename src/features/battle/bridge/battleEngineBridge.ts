@@ -64,12 +64,13 @@ export const useBattleUIState = () => {
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(
-    opponentProfile: OpponentProfile,
-    playerProfile: PlayerProfile,
     deps: {
         startMeltAnimation?: MeltAnimationFn,
         requestOverlayAnimation: OverlayAnimationRequester,
+    },
+    data: {
         lexicons: Sides<MoveLexicon>
+        profiles: {player: PlayerProfile, opponent: OpponentProfile}
     },
     config: {
         onEnd: (res: BattleOutcome) => void,
@@ -111,7 +112,7 @@ export function createUIBridgedBattleEngine(
     }
 
     async function handleOpponentUIBehaviors(stage: 'preRound' | 'postRound', predicateArgs: OpponentDisplayPredicateArgs, runnerDeps: OpponentDisplayBehaviorDeps) {
-        const behaviors = opponentProfile.display.behaviors?.[stage];
+        const behaviors = data.profiles.opponent.display.behaviors?.[stage];
         if (!behaviors) return;
 
         for (const behavior of behaviors) {
@@ -130,7 +131,7 @@ export function createUIBridgedBattleEngine(
         engine.setupRound();
     });
 
-    const dramaTable = { ...COMMON_DRAMA_TABLE, ...opponentProfile.display.dramas };
+    const dramaTable = { ...COMMON_DRAMA_TABLE, ...data.profiles.opponent.display.dramas };
 
     const reactions: BattleReactions = {
 
@@ -169,18 +170,18 @@ export function createUIBridgedBattleEngine(
             await sleep(PRE_ANIMATION_DELAY);
         },
 
-        async MoveEnd(data) {
+        async MoveEnd(evdata) {
             
             function opponentDamage() {
-                if (data.postCtx.opponent.damageTaken > 0) {
-                    setOpponentHealthPercentage(data.combatants.opponent.healthPercent);
-                    opponentProfile.display.damageDrama ? opponentProfile.display.damageDrama(dramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
+                if (evdata.postCtx.opponent.damageTaken > 0) {
+                    setOpponentHealthPercentage(evdata.combatants.opponent.healthPercent);
+                    data.profiles.opponent.display.damageDrama ? data.profiles.opponent.display.damageDrama(dramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
                 }
             }
 
             function playerDamage() {
-                if (data.postCtx.player.damageTaken > 0) {
-                    setPlayerHealthPercentage(data.combatants.player.healthPercent);
+                if (evdata.postCtx.player.damageTaken > 0) {
+                    setPlayerHealthPercentage(evdata.combatants.player.healthPercent);
                     DEFAULT_DAMAGE_DRAMAS.player(dramaDeps);
                 }
             }
@@ -192,7 +193,7 @@ export function createUIBridgedBattleEngine(
                 playerDamage() { dramaObli.run('playerDamage') }
             }
 
-            const dramaData: DramaData = { ...data, ...deps, profiles: { player: playerProfile, opponent: opponentProfile } }
+            const dramaData: DramaData = { ...evdata, ...deps, ...data }
             const dramaDeps: DramaDependancies = { ...deps, refRegistry, appendActionMessage, fufillDramaObligation }
 
             // Filter by applicable dramas.
@@ -222,7 +223,7 @@ export function createUIBridgedBattleEngine(
             dramaObli.resolveObligations();
 
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
-            refreshCombatantInfo(data.combatants);
+            refreshCombatantInfo(evdata.combatants);
 
             // If no dramas, advance faster (usually this is on meaningless move pairings)
             if (places.length > 0) await sleep(MOVE_DELAY);
@@ -272,7 +273,7 @@ export function createUIBridgedBattleEngine(
         }
     };
 
-    const engine = createBattleEngine(opponentProfile.logic.ai, opponentProfile.logic.stats, reactions, { logger(m) { appendActionMessage(m, 'default') } });
+    const engine = createBattleEngine(data.profiles.opponent.logic.ai, data.profiles.opponent.logic.stats, reactions, { logger(m) { appendActionMessage(m, 'default') } });
 
     attachToConsole(engine, 'DG_BATTLE_ENGINE');
 

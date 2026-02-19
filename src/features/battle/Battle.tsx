@@ -38,10 +38,16 @@ export default function Battle(props: {
     const { overlayAnimRequests, requestOverlayAnimation } = createOverlayAnimationQueue();
 
     const { engine, ...bridge } = createUIBridgedBattleEngine(
-        props.opponentProfile, 
-        props.playerProfile, 
-        {startMeltAnimation, requestOverlayAnimation, lexicons: makeSidesMap(playerLexicon, opponentLexicon)}, 
-        {onEnd: props.onEnd, skipOpeningAnimation: true}
+        {
+            startMeltAnimation, 
+            requestOverlayAnimation
+        },
+        {
+            lexicons: makeSidesMap(playerLexicon, opponentLexicon), profiles: {player: props.playerProfile, opponent: props.opponentProfile}
+        }, 
+        {
+            onEnd: props.onEnd, skipOpeningAnimation: false
+        }
     );
 
     //createMusicTrack({src: 'PWL/battle.mp3'});
