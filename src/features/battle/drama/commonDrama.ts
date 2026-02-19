@@ -206,7 +206,7 @@ const SHARED_DRAMAS: DramaTable = {
         run: ({ appendActionMessage }, { profiles, combatantHistory, combatants }, side) => {
             const deltaPercent = Math.round(100 * (combatantHistory.MoveEnd[side].health - combatantHistory.DamagesApplied[side].health) / combatants[side].maxHealth);
             if (side == 'opponent') {
-                appendActionMessage(`${profiles.opponent.display.name} heals.`)
+                appendActionMessage(`${profiles.opponent.display.name} heals.`, 'heal')
             } else {
                 appendActionMessage(`${profiles.player.display.name} finds her resolve. ${deltaPercent}% of F-CH restored.`, 'heal')
             }

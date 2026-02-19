@@ -6,6 +6,22 @@ import sprite from '@/assets/artwork/dæmons/combat_fox.png';
 import icon from '@/assets/artwork/dæmons/fox_icon.png';
 import backgroundShader from '@/assets/background-shaders/disgrid.glsl'
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import { AssetURL } from "@/shared/types/misc.types";
+import { PLACES } from "@/features/battle/drama/drama.types";
+import battleUIAnimations from "@/features/battle/animation/uiAnimations/battleUIAnimations";
+import { playSound } from "@/core/audio/audio";
+import pickRandom from "@/shared/utils/pickRandom";
+
+const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
+    eager: true,
+    query: '?url',
+    import: 'default'
+}) as Record<string, AssetURL>
+
+const OPPONENT_PAIN_SOUNDS: AssetURL[] = [];
+for (const [_k, i] of Object.entries(OPPONENT_PAIN_IMPORT)) {
+    OPPONENT_PAIN_SOUNDS.push(i)
+}
 
 const FOX_MOVEBANK = {
     ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
@@ -24,15 +40,16 @@ export const OPPONENT_FOX: OpponentProfile = {
             heal: { label: "rest" }
         },
         spriteOffset: { x: 0, y: 30 },
-        moveUISideEffectOverrides: {
-            'idle': {
-                add: [{
-                    place: 1,
-                    run({ appendActionMessage }) {
-                        appendActionMessage("The Rogue Zenko growls loudly.")
-                    }
-                }]
+        dramas: {
+            'zenko-growl': {
+                place: PLACES.PRE_CLASH,
+                when: ({plannedMoves}) => plannedMoves.opponent.name == 'idle',
+                run: ({appendActionMessage}) => appendActionMessage("The Rogue Zenko growls loudly!")
             }
+        },
+        damageDrama(deps) {
+            playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
+            battleUIAnimations.damageFlash(deps.refRegistry.opponentSprite);
         }
     },
 

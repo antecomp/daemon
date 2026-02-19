@@ -28,17 +28,6 @@ import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
 import { DramaData, DramaDependancies, DramaEntry } from "../drama/drama.types";
 
-const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
-    eager: true,
-    query: '?url',
-    import: 'default'
-}) as Record<string, AssetURL>
-
-const OPPONENT_PAIN_SOUNDS: AssetURL[] = [];
-for (const [_k, i] of Object.entries(OPPONENT_PAIN_IMPORT)) {
-    OPPONENT_PAIN_SOUNDS.push(i)
-}
-
 /** UI States for various stages in battle execution, used to conditionally lock some components. */
 export enum BattleUIState {
     /** Openining Prompt */
@@ -185,7 +174,7 @@ export function createUIBridgedBattleEngine(
             function opponentDamage() {
                 if (data.postCtx.opponent.damageTaken > 0) {
                     setOpponentHealthPercentage(data.combatants.opponent.healthPercent);
-                    DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
+                    opponentProfile.display.damageDrama ? opponentProfile.display.damageDrama(dramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(dramaDeps);
                 }
             }
 
@@ -252,6 +241,8 @@ export function createUIBridgedBattleEngine(
             setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(combatants);
+
+            // TODO: Also run dramas here.
 
             switch (outcome) {
                 case BattleOutcome.PlayerVictory:

@@ -16,7 +16,7 @@ import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
 import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
-import { DramaTable } from '../drama/drama.types';
+import { DamageDrama, DramaTable } from '../drama/drama.types';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -95,6 +95,8 @@ export interface OpponentProfile {
          * with the common drama table, it overrides it.
           */
         dramas?: DramaTable
+        /** Custom drama defintion for opponent damage. Completely overrides default behavior. */
+        damageDrama?: DamageDrama
     };
 
     /**
