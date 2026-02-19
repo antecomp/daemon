@@ -222,6 +222,8 @@ export function createUIBridgedBattleEngine(
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(evdata.combatants);
 
+            // Do I add some sort of delay here?
+
             switch (evdata.outcome) {
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.

@@ -108,13 +108,15 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             const [slashSoundReady, _] = playSound(slash_sfx);
             await slashSoundReady;
 
+            const preparedLevel = combatantHistory.MultipliersComputed.player.statuses['prepared']?.level ?? 0;
+            const maniaLevel = combatantHistory.MultipliersComputed.player.statuses['mania']?.level ?? 0;
+
             // TODO: Change how this works. Prep should take precedence over other anim types.
-            if (combatants.player.getStatusLevel('mania') > 0) {
+            if (maniaLevel> 0) {
                 await requestOverlayAnimation('slash_elag');
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
             } else {
-                const preparedLevel = combatantHistory.MultipliersComputed.player.statuses['prepared']?.level ?? 0;
                 await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
             }
 
