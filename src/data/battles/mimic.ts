@@ -89,6 +89,6 @@ export const OPPONENT_MIMICRY: OpponentProfile = {
             }
         },
         
-        stats: { maxHealth: 10 }
+        stats: { maxHealth: 1 }
     },
 }

@@ -184,9 +184,7 @@ export function createUIBridgedBattleEngine(
 
         async MoveStart({ moveIndex, sequences }) {
             setCurrentlyExecutingMoveIndex(moveIndex);
-
             setCurrentMoveClash(mapSides(sequences, (s) => ({ moveName: s[moveIndex].name as MoveLexeme, tags: s[moveIndex].tags })));
-
             // Short delay for index anim to play without anything else happening
             await sleep(MOVE_INIT_DELAY);
         },
@@ -201,14 +199,12 @@ export function createUIBridgedBattleEngine(
         },
 
         async MoveEnd(evdata) {
-
             const placesRan = await makeDramaRunner(evdata)();
+            // If no dramas ran, advance faster (usually this is on meaningless move pairings)
+            if (placesRan > 0) await sleep(MOVE_DELAY);
 
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             refreshCombatantInfo(evdata.combatants);
-
-            // If no dramas, advance faster (usually this is on meaningless move pairings)
-            if (placesRan > 0) await sleep(MOVE_DELAY);
         },
 
         async RoundEnd({ combatants }) {
@@ -220,14 +216,13 @@ export function createUIBridgedBattleEngine(
             engine.setupRound();
         },
 
-        async BattleEnd({ outcome, combatants }) {
+        async BattleEnd(evdata) {
+            await makeDramaRunner(evdata)();
             setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
-            refreshCombatantInfo(combatants);
+            refreshCombatantInfo(evdata.combatants);
 
-            // TODO: Also run dramas here.
-
-            switch (outcome) {
+            switch (evdata.outcome) {
                 case BattleOutcome.PlayerVictory:
                     // Play opponent death sound here.
                     playSound(opponent_death_sound);
@@ -245,7 +240,7 @@ export function createUIBridgedBattleEngine(
             }
 
             await sleep(BATTLE_END_SLEEP_TIME);
-            config.onEnd(outcome);
+            config.onEnd(evdata.outcome);
         },
 
         async BattleForceEnd({ outcome }) {
