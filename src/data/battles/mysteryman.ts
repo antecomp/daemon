@@ -10,6 +10,9 @@ import battleUIAnimations from "@/features/battle/animation/uiAnimations/battleU
 import { playSound } from "@/core/audio/audio";
 import pickRandom from "@/shared/utils/pickRandom";
 
+import death_sound from '@/assets/sfx/battle/yeouch.ogg';
+import animateAsync from "@/shared/utils/animateAsync";
+
 const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
     eager: true,
     query: '?url',
@@ -27,6 +30,7 @@ const MOVESET = { ...pick(COMMON_PLANNED_MOVES, ['attack', 'defend', 'evade', 'i
 export const OPPONENT_MYSTERYMAN: OpponentProfile = {
     display: {
         sprite, icon, backgroundShader,
+        spriteOffset: {x: 25, y: 0},
         name: "Mystery Man",
         lexicon: {
             'prepare': { 'label': 'aim' },
@@ -36,10 +40,18 @@ export const OPPONENT_MYSTERYMAN: OpponentProfile = {
         damageDrama(deps) {
             playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
             battleUIAnimations.damageFlash(deps.refRegistry.opponentSprite);
+        },
+        async deathDrama(deps) {
+            const sprite = deps.refRegistry.opponentSprite;
+            if (!sprite) return;
+            playSound(death_sound);
+            sprite.style.transformOrigin = 'center left';
+            await animateAsync(sprite, [{rotate: '0deg'}, {rotate: '90deg'}], {duration: 1500, fill: 'forwards'});
+            await battleUIAnimations.fadeToBlackAndTransparent(sprite);
         }
     },
     logic: {
-        ai: {getSequence: () => buildSequenceFromWeightMap(MOVESET, {'prepare': {'attack': 3}})},
-        stats: {maxHealth: 15}
+        ai: { getSequence: () => buildSequenceFromWeightMap(MOVESET, { 'prepare': { 'attack': 3 } }) },
+        stats: { maxHealth: 3 }
     }
 }

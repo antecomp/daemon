@@ -4,10 +4,6 @@ import Battle from "@/features/battle/Battle";
 import { PlayerProfile } from '@/features/battle/bridge/battleProfiles';
 import { render } from "solid-js/web";
 
-
-import { OPPONENT_CROW } from '@/data/battles/crow';
-import { OPPONENT_ANGEL } from '@/data/battles/angel';
-import { OPPONENT_MIMICRY } from '@/data/battles/mimic';
 import { OPPONENT_MYSTERYMAN } from '@/data/battles/mysteryman';
 
 const plyr: PlayerProfile = {

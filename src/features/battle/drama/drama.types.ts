@@ -64,6 +64,7 @@ export enum PLACES {
     POST_CLASH = 300
 }
 
+/** Reduced dependancies for other drama actions (damage, death). Does not have the obligation functions. */
+export type ReducedDramaDependancies = Omit<DramaDependancies, 'fufillDramaObligation'>;
 /** Dramatization for damage taken */
-export type DamageDramaDependancies = Omit<DramaDependancies, 'fufillDramaObligation'>;
-export type DamageDrama = (deps: DamageDramaDependancies) => Promise<void> | void;
+export type SimpleDramaEffect = (deps: ReducedDramaDependancies) => Promise<void> | void;

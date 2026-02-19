@@ -5,7 +5,7 @@ import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 
 import animateAsync from "@/shared/utils/animateAsync";
-import { DamageDrama, DramaTable, PLACES } from "./drama.types";
+import { SimpleDramaEffect, DramaTable, PLACES } from "./drama.types";
 import { playSound } from '@/core/audio/audio';
 import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
@@ -221,7 +221,7 @@ const SHARED_DRAMAS: DramaTable = {
 const COMMON_DRAMA_TABLE: DramaTable = { ...COMMON_OPPONENT_MOVE_DRAMAS, ...COMMON_PLAYER_MOVE_DRAMAS, ...SHARED_DRAMAS };
 export default COMMON_DRAMA_TABLE;
 
-export const DEFAULT_DAMAGE_DRAMAS: Sides<DamageDrama> = {
+export const DEFAULT_DAMAGE_DRAMAS: Sides<SimpleDramaEffect> = {
     player(deps) {
         playSound(player_pain_sfx);
         // Not awaiting, I think it overlaying on top of other animations looks cool.

@@ -25,7 +25,7 @@ import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
-import { DamageDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
+import { ReducedDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
 import { BattleUIState } from "./battleUIState";
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
@@ -92,13 +92,12 @@ export function createUIBridgedBattleEngine(
     }
 
     onMount(async () => {
-        console.log(refRegistry);
         if (!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
     });
 
     const dramaTable = { ...COMMON_DRAMA_TABLE, ...data.profiles.opponent.display.dramas };
-    const damageDramaDeps: DamageDramaDependancies = { ...deps, refRegistry, appendActionMessage };
+    const baseDramaDeps: ReducedDramaDependancies = { ...deps, refRegistry, appendActionMessage };
 
     // Defined here to capture all the config stuff in this scope easily.
     function makeDramaRunner(evdata: BattleEventPayload['MoveEnd']) {
@@ -113,14 +112,14 @@ export function createUIBridgedBattleEngine(
             opponentDamage() {
                 if (evdata.postCtx.opponent.damageTaken > 0) {
                     setOpponentHealthPercentage(evdata.combatants.opponent.healthPercent);
-                    data.profiles.opponent.display.damageDrama ? data.profiles.opponent.display.damageDrama(damageDramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(damageDramaDeps);
+                    data.profiles.opponent.display.damageDrama ? data.profiles.opponent.display.damageDrama(baseDramaDeps) : DEFAULT_DAMAGE_DRAMAS.opponent(baseDramaDeps);
                 }
             },
 
             playerDamage() {
                 if (evdata.postCtx.player.damageTaken > 0) {
                     setPlayerHealthPercentage(evdata.combatants.player.healthPercent);
-                    DEFAULT_DAMAGE_DRAMAS.player(damageDramaDeps);
+                    DEFAULT_DAMAGE_DRAMAS.player(baseDramaDeps);
                 }
             }
         });
@@ -132,7 +131,7 @@ export function createUIBridgedBattleEngine(
 
         return async () => {
             const dramaDeps: DramaDependancies = {
-                ...damageDramaDeps,
+                ...baseDramaDeps,
                 fufillDramaObligation
             }
 
@@ -222,21 +221,25 @@ export function createUIBridgedBattleEngine(
             refreshCombatantInfo(evdata.combatants);
 
             // Do I add some sort of delay here?
+            await sleep(1000);
 
             switch (evdata.outcome) {
                 case BattleOutcome.PlayerVictory:
-                    // Play opponent death sound here.
+                    if (data.profiles.opponent.display.deathDrama) {
+                        await data.profiles.opponent.display.deathDrama(baseDramaDeps);
+                        break;
+                    }
                     playSound(opponent_death_sound);
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
                 case BattleOutcome.OpponentVictory:
-                    // Player death sound here.
+                    // TODO: Player death sound here.
                     deps.startMeltAnimation?.(false, 20, 5);
                     // Consider switching back to fading with code animation so we can await it
                     break;
                 case BattleOutcome.Draw:
+                    // TODO: Do some sort of unique other animation or event in case of draw here.
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
-                    // Do some sort of unique other animation or event in case of draw here.
                     break;
             }
 
@@ -247,6 +250,25 @@ export function createUIBridgedBattleEngine(
         async BattleForceEnd({ outcome }) {
             setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
+            switch (outcome) {
+                case BattleOutcome.PlayerVictory:
+                    if (data.profiles.opponent.display.deathDrama) {
+                        await data.profiles.opponent.display.deathDrama(baseDramaDeps);
+                        break;
+                    }
+                    playSound(opponent_death_sound);
+                    await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
+                    break;
+                case BattleOutcome.OpponentVictory:
+                    // TODO: Player death sound here.
+                    deps.startMeltAnimation?.(false, 20, 5);
+                    // Consider switching back to fading with code animation so we can await it
+                    break;
+                case BattleOutcome.Draw:
+                    // TODO: Do some sort of unique other animation or event in case of draw here.
+                    await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
+                    break;
+            }
             config.onEnd(outcome);
         }
     };
