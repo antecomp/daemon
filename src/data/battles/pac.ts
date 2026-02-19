@@ -4,6 +4,8 @@ import icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
 import backgroundShader from '@/assets/background-shaders/vortex.glsl';
 import { COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import animateAsync from "@/shared/utils/animateAsync";
+import COMMON_DRAMA_TABLE from "@/features/battle/drama/commonDrama";
+import sleep from "@/shared/utils/sleep";
 
 export const OPPONENT_PAC: OpponentProfile = {
     display: {
@@ -13,17 +15,15 @@ export const OPPONENT_PAC: OpponentProfile = {
         lexicon: {
             attack: { label: "chomp" }
         },
-        moveUISideEffectOverrides: {
-            attack: {
-                add: [{
-                    place: 2,
-                    run: function (deps) {
-                        const sprite = deps.refRegistry?.opponentSprite;
-                        if (!sprite) return;
-                        sprite.style.transformOrigin = 'top left';
-                        animateAsync(sprite, [{ scale: '1' }, { 'scale': '5' }, { scale: '1' }], { duration: 500 })
-                    }
-                }]
+        dramas: {
+            'opp-attack': {
+                ...COMMON_DRAMA_TABLE['opp-attack'],
+                run: ({refRegistry}) => {
+                    const sprite = refRegistry.opponentSprite;
+                    if (!sprite) return;
+                    animateAsync(sprite, [{ scale: '1' }, { 'scale': '5' }, { scale: '1' }], { duration: 500 });
+                    return sleep(250); // should advance to damage right after he is max size;
+                }
             }
         }
     },
