@@ -10,7 +10,7 @@ import Billboard from '@/3d/components/Billboard';
 import { addLogMessage } from '@/app/shell/hud/EventLog';
 import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
-import { playSound } from '@/shared/utils/playSound';
+import { playSoundOnce } from '@/shared/utils/playSound';
 
 import yeah_sound from './assets/yeah.ogg'
 import bonk_sound from '@/assets/sfx/misc/bonk.mp3';
@@ -59,7 +59,7 @@ export default function Test() {
 
     navListen((e => console.log(e)));
 
-    navListen(e => (e.type == 'move' && !e.success) && playSound(bonk_sound))
+    navListen(e => (e.type == 'move' && !e.success) && playSoundOnce(bonk_sound))
 
     return (
         <>
@@ -94,7 +94,7 @@ export default function Test() {
                     scale={90}
                     interactions={
                         [
-                            () => playSound(yeah_sound),
+                            () => playSoundOnce(yeah_sound),
                             //() => addLogMessage('she has nothing to say'),
                             () => {
                                 if (navCoordToTuple(navController.state().tile)[1] === 8) {

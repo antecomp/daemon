@@ -27,7 +27,7 @@ import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';
 
 import fox_voiceclip from '@/assets/sfx/misc/inordertopass.ogg';
-import { playSound } from "@/shared/utils/playSound";
+import { playSoundOnce } from "@/shared/utils/playSound";
 import { OPPONENT_FOX } from "@/data/battles/fox";
 
 export default function Islands() {
@@ -96,7 +96,7 @@ export default function Islands() {
                 () => {
                   if(foxBattleTransitionStarted) return;
                   foxBattleTransitionStarted = true;
-                  playSound(fox_voiceclip).then(_ => startBattle(OPPONENT_FOX)).then(outcome => {
+                  playSoundOnce(fox_voiceclip).then(_ => startBattle(OPPONENT_FOX)).then(outcome => {
                     foxBattleTransitionStarted = false;
                     if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
                   });

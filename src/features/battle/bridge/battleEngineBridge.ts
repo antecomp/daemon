@@ -6,7 +6,7 @@ import sleep from "@/shared/utils/sleep";
 import { createSignal, onMount } from "solid-js";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 import battleUIAnimations from "../animation/uiAnimations/battleUIAnimations";
-import { playSound } from "@/shared/utils/playSound";
+import { playSoundOnce } from "@/shared/utils/playSound";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 
 import { mapSides, Sides } from "@/core/battle/utils/sides.utils";
@@ -229,7 +229,7 @@ export function createUIBridgedBattleEngine(
                         await data.profiles.opponent.display.deathDrama(baseDramaDeps);
                         break;
                     }
-                    playSound(opponent_death_sound);
+                    playSoundOnce(opponent_death_sound);
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
                 case BattleOutcome.OpponentVictory:
@@ -256,7 +256,7 @@ export function createUIBridgedBattleEngine(
                         await data.profiles.opponent.display.deathDrama(baseDramaDeps);
                         break;
                     }
-                    playSound(opponent_death_sound);
+                    playSoundOnce(opponent_death_sound);
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
                 case BattleOutcome.OpponentVictory:

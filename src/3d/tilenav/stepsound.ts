@@ -1,6 +1,6 @@
 import pickRandom from "@/shared/utils/pickRandom";
 import { StepSFXCategory } from "./tilenav.types";
-import { playSound } from "@/shared/utils/playSound";
+import { playSoundOnce } from "@/shared/utils/playSound";
 
 // TODO: Switch off eager true to utilize lazy load. This is way too much loaded for no reason.
 const carpet = Object.values(import.meta.glob<string>('@/assets/sfx/steps/carpet/*', {eager: true, query: '?url', import: 'default'}));
@@ -18,5 +18,5 @@ const stepSounds = {
 
 export default function playStepSound(category: StepSFXCategory) {
     const sfx = pickRandom(stepSounds[category]);
-    playSound(sfx);
+    playSoundOnce(sfx);
 }

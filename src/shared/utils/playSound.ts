@@ -1,6 +1,10 @@
 import { AssetURL } from "../types/misc.types";
 
-export async function playSound(src: AssetURL, volume?: number): Promise<void> {
+/** Simple playSound that best-effort loads, plays, then destroys an audio instance.
+ * Consider using playSound from audio.ts for repeated sounds or sounds that should be buffered.
+ * @returns A Promise that resolves when the sound *ends*
+ */
+export async function playSoundOnce(src: AssetURL, volume?: number): Promise<void> {
     return new Promise((resolve, reject) => {
         const audio = new Audio(src);
         if(volume) audio.volume = volume;
@@ -9,8 +13,11 @@ export async function playSound(src: AssetURL, volume?: number): Promise<void> {
         audio.play().catch(reject);
     })
 }
-
-export async function playSoundOnReady(src: AssetURL, volume?: number): Promise<void> {
+/** Simple playSound that best-effort loads, plays, then destroys an audio instance.
+ * Consider using playSound from audio.ts for repeated sounds or sounds that should be buffered.
+ * @returns A Promise that resolves when the sound *starts*
+ */
+export async function playSoundOnceOnReady(src: AssetURL, volume?: number): Promise<void> {
     return new Promise((resolve, reject) => {
         const audio = new Audio(src);
         if(volume) audio.volume = volume;
