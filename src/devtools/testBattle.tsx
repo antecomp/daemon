@@ -8,6 +8,7 @@ import { render } from "solid-js/web";
 import { OPPONENT_CROW } from '@/data/battles/crow';
 import { OPPONENT_ANGEL } from '@/data/battles/angel';
 import { OPPONENT_MIMICRY } from '@/data/battles/mimic';
+import { OPPONENT_MYSTERYMAN } from '@/data/battles/mysteryman';
 
 const plyr: PlayerProfile = {
     display: {
@@ -23,7 +24,7 @@ const plyr: PlayerProfile = {
 const root = document.getElementById('root');
 render(() => (
     <main id="game-root">
-        <Battle opponentProfile={OPPONENT_MIMICRY} playerProfile={plyr} onEnd={(o) => alert('Battele End: ' + o)} />
+        <Battle opponentProfile={OPPONENT_MYSTERYMAN} playerProfile={plyr} onEnd={(o) => alert('Battele End: ' + o)} />
         <div id="modal-root"/>
     </main>
 )
