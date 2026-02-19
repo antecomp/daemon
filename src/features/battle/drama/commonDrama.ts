@@ -54,6 +54,8 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         }
     },
 
+    // TODO: Move evade fail to own slot that runs at CLASH_ONE + 1.
+
     'opp-mirror': {
         place: PLACES.CLASH_ONE,
         // When opponent deals damage as result of mirror...

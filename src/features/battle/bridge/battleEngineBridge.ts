@@ -200,11 +200,10 @@ export function createUIBridgedBattleEngine(
 
         async MoveEnd(evdata) {
             const placesRan = await makeDramaRunner(evdata)();
+            refreshCombatantInfo(evdata.combatants);
             // If no dramas ran, advance faster (usually this is on meaningless move pairings)
             if (placesRan > 0) await sleep(MOVE_DELAY);
-
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
-            refreshCombatantInfo(evdata.combatants);
         },
 
         async RoundEnd({ combatants }) {
