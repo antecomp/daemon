@@ -18,7 +18,7 @@ import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 
 import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
-import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge'
+import { BattleUIState, useBattleUIState } from "../bridge/battleUIState"
 import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
@@ -146,7 +146,7 @@ export default function Actionbar(props: ActionbarProps) {
                     class='reset-button'
                     src={reset_button}
                     onClick={resetPlan} 
-                    classList={{usable: planBuffer().length > 0}}
+                    classList={{usable: planBuffer().length > 0 && (battleUIState() !== BattleUIState.EXECUTING)}}
                 />
                 <img
                     class='exec-button'

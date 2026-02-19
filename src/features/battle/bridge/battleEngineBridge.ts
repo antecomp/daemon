@@ -3,7 +3,7 @@ import { BattleEventPayload, BattleReactions } from "@/core/battle/model/battleR
 import { BattleOutcome, DamageMultipliers, ZERO_MULTIPLIERS_BY_SIDE } from "@/core/battle/model/battle";
 import { createRefRegistry } from "@/shared/utils/refRegistry";
 import sleep from "@/shared/utils/sleep";
-import { Accessor, createContext, createSignal, onMount, useContext } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { BattleRefNames } from "../animation/uiAnimations/battleUIRefRegistry";
 import battleUIAnimations from "../animation/uiAnimations/battleUIAnimations";
 import { playSound } from "@/shared/utils/playSound";
@@ -26,40 +26,7 @@ import battleOpeningAnimation from "../animation/battle-opening-animation";
 import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
 import { DamageDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
-
-/** UI States for various stages in battle execution, used to conditionally lock some components. */
-export enum BattleUIState {
-    /** Openining Prompt */
-    INIT,
-    /** Opening Animation */
-    OPENING,
-    /** Waiting for user input (building sequence) */
-    WAITING,
-    /** User input of correct size, waiting for "execute" */
-    READY,
-    /** Running the clashes, animations and whatnot, (round execute) */
-    EXECUTING,
-    /** Battle end state, (temporary lock while closing animation plays) */
-    END
-}
-
-interface BattleUIStateMachine {
-    battleUIState: Accessor<BattleUIState>;
-    setBattleUIState: (newState: BattleUIState) => void;
-}
-
-export const BattleUIStateContext = createContext<BattleUIStateMachine>();
-
-/**
- * Hook that wraps useContext(BattleUIStateContext) to subscribe to current BattleUIState.
- *
- * Throws error if context cannot be obtained.
- */
-export const useBattleUIState = () => {
-    const context = useContext(BattleUIStateContext);
-    if (!context) throw new Error("useBattleUIState must be within BattleUIState provider (Battle Component)");
-    return context;
-};
+import { BattleUIState } from "./battleUIState";
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(

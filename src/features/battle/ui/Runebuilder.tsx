@@ -1,5 +1,5 @@
 import { MoveLexicon } from "../lexicon/moveLexicon";
-import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge';
+import { BattleUIState, useBattleUIState } from "../bridge/battleUIState";
 import { Point } from "@/shared/types/3d.types";
 import { createTooltip } from "@/shared/hooks/createTooltip";
 import { For } from "solid-js";

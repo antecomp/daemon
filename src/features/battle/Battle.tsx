@@ -2,7 +2,8 @@ import './ui/styles/battle.css';
 
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
-import { BattleUIState, BattleUIStateContext, createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
+import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
+import { BattleUIState, BattleUIStateContext } from "./bridge/battleUIState";
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';

@@ -1,7 +1,7 @@
 import { RefRegistry } from "@/shared/utils/refRegistry";
 import { BattleRefNames } from "./uiAnimations/battleUIRefRegistry";
 import { Setter } from "solid-js";
-import { BattleUIState } from "../bridge/battleEngineBridge";
+import { BattleUIState } from "../bridge/battleUIState";
 import animateAsync from "@/shared/utils/animateAsync";
 import sleep from "@/shared/utils/sleep";
 
