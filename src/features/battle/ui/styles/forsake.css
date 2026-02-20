@@ -35,7 +35,7 @@
         rotate: 90deg;
         stroke-dasharray: 1500;
         stroke-dashoffset: 1500;
-        animation: strokein 2s forwards linear;
+        animation: strokein 1s forwards linear;
     }
 }
 

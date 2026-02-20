@@ -35,10 +35,10 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
     return (
         <>
             <svg class="forsake-svg" height={500} width={500} xmlns="http://www.w3.org/2000/svg" onClick={forsakeAnimation}>
-                <circle ref={circleRef} r="225" cx="250" cy="250" stroke='white' stroke-width='6' fill='transparent' />
+                <circle ref={circleRef} r="225" cx="250" cy="250" stroke='white' stroke-width='7' fill='transparent' />
             </svg>
             <div ref={divRef} class="battle-forsake">
-                <div>DAEMONIC VIVIDITY REDUCED. CLICK TO FORSAKE</div>
+                <div>DAEMONIC VIVIDITY CRITICAL. CLICK TO FORSAKE</div>
             </div>
         </>
     )
