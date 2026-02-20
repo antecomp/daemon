@@ -63,6 +63,7 @@ export function playSound(
   return [ready, ended];
 }
 
+/** TODO: DOCUMENT */
 export function useSound(preload: string[] = []) {
   const loadedSrcs = new Set<string>();
 

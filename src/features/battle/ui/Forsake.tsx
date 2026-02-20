@@ -4,7 +4,12 @@ import left from '../assets/forsake_left.png'
 import right from '../assets/init_right.png'
 import forsake_br from '../assets/forsake-br.png'
 
+import forsake_sound from '@/assets/sfx/battle/forsake.wav'
+import { useSound } from '@/core/audio/audio'
+
 export default function Forsake(props: { forsake: (v: any) => void }) {
+
+    const {playSound} = useSound([forsake_sound]);
 
     let closeAnimationPlaying = false;
     function circleCollapseAnimation(circle: SVGCircleElement, duration: number): Promise<Animation> {
@@ -34,6 +39,7 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
         if (closeAnimationPlaying) return;
         closeAnimationPlaying = true;
         svgRef.classList.add('collapsing');
+        playSound(forsake_sound);
         await circleCollapseAnimation(circleRef, 200);
         props.forsake(undefined);
     }
