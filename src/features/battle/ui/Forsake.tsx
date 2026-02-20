@@ -26,29 +26,42 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
         return animation.finished;
     }
 
+    let svgRef!: SVGSVGElement // bruh what the hell is this type name lol.
     let circleRef!: SVGCircleElement;
     let divRef!: HTMLDivElement
 
     async function forsakeAnimation() {
         if (closeAnimationPlaying) return;
         closeAnimationPlaying = true;
+        svgRef.classList.add('collapsing');
         await circleCollapseAnimation(circleRef, 200);
         props.forsake(undefined);
     }
 
     return (
         <>
-            <svg class="forsake-svg" height={500} width={500} xmlns="http://www.w3.org/2000/svg" onClick={forsakeAnimation}>
-                <circle ref={circleRef} r="225" cx="250" cy="250" stroke='white' stroke-width='7' fill='transparent' />
+            <svg
+                class="forsake-svg cursor-pointer"
+                ref={svgRef}
+                height={500} width={500}
+                xmlns="http://www.w3.org/2000/svg"
+                onClick={forsakeAnimation}
+            >
+                <circle
+                    ref={circleRef} r="225"
+                    cx="250" cy="250"
+                    stroke='white'
+                    stroke-width='7' fill='transparent'
+                />
             </svg>
-            <div ref={divRef} class="battle-forsake">
-                <img src={left}/>
+            <div ref={divRef} class="battle-forsake cursor-pointer" onClick={forsakeAnimation}>
+                <img src={left} />
                 <span>DAEMONIC VIVIDITY CRITICAL.</span>
-                <img src={right}/>
+                <img src={right} />
                 <div class="forsake-bottom">
                     <span>CLICK TO FORSAKE </span>
-                    <img src={forsake_br}/>
-                    </div>
+                    <img src={forsake_br} />
+                </div>
             </div>
         </>
     )

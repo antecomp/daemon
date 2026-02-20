@@ -95,9 +95,9 @@ export default function Battle(props: {
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
                         <InitMessage message={props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}/>
                     </Show>
-                    <Show when={bridge.battleUIState() == BattleUIState.FORSAKE}>
+                    {/* <Show when={bridge.battleUIState() == BattleUIState.FORSAKE}> */}
                         <Forsake forsake={bridge.forsake}/>
-                    </Show>
+                    {/* </Show> */}
                 </div>
             </BattleUIStateContext.Provider>
         </BattleRefRegistryCTX.Provider>

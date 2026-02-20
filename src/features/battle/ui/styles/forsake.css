@@ -46,7 +46,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    transform-origin: top left;
     mix-blend-mode: difference;
+    animation: forsake-idle infinite 1s ease-in-out;
+    animation-delay: 1.5s;
 
     circle {
         transform-origin: center;
@@ -57,8 +60,24 @@
     }
 }
 
+.forsake-svg.collapsing {
+    animation: none;
+}
+
 @keyframes strokein {
     to {
         stroke-dashoffset: 0;
+    }
+}
+
+@keyframes forsake-idle {
+    0% {
+        scale: 1
+    }
+    50% {
+        scale: 0.95
+    }
+    100% {
+        scale : 1
     }
 }

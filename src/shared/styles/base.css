@@ -41,6 +41,10 @@
   cursor: url('@/assets/ui/cursors/nav.png'), auto;
 }
 
+.cursor-pointer {
+  cursor: var(--cursor_pointer);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -62,11 +66,16 @@ body {
   cursor: var(--cursor_default);
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-weight: normal;
 }
 
-button, a {
+button,
+a {
   cursor: var(--cursor_pointer);
 }
 
@@ -93,7 +102,8 @@ button {
 #root {
   perspective: 0px;
   transform: perspective(0px);
-  background: black; /* Weird thing to make blending and other stuff calculate correctly */
+  background: black;
+  /* Weird thing to make blending and other stuff calculate correctly */
 }
 
 .tooltip {
@@ -119,59 +129,67 @@ button {
 
 .fademein {
   opacity: 0;
-  animation: fade-in forwards; /* attr(data-fade-duration ms, 500ms); /* unreliable on firefox ig */
+  animation: fade-in forwards;
+  /* attr(data-fade-duration ms, 500ms); /* unreliable on firefox ig */
   animation-duration: attr(data-fade-duration ms, 500ms);
-  animation-duration: 500ms; /* fallback */
+  animation-duration: 500ms;
+  /* fallback */
 }
 
 /* Integer scale game when there's enough room using evil hacks to support every browser (even the bad ones) */
 @media screen and (min-width: 1978px) and (min-height: 1378px) {
-    @supports not (-moz-orient: block) { /* chrome/webkit */
-        main {
-            zoom: 2; /* zoom seems to do nearest neighbor scaling of everything :D */
-        }
+  @supports not (-moz-orient: block) {
+
+    /* chrome/webkit */
+    main {
+      zoom: 2;
+      /* zoom seems to do nearest neighbor scaling of everything :D */
+    }
+  }
+
+  @supports (-moz-orient: block) {
+
+    /* firefox does things differently because of course */
+    body {
+      scale: 2;
+      overflow: hidden;
     }
 
-    @supports (-moz-orient: block) { /* firefox does things differently because of course */
-        body {
-            scale: 2;
-            overflow: hidden;
-        }
-
-        #root, .tooltip {
-            /* On firefox/chrome: perspective: 0px; makes the text not-blurry at normal scale
+    #root,
+    .tooltip {
+      /* On firefox/chrome: perspective: 0px; makes the text not-blurry at normal scale
                  But for firefox, but when zoomed in, it makes the text blurry again (lmao?) */
-            perspective: none; 
-            transform: none;
-        }
+      perspective: none;
+      transform: none;
     }
+  }
 
-    /* upscale all the cursors too */
-    :root {
-        --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
-        --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
-    }
+  /* upscale all the cursors too */
+  :root {
+    --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
+    --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
+  }
 
-    .cursor-chat {
-        cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
-    }
+  .cursor-chat {
+    cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
+  }
 
-    .cursor-interact {
-        cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
-    }
+  .cursor-interact {
+    cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
+  }
 
-    .cursor-observe {
-        cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
-    }
+  .cursor-observe {
+    cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
+  }
 
-    .cursor-navigate {
-      cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
-    }
+  .cursor-navigate {
+    cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
+  }
 
 }
 
 ::-webkit-scrollbar {
-	width: 2px;
+  width: 2px;
 }
 
 ::-webkit-scrollbar-track {
@@ -187,47 +205,46 @@ button {
 }
 
 /* Integer Scale On HiDPI Displays (Mac). 1.5 actually looks crisp because???? */
-@media screen and (min-resolution: 2dppx)
-       and (min-width: 1483px)
-       and (min-height: 1029px) {
+@media screen and (min-resolution: 2dppx) and (min-width: 1483px) and (min-height: 1029px) {
 
-    @supports not (-moz-orient: block) {
-        main {
-            zoom: 1.5;
-        }
+  @supports not (-moz-orient: block) {
+    main {
+      zoom: 1.5;
+    }
+  }
+
+  @supports (-moz-orient: block) {
+    body {
+      scale: 1.5;
+      overflow: hidden;
     }
 
-    @supports (-moz-orient: block) {
-        body {
-            scale: 1.5;
-            overflow: hidden;
-        }
-
-        #root, .tooltip {
-            perspective: none;
-            transform: none;
-        }
+    #root,
+    .tooltip {
+      perspective: none;
+      transform: none;
     }
+  }
 
-    /* upscale all the cursors too */
-    :root {
-        --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
-        --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
-    }
+  /* upscale all the cursors too */
+  :root {
+    --cursor_default: url('@/assets/ui/cursors/pra_2x.png'), auto;
+    --cursor_pointer: url('@/assets/ui/cursors/point_2x.png'), auto;
+  }
 
-    .cursor-chat {
-        cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
-    }
+  .cursor-chat {
+    cursor: url('@/assets/ui/cursors/pr_chat_2x.png'), auto;
+  }
 
-    .cursor-interact {
-        cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
-    }
+  .cursor-interact {
+    cursor: url('@/assets/ui/cursors/pra_2x.png'), auto;
+  }
 
-    .cursor-observe {
-        cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
-    }
+  .cursor-observe {
+    cursor: url('@/assets/ui/cursors/pr_obs_2x.png'), auto;
+  }
 
-    .cursor-navigate {
-      cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
-    }
+  .cursor-navigate {
+    cursor: url('@/assets/ui/cursors/nav_2x.png'), auto;
+  }
 }
