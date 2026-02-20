@@ -9,10 +9,11 @@ import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe
 import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack.webm';
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
-import { OverlayAnimData } from './overlayAnimations.types'
+import { OverlayAnimationTable, OverlayAnimData } from './overlayAnimations.types'
+import { SuggestedString } from '@/shared/types/misc.types'
 
 /** Named overlay animations for battle that contain the `src` of the video, and a `width` and `height` for properly scaling the video element. */
-export const overlayAnimationDefinitions = {
+export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
     "slash_norm": {
         src: slashnorm,
         width: 567,
@@ -67,10 +68,10 @@ export const overlayAnimationDefinitions = {
         width: 502,
         height: 524
     }
-} as const satisfies Record<string, OverlayAnimData>
+} satisfies OverlayAnimationTable
 
 /** Helper type to constrain calls to requestOverlayAnimation to animation names known to exist. */
-export type AvailableOverlayAnimationNames = keyof typeof overlayAnimationDefinitions;
+export type OverlayAnimationName = SuggestedString<keyof typeof COMMON_OVERLAY_ANIMATION_DEFINITIONS>;
 
 // Lazily just calling it here for now, we will want to be smart about it when we actually have dynamic resources.
-requestAssetPrefetch(Object.values(overlayAnimationDefinitions).map(a => a.src));
+requestAssetPrefetch(Object.values(COMMON_OVERLAY_ANIMATION_DEFINITIONS).map(a => a.src));

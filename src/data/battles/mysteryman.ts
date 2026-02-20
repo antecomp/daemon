@@ -12,6 +12,7 @@ import pickRandom from "@/shared/utils/pickRandom";
 
 import death_sound from '@/assets/sfx/battle/yeouch.ogg';
 import animateAsync from "@/shared/utils/animateAsync";
+import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
     eager: true,
@@ -40,6 +41,7 @@ export const OPPONENT_MYSTERYMAN: OpponentProfile = {
         damageDrama(deps) {
             playSound(pickRandom(OPPONENT_PAIN_SOUNDS));
             battleUIAnimations.damageFlash(deps.refRegistry.opponentSprite);
+            deps.requestOverlayAnimation('test');
         },
         async deathDrama(deps) {
             const sprite = deps.refRegistry.opponentSprite;
@@ -48,7 +50,13 @@ export const OPPONENT_MYSTERYMAN: OpponentProfile = {
             sprite.style.transformOrigin = 'center left';
             await animateAsync(sprite, [{rotate: '0deg'}, {rotate: '90deg'}], {duration: 1500, fill: 'forwards'});
             await battleUIAnimations.fadeToBlackAndTransparent(sprite);
-        }
+        },
+
+        // Test
+        // overlayAnimationsTable: {
+        //     'opp-attack': COMMON_OVERLAY_ANIMATION_DEFINITIONS.observe,
+        //     'test': COMMON_OVERLAY_ANIMATION_DEFINITIONS.slash_elag
+        // }
     },
     logic: {
         ai: { getSequence: () => buildSequenceFromWeightMap(MOVESET, { 'prepare': { 'attack': 3 } }) },

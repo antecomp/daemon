@@ -86,7 +86,7 @@ export default function Battle(props: {
                     <OpponentSprite
                         {...props.opponentProfile.display}
                     />
-                    <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} />
+                    <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} overlayAnimTableOverrides={props.opponentProfile.display.overlayAnimationsTable} />
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
                         <InitMessage message={props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}/>
                     </Show>

@@ -7,7 +7,7 @@ import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
 import animateAsync from "@/shared/utils/animateAsync";
 import { SimpleDramaEffect, DramaTable, PLACES } from "./drama.types";
 import { playSound } from '@/core/audio/audio';
-import { AvailableOverlayAnimationNames } from "../animation/overlayAnimations/overlayAnimationDefinitions";
+import { OverlayAnimationName } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 import sleep from "@/shared/utils/sleep";
 import { MoveType } from '@/core/battle/model/move.types';
 import { defineSideDrama } from './drama';
@@ -119,7 +119,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
             } else {
-                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies AvailableOverlayAnimationNames[])[preparedLevel] ?? 'slash_majes');
+                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies OverlayAnimationName[])[preparedLevel] ?? 'slash_majes');
             }
 
             // ugh -- don't early run damage of opponent blocks. Looks better if we wait for their defense anim to finish.

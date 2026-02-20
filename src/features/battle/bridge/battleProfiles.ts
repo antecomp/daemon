@@ -15,7 +15,7 @@ import { MoveLexiconOverrides } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
-import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
+import { OverlayAnimationRequester, OverlayAnimationTable } from '../animation/overlayAnimations/overlayAnimations.types';
 import { SimpleDramaEffect, DramaTable } from '../drama/drama.types';
 
 /**
@@ -100,6 +100,9 @@ export interface OpponentProfile {
         /** Custom drama definiton for opponent death */
         deathDrama?: SimpleDramaEffect
         // TODO: Do we also add a custom victory drama?
+
+        /** Overrides/Additions to the overlay animations table */
+        overlayAnimationsTable?: OverlayAnimationTable
     };
 
     /**
