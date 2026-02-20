@@ -53,6 +53,7 @@ import spawnPopup from "@/app/shell/popup/Popup";
 import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 import { OPPONENT_FOX } from "@/data/battles/fox.ts";
 import { OPPONENT_PAC } from "@/data/battles/pac.ts";
+import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
 
 export default function DevMenu() {
 
@@ -80,7 +81,7 @@ export default function DevMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX, OPPONENT_PAC
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX, OPPONENT_PAC, OPPONENT_MYSTERYMAN
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>

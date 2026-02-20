@@ -1,5 +1,8 @@
 import './styles/forsake.css'
 
+import left from '../assets/forsake_left.png'
+import right from '../assets/init_right.png'
+
 export default function Forsake(props: { forsake: (v: any) => void }) {
 
     let closeAnimationPlaying = false;
@@ -38,7 +41,9 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
                 <circle ref={circleRef} r="225" cx="250" cy="250" stroke='white' stroke-width='7' fill='transparent' />
             </svg>
             <div ref={divRef} class="battle-forsake">
-                <div>DAEMONIC VIVIDITY CRITICAL. CLICK TO FORSAKE</div>
+                <img src={left}/>
+                <span>DAEMONIC VIVIDITY CRITICAL. CLICK TO FORSAKE</span>
+                <img src={right}/>
             </div>
         </>
     )

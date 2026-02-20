@@ -5,21 +5,24 @@
     transform: translate(-50%, -50%);
 
     display: grid;
-    place-items: center;
+    grid-template-columns: repeat(3, auto);
 
-    div {
-        background: black;
-        padding: 15px;
-        width: 312px;
-        /* transform: perspective(0px); */
-        text-align: center;
+    opacity: 0;
+    animation: fade-in 1000ms linear forwards;
+    animation-delay: 1s;
 
-        opacity: 0;
-        animation: fade-in 1000ms linear forwards;
-        animation-delay: 1s;
+
+    & span {
+        display: grid;
+        place-items: center;
+        background-color: white;
+        color: black;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 1px;
+        text-transform: uppercase;
+        width: 305px;
     }
-
-
 
 }
 
