@@ -29,6 +29,7 @@ export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
     onEnd: (outcome: BattleOutcome) => void;
+    onStart?: () => void;
     skipOpeningAnimation?: boolean
 }) {
 
@@ -49,7 +50,9 @@ export default function Battle(props: {
             lexicons: makeSidesMap(playerLexicon, opponentLexicon), profiles: {player: props.playerProfile, opponent: props.opponentProfile}
         }, 
         {
-            onEnd: props.onEnd, skipOpeningAnimation: props.skipOpeningAnimation
+            onStart: props.onStart,
+            onEnd: props.onEnd, 
+            skipOpeningAnimation: props.skipOpeningAnimation
         }
     );
 

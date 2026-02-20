@@ -40,6 +40,7 @@ export function createUIBridgedBattleEngine(
     },
     config: {
         onEnd: (res: BattleOutcome) => void,
+        onStart?: () => void,
         skipOpeningAnimation?: boolean
     }
 ) {
@@ -91,11 +92,13 @@ export function createUIBridgedBattleEngine(
         }
     }
 
-    // Disgusting.
+    // Disgusting. Used to signal the player has clicked the "forsake" button on their victory.
     const {resolve: forsake, promise: forsakePromise} = Promise.withResolvers<undefined>();
 
+    // Startup.
     onMount(async () => {
         if (!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
+        config.onStart?.();
         engine.setupRound();
     });
 

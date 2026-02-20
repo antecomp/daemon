@@ -99,8 +99,19 @@ export default function DevMenu() {
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
             <button onClick={() => {
-                startNewBattle(OPPONENT_SERPENT);
-                sleep(9000).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
+                startNewBattle(OPPONENT_SERPENT, () => {
+                    spawnPopup(<p style='padding: 0px 10px'>DV AUTOMATION FAILURE. MANUAL ENGAGEMENT ACTIVATED. <br /> Launch tutorial?</p>,
+                        [{
+                            prompt: 'Yes',
+                            action: () => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6])
+                        },
+                        {
+                            prompt: 'No',
+                            action: () => { }
+                        }],
+                        "DAEMONVEIL"
+                    );
+                });
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
@@ -108,7 +119,7 @@ export default function DevMenu() {
             <button onClick={() => pushUILayer({
                 id: 'test-puzzle',
                 blockBehind: true,
-                style: {display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px"},
+                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px" },
                 component: () => <EnochPuzzle
                     target="ATHENA"
                     onCorrect={() => popUILayer('test-puzzle')}
@@ -118,9 +129,9 @@ export default function DevMenu() {
             <button onClick={() => playTextOverlay(dec_textscene)}>Dec TextScene</button>
             <button onclick={() => spawnPopup("HELLO")}>Popup</button>
             <button onclick={() => spawnPopup("Test", [
-                {prompt: 'NC', action() {alert('action no close')}, dontClose: true},
-                {prompt: 'CL', action() {alert('action, close')}}
-                ])}>Popup 2</button>
+                { prompt: 'NC', action() { alert('action no close') }, dontClose: true },
+                { prompt: 'CL', action() { alert('action, close') } }
+            ])}>Popup 2</button>
         </div>
     )
 }
