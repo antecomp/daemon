@@ -91,6 +91,9 @@ export function createUIBridgedBattleEngine(
         }
     }
 
+    // Disgusting.
+    const {resolve: forsake, promise: forsakePromise} = Promise.withResolvers<undefined>();
+
     onMount(async () => {
         if (!config.skipOpeningAnimation) await battleOpeningAnimation(refRegistry, setBattleUIState);
         engine.setupRound();
@@ -216,15 +219,16 @@ export function createUIBridgedBattleEngine(
 
         async BattleEnd(evdata) {
             await makeDramaRunner(evdata)();
-            setBattleUIState(BattleUIState.END);
+            //setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(evdata.combatants);
 
-            // Do I add some sort of delay here?
-            await sleep(1000);
-
             switch (evdata.outcome) {
                 case BattleOutcome.PlayerVictory:
+                    await sleep(1000);
+                    setBattleUIState(BattleUIState.FORSAKE);
+                    await forsakePromise;
+                    setBattleUIState(BattleUIState.END);
                     if (data.profiles.opponent.display.deathDrama) {
                         await data.profiles.opponent.display.deathDrama(baseDramaDeps);
                         break;
@@ -233,11 +237,13 @@ export function createUIBridgedBattleEngine(
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
                 case BattleOutcome.OpponentVictory:
+                    setBattleUIState(BattleUIState.END);
                     // TODO: Player death sound here.
                     deps.startMeltAnimation?.(false, 20, 5);
                     // Consider switching back to fading with code animation so we can await it
                     break;
                 case BattleOutcome.Draw:
+                    setBattleUIState(BattleUIState.END);
                     // TODO: Do some sort of unique other animation or event in case of draw here.
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
@@ -285,6 +291,7 @@ export function createUIBridgedBattleEngine(
         currentlyExecutingMoveIndex, currentClash: currentMoveClash,
         attachToRegistry,
         currentStatusIcons,
+        forsake,
         engine,
         actionMessages
     }

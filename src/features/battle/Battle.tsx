@@ -23,6 +23,7 @@ import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
 import { extendLexicon } from './bridge/battleEngineBridge.util';
 import { makeSidesMap } from '@/core/battle/utils/sides.utils';
+import Forsake from './ui/Forsake';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -90,6 +91,9 @@ export default function Battle(props: {
                     <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} overlayAnimTableOverrides={props.opponentProfile.display.overlayAnimationsTable} />
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
                         <InitMessage message={props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}/>
+                    </Show>
+                    <Show when={bridge.battleUIState() == BattleUIState.FORSAKE}>
+                        <Forsake forsake={bridge.forsake}/>
                     </Show>
                 </div>
             </BattleUIStateContext.Provider>

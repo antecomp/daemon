@@ -14,7 +14,9 @@ export enum BattleUIState {
     /** Running the clashes, animations and whatnot, (round execute) */
     EXECUTING,
     /** Battle end state, (temporary lock while closing animation plays) */
-    END
+    END,
+    /** Player Victory Ending UI */
+    FORSAKE
 }
 interface BattleUIStateMachine {
     battleUIState: Accessor<BattleUIState>;

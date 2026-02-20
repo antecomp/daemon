@@ -1,0 +1,46 @@
+.battle-forsake {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: grid;
+    place-items: center;
+
+    div {
+        background: black;
+        padding: 15px;
+        width: 312px;
+        /* transform: perspective(0px); */
+        text-align: center;
+
+        opacity: 0;
+        animation: fade-in 1000ms linear forwards;
+        animation-delay: 1s;
+    }
+
+
+
+}
+
+.forsake-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: difference;
+
+    circle {
+        transform-origin: center;
+        rotate: 90deg;
+        stroke-dasharray: 1500;
+        stroke-dashoffset: 1500;
+        animation: strokein 2s forwards linear;
+    }
+}
+
+@keyframes strokein {
+    to {
+        stroke-dashoffset: 0;
+    }
+}

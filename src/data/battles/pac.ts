@@ -29,7 +29,7 @@ export const OPPONENT_PAC: OpponentProfile = {
     },
 
     logic: {
-        stats: { maxHealth: 30 },
+        stats: { maxHealth: 1 },
         ai: {
             getSequence() {
                 const attck = COMMON_PLANNED_MOVES.attack

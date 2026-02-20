@@ -35,7 +35,7 @@ export const OPPONENT_FOX: OpponentProfile = {
     },
 
     logic: {
-        stats: { maxHealth: 15 },
+        stats: { maxHealth: 1 },
         ai: {
             getSequence() {
                 return buildSequenceFromWeightMap(FOX_MOVEBANK, {
