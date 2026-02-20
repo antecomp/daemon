@@ -54,6 +54,7 @@ import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 import { OPPONENT_FOX } from "@/data/battles/fox.ts";
 import { OPPONENT_PAC } from "@/data/battles/pac.ts";
 import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
+import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial.tsx";
 
 export default function DevMenu() {
 
@@ -99,19 +100,7 @@ export default function DevMenu() {
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
             <button onClick={() => {
-                startNewBattle(OPPONENT_SERPENT, () => {
-                    spawnPopup(<p style='padding: 0px 10px'>DV AUTOMATION FAILURE. MANUAL ENGAGEMENT ACTIVATED. <br /> Launch tutorial?</p>,
-                        [{
-                            prompt: 'Yes',
-                            action: () => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6])
-                        },
-                        {
-                            prompt: 'No',
-                            action: () => { }
-                        }],
-                        "DAEMONVEIL"
-                    );
-                });
+                startNewBattle(OPPONENT_SERPENT, showBattleTutorial)
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
