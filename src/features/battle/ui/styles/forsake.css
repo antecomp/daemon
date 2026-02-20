@@ -24,6 +24,21 @@
         width: 305px;
     }
 
+    .forsake-bottom {
+        position: absolute;
+        bottom: 0;
+        transform: translateY(100%);
+        height: fit-content;
+        color: black;
+        display: flex;
+
+        & span {
+            background: white;
+            width: auto;
+            padding-left: 6px;
+        }
+    }
+
 }
 
 .forsake-svg {

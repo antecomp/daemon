@@ -12,7 +12,7 @@ import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
 import { mapSides, Sides } from "@/core/battle/utils/sides.utils";
 import { AssetURL } from "@/shared/types/misc.types";
 import { generateHint, getStatusIconsOfCombatant } from "./battleEngineBridge.util";
-import { BATTLE_END_SLEEP_TIME, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "../config/timings.config";
+import { BATTLE_END_SLEEP_TIME, FORSAKE_DELAY, MOVE_DELAY, MOVE_INIT_DELAY, PRE_ANIMATION_DELAY } from "../config/timings.config";
 import { OverlayAnimationRequester } from "../animation/overlayAnimations/overlayAnimations.types";
 import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile, PlayerProfile } from "./battleProfiles";
@@ -225,7 +225,7 @@ export function createUIBridgedBattleEngine(
 
             switch (evdata.outcome) {
                 case BattleOutcome.PlayerVictory:
-                    await sleep(1000);
+                    await sleep(FORSAKE_DELAY);
                     setBattleUIState(BattleUIState.FORSAKE);
                     await forsakePromise;
                     setBattleUIState(BattleUIState.END);

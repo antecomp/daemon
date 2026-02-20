@@ -39,7 +39,7 @@ const allBattles = Object.entries(BATTLE_IMPORTS)
     .filter((battle): battle is { key: string, label: string, profile: OpponentProfile } => battle !== null)
     .sort((a, b) => a.label.localeCompare(b.label));
 
-const [selectedBattleKey, setSelectedBattleKey] = createSignal(allBattles[0]?.key ?? '');
+const [selectedBattleKey, setSelectedBattleKey] = createSignal(allBattles[3]?.key ?? '');
 const selectedBattle = createMemo(() => {
     const key = selectedBattleKey();
     return allBattles.find((battle) => battle.key === key)?.profile ?? allBattles[0]?.profile;

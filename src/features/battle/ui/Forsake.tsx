@@ -2,6 +2,7 @@ import './styles/forsake.css'
 
 import left from '../assets/forsake_left.png'
 import right from '../assets/init_right.png'
+import forsake_br from '../assets/forsake-br.png'
 
 export default function Forsake(props: { forsake: (v: any) => void }) {
 
@@ -42,8 +43,12 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
             </svg>
             <div ref={divRef} class="battle-forsake">
                 <img src={left}/>
-                <span>DAEMONIC VIVIDITY CRITICAL. CLICK TO FORSAKE</span>
+                <span>DAEMONIC VIVIDITY CRITICAL.</span>
                 <img src={right}/>
+                <div class="forsake-bottom">
+                    <span>CLICK TO FORSAKE </span>
+                    <img src={forsake_br}/>
+                    </div>
             </div>
         </>
     )
