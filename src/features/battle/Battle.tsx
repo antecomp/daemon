@@ -28,6 +28,7 @@ export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
     onEnd: (outcome: BattleOutcome) => void;
+    skipOpeningAnimation?: boolean
 }) {
 
     const playerLexicon = extendLexicon(PLAYER_MOVE_LEXICON, props.playerProfile.display.lexicon);
@@ -47,7 +48,7 @@ export default function Battle(props: {
             lexicons: makeSidesMap(playerLexicon, opponentLexicon), profiles: {player: props.playerProfile, opponent: props.opponentProfile}
         }, 
         {
-            onEnd: props.onEnd, skipOpeningAnimation: false
+            onEnd: props.onEnd, skipOpeningAnimation: props.skipOpeningAnimation
         }
     );
 
