@@ -6,10 +6,10 @@ import slash_repeat from '@/assets/artwork/battle_overlay_animations/slash/slash
 import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_opp.webm'
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe.webm';
-import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack.webm';
+import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack-a.webm';
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
-import { OverlayAnimationTable, OverlayAnimData } from './overlayAnimations.types'
+import { OverlayAnimationTable } from './overlayAnimations.types'
 import { SuggestedString } from '@/shared/types/misc.types'
 
 /** Named overlay animations for battle that contain the `src` of the video, and a `width` and `height` for properly scaling the video element. */

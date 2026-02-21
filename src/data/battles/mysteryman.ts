@@ -60,6 +60,6 @@ export const OPPONENT_MYSTERYMAN: OpponentProfile = {
     },
     logic: {
         ai: { getSequence: () => buildSequenceFromWeightMap(MOVESET, { 'prepare': { 'attack': 3 } }) },
-        stats: { maxHealth: 3 }
+        stats: { maxHealth: 12 }
     }
 }
