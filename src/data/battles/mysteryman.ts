@@ -12,7 +12,7 @@ import pickRandom from "@/shared/utils/pickRandom";
 
 import death_sound from '@/assets/sfx/battle/yeouch.ogg';
 import animateAsync from "@/shared/utils/animateAsync";
-import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
+//import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const OPPONENT_PAIN_IMPORT = import.meta.glob<AssetURL>('@/assets/sfx/battle/yeah/*.ogg', {
     eager: true,

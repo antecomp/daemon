@@ -32,7 +32,7 @@ const ITEM_DV_MOD: Item = {
     actionShouldCloseViewer: false,
     action() {
 
-        const getPuzzleText = () => pickRandom(['GARDEN', 'DAEMON', 'ISLAND'])
+        const getPuzzleText = () => pickRandom(['GARDEN', 'DAEMON', 'ISLAND', 'SINNER'])
 
         const spawnFailPopup = () =>
             spawnPopup(
