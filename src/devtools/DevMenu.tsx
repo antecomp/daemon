@@ -55,6 +55,7 @@ import { OPPONENT_FOX } from "@/data/battles/fox.ts";
 import { OPPONENT_PAC } from "@/data/battles/pac.ts";
 import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
 import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial.tsx";
+import { OPPONENT_GHOST } from "@/data/battles/ghost.ts";
 
 export default function DevMenu() {
 
@@ -82,7 +83,7 @@ export default function DevMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX, OPPONENT_PAC, OPPONENT_MYSTERYMAN
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX, OPPONENT_PAC, OPPONENT_MYSTERYMAN, OPPONENT_GHOST
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
