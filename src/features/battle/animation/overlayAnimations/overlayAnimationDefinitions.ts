@@ -7,6 +7,7 @@ import shield from '@/assets/artwork/battle_overlay_animations/opponent/shield_o
 import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.webm'
 import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe.webm';
 import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack-a.webm';
+import overwhelm from '@/assets/artwork/battle_overlay_animations/player/overwhelm.webm'
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 import { OverlayAnimationTable } from './overlayAnimations.types'
@@ -67,6 +68,12 @@ export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
         src: opp_attack,
         width: 502,
         height: 524
+    },
+
+    'overwhelm': {
+        src: overwhelm,
+        width: 375,
+        height: 375
     }
 } satisfies OverlayAnimationTable
 

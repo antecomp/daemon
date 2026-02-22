@@ -3,6 +3,7 @@ import deflect_noise from '@/assets/sfx/battle/overwhelm.wav'
 import opp_attack_noise from '@/assets/sfx/battle/explosion.wav';
 import opponent_pain_sfx from "@/assets/sfx/battle/pain.wav";
 import player_pain_sfx from "@/assets/sfx/battle/player_pain.wav"
+import overwhelm_sfx from '@/assets/sfx/battle/overwhelma.wav';
 
 import animateAsync from "@/shared/utils/animateAsync";
 import { SimpleDramaEffect, DramaTable, PLACES } from "./drama.types";
@@ -20,8 +21,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         place: PLACES.CLASH_ONE,
         when: ({ moves, postCtx }) =>
             moves.opponent.name == 'defend'
-            && postCtx.player.ourMults.outgoing > 0
-            && moves.player.type !== MoveType.Overwhelming,
+            && postCtx.player.ourMults.outgoing > 0,
         run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
             await requestOverlayAnimation('shield');
             appendActionMessage(profiles.opponent.display.name + " endures your attack!");
@@ -169,6 +169,17 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             }
         }
     },
+
+    'player-overwhelm': {
+        place: PLACES.CLASH_ONE,
+        when: ({moves, postCtx}) => 
+            moves.player.name == 'overwhelm'
+            && postCtx.player.damageDealt > 0,
+        run: ({requestOverlayAnimation}) => {
+            playSound(overwhelm_sfx);
+            return requestOverlayAnimation('overwhelm');
+        }
+    }
 }
 
 const SHARED_DRAMAS: DramaTable = {
