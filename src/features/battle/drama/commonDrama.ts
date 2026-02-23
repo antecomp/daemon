@@ -125,14 +125,17 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             const preparedLevel = combatantHistory.MultipliersComputed.player.statuses['prepared']?.level ?? 0;
             const maniaLevel = combatantHistory.MultipliersComputed.player.statuses['mania']?.level ?? 0;
 
-            // TODO: Change how this works. Prep should take precedence over other anim types.
-            if (maniaLevel > 0) {
-                await requestOverlayAnimation('slash_elag');
-            } else if (moves.player.tags?.includes('repeated')) {
-                await requestOverlayAnimation('slash_repeat');
-            } else {
-                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'rip'] satisfies OverlayAnimationName[])[preparedLevel] ?? 'slash_majes');
-            }
+            const preparedAnimation = (['slash_norm', 'slash_purpose', 'rip'] satisfies OverlayAnimationName[])[preparedLevel] ?? 'slash_majes';
+            const slashAnimation =
+                preparedLevel > 0
+                    ? preparedAnimation
+                    : maniaLevel > 0
+                        ? 'slash_elag'
+                        : moves.player.tags?.includes('repeated')
+                            ? 'slash_repeat'
+                            : preparedAnimation;
+
+            await requestOverlayAnimation(slashAnimation);
 
             // ugh -- don't early run damage of opponent blocks. Looks better if we wait for their defense anim to finish.
             if (postCtx.opponent.ourMults.incoming < 1) return;

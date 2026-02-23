@@ -84,10 +84,20 @@ export interface OpponentProfile {
         backgroundShader: string;
         backgroundShaderTexture?: AssetURL;
 
-        // UI-Based Contextual Behaviors.
-        // TODO: DOCUMENT.
+        /**
+         * A UI-focused, contextual behavior that an opponent can perform.
+         * Behaviors can be gated by a predicate, run once, and operate on
+         * injected UI helpers.
+         *
+         * @property {string} key - Stable identifier for the behavior (used for tracking/execution).
+         * @property {(args: OpponentDisplayPredicateArgs) => boolean} [when] - Optional predicate to determine if the behavior should run.
+         * @property {(deps: OpponentDisplayBehaviorDeps) => void} run - Executes the behavior with provided dependencies.
+         * @property {boolean} [once] - If true, runs at most once across the battle.
+         */
         behaviors?: {
+            /** Executes once the round starts. */
             preRound?: OpponentDisplayBehavior[]
+            /** Executes once the round ends. */
             postRound?: OpponentDisplayBehavior[],
         }
 
@@ -99,7 +109,7 @@ export interface OpponentProfile {
         damageDrama?: SimpleDramaEffect
         /** Custom drama definiton for opponent death */
         deathDrama?: SimpleDramaEffect
-        // TODO: Do we also add a custom victory drama?
+        // Add custom victory drama if needed.
 
         /** Overrides/Additions to the overlay animations table */
         overlayAnimationsTable?: OverlayAnimationTable

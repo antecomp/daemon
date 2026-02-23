@@ -107,11 +107,12 @@ export function createUIBridgedBattleEngine(
     const baseDramaDeps: ReducedDramaDependancies = { ...deps, refRegistry, appendActionMessage };
 
     // Defined here to capture all the config stuff in this scope easily.
-    function makeDramaRunner(evdata: BattleEventPayload['MoveEnd']) {
+    function makeDramaRunner(evdata: BattleEventPayload['MoveEnd'], endOutcome: BattleOutcome | undefined) {
         const dramaData: DramaData = {
             ...data,
             ...deps,
-            ...evdata
+            ...evdata,
+            endOutcome
         };
 
         // this fills me with contempt.
@@ -205,7 +206,7 @@ export function createUIBridgedBattleEngine(
         },
 
         async MoveEnd(evdata) {
-            const placesRan = await makeDramaRunner(evdata)();
+            const placesRan = await makeDramaRunner(evdata, undefined)();
             refreshCombatantInfo(evdata.combatants);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE)
             // If no dramas ran, advance faster (usually this is on meaningless move pairings)
@@ -222,7 +223,7 @@ export function createUIBridgedBattleEngine(
         },
 
         async BattleEnd(evdata) {
-            await makeDramaRunner(evdata)();
+            await makeDramaRunner(evdata, evdata.outcome)();
             //setBattleUIState(BattleUIState.END);
             setDisplayMults(ZERO_MULTIPLIERS_BY_SIDE);
             refreshCombatantInfo(evdata.combatants);
@@ -244,7 +245,8 @@ export function createUIBridgedBattleEngine(
                     setBattleUIState(BattleUIState.END);
                     playSoundOnce(player_death_sound);
                     deps.startMeltAnimation?.(false, 20, 5);
-                    // Consider switching back to fading with code animation so we can await it
+                    // TODO: Proper flair indicating player loss. This may end up being the responsibility of startBattle rather than here.
+                    // Game over screen component?
                     break;
                 case BattleOutcome.Draw:
                     setBattleUIState(BattleUIState.END);
@@ -275,7 +277,6 @@ export function createUIBridgedBattleEngine(
                     // Consider switching back to fading with code animation so we can await it
                     break;
                 case BattleOutcome.Draw:
-                    // TODO: Do some sort of unique other animation or event in case of draw here.
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
             }

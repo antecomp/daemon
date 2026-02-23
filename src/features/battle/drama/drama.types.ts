@@ -7,6 +7,7 @@ import { OpponentProfile, PlayerProfile } from "../bridge/battleProfiles";
 import { MoveLexicon } from "../lexicon/moveLexicon";
 import { Sides } from "@/core/battle/utils/sides.utils";
 import { MeltAnimationFn } from "@/shared/hooks/createMeltEffect";
+import { BattleOutcome } from "@/core/battle/model/battle";
 
 /** Indicates the type of data that is handed to the drama to make decisions / branch responses */
 export type DramaData = BattleEventPayload['MoveEnd'] & {
@@ -15,7 +16,9 @@ export type DramaData = BattleEventPayload['MoveEnd'] & {
     profiles: {player: PlayerProfile, opponent: OpponentProfile}
     // compiled lexicon.
     lexicons: Sides<MoveLexicon>
-}; // TODO: Indicate Game End State? Diff Drama for death.
+    // Used to indicate battle end.
+    endOutcome: undefined | BattleOutcome
+};
 
 /** Obligated UI actions. These can be executed early, or will be automatically done at the end of the drama if no drama code runs them. */
 export type DramaObligations = {
