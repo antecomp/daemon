@@ -32,6 +32,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: filter 500ms ease-in;
+}
+
+.battle-sprite.forsaken {
+    filter: brightness(0.75);
 }
 
 .ink-overlay {

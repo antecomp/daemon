@@ -119,9 +119,9 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
     'player-slash': {
         place: PLACES.CLASH_ONE,
         // When we attack using repeat or candle, but not mirror.
-        when: ({ moves, plannedMoves }) =>
-            plannedMoves.player.name !== 'mirror'
-            && moves.player.name == 'attack',
+        when: ({ moves }) =>
+            moves.player.name == 'attack'
+            && !moves.player.tags?.includes('mirrored'),
         async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { moves, postCtx, combatantHistory }) {
             const [slashSoundReady, _] = playSound(slash_sfx);
             await slashSoundReady;
