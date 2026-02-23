@@ -17,7 +17,8 @@ import { OverlayAnimationRequester } from "../animation/overlayAnimations/overla
 import { MoveLexeme, MoveLexicon } from "../lexicon/moveLexicon";
 import { OpponentDisplayBehaviorDeps, OpponentDisplayPredicateArgs, OpponentProfile, PlayerProfile } from "./battleProfiles";
 
-import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav'
+import opponent_death_sound from '@/assets/sfx/battle/opponent_death.wav';
+import player_death_sound from '@/assets/sfx/battle/player_death.wav';
 import { Combatant } from "@/core/battle/model/combatant";
 import attachToConsole from "@/devtools/attachToConsole";
 import { MoveTags } from "@/core/battle/model/move.types";
@@ -241,7 +242,7 @@ export function createUIBridgedBattleEngine(
                     break;
                 case BattleOutcome.OpponentVictory:
                     setBattleUIState(BattleUIState.END);
-                    // TODO: Player death sound here.
+                    playSoundOnce(player_death_sound);
                     deps.startMeltAnimation?.(false, 20, 5);
                     // Consider switching back to fading with code animation so we can await it
                     break;
@@ -269,7 +270,7 @@ export function createUIBridgedBattleEngine(
                     await battleUIAnimations.fadeToBlackAndTransparent(refRegistry.opponentSprite);
                     break;
                 case BattleOutcome.OpponentVictory:
-                    // TODO: Player death sound here.
+                    playSoundOnce(player_death_sound);
                     deps.startMeltAnimation?.(false, 20, 5);
                     // Consider switching back to fading with code animation so we can await it
                     break;

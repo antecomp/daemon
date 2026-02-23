@@ -92,9 +92,18 @@ type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) =>
  * 
  * This is namely used by battleEngineBridge to update the UI, run animations, etc (blocking engine where necessary).
   */
-export type BattleReactions = Partial<{[K in BattleEvent]: BattleReaction<K>}>;
+export type BattleReactions = Partial<{ [K in BattleEvent]: BattleReaction<K> }>;
 
 /** Record of {@link CombatantSnapshot}s associating a snapshot of combatant state with battle event stages
- * TODO: Reduce the keys to just what is actually used.
  */
-export type CombatantHistory = Record<BattleEvent, Sides<CombatantSnapshot>>;
+export type CombatantHistory = Record<
+    Extract<BattleEvent,
+        'MoveStart'
+        | 'PreEffectResolved'
+        | 'MultipliersComputed'
+        | 'DamagesApplied'
+        | 'PostEffectResolved'
+        | 'MoveEnd'
+    >,
+    Sides<CombatantSnapshot>
+>;

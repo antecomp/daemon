@@ -23,7 +23,8 @@ export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNa
     )) return;
 
     const rbRunes = rr.runeBuilder.querySelectorAll('.rb-rune') as NodeListOf<SVGElement>;
-    // TODO: Might want to add a classname instead to make this more robust.
+
+    // FLAG: Careful with this if you change the layout!
     const rbActionButtons = rr.actionBarLeft.querySelectorAll('img');
 
     const fchBar = rr.actionBarRight.querySelector('.fch-bar') as HTMLElement | null;

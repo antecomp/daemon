@@ -157,6 +157,8 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Oppone
             // death.
             const outcome = outcomeCheck();
             if (outcome !== null) {
+                combatantHistory.DamagesApplied = mapSides(combatants, s => s.snapshot());
+                combatantHistory.MoveEnd = mapSides(combatants, s => s.snapshot());
                 await emitBattleEvent('BattleEnd', { outcome, combatants, postCtx, postEffectOutcomes: makeSidesMap(undefined, undefined), moves, plannedMoves, combatantHistory });
                 return;
             }

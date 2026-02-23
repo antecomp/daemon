@@ -28,33 +28,28 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         }
     },
 
-    'opp-evade': {
+    'opp-evade-success': {
         place: PLACES.CLASH_ONE,
-        when: ({ moves }) =>
-            moves.opponent.name == 'evade',
-        //&& postEffectOutcomes.opponent?.status == 'success',
-        run: async ({ refRegistry, appendActionMessage }, { profiles, postEffectOutcomes, postCtx }) => {
-            if (postEffectOutcomes.opponent?.status == 'success') {
-                appendActionMessage(profiles.opponent.display.name + " dodges swiftly! " + profiles.opponent.display.name + " feels invigorated!");
-                const oppSprite = refRegistry.opponentSprite;
-                if (!oppSprite) return;
-                // Could even animate it shifting to one direction here.
-                await animateAsync(oppSprite, [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }], { duration: 500 });
-            }
-
-            // This should only fire if it fails for RNG and we took damage
-            // failure due to overwhelm should have a differet reason.
-            if (
-                postEffectOutcomes.opponent?.reason == 'rng'
-                && postEffectOutcomes.opponent.status == 'failure'
-                && postCtx.opponent.damageTaken > 0
-            ) {
-                appendActionMessage(`${profiles.opponent.display.name} couldn't avoid your attack in time!`)
-            }
+        when: ({ moves, postEffectOutcomes }) =>
+            moves.opponent.name == 'evade'
+            && postEffectOutcomes.opponent?.status == 'success',
+        run: async ({ refRegistry, appendActionMessage }, { profiles }) => {
+            appendActionMessage(profiles.opponent.display.name + " dodges swiftly! " + profiles.opponent.display.name + " feels invigorated!");
+            const oppSprite = refRegistry.opponentSprite;
+            if (!oppSprite) return;
+            await animateAsync(oppSprite, [{ opacity: 1 }, { opacity: 0.5 }, { opacity: 1 }], { duration: 500 });
         }
     },
 
-    // TODO: Move evade fail to own slot that runs at CLASH_ONE + 1.
+    'opp-evade-fail': {
+        place: PLACES.CLASH_ONE + 1,
+        when: ({ moves, postEffectOutcomes, postCtx }) =>
+            moves.opponent.name == 'evade'
+            && postEffectOutcomes.opponent?.reason === 'rng'
+            && postEffectOutcomes.opponent.status == 'failure'
+            && postCtx.opponent.damageTaken > 0,
+        run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.opponent.display.name} couldn't avoid your attack in time!`)
+    },
 
     'opp-mirror': {
         place: PLACES.CLASH_ONE,
@@ -100,14 +95,15 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
 
     'opp-heal': {
         place: PLACES.POST_CLASH - 1,
-        when: ({ moves, postEffectOutcomes, combatantHistory }) =>
-            moves.opponent.name == 'heal'
-            && postEffectOutcomes.opponent?.status == 'success'
+        when: ({ combatantHistory, combatants }) =>
+            //moves.opponent.name == 'heal'
+            //&& postEffectOutcomes.opponent?.status == 'success'
+            !combatants.opponent.isDead
             && combatantHistory.MoveEnd.opponent.health > combatantHistory.DamagesApplied.opponent.health,
-        run: ({refRegistry}) => {
+        run: ({ refRegistry }) => {
             const sprite = refRegistry.opponentSprite;
             if (!sprite) return;
-            return animateAsync(sprite, [{filter: 'none'},{filter: 'contrast(0.5) brightness(2.5)'}, {filter: 'none'}], {
+            return animateAsync(sprite, [{ filter: 'none' }, { filter: 'contrast(0.5) brightness(2.5)' }, { filter: 'none' }], {
                 'iterations': 2,
                 'duration': 600
             })
@@ -130,7 +126,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             const maniaLevel = combatantHistory.MultipliersComputed.player.statuses['mania']?.level ?? 0;
 
             // TODO: Change how this works. Prep should take precedence over other anim types.
-            if (maniaLevel> 0) {
+            if (maniaLevel > 0) {
                 await requestOverlayAnimation('slash_elag');
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
@@ -164,34 +160,31 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.player.display.name} braves the hit!`)
     },
 
-    'player-evade': {
+    'player-evade-success': {
         place: PLACES.CLASH_TWO + 1,
-        when: ({ moves }) =>
-            moves.player.name == 'evade',
-        //&& postEffectOutcomes.opponent?.status == 'success',
-        run: async ({ appendActionMessage }, { profiles, postEffectOutcomes, postCtx }) => {
-            if (postEffectOutcomes.player?.status == 'success') {
-                appendActionMessage(profiles.player.display.name + " dodges swiftly! " + profiles.player.display.name + " feels invigorated!", 'mania');
-            }
+        when: ({ moves, postEffectOutcomes }) =>
+            moves.player.name == 'evade'
+            && postEffectOutcomes.player?.status == 'success',
+        run: async ({ appendActionMessage }, { profiles }) =>
+            appendActionMessage(profiles.player.display.name + " dodges swiftly! " + profiles.player.display.name + " feels invigorated!", 'mania')
+    },
 
-            // This should only fire if it fails for RNG and we took damage
-            // failure due to overwhelm should have a differet reason.
-            if (
-                postEffectOutcomes.player?.reason == 'rng'
-                && postEffectOutcomes.player.status == 'failure'
-                && postCtx.player.damageTaken > 0
-            ) {
-                appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
-            }
-        }
+    'player-evade-fail': {
+        place: PLACES.CLASH_TWO + 1,
+        when: ({moves, postEffectOutcomes, postCtx}) =>
+            moves.player.name == 'evade'
+            && postEffectOutcomes.player?.reason == 'rng'
+            && postEffectOutcomes.player.status == 'failure'
+            && postCtx.player.damageTaken > 0,
+        run: ({appendActionMessage}, {profiles}) => appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
     },
 
     'player-overwhelm': {
         place: PLACES.CLASH_ONE,
-        when: ({moves, postCtx}) => 
+        when: ({ moves, postCtx }) =>
             moves.player.name == 'overwhelm'
             && postCtx.player.damageDealt > 0,
-        run: ({requestOverlayAnimation}) => {
+        run: ({ requestOverlayAnimation }) => {
             playSound(overwhelm_sfx);
             return requestOverlayAnimation('overwhelm');
         }
