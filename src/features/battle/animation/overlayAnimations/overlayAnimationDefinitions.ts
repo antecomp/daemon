@@ -8,6 +8,8 @@ import mirror from '@/assets/artwork/battle_overlay_animations/opponent/mirror.w
 import observe from '@/assets/artwork/battle_overlay_animations/opponent/observe.webm';
 import opp_attack from '@/assets/artwork/battle_overlay_animations/opponent/opp-attack-a.webm';
 import overwhelm from '@/assets/artwork/battle_overlay_animations/player/overwhelm.webm'
+import rip from '@/assets/artwork/battle_overlay_animations/player/rip.webm'
+import bite from '@/assets/artwork/battle_overlay_animations/opponent/bitef.webm'
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 import { OverlayAnimationTable } from './overlayAnimations.types'
@@ -74,6 +76,18 @@ export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
         src: overwhelm,
         width: 375,
         height: 375
+    },
+
+    'rip': {
+        src: rip,
+        width: 500,
+        height: 500
+    },
+
+    'bite': {
+        src: bite,
+        width: 500,
+        height: 475
     }
 } satisfies OverlayAnimationTable
 

@@ -22,9 +22,9 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, postCtx }) =>
             moves.opponent.name == 'defend'
             && postCtx.player.ourMults.outgoing > 0,
-        run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles }) => {
+        run: async ({ requestOverlayAnimation, appendActionMessage }, { profiles, moves }) => {
             await requestOverlayAnimation('shield');
-            appendActionMessage(profiles.opponent.display.name + " endures your attack!");
+            if (moves.player.type !== MoveType.Overwhelming) appendActionMessage(profiles.opponent.display.name + " endures your attack!");
         }
     },
 
@@ -96,6 +96,22 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             fufillDramaObligation.playerDamage();
         },
         preDelay: 300
+    },
+
+    'opp-heal': {
+        place: PLACES.POST_CLASH - 1,
+        when: ({ moves, postEffectOutcomes, combatantHistory }) =>
+            moves.opponent.name == 'heal'
+            && postEffectOutcomes.opponent?.status == 'success'
+            && combatantHistory.MoveEnd.opponent.health > combatantHistory.DamagesApplied.opponent.health,
+        run: ({refRegistry}) => {
+            const sprite = refRegistry.opponentSprite;
+            if (!sprite) return;
+            return animateAsync(sprite, [{filter: 'none'},{filter: 'contrast(0.5) brightness(2.5)'}, {filter: 'none'}], {
+                'iterations': 2,
+                'duration': 600
+            })
+        }
     }
 }
 
@@ -119,7 +135,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             } else if (moves.player.tags?.includes('repeated')) {
                 await requestOverlayAnimation('slash_repeat');
             } else {
-                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'slash_majes'] satisfies OverlayAnimationName[])[preparedLevel] ?? 'slash_majes');
+                await requestOverlayAnimation((['slash_norm', 'slash_purpose', 'rip'] satisfies OverlayAnimationName[])[preparedLevel] ?? 'slash_majes');
             }
 
             // ugh -- don't early run damage of opponent blocks. Looks better if we wait for their defense anim to finish.

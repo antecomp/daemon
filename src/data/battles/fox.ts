@@ -7,6 +7,7 @@ import icon from '@/assets/artwork/dæmons/fox_icon.png';
 import backgroundShader from '@/assets/background-shaders/disgrid.glsl'
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
 import { PLACES } from "@/features/battle/drama/drama.types";
+import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const FOX_MOVEBANK = {
     ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
@@ -31,6 +32,10 @@ export const OPPONENT_FOX: OpponentProfile = {
                 when: ({plannedMoves}) => plannedMoves.opponent.name == 'idle',
                 run: ({appendActionMessage}) => appendActionMessage("The Rogue Zenko growls loudly!")
             }
+        },
+        overlayAnimationsTable: {
+            // replace attack animation
+            'opp-attack': COMMON_OVERLAY_ANIMATION_DEFINITIONS.bite
         }
     },
 
