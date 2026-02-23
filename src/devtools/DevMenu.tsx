@@ -37,13 +37,6 @@ import tut2 from '@/assets/placeholders/tut_2.png'
 import tut3 from '@/assets/placeholders/tut_3.png'
 import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
 
-import bt1 from '@/assets/placeholders/battletut/tut1.png'
-import bt2 from '@/assets/placeholders/battletut/tut2.png'
-import bt3 from '@/assets/placeholders/battletut/tut3.png'
-import bt4 from '@/assets/placeholders/battletut/tut4.png'
-import bt5 from '@/assets/placeholders/battletut/tut5.png'
-import bt6 from '@/assets/placeholders/battletut/tut6.png'
-import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";

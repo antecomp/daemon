@@ -22,7 +22,6 @@ import Clouds from "@/shared/components/Clouds/Clouds";
 import windsfx from './assets/wind3.wav';
 import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { UniformsLib } from "three";
-import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 
 export default function Bridge() {

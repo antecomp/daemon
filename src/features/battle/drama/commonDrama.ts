@@ -122,7 +122,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves, plannedMoves }) =>
             plannedMoves.player.name !== 'mirror'
             && moves.player.name == 'attack',
-        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { combatants, moves, postCtx, combatantHistory }) {
+        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { moves, postCtx, combatantHistory }) {
             const [slashSoundReady, _] = playSound(slash_sfx);
             await slashSoundReady;
 

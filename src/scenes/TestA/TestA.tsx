@@ -23,7 +23,7 @@ import AtTile from "@/3d/tilenav/AtTile";
 import attachToConsole from "@/devtools/attachToConsole";
 
 export default function TestA() {
-    const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef);
 

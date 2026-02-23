@@ -22,8 +22,6 @@ import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
-import { DialogueService } from "@/core/dialogue/dialogueService";
-import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';
 
 import fox_voiceclip from '@/assets/sfx/misc/inordertopass.ogg';
