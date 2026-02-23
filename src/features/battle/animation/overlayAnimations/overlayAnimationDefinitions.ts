@@ -86,6 +86,7 @@ export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
 
     'bite': {
         src: bite,
+        blendMode: 'lighten',
         width: 500,
         height: 475
     }

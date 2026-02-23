@@ -6,6 +6,7 @@ import pick from "@/shared/utils/pick";
 import { attack } from "@/core/battle/moves/moves";
 import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const SERPENT_PLANBANK = {
     ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe']),
@@ -24,6 +25,9 @@ export const OPPONENT_SERPENT: OpponentProfile = {
         sprite: pan_sprite,
         spriteOffset: { x: 0, y: -25 },
         backgroundShader: vortexShader,
+        overlayAnimationsTable: {
+            'opp-attack': COMMON_OVERLAY_ANIMATION_DEFINITIONS.bite
+        }
     },
     logic: {
         ai: {
