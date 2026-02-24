@@ -191,6 +191,17 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
             playSound(overwhelm_sfx);
             return requestOverlayAnimation('overwhelm');
         }
+    },
+
+    'player-mirror': {
+        place: PLACES.CLASH_TWO,
+        when: ({moves, postCtx}) =>
+            moves.player.tags?.includes('mirrored')
+            && postCtx.player.damageDealt > 0,
+        run: async ({requestOverlayAnimation}) => {
+            sleep(1050).then(() => playSound(deflect_noise));
+            await requestOverlayAnimation('player-mirror');
+        }
     }
 }
 
