@@ -3,19 +3,22 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { onCleanup } from "solid-js";
 
 const context = new AudioContext();
-const cache = new Map<string, AudioBuffer>();
+const cache = new Map<AssetURL, AudioBuffer>();
 
 /**
  * Loads and decodes an audio asset, memoizing the decoded buffer by source URL.
  */
 async function loadBuffer(src: AssetURL): Promise<AudioBuffer> {
   if (cache.has(src)) return cache.get(src)!;
-
-  const response = await fetch(src);
-  const arrayBuffer = await response.arrayBuffer();
-  const audioBuffer = await context.decodeAudioData(arrayBuffer);
-  cache.set(src, audioBuffer);
-  return audioBuffer;
+  try {
+    const response = await fetch(src);
+    const arrayBuffer = await response.arrayBuffer();
+    const audioBuffer = await context.decodeAudioData(arrayBuffer);
+    cache.set(src, audioBuffer);
+    return audioBuffer;
+  } catch (err) {
+    throw err;
+  }
 }
 
 export async function preloadSound(src: AssetURL) {
@@ -63,8 +66,13 @@ export function playSound(
   return [ready, ended];
 }
 
-/** TODO: DOCUMENT */
-export function useSound(preload: string[] = []) {
+/**
+ * Creates scoped audio helpers with optional eager preloading.
+ *
+ * Any sound loaded or played through this hook is tracked and removed from the
+ * shared decode cache when the current Solid owner is cleaned up.
+ */
+export function useSound(preload: AssetURL[] = []) {
   const loadedSrcs = new Set<string>();
 
   function load(src: string) {
@@ -80,7 +88,7 @@ export function useSound(preload: string[] = []) {
   // Kick off preloads immediately on mount, errors are intentionally swallowed
   // since these are best-effort — playSound will retry if a preload failed
   for (const src of preload) {
-    load(src).catch(() => {});
+    load(src).catch(() => { });
   }
 
   onCleanup(() => {
