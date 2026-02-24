@@ -1,12 +1,15 @@
 import err_icon from '@/features/battle/tutorial/assets/err.png'
 
-// TODO: Update and replace these:
-import bt1 from '@/assets/placeholders/battletut/tut1.png'
-import bt2 from '@/assets/placeholders/battletut/tut2.png'
-import bt3 from '@/assets/placeholders/battletut/tut3.png'
-import bt4 from '@/assets/placeholders/battletut/tut4.png'
-import bt5 from '@/assets/placeholders/battletut/tut5.png'
-import bt6 from '@/assets/placeholders/battletut/tut6.png'
+
+
+import bt1 from './assets/bt1.png';
+import bt2 from './assets/bt2.png';
+import bt3 from './assets/bt3.png';
+import bt4 from './assets/bt4.png';
+import bt5 from './assets/bt5.png';
+import bt6 from './assets/bt6.png';
+import bt7 from './assets/bt7.png';
+
 import spawnPopup from '@/app/shell/popup/Popup'
 import { createTutorialOverlay } from '@/shared/ui/extras/TutorialOverlay'
 
@@ -43,7 +46,7 @@ export default function showBattleTutorial() {
         },
         {
             prompt: 'Yes',
-            action() { createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]) }
+            action() { createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6, bt7]) }
         },
     ],
         'DAEMONVEIL'

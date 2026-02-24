@@ -118,7 +118,7 @@ export const COMMON_MOVE_LEXICON: MoveLexicon = {
         label: 'observe',
         icon: BATTLE_RUNE_IMGS.lantern,
         largeIcon: BATTLE_RUNE_IMGS.lantern_ex,
-        description: 'Makes target vulnerable.'
+        description: 'Looks for a weak spot. A followup attack will do extra damage.'
     }
 }
 
