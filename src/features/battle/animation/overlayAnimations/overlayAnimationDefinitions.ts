@@ -11,6 +11,8 @@ import overwhelm from '@/assets/artwork/battle_overlay_animations/player/overwhe
 import rip from '@/assets/artwork/battle_overlay_animations/player/rip.webm'
 import bite from '@/assets/artwork/battle_overlay_animations/opponent/bitef.webm'
 import player_mirror from '@/assets/artwork/battle_overlay_animations/player/mirror.webm'
+import claw_a from '@/assets/artwork/battle_overlay_animations/opponent/clawa.webm';
+import claw_b from '@/assets/artwork/battle_overlay_animations/opponent/clawb.webm';
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 import { OverlayAnimationTable } from './overlayAnimations.types'
@@ -96,7 +98,23 @@ export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
         src: player_mirror,
         width: 570,
         height: 570
+    },
+
+    'claw-a': {
+        src: claw_a,
+        width: 411,
+        height: 442,
+        blendMode: 'unset'
+    },
+
+    'claw-b': {
+        src: claw_b,
+        width: 404,
+        height: 445,
+        blendMode: 'unset'
     }
+
+
 } satisfies OverlayAnimationTable
 
 /** Helper type to constrain calls to requestOverlayAnimation to animation names known to exist. */
