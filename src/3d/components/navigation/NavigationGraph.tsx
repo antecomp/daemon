@@ -2,7 +2,6 @@ import { createSignal, For, Show } from "solid-js";
 import NavigationPlane, { NavigationPlaneData } from "./NavigationPlane";
 import { CameraController } from "@/3d/camera/camera.types";
 
-/** TODO DOCUMENT */
 interface NavigationNode extends Omit<NavigationPlaneData, "cameraController"> {
     connected: string[]
 }

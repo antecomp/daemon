@@ -17,8 +17,7 @@ interface PopupProps {
     actions?: {
         prompt: string,
         dontClose?: boolean,
-        // TODO: Make optional.
-        action: () => void;
+        action?: () => void;
     }[]
 }
 
@@ -44,7 +43,7 @@ const Popup: ParentComponent<PopupProps> = (props) => {
                     <Switch fallback={<p class='button' onClick={props.closeSelf}><span>OK</span></p>}>
                         <Match when={props.actions && props.actions.length > 0}>
                             <For each={props.actions}>
-                                {action => <p class="button" onClick={() => {action.action(); action.dontClose || props.closeSelf()}}>
+                                {action => <p class="button" onClick={() => {action.action?.(); action.dontClose || props.closeSelf()}}>
                                     <span>{action.prompt}</span>
                                 </p>}
                             </For>
@@ -72,7 +71,7 @@ const Popup: ParentComponent<PopupProps> = (props) => {
  * The popup is stacked visually when multiple are open, and only the topmost can be interacted with.
  * Closing a popup decrements the stack count.
  */
-export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string, lock: UILayer['lock'] = 'scene') {
+export default function createPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string, lock: UILayer['lock'] = 'scene') {
     const id = nanoid();
     const stackOffset = activePopupCount * 12;
     let closed = false;
@@ -98,6 +97,4 @@ export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['ac
     activePopupCount += 1;
 }
 
-attachToConsole(() => spawnPopup("Test Popup"), "DG_TEST_POPUP");
-
-// TODO: Change the name of this to createPopup()?
+attachToConsole(() => createPopup("Test Popup"), "DG_TEST_POPUP");

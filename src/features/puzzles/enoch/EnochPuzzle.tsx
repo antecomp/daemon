@@ -9,7 +9,7 @@ import atb_f from './assets/atb_filled.png'
 import atb_label from './assets/atb_label.png';
 import tutorial_button from './assets/tut_button.png';
 import tutorial_dia from './assets/tut_dia.png';
-import spawnPopup from "@/app/shell/popup/Popup";
+import createPopup from "@/app/shell/popup/Popup";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const MOD = ALPHABET.length
@@ -83,7 +83,7 @@ function isColumnCorrect(column: ColumnState): boolean {
 }
 
 const spawnHelp = () =>
-  spawnPopup(
+  createPopup(
     <div
       class="enoch-tutorial-content"
     >

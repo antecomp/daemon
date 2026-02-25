@@ -59,7 +59,6 @@ export default function NavTilePreviewer(props: {
                 const hasTile = () => !!tile();
                 const edges = () => tile()?.edges ?? 0;
 
-                // TODO: Change this to use instance geometry later. Much more performant.
                 return (
                     <>
                         <lume-plane

@@ -10,7 +10,7 @@ import bt5 from './assets/bt5.png';
 import bt6 from './assets/bt6.png';
 import bt7 from './assets/bt7.png';
 
-import spawnPopup from '@/app/shell/popup/Popup'
+import createPopup from '@/app/shell/popup/Popup'
 import { createTutorialOverlay } from '@/shared/ui/extras/TutorialOverlay'
 
 const TUTORIAL_POPUP_CONTENT =
@@ -39,7 +39,7 @@ const TUTORIAL_POPUP_CONTENT =
     </>;
 
 export default function showBattleTutorial() {
-    spawnPopup(TUTORIAL_POPUP_CONTENT, [
+    createPopup(TUTORIAL_POPUP_CONTENT, [
         {
             prompt: 'No',
             action: () => { }

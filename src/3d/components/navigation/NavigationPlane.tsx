@@ -6,7 +6,10 @@ import { Vector3 } from "three";
 import { onMount } from "solid-js"
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 
-/** TODO DOCUMENT */
+/**
+ * Configuration for a navigation interaction plane.
+ * Defines camera movement/orientation updates and plane placement/render options.
+ */
 export interface NavigationPlaneData {
     cameraController: CameraController,
     newPos?: XYZ

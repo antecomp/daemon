@@ -1,6 +1,6 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
-import spawnPopup from "@/app/shell/popup/Popup";
+import createPopup from "@/app/shell/popup/Popup";
 import { Item } from "@/core/inventory/Items";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
@@ -35,7 +35,7 @@ const ITEM_DV_MOD: Item = {
         const getPuzzleText = () => pickRandom(['GARDEN', 'DAEMON', 'ISLAND', 'SINNER'])
 
         const spawnFailPopup = () =>
-            spawnPopup(
+            createPopup(
                 (<div style={POPUP_STYLE}>
                     <img src={alert_icon} />
                     <p>Decryption Failed, passkey may have changed. Try again?</p>
@@ -53,7 +53,7 @@ const ITEM_DV_MOD: Item = {
             );
 
         const spawnSuccessPopup = () =>
-            spawnPopup((<div style={POPUP_STYLE}>
+            createPopup((<div style={POPUP_STYLE}>
                 <img src={alert_icon} />
                 <p>Decryption Success. Cache contains one executable.</p>
             </div>),
@@ -61,7 +61,7 @@ const ITEM_DV_MOD: Item = {
                     prompt: 'Run',
                     action() {
                         popUILayer(PUZZLE_ID);
-                        playTextOverlay(decrypt_textscene).finally(() => spawnPopup((
+                        playTextOverlay(decrypt_textscene).finally(() => createPopup((
                             <div
                                 style={{
                                     'padding': '20px',
@@ -92,7 +92,7 @@ const ITEM_DV_MOD: Item = {
                 />
             });
 
-        spawnPopup(
+        createPopup(
             (<div style={POPUP_STYLE}>
                 <img src={alert_icon} />
                 <p>Unable to read or execute cache. Data is encrypted. Attempt to decrypt?</p>

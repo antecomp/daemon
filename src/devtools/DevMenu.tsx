@@ -42,7 +42,7 @@ import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
-import spawnPopup from "@/app/shell/popup/Popup";
+import createPopup from "@/app/shell/popup/Popup";
 import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 import { OPPONENT_FOX } from "@/data/battles/fox.ts";
 import { OPPONENT_PAC } from "@/data/battles/pac.ts";
@@ -110,8 +110,8 @@ export default function DevMenu() {
                 />
             })}>Test Puzzle</button>
             <button onClick={() => playTextOverlay(dec_textscene)}>Dec TextScene</button>
-            <button onclick={() => spawnPopup("HELLO", undefined, "JDSF")}>Popup</button>
-            <button onclick={() => spawnPopup("Test", [
+            <button onclick={() => createPopup("HELLO", undefined, "JDSF")}>Popup</button>
+            <button onclick={() => createPopup("Test", [
                 { prompt: 'NC', action() { alert('action no close') }, dontClose: true },
                 { prompt: 'CL', action() { alert('action, close') } }
             ])}>Popup 2</button>
