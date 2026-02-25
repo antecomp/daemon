@@ -6,6 +6,13 @@ import pick from '@/shared/utils/pick';
 import { attack } from '@/core/battle/moves/moves';
 import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import { buildSequenceFromWeightMap } from '@/core/battle/ai/weightedSequenceAI';
+import { DramaEntry } from '@/features/battle/drama/drama.types';
+import COMMON_DRAMA_TABLE from '@/features/battle/drama/commonDrama';
+import sleep from '@/shared/utils/sleep';
+
+import claw_sound_a from '@/assets/sfx/battle/claw.wav';
+import claw_sound_b from '@/assets/sfx/battle/claw2.wav'
+import { playSound } from '@/core/audio/audio';
 
 // Test - heal without requiring focus. Verifying custom move definitions work.
 // const roostMove: Move = {
@@ -20,6 +27,18 @@ const CROW_PLANBANK = {
     ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm', 'heal']),
     attack1: planMove(attack), attack2: planMove(attack), 
     //roost: planMove(roostMove)
+}
+
+const CLAW_DRAMA: DramaEntry = {
+    ...COMMON_DRAMA_TABLE['opp-attack'],
+    run: async ({requestOverlayAnimation, fufillDramaObligation}) => {
+        playSound(claw_sound_a);
+        requestOverlayAnimation('claw-a', [-280, -100]);
+        await sleep(380);
+        playSound(claw_sound_b);
+        await requestOverlayAnimation('claw-b', [280, 80]);
+        fufillDramaObligation.playerDamage();
+    }
 }
 
 export const OPPONENT_CROW: OpponentProfile = {
@@ -37,6 +56,9 @@ export const OPPONENT_CROW: OpponentProfile = {
                 //icon: BATTLE_RUNE_IMGS.priestess
             }
         },
+        dramas: {
+            'opp-attack': CLAW_DRAMA
+        }
     },
     logic: {
         stats: {maxHealth: 10},

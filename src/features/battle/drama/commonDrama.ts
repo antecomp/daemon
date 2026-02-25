@@ -78,14 +78,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-attack': {
         place: PLACES.CLASH_TWO,
         when: ({ moves }) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
-        run: async ({ requestOverlayAnimation, fufillDramaObligation }, { moves }) => {
-            // Add a delay to give a feeling of retaliation here.
-            if (
-                moves.player.type == MoveType.Aggressive &&
-                !moves.player.tags?.includes('mirrored')
-            ) {
-                await sleep(500);
-            }
+        run: async ({ requestOverlayAnimation, fufillDramaObligation }) => {
             await playSound(opp_attack_noise)[0];
             await requestOverlayAnimation('opp-attack');
             fufillDramaObligation.playerDamage();
