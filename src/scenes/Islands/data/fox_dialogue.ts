@@ -1,38 +1,34 @@
-import { BattleOutcome } from "@/core/battle/model/battle";
 import { createDialogueBuilder } from "@/core/dialogue/dialogueBuilder";
-import { EMPTY_RENDER } from "@/core/dialogue/dialogueNode";
-import { OPPONENT_FOX } from "@/data/battles/fox";
-import { startBattle } from "@/features/battle/startBattle";
-import sleep from "@/shared/utils/sleep";
+import { VISUALIZER } from "@/core/dialogue/dialogueNode";
 
-// just some bullshit placeholder text rn.
+const FOX = "A Rogue Zenko";
 
-const UNKNOWN = "???";
-const FOX = "The Zenko";
+const doyouthink = createDialogueBuilder("Do you think that now, just because you can see me that you're strong?", FOX);
+doyouthink
+    .chain(
+        "That you're welcome here?",
+        "I will let you leave this place, but the others will not show the same mercy.",
+        "The woman I found in the sunlit rain won't let me eat you.",
+        "But the others... the others are proper daemons.",
+        "They only wish to grow.",
+        "I have grown enough. And I don't want to see anyone else devoured.",
+        "Especially not in the name of that horrid scarecrow."
+    )
+    .car(
+        ['Let me through.', 'I did not come this far just to turn around.'], 
+        "I was afraid you'd say that. You strays are always so incredibly arrogant."
+    )
+    .then(
+        "Very well, prove yourself now, while you still won't loose your head over it."
+    )
+    .addOption(["[FIGHT]", ''], undefined, undefined, {sideEffect(ctx){ctx?.actions?.foxBattle?.()}})
 
-const root = createDialogueBuilder("Hello Arda.", UNKNOWN);
 
+
+const root = createDialogueBuilder("Hello, Arda. I'm afraid I must stop you here.", FOX);
 root
-    .makeNodeWaitFor(() => sleep(500))
-    .chain("I'm afaid I must stop you here.")
-    .questionLoop(
-        // Should never see the exhaustion one.
-        EMPTY_RENDER, EMPTY_RENDER, 'Let me through', [
-        {
-            id: "you",
-            option: "What are you?",
-            answer: "I am what you people call a Zenko.",
-            builder: r => r.t("Some yapping...", FOX)
-        },
-        {
-            id: "name",
-            option: "How did you know my name?",
-            answer: "idk."
-        }
-    ])
-    .then("I shall only let you through if you can prove your strength!")
-    .addOption(["[FIGHT!]", ""], undefined, undefined, 
-        {'sideEffect': ctx => startBattle(OPPONENT_FOX).then(outcome => (outcome === BattleOutcome.PlayerVictory) && ctx?.actions?.removeFox())}
-    );
+    .then('I suppress thousands of errors spewing from my VI-LINK, and struggle to keep my composure.', VISUALIZER)
+    .addCar('How do you know my name?', ["Just because you are blind to something doesn't mean it also cannot see you.", FOX], r => r.then(doyouthink.unwrap()))
+    .addCar(['Why', 'And why is that?'], doyouthink.unwrap());
 
 export default root.unwrap();

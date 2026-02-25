@@ -24,10 +24,11 @@ import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
 //import test_girl_sprite from '../Test/assets/girl2.png';
 
-import fox_voiceclip from '@/assets/sfx/misc/inordertopass.ogg';
-import { playSoundOnce } from "@/shared/utils/playSound";
 import { OPPONENT_FOX } from "@/data/battles/fox";
 import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial";
+import { DialogueService } from "@/core/dialogue/dialogueService";
+
+import fox_dialogue_root from "./data/fox_dialogue";
 
 export default function Islands() {
   let islands_ref!: GltfModel;
@@ -40,8 +41,6 @@ export default function Islands() {
 
   const [defeatedCrow, setDefeatedCrow] = createSignal(false);
   const [defeatedFox, setDefeatedFox] = createSignal(false);
-
-  let foxBattleTransitionStarted = false;
 
   return (
     <>
@@ -93,14 +92,13 @@ export default function Islands() {
               interactions={[
                 () => addLogMessage("As you reach out, the fox snarls loudly."),
                 () => {
-                  if(foxBattleTransitionStarted) return;
-                  foxBattleTransitionStarted = true;
-                  playSoundOnce(fox_voiceclip).then(_ => startBattle(OPPONENT_FOX, showBattleTutorial)).then(outcome => {
-                    foxBattleTransitionStarted = false;
-                    if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
-                  });
+                  DialogueService.startDialogue(fox_dialogue_root, {ctx: {actions: {foxBattle() {
+                    startBattle(OPPONENT_FOX, showBattleTutorial).then(outcome => {
+                      if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
+                    })
+                  }}}}) // {{{{{{{{{{{{{{{{{pain}}}}}}}}}}}}}}}}}
                 },
-                () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensly.")
+                () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
               ]}
             />
           </AtTile>
