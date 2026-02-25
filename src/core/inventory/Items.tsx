@@ -1,14 +1,10 @@
 import ITEM_DV_MOD from "@/data/items/ITEM_DV_MOD";
 import ITEM_EXAMPLE from "@/data/items/ITEM_EXAMPLE";
 import { Component } from "solid-js"
-import default_item_icon from '@/assets/ui/icons/items/default_icon.png';
 import { AssetURL } from "@/shared/types/misc.types";
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import decrypt_textscene from "@/scenes/TheGem/data/decrypt_textscene";
-
-export const ITEM_ICONS = {
-    'default': default_item_icon,
-} as const satisfies Record<string, AssetURL>
+import { ITEM_ICONS } from "./itemIcons";
 
 export type ItemCategory = "data" | "caches" | "misc"
 

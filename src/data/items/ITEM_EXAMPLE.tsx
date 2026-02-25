@@ -1,5 +1,6 @@
-import { Item, ITEM_ICONS } from "@/core/inventory/Items";
+import { Item } from "@/core/inventory/Items";
 import ksngr from '@/assets/artwork/dæmons/kissinger.png';
+import { ITEM_ICONS } from "@/core/inventory/itemIcons";
 
 const ITEM_EXAMPLE: Item = {
     category: 'misc',

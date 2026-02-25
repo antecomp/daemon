@@ -1,7 +1,7 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import createPopup from "@/app/shell/popup/Popup";
-import { Item, ITEM_ICONS } from "@/core/inventory/Items";
+import type { Item } from "@/core/inventory/Items";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
 import pickRandom from "@/shared/utils/pickRandom";
@@ -12,6 +12,7 @@ import decrypt_textscene from '@/scenes/TheGem/data/decrypt_textscene.ts'
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import controls_dia from '@/assets/misc/controls dia.png';
 import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
+import { ITEM_ICONS } from "@/core/inventory/itemIcons";
 
 const PUZZLE_ID = 'dv-mod-puzzle';
 
