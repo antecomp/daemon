@@ -152,7 +152,7 @@ export default function createTileNavigator(
     const [currentTile, setCurrentTile] = createSignal<NavCoord>(navMap.config.spawn);
 
     const [occupiedTiles, setOccupiedTiles] = createSignal<NavCoord[]>([]);
-    
+
     // Returns the release function.
     function occupyTile(coord: NavCoord) {
         setOccupiedTiles(prev => [...prev, coord]);
@@ -299,6 +299,7 @@ export default function createTileNavigator(
         switch (action) {
             case NavAction.TurnLeft:
                 {
+                    if (sceneLock.isLocked()) break;
                     const nextDirection = ((currentDirection() + 1) & 3) as Direction;
                     setCurrentDirection(nextDirection);
                     setCurrentYaw(yaw => yaw + 90);
@@ -308,6 +309,7 @@ export default function createTileNavigator(
 
             case NavAction.TurnRight:
                 {
+                    if (sceneLock.isLocked()) break;
                     const nextDirection = ((currentDirection() + 3) & 3) as Direction;
                     setCurrentDirection(nextDirection);
                     setCurrentYaw(yaw => yaw - 90);
