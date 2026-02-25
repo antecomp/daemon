@@ -84,6 +84,7 @@ export default function Islands() {
             pos='-6,-10'
             nm={navController.navMap}
             nc={navController}
+            onWalkInto={() => addLogMessage('The fox is blocking your path.')}
           >
             <Billboard
               texture={fox_sprite}

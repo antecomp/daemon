@@ -64,6 +64,7 @@ export interface NavController {
     setCurrentTile: Setter<NavCoord>;
     occupiedTiles: Accessor<NavCoord[]>;
     occupyTile: (coord: NavCoord) => () => void;
+    navListen: (fn: (event: NavActionEvent) => void) => void
 }
 
 /**
@@ -492,7 +493,8 @@ export default function createTileNavigator(
             navMap,
             setNavMap,
             occupiedTiles,
-            occupyTile
+            occupyTile,
+            navListen: listenNavAction
         },
         navListen: listenNavAction
     };

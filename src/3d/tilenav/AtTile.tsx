@@ -10,7 +10,8 @@ import { getWSPositionOfTile, navCoordToTuple, tupleToNavCoord } from "./tilenav
 interface OnTileProps extends ParentProps {
     pos: NavCoord,
     nm: NavMap,
-    nc: NavController
+    nc: NavController,
+    onWalkInto?: () => void
 }
 
 /** TODO: Document */
@@ -30,6 +31,10 @@ export default function AtTile(props: OnTileProps) {
                 navCoordToTuple(props.pos).map(e => Math.round(e)) as [number, number]
             )
         );
+    });
+
+    props.nc.navListen((e) => {
+        if(e.type == 'move' && e.target == props.pos) props.onWalkInto?.();
     });
 
     onCleanup(() => {
