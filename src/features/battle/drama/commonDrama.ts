@@ -101,7 +101,18 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
                 'duration': 600
             })
         }
-    }
+    },
+
+    'opp-overwhelm': {
+        place: PLACES.CLASH_ONE,
+        when: ({ moves, postCtx }) =>
+            moves.opponent.name == 'overwhelm'
+            && postCtx.opponent.damageDealt > 0,
+        run: ({ requestOverlayAnimation }) => {
+            playSound(overwhelm_sfx);
+            return Promise.allSettled([requestOverlayAnimation('opp-overwhelm-left', [-293, 0]),requestOverlayAnimation('opp-overwhelm-right', [293, 0])]);
+        }
+    },
 }
 
 const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
@@ -167,12 +178,12 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
 
     'player-evade-fail': {
         place: PLACES.CLASH_TWO + 1,
-        when: ({moves, postEffectOutcomes, postCtx}) =>
+        when: ({ moves, postEffectOutcomes, postCtx }) =>
             moves.player.name == 'evade'
             && postEffectOutcomes.player?.reason == 'rng'
             && postEffectOutcomes.player.status == 'failure'
             && postCtx.player.damageTaken > 0,
-        run: ({appendActionMessage}, {profiles}) => appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
+        run: ({ appendActionMessage }, { profiles }) => appendActionMessage(`${profiles.player.display.name} couldn't evade in time!`)
     },
 
     'player-overwhelm': {
@@ -188,10 +199,10 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
 
     'player-mirror': {
         place: PLACES.CLASH_TWO,
-        when: ({moves, postCtx}) =>
+        when: ({ moves, postCtx }) =>
             moves.player.tags?.includes('mirrored')
             && postCtx.player.damageDealt > 0,
-        run: async ({requestOverlayAnimation}) => {
+        run: async ({ requestOverlayAnimation }) => {
             sleep(1050).then(() => playSound(deflect_noise));
             await requestOverlayAnimation('player-mirror');
         }

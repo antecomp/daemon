@@ -13,6 +13,9 @@ import bite from '@/assets/artwork/battle_overlay_animations/opponent/bitef.webm
 import player_mirror from '@/assets/artwork/battle_overlay_animations/player/mirror.webm'
 import claw_a from '@/assets/artwork/battle_overlay_animations/opponent/clawa.webm';
 import claw_b from '@/assets/artwork/battle_overlay_animations/opponent/clawb.webm';
+import opp_overwhem_left from '@/assets/artwork/battle_overlay_animations/opponent/opp_overwhelm_left.webm'
+import opp_overwhem_right from '@/assets/artwork/battle_overlay_animations/opponent/opp_overwhelm_right.webm'
+
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
 import { OverlayAnimationTable } from './overlayAnimations.types'
@@ -112,6 +115,18 @@ export const COMMON_OVERLAY_ANIMATION_DEFINITIONS = {
         width: 404,
         height: 445,
         blendMode: 'unset'
+    },
+
+    'opp-overwhelm-left': {
+        src: opp_overwhem_left,
+        width: 400,
+        height: 650
+    },
+
+    'opp-overwhelm-right': {
+        src: opp_overwhem_right,
+        width: 400,
+        height: 650
     }
 
 
