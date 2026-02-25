@@ -110,7 +110,7 @@ export default function DevMenu() {
                 />
             })}>Test Puzzle</button>
             <button onClick={() => playTextOverlay(dec_textscene)}>Dec TextScene</button>
-            <button onclick={() => spawnPopup("HELLO")}>Popup</button>
+            <button onclick={() => spawnPopup("HELLO", undefined, "JDSF")}>Popup</button>
             <button onclick={() => spawnPopup("Test", [
                 { prompt: 'NC', action() { alert('action no close') }, dontClose: true },
                 { prompt: 'CL', action() { alert('action, close') } }

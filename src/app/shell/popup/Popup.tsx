@@ -8,6 +8,7 @@ import { For, JSX, Match, ParentComponent, Switch } from 'solid-js';
 import { nanoid } from 'nanoid';
 import { popUILayer, pushUILayer } from '../layers/UILayerManager';
 import attachToConsole from '@/devtools/attachToConsole';
+import { UILayer } from '../layers/ui-layers.types';
 
 interface PopupProps {
     // Used to give popup ability to close own UILayer, passed by popup spawner.
@@ -62,7 +63,7 @@ const Popup: ParentComponent<PopupProps> = (props) => {
  * @param {Array<{prompt: string, dontClose?: boolean, action: () => void}>} [actions] - Optional array of button definitions.
  *        Each button has a label (`prompt`), an action callback, and an optional `dontClose` flag to keep the popup open after the action.
  * @param {string} [title] - Optional title to display in the popup header. Defaults to "NOTICE".
- * @param {boolean} [lockUI] - Optional - whether to activate a UI lock for this popup. Note these locks contain side effects such as closing sidebar windows!
+ * @param {boolean} [lock] - Optional - whether to activate a UI lock for this popup. Note these locks contain side effects such as closing sidebar windows!
  * @example
  * spawnPopup(<div>Hello!</div>, [
  *   { prompt: "OK", action: () => console.log("Confirmed") }
@@ -71,7 +72,7 @@ const Popup: ParentComponent<PopupProps> = (props) => {
  * The popup is stacked visually when multiple are open, and only the topmost can be interacted with.
  * Closing a popup decrements the stack count.
  */
-export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string, lockUI?: boolean) {
+export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['actions'], title?: string, lock: UILayer['lock'] = 'scene') {
     const id = nanoid();
     const stackOffset = activePopupCount * 12;
     let closed = false;
@@ -84,7 +85,7 @@ export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['ac
 
     pushUILayer({
         id,
-        lock: lockUI ? 'all' : undefined,
+        lock: lock,
         blockBehind: true,
         style: {
             'display': 'grid',

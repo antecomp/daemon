@@ -12,6 +12,7 @@ import {
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { navCoordToTuple } from "./tilenav.utils"
 import playStepSound from "./stepsound";
+import { sceneLock } from "@/app/shell/locks/UILockManager";
 
 export enum NavAction {
     StepForward,
@@ -281,7 +282,7 @@ export default function createTileNavigator(
     const tryMove = (dirIndex: Direction) => {
         const from = currentTile();
         const target = targetForDir(from, dirIndex);
-        const success = canMoveTo(from, dirIndex, target);
+        const success = !sceneLock.isLocked() && canMoveTo(from, dirIndex, target);
         if (success) setCurrentTile(target);
         return { target, success, from };
     };
