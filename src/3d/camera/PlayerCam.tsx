@@ -89,9 +89,18 @@ export default function PlayerCam(props: {
     let bodyRef!: Element3D
 
     function runHoverRaycast() {
-        if (props.overrideOri || props.overridePos || sceneLock.isLocked()) return;
-        // TODO: Note/Warning - this guard clause skips the logic for onHoverLeave also,
-        // so anything hovered upon at lock time will not have a chance to reset state.
+        if (props.overrideOri || props.overridePos || sceneLock.isLocked()) {
+            if (previouslyHoveredObject) {
+                previouslyHoveredObject.userData.onHoverLeave?.();
+                previouslyHoveredObject.traverseAncestors(a => {
+                    a.userData.onHoverLeave?.();
+                });
+                previouslyHoveredObject = null;
+                setHoverCursor(undefined);
+                previousUV = null;
+            }
+            return;
+        }
 
         raycaster.setFromCamera(mouse, camRef.three);
 

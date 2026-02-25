@@ -37,7 +37,7 @@ export type RenderOrNode = DialogueRender | DialogueNode
  * However, the main strength of DialogueNode is it's helper methods. Every DialogueNode provides methods that allow you to automatically generate and attach children nodes.
  * Furthermore, each of these methods return the newly created nodes, allowing you to chain multiple helpers together to quickly build dialogue trees.
  * 
- * Generally, refer to the JSDoc for the createDialogueNode and helper methods here instead of the node itself. You should never be declaring a node manually.
+ * Generally, refer to the JSDoc for the dialogueBuilder and helper methods here instead of the node itself. You should never be declaring a node manually.
  * 
  * @property id - Internal tracking of dialogue nodes for keying and visualization. This should never be changed.
  * @property name - who is speaking.

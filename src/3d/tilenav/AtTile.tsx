@@ -6,7 +6,6 @@ import { getWSPositionOfTile, navCoordToTuple, tupleToNavCoord } from "./tilenav
 // Hey! Just make the children offset their y to get the height right. Don't make it the responsibility here.
 // Also note that you can totally do half tiles (i.e 0.5,0.5) to move within the tile dimensions here!
 
-
 interface OnTileProps extends ParentProps {
     pos: NavCoord,
     nm: NavMap,
@@ -14,12 +13,19 @@ interface OnTileProps extends ParentProps {
     onWalkInto?: () => void
 }
 
-/** TODO: Document */
+/**
+ * Anchors children to a world-space tile position and marks that tile as occupied
+ * for as long as this component is mounted at the given `pos`.
+ *
+ * Occupancy rounds fractional coordinates to the nearest tile index, while rendered
+ * world-space placement keeps the exact `pos` value.
+ * 
+ * @prop onWalkInto -- Optional function to run when the player navigates into this tile.
+ */
 export default function AtTile(props: OnTileProps) {
 
     let releaseTileOccupancy: (() => void) | null = null;
     
-    // Should run whenever props changes?
     createEffect(() => {
         // Release tile that was previously occupied
         releaseTileOccupancy && releaseTileOccupancy();
