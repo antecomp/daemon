@@ -1,15 +1,19 @@
 import './styles/overlay-animator.css';
 
 import { Accessor, createEffect } from "solid-js";
-import { OverlayAnimData, OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
-import { overlayAnimationDefinitions } from "../animation/overlayAnimations/overlayAnimationDefinitions";
+import { OverlayAnimationTable, OverlayAnimReq } from "../animation/overlayAnimations/overlayAnimations.types";
+import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "../animation/overlayAnimations/overlayAnimationDefinitions";
 
 export default function OverlayAnimator(props: {
     overlayAnimationRequests: Accessor<OverlayAnimReq[]>
+    overlayAnimTableOverrides?: OverlayAnimationTable
 }) {
     let overlayContainerRef!: HTMLDivElement;
 
     const processedAnimationRequests = new Set();
+
+    const overlayAnimTable: OverlayAnimationTable = {...COMMON_OVERLAY_ANIMATION_DEFINITIONS, ...props.overlayAnimTableOverrides}
+    console.log(overlayAnimTable)
 
     createEffect(() => {
             props.overlayAnimationRequests().forEach(({name, position, id, onFinish}) => {
@@ -18,7 +22,7 @@ export default function OverlayAnimator(props: {
                 if(processedAnimationRequests.has(id)) return; 
                 processedAnimationRequests.add(id);
                 
-                const config = overlayAnimationDefinitions[name] as OverlayAnimData;
+                const config = overlayAnimTable[name];
                 if (!config) {
                     console.error(`Animation "${name}" not found`);
                     return;

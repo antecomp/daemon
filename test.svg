@@ -1,0 +1,32 @@
+<svg width="200" height="200" viewBox="0 0 220 220"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <filter id="displacementFilter">
+    <feTurbulence type="turbulence"
+                  baseFrequency="0.005"
+                  numOctaves="3"
+                  seed="1"
+                  result="turbulence">
+      <!-- Keep changing the seed for endless evolving noise -->
+      <animate 
+        attributeName="seed"
+        dur="2s"
+        values="1;2;3;4;5;6;7;8;9;10"
+        repeatCount="indefinite" 
+      />
+    </feTurbulence>
+
+    <feDisplacementMap 
+      in="SourceGraphic"
+      in2="turbulence"
+      scale="40"
+      xChannelSelector="R"
+      yChannelSelector="G" 
+    />
+  </filter>
+
+  <circle cx="100" cy="100" r="100"
+          stroke="white" stroke-width="7"
+          fill="none"
+          filter="url(#displacementFilter)" />
+</svg>

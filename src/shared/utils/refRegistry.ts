@@ -8,10 +8,10 @@
 /**
  * Map from allowed keys to their corresponding `HTMLElement` reference.
  * Keys are optional until a reference is registered for them.
- *
+ *  TODO: RENAME THIS TO REFREGISTRY!
  * @template {readonly string[]} K - Tuple of allowed string keys.
  */
-export type Registry<K extends readonly string[]> = {
+export type RefRegistry<K extends readonly string[]> = {
     [Key in K[number]]?: HTMLElement;
 };
 
@@ -30,7 +30,7 @@ export type RegistryAttacher<K extends readonly string[]> = (val: K[number], ref
  * provide a type argument that is a tuple of string literals.
  *
  * @template {readonly string[]} K - Tuple of allowed key strings.
- * @returns {{ attachToRegistry: RegistryAttacher<K>, refRegistry: Registry<K> }}
+ * @returns {{ attachToRegistry: RegistryAttacher<K>, refRegistry: RefRegistry<K> }}
  *   Object containing:
  *   - `attachToRegistry`: Registers an `HTMLElement` for a given key.
  *   - `refRegistry`: Backing map of key → `HTMLElement | undefined`.
@@ -51,7 +51,7 @@ export type RegistryAttacher<K extends readonly string[]> = (val: K[number], ref
  */
 export function createRefRegistry<const K extends readonly string[]>() {
 
-    const refRegistry: Registry<K> = {};
+    const refRegistry: RefRegistry<K> = {};
 
     const attachToRegistry: RegistryAttacher<K> = (val, ref) => {
         refRegistry[val] = ref;

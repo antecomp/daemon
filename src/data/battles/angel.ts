@@ -4,12 +4,15 @@ import debug_angel_icon from "@/assets/artwork/dæmons/debug_angel_icon.png";
 import debug_angel_sprite from '@/assets/artwork/dæmons/debug_angel.png';
 import basic_grid_bg from '@/assets/artwork/battle_bgs/debug_angel_bg.png';
 import testShader from "@/assets/background-shaders/test.glsl";
-import { mirrorPlan, PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { mirrorPlan, COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import pick from "@/shared/utils/pick";
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import COMMON_DRAMA_TABLE from '@/features/battle/drama/commonDrama';
+import { PLACES } from '@/features/battle/drama/drama.types';
+import animateAsync from '@/shared/utils/animateAsync';
 
 const mimicry_planbank = {
-    ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
+    ...pick(COMMON_PLANNED_MOVES, ['evade', 'defend', 'repeat', 'mirror', 'attack', 'prepare']),
     mirror2: mirrorPlan,
     mirror3: mirrorPlan
 }
@@ -50,36 +53,20 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                     when() { return false }
                 }
             ],
-            moveEmissionHandlers: {
-                add: {
-                    'status:prepare'(_, {appendActionMessage}, {perspective}) {
-                        if(perspective == 'opponent') appendActionMessage("Angel added this prepare notification!");
-                    }
-                },
-                replace: {
-                    'mechanic:focus'(_, {appendActionMessage, defaultSE}) {
-                        appendActionMessage('Debug Angel Completely Overrode This Focus Lost Notif');
-                        defaultSE?.();
-                    }
-                }
-            }
         },
-        moveUISideEffectOverrides: {
-            'defend': {
-                replace: [{
-                    place: 0,
-                    run({appendActionMessage}) {
-                        appendActionMessage("THIS WILL RUN INSTEAD OF SHIELD ANIMATION!!!")
-                    }
-                }]
+        dramas: {
+            'opp-shield': {
+                ...COMMON_DRAMA_TABLE['opp-shield'],
+                run(deps, data) {
+                    deps.appendActionMessage('addition to shield by angel');
+                    return COMMON_DRAMA_TABLE['opp-shield'].run(deps,data);
+                }
             },
-            'mirror': {
-                add: [{
-                    place: 1,
-                    run({appendActionMessage}) {
-                        appendActionMessage("THIS WILL ALSO RUN WITH MIRROR - ADDITION BY ANGEL!!!");
-                    }
-                }]
+            // goofy test of a completely new method.
+            'full-spin': {
+                place: PLACES.POST_CLASH,
+                when: () => true,
+                run: ({refRegistry}) => refRegistry.opponentSprite && animateAsync(refRegistry.opponentSprite, [{rotate: '0deg'}, {rotate: '360deg'}], {duration: 3000})
             }
         }
     },
@@ -89,9 +76,9 @@ export const OPPONENT_ANGEL: OpponentProfile = {
             getSequence(me) {
                 if (me.health < 5) {
                     const desperate_movebank = {
-                        ...pick(PLANNED_MOVE_REGISTRY, ['evade', 'defend', 'repeat', 'attack']),
-                        attack2: PLANNED_MOVE_REGISTRY.attack,
-                        attack3: PLANNED_MOVE_REGISTRY.attack
+                        ...pick(COMMON_PLANNED_MOVES, ['evade', 'defend', 'repeat', 'attack']),
+                        attack2: COMMON_PLANNED_MOVES.attack,
+                        attack3: COMMON_PLANNED_MOVES.attack
                     }
 
                     return buildSequenceFromWeightMap(
@@ -115,12 +102,12 @@ export const OPPONENT_ANGEL: OpponentProfile = {
                 )
             },
             behaviors: {
-                preRound: [{
-                    key: 'example',
-                    run({combatants}){
-                        combatants.opponent.health > 1 && combatants.opponent.takeDamage(1);
-                    }   
-                }]
+                // preRound: [{
+                //     key: 'example',
+                //     run({combatants}){
+                //         combatants.opponent.health > 1 && combatants.opponent.takeDamage(1);
+                //     }   
+                // }]
             }
         },
 

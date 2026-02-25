@@ -62,7 +62,7 @@ export const mirrorPlan: PlannedMove = {
     }
 }
 
-export const PLANNED_MOVE_REGISTRY = {
+export const COMMON_PLANNED_MOVES = {
     repeat: repeatPlan,
     mirror: mirrorPlan,
 

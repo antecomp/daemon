@@ -64,7 +64,7 @@ export function createTooltip() {
     document.removeEventListener("mousemove", updatePosition);
   };
 
-  onCleanup(() => document.removeEventListener("mousemove", updatePosition));
+  onCleanup(hideTooltip);
 
   const TooltipComponent = () => (
     <Show when={tooltipContent()}>

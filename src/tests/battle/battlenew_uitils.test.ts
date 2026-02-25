@@ -1,10 +1,10 @@
 import { idle as idleMove, nothingMove } from "@/core/battle/moves/moves";
 import { DamageMultipliers } from "@/core/battle/model/battle";
 import { Combatant } from "@/core/battle/model/combatant";
-import { DamageMultiplierFunction, MoveSideEffectOutcome, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, MoveSignal } from "@/core/battle/model/move.types";
+import { DamageMultiplierFunction, Move, MoveType, PostMoveContext, PreMoveContext, PreMoveSideEffect, DamageMultiplierContext, reportMoveOutcome } from "@/core/battle/model/move.types";
 import { Status } from "@/core/battle/model/status";
 import { calculateAndApplyDamage, combineMultiplierSets, computeStatusMultipliers, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "@/core/battle/utils/engine.utils";
-import { PASSTHROUGH_MULTPLIERS } from "@/core/battle/model/battle";
+import { PASSTHROUGH_MULTIPLIERS } from "@/core/battle/model/battle";
 import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "@/core/battle/moves/behaviors";
 import { buildSidesMap, forEachSide, makeSidesMap, mapSides, oppositeSide, Side } from "@/core/battle/utils/sides.utils";
 import { describe, expect, test, vi } from "vitest";
@@ -165,9 +165,6 @@ describe("BattleEngine Utility Functions", () => {
         const ctx: DamageMultiplierContext = {
             preEffectOutcome: undefined,
             deps: {logger(m) {console.log(m)}},
-            emit(signal: MoveSignal) {
-                console.log("Move emitted signal: " + signal);
-            },
             self: doll,
             them: oppdoll,
             moves: {
@@ -246,17 +243,17 @@ describe("BattleEngine Utility Functions", () => {
     test("Calculate And Apply Damage", () => {
         let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
         
-        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, PASSTHROUGH_MULTPLIERS));
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTIPLIERS, PASSTHROUGH_MULTIPLIERS));
         expect(dolls.player.health).toBe(9);
         expect(dolls.opponent.health).toBe(9);
 
         dolls = makeSidesMap(new Combatant(10), new Combatant(10));
-        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTPLIERS, {incoming: 5, outgoing: 10}));
+        calculateAndApplyDamage(dolls, makeSidesMap(PASSTHROUGH_MULTIPLIERS, {incoming: 5, outgoing: 10}));
         expect(dolls.player.health).toBe(0);
         expect(dolls.opponent.health).toBe(5);
 
         dolls = makeSidesMap(new Combatant(10), new Combatant(10));
-        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, PASSTHROUGH_MULTPLIERS));
+        calculateAndApplyDamage(dolls, makeSidesMap({incoming: 2, outgoing: 3}, PASSTHROUGH_MULTIPLIERS));
         expect(dolls.player.health).toBe(8);
         expect(dolls.opponent.health).toBe(7);
 
@@ -269,8 +266,8 @@ describe("BattleEngine Utility Functions", () => {
     test("runMovePreEffect, runMovePostEffects", () => {
         let dolls = makeSidesMap(new Combatant(10), new Combatant(10))
 
-        const successEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Success
-        const failEffect: PreMoveSideEffect = () => MoveSideEffectOutcome.Failure
+        const successEffect: PreMoveSideEffect = () => reportMoveOutcome('success', 'mechanic')
+        const failEffect: PreMoveSideEffect = () => reportMoveOutcome('failure', 'mechanic')
         const resultlessEffect: PreMoveSideEffect = () => undefined
         const selfModiEffect: PreMoveSideEffect = ({self}) => self.addStatus(new MockStatus);
 
@@ -285,14 +282,13 @@ describe("BattleEngine Utility Functions", () => {
             deps: {
                 logger(m) {console.log(m)}
             },
-            emit(s){console.log('move emitted signal' + s)}
         }));
 
         moves.player.behaviors.preEffect = successEffect;
-        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(MoveSideEffectOutcome.Success)
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toEqual(reportMoveOutcome('success', 'mechanic'))
 
         moves.player.behaviors.preEffect = failEffect;
-        expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(MoveSideEffectOutcome.Failure)
+        expect(runMovePreEffect(moves.player, preCtxPair.player)).toEqual(reportMoveOutcome('failure', 'mechanic'))
 
         moves.player.behaviors.preEffect = resultlessEffect;
         expect(runMovePreEffect(moves.player, preCtxPair.player)).toBe(undefined)
@@ -306,15 +302,15 @@ describe("BattleEngine Utility Functions", () => {
             preEffectOutcome: undefined,
             damageDealt: 0,
             damageTaken: 0,
-            theirMults: PASSTHROUGH_MULTPLIERS,
-            ourMults: PASSTHROUGH_MULTPLIERS
+            theirMults: PASSTHROUGH_MULTIPLIERS,
+            ourMults: PASSTHROUGH_MULTIPLIERS
         }));
 
         moves.player.behaviors.postEffect = successEffect;
-        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(MoveSideEffectOutcome.Success)
+        expect(runMovePostEffect(moves.player, postCtx.player)).toEqual(reportMoveOutcome('success', 'mechanic'))
 
         moves.player.behaviors.postEffect = failEffect;
-        expect(runMovePostEffect(moves.player, postCtx.player)).toBe(MoveSideEffectOutcome.Failure)
+        expect(runMovePostEffect(moves.player, postCtx.player)).toEqual(reportMoveOutcome('failure', 'mechanic'))
 
         moves.player.behaviors.postEffect = resultlessEffect;
         expect(runMovePostEffect(moves.player, postCtx.player)).toBe(undefined)
@@ -473,7 +469,7 @@ describe("side utils", () => {
 
 describe("Move Behavior Util Methods", () => {
     test("effectPipeline basics", () => {
-        let dummyPreEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Success);
+        let dummyPreEffect = vi.fn<PreMoveSideEffect>(() => reportMoveOutcome('success', 'mechanic'));
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
@@ -483,17 +479,16 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
         const result = effectPipeline(dummyPreEffect, dummyPreEffect)(ctx);
         expect(dummyPreEffect).toHaveBeenCalledTimes(2);
-        expect(result).toBe(MoveSideEffectOutcome.Success);
+        expect(result).toEqual(reportMoveOutcome('success', 'mechanic'));
     });
 
     test("effectPipeline to take the last defined result in chain", () => {
         let undefEffect = vi.fn<PreMoveSideEffect>(() => undefined);
-        let sucEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Success);
-        let failEffect = vi.fn<PreMoveSideEffect>(() => MoveSideEffectOutcome.Failure);
+        let sucEffect = vi.fn<PreMoveSideEffect>(() => reportMoveOutcome('success', 'mechanic'));
+        let failEffect = vi.fn<PreMoveSideEffect>(() => reportMoveOutcome('failure', 'mechanic'));
 
         const ctx: PreMoveContext = {
             self: new Combatant(10),
@@ -503,11 +498,10 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         let result = effectPipeline(failEffect, sucEffect, undefEffect)(ctx);
-        expect(result).toBe(MoveSideEffectOutcome.Success)
+        expect(result).toEqual(reportMoveOutcome('success', 'mechanic'))
     });
 
     test("effectPipeline to forward undefined if no effect has outcome", () => {
@@ -521,7 +515,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: idleMove
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         let result = effectPipeline(undefEffect, undefEffect, undefEffect)(ctx);
@@ -555,7 +548,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: move
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         doll.addStatus(new MockStatus, 1);
@@ -592,7 +584,6 @@ describe("Move Behavior Util Methods", () => {
                 theirs: move
             },
             deps: {logger(){}},
-            emit(){}
         }
 
         runMovePreEffect(move, ctx);

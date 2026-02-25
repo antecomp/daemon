@@ -10,11 +10,13 @@ import { popUILayer, pushUILayer } from '../layers/UILayerManager';
 import attachToConsole from '@/devtools/attachToConsole';
 
 interface PopupProps {
+    // Used to give popup ability to close own UILayer, passed by popup spawner.
     closeSelf: () => void
     title?: string,
     actions?: {
         prompt: string,
         dontClose?: boolean,
+        // TODO: Make optional.
         action: () => void;
     }[]
 }
@@ -96,3 +98,5 @@ export default function spawnPopup(prompt: JSX.Element, actions?: PopupProps['ac
 }
 
 attachToConsole(() => spawnPopup("Test Popup"), "DG_TEST_POPUP");
+
+// TODO: Change the name of this to createPopup()?

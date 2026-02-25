@@ -16,17 +16,18 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_CROW } from "@/data/battles/crow";
-import { OPPONENT_ANGEL } from "@/data/battles/angel";
 import { BattleOutcome } from "@/core/battle/model/battle";
 
 import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
-import { OPPONENT_FOX } from "@/data/battles/fox";
-import { DialogueService } from "@/core/dialogue/dialogueService";
-import fox_dialogue from "./data/fox_dialogue";
 //import test_girl_sprite from '../Test/assets/girl2.png';
+
+import fox_voiceclip from '@/assets/sfx/misc/inordertopass.ogg';
+import { playSoundOnce } from "@/shared/utils/playSound";
+import { OPPONENT_FOX } from "@/data/battles/fox";
+import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial";
 
 export default function Islands() {
   let islands_ref!: GltfModel;
@@ -39,6 +40,8 @@ export default function Islands() {
 
   const [defeatedCrow, setDefeatedCrow] = createSignal(false);
   const [defeatedFox, setDefeatedFox] = createSignal(false);
+
+  let foxBattleTransitionStarted = false;
 
   return (
     <>
@@ -89,7 +92,14 @@ export default function Islands() {
               position='0 -25 0'
               interactions={[
                 () => addLogMessage("As you reach out, the fox snarls loudly."),
-                () => DialogueService.startDialogue(fox_dialogue, { ctx: { actions: { removeFox() { setDefeatedFox(true) } } } }),
+                () => {
+                  if(foxBattleTransitionStarted) return;
+                  foxBattleTransitionStarted = true;
+                  playSoundOnce(fox_voiceclip).then(_ => startBattle(OPPONENT_FOX, showBattleTutorial)).then(outcome => {
+                    foxBattleTransitionStarted = false;
+                    if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
+                  });
+                },
                 () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensly.")
               ]}
             />

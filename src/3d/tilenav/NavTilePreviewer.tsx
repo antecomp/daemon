@@ -1,5 +1,5 @@
 import { Coord2D } from "@/shared/types/3d.types";
-import { NavCoord, NavMap, NavTile, NavTileMask } from "./tilenav.types";
+import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { createMemo, For } from "solid-js";
 import { GRID_COORDS, WINDOW_SIZE_TILES } from "./tilenav.config";
 
@@ -11,7 +11,7 @@ export default function NavTilePreviewer(props: {
     chunk: [number, number]; // positive/negative x,y from center chunk.
 }) {
 
-    const tileColor = ([tx, tz]: Coord2D, navcoord: NavCoord, hasTile: boolean, tileData: NavTile | undefined) => {
+    const tileColor = ([tx, tz]: Coord2D, navcoord: NavCoord, hasTile: boolean) => {
         const existsColor = (tx + tz) % 2 === 0 ? "#529958" : "#70ca96";
         const emptyColor = (tx + tz) % 2 === 0 ? "#2b2b2b" : "#3a3a3a";
         const existsAndSelectedColor = (tx + tz) % 2 === 0 ? "#108178" : "#1fc0b3";
@@ -23,7 +23,6 @@ export default function NavTilePreviewer(props: {
         if (isHovered) return "yellow";
         if (isSelected && hasTile) return existsAndSelectedColor;
         if (isSelected) return selectedColor;
-        if (tileData?.occupied) return '#d86b98'
         return hasTile ? existsColor : emptyColor;
     };
     const tileSize = createMemo(() => props.NM.config.tileSize);
@@ -65,7 +64,7 @@ export default function NavTilePreviewer(props: {
                     <>
                         <lume-plane
                             sidedness="double"
-                            color={tileColor([tx, tz], coordKey(), hasTile(), tile())}
+                            color={tileColor([tx, tz], coordKey(), hasTile())}
                             align-point="0.5 0.5"
                             mount-point="0.5 0.5"
                             rotation="90 0 0"

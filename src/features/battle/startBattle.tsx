@@ -5,10 +5,12 @@ import Battle from "./Battle";
 import TransitionVideo from "@/shared/ui/primitives/TransitionVideo";
 import battle_transition_video from '@/assets/ui/misc/battle transition.webm'
 import sleep from "@/shared/utils/sleep";
+import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 
 
 const plyr: PlayerProfile = {
     display: {
+        name: MAIN_CHARACTER_NAME,
         lexicon: {}
     }
 }
@@ -16,9 +18,10 @@ const plyr: PlayerProfile = {
 /**
  * Initializes a new battle and adds it as a UI layer.
  * @param opponentProfile - OpponentProfile representing the opponent for this battle.
+ * @param onStart - Runs once the battle starts
  * @returns a promise of the battle result (to properly await and respond to battle completion)
  */
-export async function startBattle(opponentProfile: OpponentProfile) {
+export async function startBattle(opponentProfile: OpponentProfile, onStart?: () => void) {
 
     const {promise: transitionPromise, resolve: endTransition} = Promise.withResolvers<void>();
     const {popLayer: popAnimLayer} = pushUILayer({
@@ -48,7 +51,7 @@ export async function startBattle(opponentProfile: OpponentProfile) {
             opacity: 0,
             animation: 'fadeIn 0.5s forwards' // Replace with cool overlay thing and custom anim later
         },
-        component: () => <Battle opponentProfile={opponentProfile} playerProfile={plyr} onEnd={resolveBattle}/>
+        component: () => <Battle opponentProfile={opponentProfile} playerProfile={plyr} onEnd={resolveBattle} onStart={onStart}/>
     });
 
     const result = await battleEndPromise;

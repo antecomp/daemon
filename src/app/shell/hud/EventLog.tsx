@@ -4,7 +4,7 @@ import tr from "@/assets/ui/corners/da/tr.png"
 import tl_el from "./assets/tl_el.png"
 import { createEffect, on, createSignal, For } from "solid-js";
 import { LOGIN_MESSAGE } from "@/config/init.config";
-import { playSound } from "@/shared/utils/playSound";
+import { playSoundOnce } from "@/shared/utils/playSound";
 import notif_sound from '@/assets/sfx/misc/notif.ogg';
 
 const [logMessages, setLogMessages] = createSignal<{ id: number, text: string, color: string }[]>([
@@ -27,7 +27,7 @@ export const addLogMessage = (text: string, color = "#aaa", options?: { dedupeMs
         recentMessages.set(key, now);
     }
     if(!options?.silent) {
-        playSound(notif_sound);
+        playSoundOnce(notif_sound);
     }
     setLogMessages((prev) => [...prev.slice(-15), { id: performance.now(), text, color }]);
 };

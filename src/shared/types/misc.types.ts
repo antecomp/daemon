@@ -12,3 +12,9 @@ export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
 /** Utility to enforce a potential `undefined` in a Record (for when key does not exist) */
 export type SparseRecord<K extends PropertyKey, V> = Partial<Record<K, V>>;
 // NOTE: Consider refactoring to incorporate the `noUncheckedIndexedAccess` TS configuration option instead.
+
+/** Utility type to force TypeScript to suggest some strings first, but allow any strings */
+export type SuggestedString<T extends string> = T | (string & {});
+
+/** Represent a function with any number of arguments with any types with any return */
+export type AnyFunction = (...args: any[]) => any;

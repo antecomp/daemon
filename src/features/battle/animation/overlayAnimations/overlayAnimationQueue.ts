@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { OverlayAnimReq } from "./overlayAnimations.types";
-import { AvailableOverlayAnimationNames, overlayAnimationDefinitions } from "./overlayAnimationDefinitions";
+import { OverlayAnimationName } from "./overlayAnimationDefinitions";
 import { nanoid } from "nanoid";
 import attachToConsole from "@/devtools/attachToConsole";
 
@@ -12,10 +12,7 @@ import attachToConsole from "@/devtools/attachToConsole";
 export function createOverlayAnimationQueue() {
     const [overlayAnimRequests, setOverlayAnimRequests] = createSignal<OverlayAnimReq[]>([]);
 
-    function requestOverlayAnimation(name: AvailableOverlayAnimationNames, position: [number, number] = [0,0]): Promise<void> {
-        if(!overlayAnimationDefinitions[name]) {
-            throw new Error(`Animation "${name}" not found.`);
-        };
+    function requestOverlayAnimation(name: OverlayAnimationName, position: [number, number] = [0,0]): Promise<void> {
 
         return new Promise<void>(resolve => {
             const id = nanoid();

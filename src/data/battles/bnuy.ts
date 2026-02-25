@@ -1,14 +1,15 @@
-import { PLANNED_MOVE_REGISTRY } from "@/core/battle/moves/plannedMoves";
+import { COMMON_PLANNED_MOVES } from "@/core/battle/moves/plannedMoves";
 import { OpponentProfile } from "@/features/battle/bridge/battleProfiles";
 import pick from "@/shared/utils/pick";
 import bnuy_icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
 import bnuy_sprite from '@/assets/artwork/dæmons/HAZARD.png';
 import fractal_shader from '@/assets/background-shaders/fractal.glsl'
 import { buildSequenceFromWeightMap } from "@/core/battle/ai/weightedSequenceAI";
+import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const BNUY_PLANBANK = {
-    ...pick(PLANNED_MOVE_REGISTRY, ['attack', 'evade', 'heal', 'idle', 'repeat', 'prepare', 'observe']),
-    idleAgain: PLANNED_MOVE_REGISTRY.idle
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'heal', 'idle', 'repeat', 'prepare', 'observe']),
+    idleAgain: COMMON_PLANNED_MOVES.idle
 }
 
 export const OPPONENT_BNUY: OpponentProfile = {
@@ -26,7 +27,10 @@ export const OPPONENT_BNUY: OpponentProfile = {
             },
         },
         spriteOffset: {x: -18, y: 22},
-        backgroundShader: fractal_shader
+        backgroundShader: fractal_shader,
+        overlayAnimationsTable: {
+            'opp-attack': COMMON_OVERLAY_ANIMATION_DEFINITIONS.bite
+        }
     },
 
     logic: {

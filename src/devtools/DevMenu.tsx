@@ -37,13 +37,6 @@ import tut2 from '@/assets/placeholders/tut_2.png'
 import tut3 from '@/assets/placeholders/tut_3.png'
 import { createTutorialOverlay } from "@/shared/ui/extras/TutorialOverlay";
 
-import bt1 from '@/assets/placeholders/battletut/tut1.png'
-import bt2 from '@/assets/placeholders/battletut/tut2.png'
-import bt3 from '@/assets/placeholders/battletut/tut3.png'
-import bt4 from '@/assets/placeholders/battletut/tut4.png'
-import bt5 from '@/assets/placeholders/battletut/tut5.png'
-import bt6 from '@/assets/placeholders/battletut/tut6.png'
-import sleep from "@/shared/utils/sleep";
 import { OPPONENT_BNUY } from "@/data/battles/bnuy";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
@@ -52,6 +45,10 @@ import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import spawnPopup from "@/app/shell/popup/Popup";
 import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 import { OPPONENT_FOX } from "@/data/battles/fox.ts";
+import { OPPONENT_PAC } from "@/data/battles/pac.ts";
+import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
+import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial.tsx";
+import { OPPONENT_GHOST } from "@/data/battles/ghost.ts";
 
 export default function DevMenu() {
 
@@ -79,7 +76,7 @@ export default function DevMenu() {
             </For>
             <h2>Battles</h2>
             <For each={[
-                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX
+                OPPONENT_MIMICRY_NEW, OPPONENT_ANGEL, OPPONENT_SERPENT, OPPONENT_BNUY, OPPONENT_CROW, OPPONENT_FOX, OPPONENT_PAC, OPPONENT_MYSTERYMAN, OPPONENT_GHOST
             ]}>
                 {opp => <button onClick={() => startNewBattle(opp)}>{opp.display.name}</button>}
             </For>
@@ -97,8 +94,7 @@ export default function DevMenu() {
             <h3>Tutorials</h3>
             <button onClick={() => createTutorialOverlay([tut1, tut2, tut3])}>sdjfh</button>
             <button onClick={() => {
-                startNewBattle(OPPONENT_SERPENT);
-                sleep(9000).then(() => createTutorialOverlay([bt1, bt2, bt3, bt4, bt5, bt6]))
+                startNewBattle(OPPONENT_SERPENT, showBattleTutorial)
             }}>Battle With Tutorial</button>
             <h3>Inventory</h3>
             <button onClick={() => Inventory.addItem('test')}>Add test item</button>
@@ -106,7 +102,7 @@ export default function DevMenu() {
             <button onClick={() => pushUILayer({
                 id: 'test-puzzle',
                 blockBehind: true,
-                style: {display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px"},
+                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px" },
                 component: () => <EnochPuzzle
                     target="ATHENA"
                     onCorrect={() => popUILayer('test-puzzle')}
@@ -116,9 +112,9 @@ export default function DevMenu() {
             <button onClick={() => playTextOverlay(dec_textscene)}>Dec TextScene</button>
             <button onclick={() => spawnPopup("HELLO")}>Popup</button>
             <button onclick={() => spawnPopup("Test", [
-                {prompt: 'NC', action() {alert('action no close')}, dontClose: true},
-                {prompt: 'CL', action() {alert('action, close')}}
-                ])}>Popup 2</button>
+                { prompt: 'NC', action() { alert('action no close') }, dontClose: true },
+                { prompt: 'CL', action() { alert('action, close') } }
+            ])}>Popup 2</button>
         </div>
     )
 }

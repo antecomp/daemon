@@ -1,49 +1,62 @@
 import './ui/styles/battle.css';
 
-// TODO: Convert this opening animation to be fully scripted so we can properly await/time it.
-//import './ui/styles/battle-opening-animation.css'
-
 import vtl from './assets/vtl.png';
 import vtr from './assets/vtr.png';
-import { BattleUIState, BattleUIStateContext, createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
+import { createUIBridgedBattleEngine } from './bridge/battleEngineBridge';
+import { BattleUIState, BattleUIStateContext } from "./bridge/battleUIState";
 import CornerRect from '@/shared/ui/primitives/corner-rect/CornerRect';
 import OpponentStatusBar from './ui/OpponentStatusBar';
 import Actionbar from './ui/Actionbar';
-import { BASE_MOVE_LEXICON, MoveLexicon, PLAYER_BASE_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
+import { COMMON_MOVE_LEXICON, PLAYER_MOVE_LEXICON } from '@/features/battle/lexicon/moveLexicon';
 import BattleCanvas from './ui/BattleCanvas';
 import { BattleRefRegistryCTX } from './animation/uiAnimations/battleUIRefRegistry';
 import { createMeltingEffect } from '@/shared/hooks/createMeltEffect';
 import OverlayAnimator from './ui/OverlayAnimator';
 import { createOverlayAnimationQueue } from './animation/overlayAnimations/overlayAnimationQueue';
-import twoLevelMerge from '@/shared/utils/twoLevelMerge';
 import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-import { createMusicTrack } from '@/core/audio/createMusicTrack';
+//import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
+import { extendLexicon } from './bridge/battleEngineBridge.util';
+import { makeSidesMap } from '@/core/battle/utils/sides.utils';
+import Forsake from './ui/Forsake';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
     playerProfile: PlayerProfile
     onEnd: (outcome: BattleOutcome) => void;
+    onStart?: () => void;
+    skipOpeningAnimation?: boolean
 }) {
 
-    const playerLexicon = twoLevelMerge(PLAYER_BASE_MOVE_LEXICON, props.playerProfile.display.lexicon);
+    const playerLexicon = extendLexicon(PLAYER_MOVE_LEXICON, props.playerProfile.display.lexicon);
 
-    // Using two level merge allows opponents to change the label for moves without having to also redeclare stuff
-    // like the icon. Is this really the best / most intuitive way? I feel like I could make this code more specific.
-    const opponentLexicon = twoLevelMerge(BASE_MOVE_LEXICON as MoveLexicon, props.opponentProfile.display.lexicon);
+    const opponentLexicon = extendLexicon(COMMON_MOVE_LEXICON, props.opponentProfile.display.lexicon);
 
     const { startMeltAnimation, filterID, filterSVG } = createMeltingEffect();
 
     const { overlayAnimRequests, requestOverlayAnimation } = createOverlayAnimationQueue();
 
-    const { engine, ...bridge } = createUIBridgedBattleEngine(props.opponentProfile, { opponent: opponentLexicon, player: playerLexicon }, props.onEnd, startMeltAnimation, requestOverlayAnimation);
+    const { engine, ...bridge } = createUIBridgedBattleEngine(
+        {
+            startMeltAnimation, 
+            requestOverlayAnimation
+        },
+        {
+            lexicons: makeSidesMap(playerLexicon, opponentLexicon), profiles: {player: props.playerProfile, opponent: props.opponentProfile}
+        }, 
+        {
+            onStart: props.onStart,
+            onEnd: props.onEnd, 
+            skipOpeningAnimation: props.skipOpeningAnimation
+        }
+    );
 
-    createMusicTrack({src: 'PWL/blackscorpionmusic-black-scorpion-music-matrix.mp3'});
+    //createMusicTrack({src: 'PWL/battle.mp3'});
 
     return (
         <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>
@@ -71,16 +84,19 @@ export default function Battle(props: {
                     <Actionbar
                         lexicon={playerLexicon}
                         executeRound={engine.executeRound}
-                        forceBattleEnd={engine.handleBattleEnd}
+                        forceBattleEnd={engine.forceBattleEnd}
                         {...bridge}
                     />
                     <CurrentClash moves={bridge.currentClash()} lexicons={{ player: playerLexicon, opponent: opponentLexicon }} />
                     <OpponentSprite
                         {...props.opponentProfile.display}
                     />
-                    <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} />
+                    <OverlayAnimator overlayAnimationRequests={overlayAnimRequests} overlayAnimTableOverrides={props.opponentProfile.display.overlayAnimationsTable} />
                     <Show when={bridge.battleUIState() === BattleUIState.INIT}>
                         <InitMessage message={props.opponentProfile.display.initMessage ?? "A " + props.opponentProfile.display.name + " attacks!"}/>
+                    </Show>
+                    <Show when={bridge.battleUIState() == BattleUIState.FORSAKE}>
+                        <Forsake forsake={bridge.forsake}/>
                     </Show>
                 </div>
             </BattleUIStateContext.Provider>

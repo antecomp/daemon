@@ -1,4 +1,4 @@
-import { PASSTHROUGH_MULTPLIERS } from "./battle";
+import { PASSTHROUGH_MULTIPLIERS } from "./battle";
 import { DamageMultipliers } from "./battle";
 
 // can't enforce an override unfortunately, but we can make the default obnoxious!
@@ -22,7 +22,7 @@ export class Status {
 
     // Sensible default for status. Override this to add multipler effects.
     getStatusMultipliers(_level: number): DamageMultipliers {
-        return PASSTHROUGH_MULTPLIERS
+        return PASSTHROUGH_MULTIPLIERS
     }
 
     // omitting pre/post effect stuff as we never used it. Feel free to add.

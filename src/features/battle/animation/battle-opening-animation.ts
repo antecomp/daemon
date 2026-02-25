@@ -1,7 +1,7 @@
-import { Registry } from "@/shared/utils/refRegistry";
+import { RefRegistry } from "@/shared/utils/refRegistry";
 import { BattleRefNames } from "./uiAnimations/battleUIRefRegistry";
 import { Setter } from "solid-js";
-import { BattleUIState } from "../bridge/battleEngineBridge";
+import { BattleUIState } from "../bridge/battleUIState";
 import animateAsync from "@/shared/utils/animateAsync";
 import sleep from "@/shared/utils/sleep";
 
@@ -9,7 +9,7 @@ import sleep from "@/shared/utils/sleep";
 
 const FADE_IN_KEYFRAMES = [{ opacity: 0 }, { opacity: 1 }];
 
-export default async function battleOpeningAnimation(rr: Registry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
+export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
     // Guard clause for everything. Let's just fail the animation if we're missing anything.
     if (!(
         rr.battleView
@@ -23,7 +23,8 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
     )) return;
 
     const rbRunes = rr.runeBuilder.querySelectorAll('.rb-rune') as NodeListOf<SVGElement>;
-    // TODO: Might want to add a classname instead to make this more robust.
+
+    // FLAG: Careful with this if you change the layout!
     const rbActionButtons = rr.actionBarLeft.querySelectorAll('img');
 
     const fchBar = rr.actionBarRight.querySelector('.fch-bar') as HTMLElement | null;
@@ -39,7 +40,7 @@ export default async function battleOpeningAnimation(rr: Registry<BattleRefNames
 
     // Setting this here causes no flash-in glitch from what I can tell.
     rr.battleView.style.opacity = '0';
-    rr.actionBar.style.opacity = '0'
+    rr.actionBar.style.opacity = '0';
     rr.initMessage.style.opacity = '0';
     initMessageBottom.style.opacity = '0';
     multbars.style.opacity = '0';

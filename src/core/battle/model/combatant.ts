@@ -6,6 +6,13 @@ type StatusEntry = {
     durationStack: number[]
 }
 
+export type CombatantSnapshot = {
+    health: number,
+    maxHealth: number,
+    statuses: {
+        [statusName: string]: { maxDur: number, level: number } | undefined
+    }
+};
 
 /**
  * The `Combatant` class tracks the health and status effects of a combatant in the battle system. It provides methods for taking damage,
@@ -46,7 +53,7 @@ export class Combatant {
     get healthPercent() {
         return this._health / this.maxHealth * 100;
     }
-    
+
     get health() {
         return this._health;
     }
@@ -65,7 +72,7 @@ export class Combatant {
      * @param duration - The duration of the status effect (default is 1).
      */
     addStatus(status: Status, duration: number = 1) {
-        if(this.statuses.has(status.name)) {
+        if (this.statuses.has(status.name)) {
             this.statuses.get(status.name)!.durationStack.push(duration);
         } else {
             this.statuses.set(status.name, {
@@ -76,8 +83,8 @@ export class Combatant {
     }
 
     tickStatuses() {
-        for(const [_, entry] of this.statuses) {
-            entry.durationStack = entry.durationStack.map(dur => dur -1);
+        for (const [_, entry] of this.statuses) {
+            entry.durationStack = entry.durationStack.map(dur => dur - 1);
         }
     }
 
@@ -97,7 +104,7 @@ export class Combatant {
     /** Returns an array of active (non zero duration) Statuses, along with their level as a tuple */
     get activeStatuses() {
         const rtn = [] as [Status, number][];
-        for(const [_, entry] of this.statuses) {
+        for (const [_, entry] of this.statuses) {
             const stat = entry.status;
             const level = entry.durationStack.filter(dur => dur > 0).length;
             if (level == 0) continue;
@@ -108,19 +115,20 @@ export class Combatant {
 
     getStatusLevel(name: string): number {
         const entry = this.statuses.get(name);
-        if(!entry) return 0;
+        if (!entry) return 0;
         else return entry.durationStack.filter(dur => dur > 0).length
     }
 
-    // kinda jank but needed for PostEffects that need to know the status level before ticking.
-    // better than the whole immediatePostEffect mess.
-    // Avoid using this unless you know exactly why you need this. This is a goofy hack
-    // to fix a logical error that arises from the whole status ticking thing.
+    /**  kinda jank but needed for PostEffects that need to know the status level before ticking.
+    * * better than the whole immediatePostEffect mess.
+    * * Avoid using this unless you know exactly why you need this. 
+    * * This is a goofy hack to fix a logical error that arises from the whole status ticking thing.
+    */
     getStatusLevelIncludingExpired(name: string): number {
         const entry = this.statuses.get(name);
         if (!entry) return 0;
         return entry.durationStack.filter(dur => dur >= 0).length;
-    }    
+    }
 
     /**
      * Extends the duration of an existing status effect on the combatant.
@@ -148,8 +156,29 @@ export class Combatant {
      * based on their duration stacks.
      */
     reapExpiredStatuses() {
+        const keysToDelete = [];
         for (const [key, s] of this.statuses) {
-            if(!s.durationStack.some(dur => dur >0)) this.statuses.delete(key);
+            if (!s.durationStack.some(dur => dur > 0)) {
+                keysToDelete.push(key);
+            }
+        }
+        for (const key of keysToDelete) this.statuses.delete(key);
+    }
+
+    /** Returns a {@link CombatantSnapshot} which represents the combatant state at a single given time. Can be used to diff for changes. */
+    public snapshot(): CombatantSnapshot {
+        const statusSnapshot = {} as CombatantSnapshot['statuses'];
+        for (const [_, entry] of this.statuses) {
+            const statName = entry.status.name;
+            const level = entry.durationStack.length;
+            const maxDur = Math.max(...entry.durationStack);
+            statusSnapshot[statName] = { maxDur, level };
+        }
+
+        return {
+            health: this._health,
+            maxHealth: this.maxHealth, // also provided for convenience.
+            statuses: statusSnapshot,
         }
     }
 }

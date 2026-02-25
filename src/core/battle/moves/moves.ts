@@ -1,5 +1,5 @@
-import { Move, MoveType } from "../model/move.types";
-import { applyStatusTo, effectPipeline, extendStatusOf, multiplierPipeline } from "./behaviors";
+import { Move, MoveType, reportMoveOutcome } from "../model/move.types";
+import { applyStatusTo, effectPipeline, extendStatusOf, FailOnOverwhelm, multiplierPipeline } from "./behaviors";
 import { NegatedByOverwhelm } from "./behaviors";
 import { OnlyDoDamageOnDefensive } from "./behaviors";
 import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceIncomingDamage, RequiresFocus, SuccessfulEvadeBonus } from "./behaviors";
@@ -28,8 +28,7 @@ export const observe: Move = {
             // extend before apply.
             extendStatusOf('them', VulnerableStatus),
             //applyStatusTo('them', VulnerableStatus)
-            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)},
-            (ctx) => {ctx.emit({type: 'mechanic:observe', payload: {}})} 
+            (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)}, 
         )
     }
 }
@@ -38,7 +37,7 @@ export const evade: Move = {
     name: 'evade',
     type: MoveType.Defensive,
     behaviors: {
-        preEffect: EvadeRoll,
+        preEffect: FailOnOverwhelm(EvadeRoll),
         damageMultipliers: NegatedByOverwhelm(EvadeDamageReduction),
         postEffect: SuccessfulEvadeBonus
     }
@@ -62,7 +61,6 @@ export const prepare: Move = {
             effectPipeline(
                 extendStatusOf('self', PreparedStatus),
                 applyStatusTo('self', PreparedStatus),
-                ({emit, self}) => {emit({type: 'status:prepare', payload: {'level': self.getStatusLevel('prepared')}})}
             )
         )
     }
@@ -72,7 +70,8 @@ export const defend: Move = {
     name: 'defend',
     type: MoveType.Defensive,
     behaviors: {
-        damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage)
+        damageMultipliers: NegatedByOverwhelm(ReduceIncomingDamage),
+        postEffect: FailOnOverwhelm(() => reportMoveOutcome('success', 'clash'))
     }
 }
 

@@ -14,52 +14,24 @@ export enum MoveType {
  * For example if the move is the result of special plans such as "mirror" or "repeat" */
 export type MoveTags = ('mirrored' | 'repeated')[];
 
-// Declare global interface that we can extend from anywhere 
-// (allowing us to easily append new information as part of move effects)
-declare global {
-    /** 
-     * MoveSignalMap is a mapping of some named signal that a move can emit, and the expected payload for that signal. 
-     * This is the type used by the MoveEmission battle event (@ref battleReactions.ts). 
-     * Thus, these signals are captured and handled by the MoveEmission method in a battle reactions map.
-     * 
-     * It is declared in the global scope so this interface can be extended from other sources. 
-     * To add additional signal types, do the following;
-     * @example
-     * ```typescript
-     * declare global {
-        interface MoveSignalMap {
-        'signalname': {something: number, somethingElse: boolean},
-        }
-    }
-    ```    
-     * */
-    interface MoveSignalMap {
-        'example': {x: number}
-    }
-}
-
-// Helper type, see below.
-export type MoveSignalOf<K extends keyof MoveSignalMap> = {
-    type: K;
-    payload: MoveSignalMap[K];
-}
-
-// Distributed union over all keys - to actually correlate type to payload for narrowing to work.
-export type MoveSignal = {
-    [K in keyof MoveSignalMap]: MoveSignalOf<K>
-}[keyof MoveSignalMap];
-
 /** Move side effects can emit an outcome as an indicator of their result (f.e if evade rolled successfully). 
  * Passed as part of context to subsequent evaluation stages (multiplierPipeline, postEffect, move end emitter)
  * 
- * Feel free to extend this enum if additional outcome indicators are needed.  */
-export enum MoveSideEffectOutcome {
-    Success, Failure,
+ * This outcome can also be tagged with a generic reason which can be used to hint to UI (or other handlers) the cause of the outcome setting.
+ */
+export type MoveSideEffectOutcome = {
+    status: 'success' | 'failure' | 'meaningless',
+    reason: "focus" | "rng" | "clash" | "mechanic" // add more as needed. consider merging focus as mechanic.
+    //meta: unknown // extend this type with additional metadata if necessary. Try to avoid though.
+}
+
+/** Factory function to shorthand the creation of a new MoveSideEffectOutcome. */
+export function reportMoveOutcome(status: MoveSideEffectOutcome['status'], reason: MoveSideEffectOutcome['reason']): MoveSideEffectOutcome {
+    return {status, reason}
 }
 
 export interface PreMoveContext {
     deps: BattleEngineDependencies;
-    emit: (signal: MoveSignal) => void;
 
     self: Combatant;
     them: Combatant;
@@ -87,8 +59,8 @@ export type DamageMultiplierFunction = (context: DamageMultiplierContext) => Dam
 export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void;
 
 // Wrapper methods for DamageMultiplierFunction and MoveSideEffect to add common conditionals.
-export type MoveMultiplierConditionalWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
-export type MoveSideEffectConditionalWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
+export type MoveMultiplierWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
+export type MoveSideEffectWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 
 /**

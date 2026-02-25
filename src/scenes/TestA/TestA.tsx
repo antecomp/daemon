@@ -8,7 +8,7 @@ import friend_texture from '@/assets/artwork/characters/friend.png';
 import Billboard from "@/3d/components/Billboard";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import tada_sound from './assets/tada.mp3';
-import { playSound } from "@/shared/utils/playSound";
+import { playSoundOnce } from "@/shared/utils/playSound";
 import Clouds from "@/shared/components/Clouds/Clouds";
 import NavCompass from "@/3d/tilenav/NavCompass";
 import { startBattle } from "@/features/battle/startBattle";
@@ -23,7 +23,7 @@ import AtTile from "@/3d/tilenav/AtTile";
 import attachToConsole from "@/devtools/attachToConsole";
 
 export default function TestA() {
-    const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef);
 
@@ -65,7 +65,7 @@ export default function TestA() {
                     //position="0 -14 -120"
                     position="0 -3 0"
                     interactions={[
-                        () => { addLogMessage('You pet the rabbit.'); playSound(tada_sound) },
+                        () => { addLogMessage('You pet the rabbit.'); playSoundOnce(tada_sound) },
                         () => startBattle(OPPONENT_BNUY),
                         () => addLogMessage('You stare at the rabbit.')
                     ]}

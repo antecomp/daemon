@@ -1,8 +1,8 @@
-import { Side, Sides } from "../utils/sides.utils";
+import { Sides } from "../utils/sides.utils";
 import { BattleOutcome, DamageMultipliers } from "./battle";
-import { Combatant } from "./combatant";
-import { MoveSideEffectOutcome, Move, MoveSignal } from "./move.types";
-import { PlannedSequence } from "./plannedMove";
+import { Combatant, CombatantSnapshot } from "./combatant";
+import { MoveSideEffectOutcome, Move, PostMoveContext } from "./move.types";
+import { PlannedMove, PlannedSequence } from "./plannedMove";
 
 /** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
 export type BattleEvent =
@@ -16,14 +16,14 @@ export type BattleEvent =
     | "MoveEnd"
     | "RoundEnd"
     | "BattleEnd"
-    | "MoveEmission" // Random Emissions from move side effects.
+    | "BattleForceEnd"
 
 /** Payload shape for each of the battle events (lifecycle stages). Provided by battleEngine.
  * Update as needed.
-  */
+ */
 export type BattleEventPayload = {
     RoundPrepared: {
-        combatants: Sides<Combatant>  
+        combatants: Sides<Combatant>
         opponentPlan: PlannedSequence
     };
     RoundStart: {
@@ -34,7 +34,8 @@ export type BattleEventPayload = {
         moveIndex: number,
         sequences: Sides<Move[]>,
         plans: Sides<PlannedSequence>,
-        moves: Sides<Move>
+        moves: Sides<Move>,
+        combatants: Sides<Combatant>
     };
     PreEffectResolved: {
         preEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
@@ -57,22 +58,28 @@ export type BattleEventPayload = {
         combatants: Sides<Combatant> // In case of extra damage / healing + reading statuses
     };
     MoveEnd: {
-        combatants: Sides<Combatant>
+        combatants: Sides<Combatant>,
+        moves: Sides<Move>,
+        plannedMoves: Sides<PlannedMove>,
+        postCtx: Sides<PostMoveContext>,
+        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
+        combatantHistory: CombatantHistory
     };
     RoundEnd: {
         combatants: Sides<Combatant>
     };
     BattleEnd: {
-        outcome: BattleOutcome
+        outcome: BattleOutcome,
+        // For closing animation data
         combatants: Sides<Combatant>
+        moves: Sides<Move>,
+        plannedMoves: Sides<PlannedMove>,
+        postCtx: Sides<PostMoveContext>,
+        postEffectOutcomes: Sides<MoveSideEffectOutcome | undefined>,
+        combatantHistory: CombatantHistory
     };
-
-    MoveEmission: {
-        moveName: string
-        signal: MoveSignal,
-        perspective: Side
-        // Consider adding a 'phase' section?
-        // feel free to add other stuff like index or whatever. 
+    BattleForceEnd: {
+        outcome: BattleOutcome
     }
 }
 
@@ -85,4 +92,18 @@ type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) =>
  * 
  * This is namely used by battleEngineBridge to update the UI, run animations, etc (blocking engine where necessary).
   */
-export type BattleReactions = Partial<{[K in BattleEvent]: BattleReaction<K>}>;
+export type BattleReactions = Partial<{ [K in BattleEvent]: BattleReaction<K> }>;
+
+/** Record of {@link CombatantSnapshot}s associating a snapshot of combatant state with battle event stages
+ */
+export type CombatantHistory = Record<
+    Extract<BattleEvent,
+        'MoveStart'
+        | 'PreEffectResolved'
+        | 'MultipliersComputed'
+        | 'DamagesApplied'
+        | 'PostEffectResolved'
+        | 'MoveEnd'
+    >,
+    Sides<CombatantSnapshot>
+>;

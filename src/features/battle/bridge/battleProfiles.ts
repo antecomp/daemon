@@ -11,13 +11,12 @@
 import { OpponentAI, OpponentStats } from '@/core/battle/ai/opponentAI.types';
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
-import { MoveLexicon } from '../lexicon/moveLexicon';
+import { MoveLexiconOverrides } from '../lexicon/moveLexicon';
 import { Combatant } from '@/core/battle/model/combatant';
 import { ActionMessageAppender } from '../ui/ActionMessages';
 import { Sides } from '@/core/battle/utils/sides.utils';
-import { OpponentMoveOverrides } from '../effects/moveUISideEffects';
-import { OverlayAnimationRequester } from '../animation/overlayAnimations/overlayAnimations.types';
-import { EmissionSEMap } from '../effects/moveEmissionResponses';
+import { OverlayAnimationRequester, OverlayAnimationTable } from '../animation/overlayAnimations/overlayAnimations.types';
+import { SimpleDramaEffect, DramaTable } from '../drama/drama.types';
 
 /**
  * Arguments passed to opponent display predicates to decide if
@@ -71,12 +70,11 @@ export interface OpponentProfile {
      * @property {behaviors} - UI-based behaviors (side effects) to run for the opponent.
      * - `preRound` - side effects that run before each round
      * - `postRound` - side effects that run after each round
-     * - `moveEmissionHandler` - A method that captures move emissions and runs some side effect.
      */
     display: {
         name: string;
         icon: AssetURL;
-        lexicon: Partial<MoveLexicon>;
+        lexicon: MoveLexiconOverrides;
 
         initMessage?: string,
 
@@ -86,19 +84,35 @@ export interface OpponentProfile {
         backgroundShader: string;
         backgroundShaderTexture?: AssetURL;
 
-        // UI-Based Contextual Behaviors.
-        // TODO: DOCUMENT.
+        /**
+         * A UI-focused, contextual behavior that an opponent can perform.
+         * Behaviors can be gated by a predicate, run once, and operate on
+         * injected UI helpers.
+         *
+         * @property {string} key - Stable identifier for the behavior (used for tracking/execution).
+         * @property {(args: OpponentDisplayPredicateArgs) => boolean} [when] - Optional predicate to determine if the behavior should run.
+         * @property {(deps: OpponentDisplayBehaviorDeps) => void} run - Executes the behavior with provided dependencies.
+         * @property {boolean} [once] - If true, runs at most once across the battle.
+         */
         behaviors?: {
+            /** Executes once the round starts. */
             preRound?: OpponentDisplayBehavior[]
+            /** Executes once the round ends. */
             postRound?: OpponentDisplayBehavior[],
-            moveEmissionHandlers?: {
-                replace?: EmissionSEMap, // overrides defaults (warning: this effects what shows for player)
-                add?: EmissionSEMap // runs in addition to the defaults.
-            }
         }
 
-        // TODO: DOCUMENT.
-        moveUISideEffectOverrides?: OpponentMoveOverrides;
+        /** Custom drama definitions for this opponent. If a entry in this table shares an ID
+         * with the common drama table, it overrides it.
+          */
+        dramas?: DramaTable
+        /** Custom drama defintion for opponent damage. Completely overrides default behavior. */
+        damageDrama?: SimpleDramaEffect
+        /** Custom drama definiton for opponent death */
+        deathDrama?: SimpleDramaEffect
+        // Add custom victory drama if needed.
+
+        /** Overrides/Additions to the overlay animations table */
+        overlayAnimationsTable?: OverlayAnimationTable
     };
 
     /**
@@ -125,6 +139,7 @@ export interface PlayerProfile {
  * Feel free to add additional display properties as needed
  */
     display: {
-        lexicon: Partial<MoveLexicon>;
+        name: string,
+        lexicon: MoveLexiconOverrides;
     };
 }

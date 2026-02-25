@@ -28,9 +28,15 @@
     /* idk */
     /* transform: translate(-50%, -50%) translateZ(1px);  */
     transform: translate(-50.5%, -50.5%);
+    transform-origin: top left;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: filter 500ms ease-in;
+}
+
+.battle-sprite.forsaken {
+    filter: brightness(0.75);
 }
 
 .ink-overlay {

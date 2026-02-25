@@ -18,16 +18,16 @@ import rb_fail from '@/assets/sfx/battle/rb/fail.wav'
 
 import { Accessor, createSignal, For } from 'solid-js'
 import { BattleOutcome, DamageMultipliers } from '@/core/battle/model/battle'
-import { BattleUIState, useBattleUIState } from '../bridge/battleEngineBridge'
+import { BattleUIState, useBattleUIState } from "../bridge/battleUIState"
 import { PlannedSequence } from '@/core/battle/model/plannedMove'
 import Runebuilder from './Runebuilder'
 import { SEQUENCE_LENGTH } from '@/core/battle/config/battle.config'
 import { PlayerRuneName, PLAYER_RUNE_REGISTRY } from '@/core/battle/moves/playerMoveRegistry'
-import { playSound } from '@/shared/utils/playSound'
 import { createBattleRefAttacher } from '../animation/uiAnimations/battleUIRefRegistry'
 import { Sides } from '@/core/battle/utils/sides.utils'
-import { MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
+import { FALLBACK_MOVE_DISPLAY_ENTRY, MoveLexeme, MoveLexicon } from '../lexicon/moveLexicon'
 import { AssetURL } from '@/shared/types/misc.types'
+import { useSound } from '@/core/audio/audio'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
@@ -37,13 +37,13 @@ function SelectedMove(props: {
     isExecuting: boolean
 }) {
 
-    const entry = props.lexicon[props.moveName];
+    const entry = () => props.lexicon[props.moveName] ?? {...FALLBACK_MOVE_DISPLAY_ENTRY, label: props.moveName};
 
     return (
         <span class="player-move" classList={{executing: props.isExecuting}}>
             <div>
-                <img src={entry.icon}/>
-                {entry.label}
+                <img src={entry().icon}/>
+                {entry().label}
             </div>
         </span>
     )
@@ -83,6 +83,9 @@ export default function Actionbar(props: ActionbarProps) {
     const actionBarRef = createBattleRefAttacher('actionBar');
     const actionBarRightRef = createBattleRefAttacher('actionBarRight');
     const actionBarLeftRef = createBattleRefAttacher('actionBarLeft');
+
+    // Sound effects for updating the plan;
+    const {playSound} = useSound(rbSounds);
 
     // Just buffer the plans by name, then we will map to the actual logical object from some bank
     const [planBuffer, setPlanBuffer] = createSignal<PlayerRuneName[]>([]);
@@ -143,7 +146,7 @@ export default function Actionbar(props: ActionbarProps) {
                     class='reset-button'
                     src={reset_button}
                     onClick={resetPlan} 
-                    classList={{usable: planBuffer().length > 0}}
+                    classList={{usable: planBuffer().length > 0 && (battleUIState() !== BattleUIState.EXECUTING)}}
                 />
                 <img
                     class='exec-button'
