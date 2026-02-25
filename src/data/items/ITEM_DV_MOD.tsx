@@ -11,7 +11,6 @@ import { JSX } from "solid-js";
 import decrypt_textscene from '@/scenes/TheGem/data/decrypt_textscene.ts'
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import controls_dia from '@/assets/misc/controls dia.png';
-import { BOTTOMBAR_HEIGHT } from "@/config/ui.config";
 import { ITEM_ICONS } from "@/core/inventory/itemIcons";
 
 const PUZZLE_ID = 'dv-mod-puzzle';
@@ -84,8 +83,7 @@ const ITEM_DV_MOD: Item = {
             pushUILayer({
                 id: PUZZLE_ID,
                 blockBehind: true,
-                // TODO: MAKE THIS A COMMON CLASS FOR UI LAYERS WE CAN APPLY TO CENTER CHILDREN.
-                style: { display: 'flex', 'justify-content': 'center', 'align-items': 'center', 'padding-bottom': BOTTOMBAR_HEIGHT + "px" },
+                classList: {centered: true},
                 component: () => <EnochPuzzle
                     target={getPuzzleText()}
                     onCorrect={spawnSuccessPopup}

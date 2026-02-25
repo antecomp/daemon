@@ -9,3 +9,10 @@
     height: 100%;
     pointer-events: auto;
 }
+
+.ui-layer.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: var(--bottombar-height);
+}

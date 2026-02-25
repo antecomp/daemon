@@ -33,4 +33,6 @@ export type UILayer = {
     blockBehind?: boolean;
     /** style - (Optional) Custom CSS properties for the UI layer (containing div). */
     style?: JSX.CSSProperties;
+    /** classList - Additional CSS classes to apply to the UI layer (containing div) */
+    classList?: JSX.CustomAttributes<HTMLDivElement>['classList']
 }
