@@ -31,7 +31,7 @@ export interface OpponentAIBehavior {
 }
 
 /** Info used to initialize an opponent combatant instance. */
-export interface OpponentStats {
+export interface CombatantInitStats {
     maxHealth: number // for Combatant constuctor.
     // could also do stuff like initial statuses if u want.
 }

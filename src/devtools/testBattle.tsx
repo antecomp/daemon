@@ -5,7 +5,7 @@ import { OpponentProfile, PlayerProfile } from '@/features/battle/bridge/battleP
 import { createMemo, createSignal, For, Show } from 'solid-js';
 import { render } from "solid-js/web";
 
-const plyr: PlayerProfile = {
+const TEST_PLAYER: PlayerProfile = {
     display: {
         name: 'The Player',
         lexicon: {
@@ -13,6 +13,9 @@ const plyr: PlayerProfile = {
                 label: 'overwritten'
             }
         }
+    },
+    logic: {
+        stats: { maxHealth: 10 }
     }
 }
 
@@ -58,10 +61,10 @@ render(() => (
         </label>
         <Show when={selectedBattle()} keyed>
             {(opponentProfile) => (
-                <Battle opponentProfile={opponentProfile} playerProfile={plyr} onEnd={(o) => alert('Battele End: ' + o)} skipOpeningAnimation={true} />
+                <Battle opponentProfile={opponentProfile} playerProfile={TEST_PLAYER} onEnd={(o) => alert('Battele End: ' + o)} skipOpeningAnimation={true} />
             )}
         </Show>
-        <div id="modal-root"/>
+        <div id="modal-root" />
     </main>
 )
-, root!)
+    , root!)

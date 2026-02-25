@@ -1,11 +1,10 @@
 import { SEQUENCE_LENGTH } from "../config/battle.config";
-import { PLAYER_HEALTH_PLACEHOLDER } from "../config/battle.config";
 import { BattleOutcome } from "../model/battle";
 import { BattleReactions, CombatantHistory } from "../model/battleReactions";
 import { Combatant } from "../model/combatant";
 import { Move, DamageMultiplierContext, PreMoveContext, PostMoveContext } from "../model/move.types";
 import { PlannedSequence } from "../model/plannedMove";
-import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, OpponentStats } from "../ai/opponentAI.types";
+import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, CombatantInitStats } from "../ai/opponentAI.types";
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../model/battleReactions";
@@ -36,9 +35,9 @@ const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
  * @remarks
  * The engine manages combatants, move execution, event emission, and battle resolution. Consumers should call `setupRound` before each round and `executeRound` with the player's moves. The engine emits events at key points for UI updates or logging.
  */
-export function createBattleEngine(opponentAI: OpponentAI, opponentStats: OpponentStats, reactions: BattleReactions, deps: BattleEngineDependencies = ENGINE_DEP_FALLBACK) {
+export function createBattleEngine(opponentAI: OpponentAI, opponentStats: CombatantInitStats, playerStats: CombatantInitStats, reactions: BattleReactions, deps: BattleEngineDependencies = ENGINE_DEP_FALLBACK) {
 
-    const combatants = makeSidesMap(new Combatant(PLAYER_HEALTH_PLACEHOLDER), new Combatant(opponentStats.maxHealth))
+    const combatants = makeSidesMap(new Combatant(playerStats.maxHealth), new Combatant(opponentStats.maxHealth))
     let opponentPlan: PlannedSequence = [];
 
     async function emitBattleEvent<K extends BattleEvent>(event: K, payload: BattleEventPayload[K]) {

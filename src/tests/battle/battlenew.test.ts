@@ -4,7 +4,7 @@ import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { BattleReactions } from "@/core/battle/model/battleReactions";
 import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { PlannedMove } from "@/core/battle/model/plannedMove";
-import { OpponentAI, OpponentStats } from "@/core/battle/ai/opponentAI.types";
+import { OpponentAI, CombatantInitStats } from "@/core/battle/ai/opponentAI.types";
 import { describe, expect, vi, test } from "vitest";
 import { BattleOutcome } from "@/core/battle/model/battle";
 
@@ -26,7 +26,7 @@ function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     }
 }
 
-const SAMPLE_OPPONENT_STATS: OpponentStats = {maxHealth: 100}
+const SAMPLE_OPPONENT_STATS: CombatantInitStats = {maxHealth: 100}
 
 describe("battleEngine init", () => {
 

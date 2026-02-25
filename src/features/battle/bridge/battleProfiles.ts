@@ -8,7 +8,7 @@
  * - Player display lexicon
  */
 
-import { OpponentAI, OpponentStats } from '@/core/battle/ai/opponentAI.types';
+import { OpponentAI, CombatantInitStats } from '@/core/battle/ai/opponentAI.types';
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
 import { MoveLexiconOverrides } from '../lexicon/moveLexicon';
@@ -123,12 +123,12 @@ export interface OpponentProfile {
      */
     logic: {
         ai: OpponentAI;
-        stats: OpponentStats;
+        stats: CombatantInitStats;
     };
 }
 
 /**
- * Player profile surface for display settings and text lexicon.
+* Full player profile combining display configuration and battle logic.
  */
 export interface PlayerProfile {
     /**
@@ -142,4 +142,8 @@ export interface PlayerProfile {
         name: string,
         lexicon: MoveLexiconOverrides;
     };
+
+    logic: {
+        stats: CombatantInitStats
+    }
 }

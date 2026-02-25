@@ -7,11 +7,14 @@ import battle_transition_video from '@/assets/ui/misc/battle transition.webm'
 import sleep from "@/shared/utils/sleep";
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 
-
-const plyr: PlayerProfile = {
+// May be replaced with something reactive or updating as the game goes on later.
+const DEFAULT_PLAYER: PlayerProfile = {
     display: {
         name: MAIN_CHARACTER_NAME,
         lexicon: {}
+    },
+    logic: {
+        stats: {maxHealth: 10}
     }
 }
 
@@ -51,7 +54,7 @@ export async function startBattle(opponentProfile: OpponentProfile, onStart?: ()
             opacity: 0,
             animation: 'fadeIn 0.5s forwards' // Replace with cool overlay thing and custom anim later
         },
-        component: () => <Battle opponentProfile={opponentProfile} playerProfile={plyr} onEnd={resolveBattle} onStart={onStart}/>
+        component: () => <Battle opponentProfile={opponentProfile} playerProfile={DEFAULT_PLAYER} onEnd={resolveBattle} onStart={onStart}/>
     });
 
     const result = await battleEndPromise;

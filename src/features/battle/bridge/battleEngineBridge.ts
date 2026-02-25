@@ -94,7 +94,7 @@ export function createUIBridgedBattleEngine(
     }
 
     // Disgusting. Used to signal the player has clicked the "forsake" button on their victory.
-    const {resolve: forsake, promise: forsakePromise} = Promise.withResolvers<undefined>();
+    const { resolve: forsake, promise: forsakePromise } = Promise.withResolvers<undefined>();
 
     // Startup.
     onMount(async () => {
@@ -284,7 +284,13 @@ export function createUIBridgedBattleEngine(
         }
     };
 
-    const engine = createBattleEngine(data.profiles.opponent.logic.ai, data.profiles.opponent.logic.stats, reactions, { logger(m) { appendActionMessage(m, 'default') } });
+    const engine = createBattleEngine(
+        data.profiles.opponent.logic.ai,
+        data.profiles.opponent.logic.stats, data.profiles.player.logic.stats,
+        reactions,
+        {
+            logger(m) { appendActionMessage(m, 'default') }
+        });
 
     attachToConsole(engine, 'DG_BATTLE_ENGINE');
 

@@ -1,4 +1,4 @@
-import { OpponentAI, OpponentStats } from "@/core/battle/ai/opponentAI.types";
+import { OpponentAI, CombatantInitStats } from "@/core/battle/ai/opponentAI.types";
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { PlannedMove, PlannedSequence } from "@/core/battle/model/plannedMove";
 import { COMMON_PLANNED_MOVES as PLN } from "@/core/battle/moves/plannedMoves";
@@ -11,7 +11,7 @@ function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
     return { getSequence: (_me, _player) => plan ?? idlePlan }
 }
 
-const SAMPLE_OPPONENT_STATS: OpponentStats = {maxHealth: 100}
+const SAMPLE_OPPONENT_STATS: CombatantInitStats = {maxHealth: 100}
 
 describe("Observe Tests", () => {
     test("Basic: Observe Applies Vulnerability to Player", async () => {
