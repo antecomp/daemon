@@ -43,8 +43,6 @@ export default function Sidebar() {
 
     const [openWindow, setOpenWindow] = createSignal<string | null>(null);
 
-
-    // Todo: Make an interface and better typed logic for all of this.
     const menuItems: SideBarItem[] = [
         {
             id: 'inventory',

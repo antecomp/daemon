@@ -3,13 +3,10 @@ import { ITEM_REGISTRY, ItemKey } from "./Items";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import attachToConsole from "@/devtools/attachToConsole";
 
-// TODO: Consider changing this to use a set or set-like methods, to prevent duplicate items.
-
 const [itemsList, setItemsList] = createSignal<ItemKey[]>([
     //'example', 
     //'dv_mod'
 ]);
-
 
 /** Player Inventory Manager
  * @method currentItemsList - Returns current item *keys*.

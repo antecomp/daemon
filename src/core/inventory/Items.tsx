@@ -29,7 +29,7 @@ export interface Item {
     // key: string, // is this needed?
     displayName: string,
     previewName?: string, // alternatively show a different name in the previewer
-    icon: keyof typeof ITEM_ICONS; // TODO: make a table of icon names to asseturls later.
+    icon: AssetURL,
     category: ItemCategory;
     previewComponent: Component;
     uploadable: boolean;
@@ -45,20 +45,20 @@ export const ITEM_REGISTRY = {
     test: {
         category: 'misc',
         displayName: 'test1',
-        icon: 'default',
+        icon: ITEM_ICONS.default,
         previewComponent: () => <p style={{width: '300px'}}>some item component</p>,
         uploadable: false
     },
     test2: {
         category: 'data',
         displayName: 'a2',
-        icon: 'default',
+        icon: ITEM_ICONS.default,
         previewComponent: () => <p>test</p>,
         uploadable: false
     },
     test3: {
         displayName: "333",
-        icon: 'default',
+        icon: ITEM_ICONS.default,
         category: 'caches',
         previewComponent: () => <p>Woah</p>,
         uploadable: false,

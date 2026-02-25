@@ -8,7 +8,6 @@
 /**
  * Map from allowed keys to their corresponding `HTMLElement` reference.
  * Keys are optional until a reference is registered for them.
- *  TODO: RENAME THIS TO REFREGISTRY!
  * @template {readonly string[]} K - Tuple of allowed string keys.
  */
 export type RefRegistry<K extends readonly string[]> = {

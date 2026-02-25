@@ -1,7 +1,7 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import createPopup from "@/app/shell/popup/Popup";
-import { Item } from "@/core/inventory/Items";
+import { Item, ITEM_ICONS } from "@/core/inventory/Items";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
 import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
 import pickRandom from "@/shared/utils/pickRandom";
@@ -25,7 +25,7 @@ const POPUP_STYLE: JSX.CSSProperties = {
 
 const ITEM_DV_MOD: Item = {
     category: 'caches',
-    icon: 'default',
+    icon: ITEM_ICONS.default,
     displayName: 'dv_mod',
     previewName: 'Daemonveil safegaurd mod',
     uploadable: false,

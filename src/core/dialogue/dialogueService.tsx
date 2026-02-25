@@ -31,7 +31,7 @@ function startDialogue(rootNode: DialogueNode, options?: StartDialogueOptions) {
     pushUILayer({
         id,
         lock: 'all', // I see no case where this won't be correct.
-        blockBehind: options?.blockBehind, // TODO: Make always true instead?
+        blockBehind: (options?.blockBehind == undefined) ? true : options.blockBehind,
         component: () => <Hermes root={rootNode} ctx={options?.ctx} />,
         style: {right: 0}
     });

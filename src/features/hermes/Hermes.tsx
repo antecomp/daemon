@@ -162,10 +162,13 @@ export default function Hermes(
     }
 
     // Option next is an EMPTY_RENDER, auto-advance (for chaining options without sending messages)
-    // TODO/WARNING we're skipping the case of option.next(ctx) => EMPTY_RENDER for now...
-    // Generally I don't think we should ever have a case like that, as it introduces some weird unreliable behavior.
-    if(typeof option.next == 'object' && isDialogueNodeEmpty(option.next)) {
+    if((typeof option.next == 'object' && isDialogueNodeEmpty(option.next))) {
       await advanceDialogue(option.next)
+      return;
+    }
+
+    if(typeof option.next == 'function' && isDialogueNodeEmpty(option.next(ctx))) {
+      await advanceDialogue(option.next(ctx));
       return;
     }
 
@@ -182,7 +185,6 @@ export default function Hermes(
     const response = evalDialogueNodeNext(call.next, ctx)
     if (!response) { // Only call but no response!
       console.warn('[Dialogue Early Termination] Option had a next, but this next goes nowhere! Call but no response')
-      //if(!stopped) DialogueService.endDialogue();
       setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
       return;
     }

@@ -12,7 +12,16 @@ function getElementScale(el: HTMLElement) {
 }
 
 
-/** TODO DOCUMENT!!! */
+/**
+ * Creates shared tooltip state and UI for the game surface.
+ * The tooltip follows mouse movement in `#game-root` local coordinates and
+ * renders into `#modal-root`, accounting for root zoom/scale and viewport edges.
+ *
+ * @returns Tooltip API:
+ * - `showTooltip(content)`: Sets tooltip content and starts mouse tracking.
+ * - `hideTooltip()`: Clears tooltip content and stops mouse tracking.
+ * - `TooltipComponent`: Portal-rendered tooltip component.
+ */
 export function createTooltip() {
   const [tooltipContent, setTooltipContent] = createSignal<(() => JSX.Element) | null>(null);
   const [position, setPosition] = createSignal({ x: 0, y: 0 });

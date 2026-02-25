@@ -1,5 +1,5 @@
 import Inventory from "@/core/inventory/inventory";
-import { Item, ITEM_ICONS, ItemCategory } from "@/core/inventory/Items";
+import { Item, ItemCategory } from "@/core/inventory/Items";
 import { createEffect, createSignal, For, on, onCleanup, Show } from "solid-js";
 import './inventory-viewer.css'
 import stupid_corner from './assets/stupid_corner.png';
@@ -52,7 +52,7 @@ export default function InventoryViewer(props: {closeInventoryViewer: () => void
                             class="inventory-item" 
                             onClick={() => showItemPreview(item, i())}
                         >
-                            <img src={ITEM_ICONS[item.icon]}/>
+                            <img src={item.icon}/>
                             <p>{item.displayName}</p>
                         </div>
                     }
