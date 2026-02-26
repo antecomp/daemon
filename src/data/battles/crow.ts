@@ -14,22 +14,12 @@ import claw_sound_a from '@/assets/sfx/battle/claw.wav';
 import claw_sound_b from '@/assets/sfx/battle/claw2.wav'
 import { playSound } from '@/core/audio/audio';
 
-// Test - heal without requiring focus. Verifying custom move definitions work.
-// const roostMove: Move = {
-//     name: 'roost',
-//     type: MoveType.Passive,
-//     behaviors: {
-//         postEffect: HealSelf
-//     }
-// }
-
 const CROW_PLANBANK = {
-    ...pick(COMMON_PLANNED_MOVES, ['attack', 'prepare', 'defend', 'observe', 'overwhelm', 'heal']),
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'defend', 'overwhelm', 'heal', 'repeat', 'evade']),
     attack1: planMove(attack), attack2: planMove(attack), 
-    //roost: planMove(roostMove)
 }
 
-const CLAW_DRAMA: DramaEntry = {
+export const CLAW_DRAMA: DramaEntry = {
     ...COMMON_DRAMA_TABLE['opp-attack'],
     run: async ({requestOverlayAnimation, fufillDramaObligation}) => {
         playSound(claw_sound_a);
@@ -68,8 +58,6 @@ export const OPPONENT_CROW: OpponentProfile = {
                     attack: { attack1: 3, attack2: 3 },
                     attack1: { attack: 3, attack2: 3 },
                     attack2: { attack: 3, attack1: 3 },
-                    prepare: { attack: 3, attack1: 3, attack2: 3, defend: 3, overwhelm: 4, },
-                    observe: { attack: 3, attack1: 3, attack2: 3 }
                 })
             }
         }

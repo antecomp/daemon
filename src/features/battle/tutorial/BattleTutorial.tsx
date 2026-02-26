@@ -21,7 +21,8 @@ const TUTORIAL_POPUP_CONTENT =
                 'grid-template-columns': 'auto auto',
                 'padding': '10px',
                 'place-items': 'center',
-                gap: '10px'
+                gap: '10px',
+                'transform': 'perspective(0px)'
             }}
         >
             <img src={err_icon} />
