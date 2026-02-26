@@ -3,6 +3,7 @@ precision mediump float;
 uniform float time;
 in vec2 uv;
 out vec4 fragColor;
+uniform vec2 u_resolution;
 
 float bayerDither(vec2 coord) {
     coord = mod(floor(coord), 4.0);
@@ -19,7 +20,12 @@ float bayerDither(vec2 coord) {
 }
 
 void main() {
-    vec2 p = uv - vec2(0.5);
+
+    float aspect = u_resolution.x / u_resolution.y;
+    vec2 uva = uv - vec2(0.5);            // center the UVs
+    uva.x *= u_resolution.x / u_resolution.y;  // apply aspect ratio correction
+
+    vec2 p = uva;
     float len = length(p);
     float gradient = smoothstep(0.0, 0.7, len + 0.1 * sin(time));
 

@@ -4,7 +4,7 @@ import { render } from "solid-js/web";
 import { onMount } from 'solid-js';
 //////////////////////////////////////////////
 
-import shader from '@/assets/background-shaders/checkers.glsl'
+import shader from '@/assets/background-shaders/rings.glsl'
 import createShaderPlane from '@/shared/hooks/createShaderPlane';
 
 function Comp() {
