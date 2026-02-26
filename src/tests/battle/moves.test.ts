@@ -12,12 +12,14 @@ function generateSampleOpponentAI(plan?: PlannedMove[]): OpponentAI {
 }
 
 const SAMPLE_OPPONENT_STATS: CombatantInitStats = {maxHealth: 100}
+const SAMPLE_PLAYER_STATS: CombatantInitStats = {maxHealth: 10}
 
 describe("Observe Tests", () => {
     test("Basic: Observe Applies Vulnerability to Player", async () => {
         const engine = createBattleEngine(
             generateSampleOpponentAI([PLN.idle, PLN.idle, PLN.idle, PLN.idle, PLN.observe]),
             SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
             {
                 RoundEnd({combatants: {player, opponent}}) {
                     expect(player.getStatusLevel('vulnerable')).toBe(1);
@@ -34,6 +36,7 @@ describe("Observe Tests", () => {
         const engine = createBattleEngine(
             generateSampleOpponentAI(),
             SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
             {
                 RoundEnd({combatants: {player, opponent}}) {
                     expect(player.getStatusLevel('vulnerable')).toBe(0);
@@ -50,6 +53,7 @@ describe("Observe Tests", () => {
         const engine = createBattleEngine(
             generateSampleOpponentAI([IDLE, IDLE, IDLE, IDLE, PLN.observe]),
             SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
             {
                 RoundEnd({combatants: {player, opponent}}) {
                     expect(player.getStatusLevel('vulnerable')).toBe(1);
@@ -67,7 +71,8 @@ describe("Observe Tests", () => {
             const engine = createBattleEngine(
             generateSampleOpponentAI([IDLE, IDLE, IDLE, IDLE, PLN.prepare]),
                 SAMPLE_OPPONENT_STATS,
-                {
+            SAMPLE_PLAYER_STATS,
+            {
                     RoundEnd({combatants: {player, opponent}}) {
                         expect(player.getStatusLevel('vulnerable')).toBe(0);
                         expect(opponent.getStatusLevel('vulnerable')).toBe(2);                    
@@ -82,7 +87,8 @@ describe("Observe Tests", () => {
             const engine = createBattleEngine(
             generateSampleOpponentAI([IDLE, IDLE, IDLE, IDLE, PLN.observe]),
                 SAMPLE_OPPONENT_STATS,
-                {
+            SAMPLE_PLAYER_STATS,
+            {
                     RoundEnd({combatants: {player, opponent}}) {
                         expect(player.getStatusLevel('vulnerable')).toBe(2);
                         expect(opponent.getStatusLevel('vulnerable')).toBe(0);                    
@@ -98,6 +104,7 @@ describe("Observe Tests", () => {
         const engine = createBattleEngine(
             generateSampleOpponentAI(),
             SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
             {
                 RoundEnd({combatants: {player, opponent}}) {
                     expect(player.getStatusLevel('vulnerable')).toBe(0);
