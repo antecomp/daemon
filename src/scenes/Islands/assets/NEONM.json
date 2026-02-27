@@ -7,7 +7,7 @@
       "y": 0,
       "z": 210
     },
-    "spawn": "1,-5",
+    "spawn": "-10,-10",
     "spawnDirection": 3
   },
   "tiles": {

@@ -58,7 +58,7 @@ export default function Islands() {
       astra: OPPONENT_ASTRAVEILLAN,
       pres: OPPONENT_PRESCIENTIA,
       para: OPPONENT_PARALLACTIC
-    }[who]).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
+    }[who], (who == 'fox') ? showBattleTutorial : undefined).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
   }
 
   return (
@@ -128,12 +128,12 @@ export default function Islands() {
           </AtTile>
         </Show>
 
-        <Show when={!completedBattles.astra}>
+        <Show when={!completedBattles.pres}>
           <AtTile
             pos='1,-2'
             nm={navController.navMap}
             nc={navController}
-            onWalkInto={() => battleToContinue('astra')}
+            onWalkInto={() => battleToContinue('pres')}
           >
             <Billboard
               texture={bttle_placeholder}
@@ -143,12 +143,12 @@ export default function Islands() {
           </AtTile>
         </Show>
 
-        <Show when={!completedBattles.pres}>
+        <Show when={!completedBattles.astra}>
           <AtTile
             pos='1,2'
             nm={navController.navMap}
             nc={navController}
-            onWalkInto={() => battleToContinue('pres')}
+            onWalkInto={() => battleToContinue('astra')}
           >
             <Billboard
               texture={bttle_placeholder}
