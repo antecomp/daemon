@@ -1,6 +1,7 @@
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import { GltfModel, Scene } from "lume";
-import { createSignal, Show } from 'solid-js';
+import { Show } from 'solid-js';
+import { createStore } from "solid-js/store";
 
 import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NEONM.json'
@@ -30,6 +31,11 @@ import { DialogueService } from "@/core/dialogue/dialogueService";
 
 import fox_dialogue_root from "./data/fox_dialogue";
 
+import bttle_placeholder from '../../assets/placeholders/BTTLE.png';
+import { OPPONENT_ASTRAVEILLAN } from "@/data/battles/astraveillan";
+import { OPPONENT_PRESCIENTIA } from "@/data/battles/prescientia";
+import { OPPONENT_PARALLACTIC } from "@/data/battles/parallactic";
+
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
@@ -37,10 +43,23 @@ export default function Islands() {
 
   const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
 
-  //createMusicTrack({ src: "PWL/erokia-496757.wav" });
+  const [completedBattles, setCompletedBattles] = createStore({
+    crow: false,
+    fox: false,
+    astra: false,
+    pres: false,
+    para: false
+  });
 
-  const [defeatedCrow, setDefeatedCrow] = createSignal(false);
-  const [defeatedFox, setDefeatedFox] = createSignal(false);
+  function battleToContinue(who: keyof typeof completedBattles) {
+    startBattle({
+      crow: OPPONENT_CROW,
+      fox: OPPONENT_FOX,
+      astra: OPPONENT_ASTRAVEILLAN,
+      pres: OPPONENT_PRESCIENTIA,
+      para: OPPONENT_PARALLACTIC
+    }[who]).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
+  }
 
   return (
     <>
@@ -59,27 +78,8 @@ export default function Islands() {
           scale="10 10 10"
           ref={islands_ref}
         />
-        <Show when={!defeatedCrow()}>
-          <AtTile
-            pos='1,-8'
-            nm={navController.navMap}
-            nc={navController}
-          >
-            <Billboard
-              id="crow"
-              texture={crow_sprite}
-              scale={20}
-              position='-19.5 -35 13'
-              interactions={[
-                () => startBattle(OPPONENT_CROW).then(outcome => setDefeatedCrow(outcome === BattleOutcome.PlayerVictory)),
-                () => addLogMessage("The crow turns its head at the sound of your voice."),
-                () => addLogMessage("There is a crow blocking your path.")
-              ]}
-            />
-          </AtTile>
-        </Show>
 
-        <Show when={!defeatedFox()}>
+        <Show when={!completedBattles.fox}>
           <AtTile
             pos='-6,-10'
             nm={navController.navMap}
@@ -93,14 +93,83 @@ export default function Islands() {
               interactions={[
                 () => addLogMessage("As you reach out, the fox snarls loudly."),
                 () => {
-                  DialogueService.startDialogue(fox_dialogue_root, {ctx: {actions: {foxBattle() {
-                    startBattle(OPPONENT_FOX, showBattleTutorial).then(outcome => {
-                      if(outcome == BattleOutcome.PlayerVictory) setDefeatedFox(true);
-                    })
-                  }}}}) // {{{{{{{{{{{{{{{{{pain}}}}}}}}}}}}}}}}}
+                  DialogueService.startDialogue(fox_dialogue_root, {
+                    ctx: {
+                      actions: {
+                        foxBattle: () => battleToContinue('fox')
+                      }
+                    }
+                  }) // {{{{{{{{{{{{{{{{{pain}}}}}}}}}}}}}}}}}
                 },
                 () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
               ]}
+            />
+          </AtTile>
+        </Show>
+
+        <Show when={!completedBattles.crow}>
+          <AtTile
+            pos='1,-8'
+            nm={navController.navMap}
+            nc={navController}
+            onWalkInto={() => addLogMessage('There is a crow blocking your path.')}
+          >
+            <Billboard
+              id="crow"
+              texture={crow_sprite}
+              scale={20}
+              position='-19.5 -35 13'
+              interactions={[
+                () => battleToContinue('crow'),
+                () => addLogMessage("The crow turns its head at the sound of your voice."),
+                () => addLogMessage("There is a crow blocking your path.")
+              ]}
+            />
+          </AtTile>
+        </Show>
+
+        <Show when={!completedBattles.astra}>
+          <AtTile
+            pos='1,-2'
+            nm={navController.navMap}
+            nc={navController}
+            onWalkInto={() => battleToContinue('astra')}
+          >
+            <Billboard
+              texture={bttle_placeholder}
+              scale={30}
+              position="0 -25 0"
+            />
+          </AtTile>
+        </Show>
+
+        <Show when={!completedBattles.pres}>
+          <AtTile
+            pos='1,2'
+            nm={navController.navMap}
+            nc={navController}
+            onWalkInto={() => battleToContinue('pres')}
+          >
+            <Billboard
+              texture={bttle_placeholder}
+              scale={30}
+              position="-5 -45 0"
+            />
+          </AtTile>
+        </Show>
+
+
+        <Show when={!completedBattles.para}>
+          <AtTile
+            pos='3,7'
+            nm={navController.navMap}
+            nc={navController}
+            onWalkInto={() => battleToContinue('para')}
+          >
+            <Billboard
+              texture={bttle_placeholder}
+              scale={30}
+              position="0 -45 -5"
             />
           </AtTile>
         </Show>

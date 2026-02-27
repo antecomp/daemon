@@ -14,7 +14,7 @@ const DEFAULT_PLAYER: PlayerProfile = {
         lexicon: {}
     },
     logic: {
-        stats: {maxHealth: 10}
+        stats: { maxHealth: 10 }
     }
 }
 
@@ -26,15 +26,16 @@ const DEFAULT_PLAYER: PlayerProfile = {
  */
 export async function startBattle(opponentProfile: OpponentProfile, onStart?: () => void) {
 
-    const {promise: transitionPromise, resolve: endTransition} = Promise.withResolvers<void>();
-    const {popLayer: popAnimLayer} = pushUILayer({
-        component: () => 
-            <TransitionVideo 
-                src={battle_transition_video} 
+    const { promise: transitionPromise, resolve: endTransition } = Promise.withResolvers<void>();
+    const { popLayer: popAnimLayer } = pushUILayer({
+        component: () =>
+            <TransitionVideo
+                src={battle_transition_video}
                 onFinished={endTransition}
-                style={{'filter': 'contrast(10)'}} // Darken to hide compression artifacts.
+                style={{ 'filter': 'contrast(10)' }} // Darken to hide compression artifacts.
             />,
         blockBehind: true,
+        lock: 'all',
         style: {
             'mix-blend-mode': 'darken',
             'translate': '0px -1px' // idk
@@ -44,9 +45,9 @@ export async function startBattle(opponentProfile: OpponentProfile, onStart?: ()
     await transitionPromise;
     sleep(1000).then(popAnimLayer);
 
-    const {promise: battleEndPromise, resolve: resolveBattle} = Promise.withResolvers<BattleOutcome>();
+    const { promise: battleEndPromise, resolve: resolveBattle } = Promise.withResolvers<BattleOutcome>();
 
-    const {popLayer} = pushUILayer({
+    const { popLayer } = pushUILayer({
         lock: 'all',
         blockBehind: true,
         style: {
@@ -54,7 +55,7 @@ export async function startBattle(opponentProfile: OpponentProfile, onStart?: ()
             opacity: 0,
             animation: 'fadeIn 0.5s forwards' // Replace with cool overlay thing and custom anim later
         },
-        component: () => <Battle opponentProfile={opponentProfile} playerProfile={DEFAULT_PLAYER} onEnd={resolveBattle} onStart={onStart}/>
+        component: () => <Battle opponentProfile={opponentProfile} playerProfile={DEFAULT_PLAYER} onEnd={resolveBattle} onStart={onStart} />
     });
 
     const result = await battleEndPromise;

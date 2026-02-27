@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, createEffect, untrack } from "solid-js";
 
 /**
  * Creates a simple event emitter using Solid.js signals.
@@ -12,7 +12,7 @@ export function createEmitter() {
     listen: (fn: () => void) =>
       createEffect(() => {
         tick();     // subscribe
-        fn();
+        untrack(fn);
       })
   };
 }
@@ -30,7 +30,12 @@ export function createPayloadEmitter<T>() {
     listen: (fn: (data: T) => void) =>
       createEffect(() => {
         const ev = event();
-        if (ev) fn(ev.data);
+        /* 
+          createEffect does not care about call depth!
+          We need to untrack the function to prevent accidentally 
+          tracking things within the function body!
+        */
+        if (ev) untrack(() => fn(ev.data));
       })
   };
 }

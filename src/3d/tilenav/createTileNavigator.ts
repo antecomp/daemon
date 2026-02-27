@@ -283,7 +283,7 @@ export default function createTileNavigator(
     const tryMove = (dirIndex: Direction) => {
         const from = currentTile();
         const target = targetForDir(from, dirIndex);
-        const success = !sceneLock.isLocked() && canMoveTo(from, dirIndex, target);
+        const success = canMoveTo(from, dirIndex, target);
         if (success) setCurrentTile(target);
         return { target, success, from };
     };
@@ -291,6 +291,8 @@ export default function createTileNavigator(
 
     // Controls
     function performNavAction(action: NavAction) {
+
+        if(sceneLock.isLocked()) return;
 
         const originDirection = currentDirection();
         const origin = currentTile();
