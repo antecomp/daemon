@@ -1,6 +1,6 @@
 import icon from '@/assets/artwork/dæmons/mimicry_icon.png';
 import sprite from '@/assets/artwork/dæmons/placeholder/mirror.png';
-import backgroundShader from '@/assets/background-shaders/rings.glsl';
+import backgroundShader from '@/assets/background-shaders/vortex.glsl';
 import { CLAW_DRAMA } from './crow';
 import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
 import pick from '@/shared/utils/pick';
@@ -15,10 +15,10 @@ const PLANBANK = {
     mirror3: COMMON_PLANNED_MOVES.mirror
 }
 
-export const OPPONENT_ASTRAVEILLAN: OpponentProfile = {
+export const OPPONENT_PARALLACTIC: OpponentProfile = {
     display: {
         name: "Parallactic",
-        initMessage: "An Parallactic swoops forward!",
+        initMessage: "A Parallactic swoops forward!",
         icon, sprite, backgroundShader,
         lexicon: {
             attack: { label: 'claw' },
@@ -33,9 +33,9 @@ export const OPPONENT_ASTRAVEILLAN: OpponentProfile = {
         stats: { maxHealth: 10 },
         ai: {
             getSequence: () => buildSequenceFromWeightMap(PLANBANK, {
-                mirror: {repeat: 2, mirror2: 2},
-                mirror2: {repeat: 2, mirror: 2},
-                mirror3: {repeat: 2, mirror2: 2}
+                mirror: { repeat: 2, mirror2: 2 },
+                mirror2: { repeat: 2, mirror: 2 },
+                mirror3: { repeat: 2, mirror2: 2 }
             })
         }
     }

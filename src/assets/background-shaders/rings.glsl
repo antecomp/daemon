@@ -50,14 +50,13 @@ void main() {
     float ring = 1.0 - smoothstep(0.0, thickness, d);
 
     // Fade out as rings get large
-    float maxRadius = 0.8;
+    float maxRadius = 0.9;
     float fade = 1.0 - smoothstep(0.0, maxRadius, dist);
 
     float intensity = ring * fade;
 
     vec3 color = vec3(intensity);
 
-    // Optional: apply the same Bayer dithering to the line pattern
     float ditherThreshold = bayerDither(gl_FragCoord.xy);
     color = step(ditherThreshold, color);
 
