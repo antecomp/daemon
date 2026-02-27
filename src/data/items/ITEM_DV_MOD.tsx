@@ -12,6 +12,7 @@ import decrypt_textscene from '@/scenes/TheGem/data/decrypt_textscene.ts'
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import controls_dia from '@/assets/misc/controls dia.png';
 import { ITEM_ICONS } from "@/core/inventory/itemIcons";
+import Inventory from "@/core/inventory/inventory";
 
 const PUZZLE_ID = 'dv-mod-puzzle';
 
@@ -61,6 +62,7 @@ const ITEM_DV_MOD: Item = {
                     prompt: 'Run',
                     action() {
                         popUILayer(PUZZLE_ID);
+                        Inventory.removeItem('dv_mod');
                         playTextOverlay(decrypt_textscene).finally(() => createPopup((
                             <div
                                 style={{

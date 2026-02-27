@@ -10,7 +10,7 @@ import { PLACES } from "@/features/battle/drama/drama.types";
 import { COMMON_OVERLAY_ANIMATION_DEFINITIONS } from "@/features/battle/animation/overlayAnimations/overlayAnimationDefinitions";
 
 const FOX_MOVEBANK = {
-    ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal', 'prepare']),
+    ...pick(COMMON_PLANNED_MOVES, ['attack', 'evade', 'defend', 'idle', 'overwhelm', 'repeat', 'heal']),
     idleAgain: COMMON_PLANNED_MOVES.idle,
     attackAgain: COMMON_PLANNED_MOVES.attack
 }
@@ -45,7 +45,6 @@ export const OPPONENT_FOX: OpponentProfile = {
             getSequence() {
                 return buildSequenceFromWeightMap(FOX_MOVEBANK, {
                     evade: { attack: 2, attackAgain: 2 }, // Take advantage of mania
-                    prepare: { attack: 3, attackAgain: 3, heal: 2, overwhelm: 2, evade: 2, idle: 0.5 },
                     attack: { repeat: 2 },
                     attackAgain: { repeat: 2 }
                 })
