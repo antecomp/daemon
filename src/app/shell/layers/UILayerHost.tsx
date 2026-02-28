@@ -14,7 +14,7 @@ export default function UILayerHost() {
                     <div
                         class="ui-layer"
                         style={{
-                            'z-index': {'default': 50, 'bottom': 100, 'middle': 200, 'top': 300}[layer?.metaLayer ?? 'default'] + index(),
+                            'z-index': {'default': 50, 'bottom': 25, 'middle': 100, 'top': 200}[layer?.metaLayer ?? 'default'] + index(),
                             '--bottombar-height': BOTTOMBAR_HEIGHT + "px",
                             ...layer.style
                         }}

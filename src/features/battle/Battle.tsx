@@ -17,14 +17,12 @@ import { OpponentProfile, PlayerProfile } from './bridge/battleProfiles';
 import ActionMessages from './ui/ActionMessages';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import CurrentClash from './ui/CurrentClash';
-//import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import OpponentSprite from './ui/OpponentSprite';
 import { Show } from 'solid-js';
 import InitMessage from './ui/InitMessage';
 import { extendLexicon } from './bridge/battleEngineBridge.util';
 import { makeSidesMap } from '@/core/battle/utils/sides.utils';
 import Forsake from './ui/Forsake';
-import { createMusicTrack } from '@/core/audio/createMusicTrack';
 
 export default function Battle(props: {
     opponentProfile: OpponentProfile
@@ -57,7 +55,7 @@ export default function Battle(props: {
         }
     );
 
-    createMusicTrack({src: 'PWL/battle.mp3'});
+    //createMusicTrack({src: 'PWL/battle.mp3'});
 
     return (
         <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>

@@ -3,6 +3,10 @@ import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
 
+type DialogueCamOptions = StartDialogueOptions & {
+    fadeTransition?: boolean;
+};
+
 /**
  * Prepares a dialogue sequence that uses a deferred camera override.
  *
@@ -18,10 +22,6 @@ import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverla
  * @returns An object containing `start`, which commits the override and launches the dialogue,
  *          and `ovrMgr`, which exposes the underlying override handle (commit/release/id) to be used for advanced mid-dialogue camera control.
  */
-type DialogueCamOptions = StartDialogueOptions & {
-    fadeTransition?: boolean;
-};
-
 export function createDialogueWithCamOvr(
     cameraController: CameraController,
     ovr: CameraSettings,
