@@ -5,9 +5,8 @@ import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE } from "@/config/init.config";
 import { SCENE_DIMENSIONS } from "@/config/ui.config";
-import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
+import { createEffect, createSignal, ErrorBoundary, on, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import { loadScene } from "@/scenes/loadScene";
 import SceneMenuWrapper from "../scene-menu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
@@ -86,10 +85,6 @@ export default function SceneContainer() {
                         <Dynamic component={loadScene(currentScene())} />
                     </Suspense>
                 </ErrorBoundary>
-
-                <Show when={DialogueService.currentDialogueOverlay()}>
-                    <div id="dialogue-overlay" class="fademein" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
-                </Show>
                 <SceneFadeOverlay />
             </SceneMenuWrapper>
         </CornerRect>

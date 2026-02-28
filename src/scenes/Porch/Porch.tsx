@@ -10,7 +10,7 @@ import createCameraController from '@/3d/camera/createCameraController';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
-
+import red from '@/assets/placeholders/red.png';
 import attachToConsole from '@/devtools/attachToConsole';
 
 import starfield from "@/assets/3d/textures/starfield.png"
@@ -135,7 +135,7 @@ export default function Porch() {
                             //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                             () => addLogMessage('You pet the rabbit.'),
                             () => {
-                                DialogueService.startDialogue(rabbit_root, {ctx: {actions: {hideRabbit: () => setShowRabbit(false)}}}).then(
+                                DialogueService.startDialogue(rabbit_root, {overlay: red, ctx: {actions: {hideRabbit: () => setShowRabbit(false)}}}).then(
                                     () => console.log("Rabbit dialogue complete")
                                 )
                             },
