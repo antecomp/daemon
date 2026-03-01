@@ -76,13 +76,18 @@ export const DialogueService = {
      * @param options - End dialogue options (all optional), reference type definition for more details
      */
     endDialogue,
-
+   /** 
+    * Retrieve the currently used dialogue overlay.
+    */
     currentDialogueOverlay,
+     /**
+     * Change the overlay image of the current dialogue. Can be set to null for no image.
+     */
     setCurrentDialogueOverlay,
-
+    /** 
+     * Indicates if there is an active dialogue.
+     */
     dialogueOngoing
-
-
 };
 
 attachToConsole(DialogueService, "DG_DialogueService")
