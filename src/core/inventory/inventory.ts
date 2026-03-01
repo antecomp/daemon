@@ -32,8 +32,3 @@ const Inventory = {
 export default Inventory;
 
 attachToConsole(Inventory, 'DG_INVENTORY');
-
-// TODO: Consider making the "upload" feature an interaction mode
-// could easily change the IModePicker to show a little upload icon to also indicate what we're doing
-// so don't worry about the extra state
-// should allow Interactable and others to easily attach on an upload Interaction.

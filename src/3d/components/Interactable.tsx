@@ -1,9 +1,9 @@
 import { Element3D } from "lume";
-import {createSignal, createEffect, ParentProps} from "solid-js"
-import { Object3D, Object3DEventMap } from "three";
+import {createEffect, ParentProps} from "solid-js"
 import { InteractableComponent } from "@/core/interaction/interactable.types";
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
+import { hoveredItem, setHoveredItem } from "../pipeline/dgRender";
 
 interface InteractableProps extends InteractableComponent, ParentProps {
     /** boolean that indicates to the OutlinePass whether to highlight (draw white border) 
@@ -11,10 +11,6 @@ interface InteractableProps extends InteractableComponent, ParentProps {
      * Remember: This prop is reactive so you can toggle this setting at runtime. */
     showHoverBorder?: boolean    
 }
-
-// Global signal so the OutlinePass in dgRender can easily observe who is actively being hovered.
-// TODO/NOTE : Move this to DGRender or elsewhere? Interactable should only worry about itself not global state!
-export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
 /**
  * Interactable wraps around any lume element to attach interaction listeners (from player camera raycast). 

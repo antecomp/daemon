@@ -245,8 +245,6 @@ export function createUIBridgedBattleEngine(
                     setBattleUIState(BattleUIState.END);
                     playSoundOnce(player_death_sound);
                     deps.startMeltAnimation?.(false, 20, 5);
-                    // TODO: Proper flair indicating player loss. This may end up being the responsibility of startBattle rather than here.
-                    // Game over screen component?
                     break;
                 case BattleOutcome.Draw:
                     setBattleUIState(BattleUIState.END);
