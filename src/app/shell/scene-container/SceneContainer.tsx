@@ -11,7 +11,7 @@ import { loadScene } from "@/scenes/loadScene";
 import SceneMenuWrapper from "../scene-menu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
 
-import SceneFadeOverlay from "../scene-fade-overlay/SceneFadeOverlay";
+import SceneFadeOverlay from "../scene-fade-overlay/SceneFade";
 import SceneLoadError from "../fallbacks/SceneLoadError";
 import SceneLoading from "../fallbacks/SceneLoading";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";

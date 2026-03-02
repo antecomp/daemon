@@ -10,7 +10,7 @@ import { createSignal, onMount } from "solid-js"
 
 import elevator_buttons from './models/elevator_buttons.png'
 import elevator_buttons_lit from './models/elevator_buttons_white.png'
-import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import applyShadows from "@/3d/pipeline/applyShadows";
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";

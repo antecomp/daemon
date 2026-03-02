@@ -1,6 +1,6 @@
 export const VERSION = "0.0949"
 
-export const INITIAL_SCENE = "Porch";
+export const INITIAL_SCENE = "Elevator";
 export const LOGIN_MESSAGE = `INSTANCE INIT | [ DAEMON-GARDEN v.${VERSION} ]`
 export const MAIN_CHARACTER_NAME = "Arda";
 

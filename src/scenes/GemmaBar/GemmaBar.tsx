@@ -16,7 +16,7 @@ import cache_model from "./models/cache.fbx?url"
 
 import Billboard from "@/3d/components/Billboard";
 import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
-import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import Interactable from "@/3d/components/Interactable";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { addLogMessage } from "@/app/shell/hud/EventLog";

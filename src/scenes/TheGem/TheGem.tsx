@@ -6,7 +6,7 @@ import { useDGShader } from "@/3d/pipeline/dgRender";
 import Billboard from "@/3d/components/Billboard";
 import createCameraController from "@/3d/camera/createCameraController";
 import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
-import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import Inventory from "@/core/inventory/inventory";
