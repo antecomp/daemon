@@ -218,3 +218,12 @@
 	cursor: var(--cursor_pointer);
 	-webkit-user-drag: none;
 }
+
+#dialogue-overlay {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-position: top 2px right 2px !important;
+    background-repeat: no-repeat !important;
+}

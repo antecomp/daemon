@@ -99,7 +99,7 @@ export default function Islands() {
                         foxBattle: () => battleToContinue('fox')
                       }
                     }
-                  }) // {{{{{{{{{{{{{{{{{pain}}}}}}}}}}}}}}}}}
+                  })
                 },
                 () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
               ]}

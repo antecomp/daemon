@@ -13,7 +13,7 @@ import { startBattle as startNewBattle } from "@/features/battle/startBattle";
 import { OPPONENT_SERPENT } from "@/data/battles/serpent";
 
 const eggggg: TextOverlaySequence = [
-    { segments: [{ text: "This is the first line, one color", color: "red" }], sideEffect: () => console.log("side effect triggered") },
+    { segments: [{ text: "This is the first line, one color", color: "red" }], sideEffect: () => DGDEV.log("side effect triggered") },
     { segments: [{ text: "This uses the default colour" }] },
     { segments: [{ text: "Now we split into " }, { text: "Two colours", color: "red" }] }
 ]
@@ -48,6 +48,7 @@ import { OPPONENT_PAC } from "@/data/battles/pac.ts";
 import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
 import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial.tsx";
 import { OPPONENT_GHOST } from "@/data/battles/ghost.ts";
+import { DGDEV } from "./dev.ts";
 
 export default function DevMenu() {
 

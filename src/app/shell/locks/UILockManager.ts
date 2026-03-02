@@ -48,4 +48,4 @@ const shellLock = makeCompositeLock(sceneLock, sidebarLock);
 
 export { sceneLock, sidebarLock, shellLock };
 
-attachToConsole({sceneLock, sidebarLock, shellLock}, "DG_UI_LOCKS");
+attachToConsole({sceneLock, sidebarLock, shellLock}, "UI_LOCKS");

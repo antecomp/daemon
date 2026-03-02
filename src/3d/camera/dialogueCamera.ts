@@ -1,7 +1,7 @@
 import { CameraController, CameraSettings } from "./camera.types";
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import { DialogueService, StartDialogueOptions } from "@/core/dialogue/dialogueService";
-import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFadeOverlay";
+import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 
 type DialogueCamOptions = StartDialogueOptions & {
     fadeTransition?: boolean;

@@ -97,4 +97,4 @@ export default function createPopup(prompt: JSX.Element, actions?: PopupProps['a
     activePopupCount += 1;
 }
 
-attachToConsole(() => createPopup("Test Popup"), "DG_TEST_POPUP");
+attachToConsole(() => createPopup("Test Popup"), "TEST_POPUP");

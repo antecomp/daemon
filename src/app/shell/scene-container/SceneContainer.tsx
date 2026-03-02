@@ -5,43 +5,34 @@ import tl from "@/assets/ui/corners/da/tl.png"
 import tr from "@/assets/ui/corners/da/tr.png"
 import { INITIAL_SCENE } from "@/config/init.config";
 import { SCENE_DIMENSIONS } from "@/config/ui.config";
-import { createEffect, createSignal, ErrorBoundary, on, Show, Suspense } from "solid-js";
+import { createEffect, ErrorBoundary, on, Suspense } from "solid-js";
 import { Dynamic } from "solid-js/web";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import { loadScene } from "@/scenes/loadScene";
 import SceneMenuWrapper from "../scene-menu/SceneMenuWrapper";
 import { InteractionMode } from "@/core/interaction/interactable.types";
-import { AssetURL } from "@/shared/types/misc.types";
 
-import SceneFadeOverlay from "../scene-fade-overlay/SceneFadeOverlay";
+import SceneFadeOverlay from "../scene-fade-overlay/SceneFade";
 import SceneLoadError from "../fallbacks/SceneLoadError";
 import SceneLoading from "../fallbacks/SceneLoading";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
 import attachToConsole from "@/devtools/attachToConsole";
+import {
+    currentScene,
+    hoverCursor,
+    isSceneConsoleAttached,
+    markSceneConsoleAttached,
+    setCurrentScene,
+    setHoverCursor,
+} from "./sceneState";
 
-// TODO: Fix this for hot reloading!
-export const [currentScene, setCurrentScene] = createSignal(INITIAL_SCENE);
-attachToConsole(setCurrentScene, "DG_setScene");
+export { currentScene, setCurrentScene, setHoverCursor };
 
-/**
- * Ephemeral hover cursor override set by scene elements (e.g., PlayerCam).
- *
- * When defined, this cursor takes precedence over the interaction-mode cursor.
- * It is cleared automatically when the scene changes.
- */
-const [hoverCursor, setHoverCursor] = createSignal<AssetURL>();
-export { setHoverCursor };
+if (!isSceneConsoleAttached()) {
+    attachToConsole(setCurrentScene, "SETSCENE");
+    markSceneConsoleAttached();
+}
 
 // Helper for scene to resolve the current cursor to display.
-
-/*
- * Scene-change side effects.
- * Currently just resets any transient hover cursor so the next scene starts clean.
- * Add further scene-change resets here as needed.
- */
-createEffect(on(currentScene, () => {
-    setHoverCursor(undefined);
-}))
 
 /**
  * SceneContainer
@@ -55,6 +46,15 @@ createEffect(on(currentScene, () => {
 export default function SceneContainer() {
 
     const {currentInteractionMode, cycleInteractionMode} = useInteractionContext();
+
+    /*
+     * Scene-change side effects.
+     * Currently just resets any transient hover cursor so the next scene starts clean.
+     * Add further scene-change resets here as needed.
+     */
+    createEffect(on(currentScene, () => {
+        setHoverCursor(undefined);
+    }));
 
     const currentCursor = () => {
         if (hoverCursor()) return hoverCursor()!;
@@ -86,10 +86,6 @@ export default function SceneContainer() {
                         <Dynamic component={loadScene(currentScene())} />
                     </Suspense>
                 </ErrorBoundary>
-
-                <Show when={DialogueService.currentDialogueOverlay()}>
-                    <div id="dialogue-overlay" class="fademein" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
-                </Show>
                 <SceneFadeOverlay />
             </SceneMenuWrapper>
         </CornerRect>

@@ -1,12 +1,11 @@
 import { FOV } from "@/config/3d.config";
 import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { Scene, toRadians } from "lume";
-import {onMount} from "solid-js"
+import {createSignal, onMount} from "solid-js"
 import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import pp_fragshader from "@/3d/shaders/post-processing/dg.frag.glsl"
 import pp_vertshader from "@/3d/shaders/post-processing/pass.vert.glsl"
-import { Vector2 } from "three";
-import { hoveredItem } from "@/3d/components/Interactable";
+import { Object3D, Object3DEventMap, Vector2 } from "three";
 import sleep from "@/shared/utils/sleep";
 
 function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
@@ -38,6 +37,9 @@ function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: numbe
     }
 
 }
+
+// Global signal so the OutlinePass in dgRender can easily observe who is actively being hovered.
+export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
 function updateOutlineUniforms(pass: OutlinePass) {
     pass.selectedObjects = hoveredItem() ? [hoveredItem()!] : [];
@@ -115,7 +117,6 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized', dimensionOverride?: {width: number, height: number}) => {
 
     const x = () => {
-        // console.log('attempting'); // seems to only play onceundefined
         requestAnimationFrame(() => {
             const s = getScene();
             if (!s) sleep(10).then(x) // retry
@@ -124,4 +125,4 @@ export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 
     }
 
     onMount(() => x())
-}
+};

@@ -8,6 +8,7 @@ import { OpponentAI, OpponentAIBehaviorDeps, OpponentAIBehaviorPredicateArgs, Co
 import { calculateAndApplyDamage, getPhaseMultipliers, initializePlannedMoves, runMovePostEffect, runMovePreEffect } from "../utils/engine.utils";
 import { makeSidesMap, oppositeSide, mapSides, Sides, forEachSide, buildSidesMap } from "../utils/sides.utils";
 import { BattleEvent, BattleEventPayload } from "../model/battleReactions";
+import { DGDEV } from "@/devtools/dev";
 
 /** Engine dependencies (swappable handlers)
  * (f.e logger uses console for testing, but UI version can have a dedicated display handler.) */
@@ -16,7 +17,7 @@ export interface BattleEngineDependencies {
 }
 
 const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
-    logger: (message) => console.log(message)
+    logger: (message) => DGDEV.log(message)
 }
 
 /**

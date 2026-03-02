@@ -5,7 +5,7 @@
     height: 100%;
     background-color: transparent;
     pointer-events: none; /* Don't block input when OFF */
-    z-index: 50; /* Ensure overlay sits above the scene */
+    z-index: 1; /* Ensure overlay sits above the scene */
 }
 
 #scene-fade-overlay.ov-fading-out {
