@@ -28,7 +28,7 @@ import {
 export { currentScene, setCurrentScene, setHoverCursor };
 
 if (!isSceneConsoleAttached()) {
-    attachToConsole(setCurrentScene, "DG_setScene");
+    attachToConsole(setCurrentScene, "SETSCENE");
     markSceneConsoleAttached();
 }
 

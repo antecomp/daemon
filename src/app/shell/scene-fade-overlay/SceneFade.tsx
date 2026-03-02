@@ -159,7 +159,7 @@ export default function SceneFadeOverlay() {
         releaseLock = undefined;
     });
 
-    attachToConsole(SceneFadeManager, "DG_SCENE_FADE");
+    attachToConsole(SceneFadeManager, "SCENE_FADE");
 
     return (
         <div

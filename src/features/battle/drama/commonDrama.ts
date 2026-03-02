@@ -228,7 +228,6 @@ const SHARED_DRAMAS: DramaTable = {
             && postEffectOutcomes[side]?.status == 'success'
             && postEffectOutcomes[side]?.reason == 'focus',
         run: ({ appendActionMessage }, { profiles, combatantHistory }, side) => {
-            console.log(combatantHistory);
             const prepLevel = combatantHistory.PostEffectResolved[side].statuses.prepared?.level
             if (!prepLevel) return;
             if (prepLevel == 1) {

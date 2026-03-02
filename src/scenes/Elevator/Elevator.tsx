@@ -20,7 +20,6 @@ import opening_textscene from "./data/opening_textscene"
 import elev_frame from './models/elevator_frame.glb';
 import door_l from './models/door_r.glb';
 import door_r from './models/door_l.glb';
-import attachToConsole from "@/devtools/attachToConsole";
 import { interactionCB } from "@/core/interaction/interactable.types";
 
 
@@ -66,8 +65,6 @@ export default function Elevator() {
             )
         }
     }
-
-    attachToConsole(setIsDoorOpen, "SIDO");
 
     return (
         <lume-scene

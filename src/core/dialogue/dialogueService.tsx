@@ -90,4 +90,4 @@ export const DialogueService = {
     dialogueOngoing
 };
 
-attachToConsole(DialogueService, "DG_DialogueService")
+attachToConsole(DialogueService, "DIALOGUESERVICE")

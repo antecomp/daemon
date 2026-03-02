@@ -28,6 +28,7 @@ import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
 import { ReducedDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
 import { BattleUIState } from "./battleUIState";
+import { DGDEV } from "@/devtools/dev";
 
 /** Contained helper to manage a battleEngine instance and translate emissions to changes in Solid (UI) signals and other UI-based side effects. */
 export function createUIBridgedBattleEngine(
@@ -177,7 +178,7 @@ export function createUIBridgedBattleEngine(
             await battleUIAnimations.fadeElementOut(refRegistry.sequenceViewOpponent);
             setOpponentPlanPreview(generateHint(opponentPlan));
             await battleUIAnimations.fadeElementIn(refRegistry.sequenceViewOpponent);
-            console.log(opponentPlan.map(plan => plan.name));
+            DGDEV.log(opponentPlan.map(plan => plan.name));
         },
 
         async RoundStart({ plans, combatants }) {
@@ -290,7 +291,7 @@ export function createUIBridgedBattleEngine(
             logger(m) { appendActionMessage(m, 'default') }
         });
 
-    attachToConsole(engine, 'DG_BATTLE_ENGINE');
+    attachToConsole(engine, 'BATTLE_ENGINE');
 
     return {
         displayMults,

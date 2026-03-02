@@ -1,3 +1,4 @@
+import { DGDEV } from "@/devtools/dev";
 import { AssetURL } from "../types/misc.types";
 
 const alreadyPrefetched = new Set<AssetURL>();
@@ -7,7 +8,7 @@ export default function requestAssetPrefetch(assetURLs: AssetURL[]) {
     for(const url of assetURLs) {
         if(alreadyPrefetched.has(url)) continue;
 
-        console.log(`Prefetching ${url}`);
+        DGDEV.log(`Prefetching ${url}`, false);
 
         const link = document.createElement('link');
         link.rel = 'prefetch';

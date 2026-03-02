@@ -6,6 +6,7 @@ import { createEffect, on } from "solid-js";
 import { InteractableComponent } from "../../core/interaction/interactable.types";
 import { InteractableObject3D } from "../../core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
+import { DGDEV } from "@/devtools/dev";
 
 interface BillboardProps extends InteractableComponent {
     texture: AssetURL,
@@ -97,7 +98,7 @@ export default function Billboard(props: BillboardProps) {
         on(
             () => props.texture, // wrap props for Accessor signature.
             () => {
-                console.log("texture change detetected");
+                DGDEV.log("texture change detetected");
                 const img = new Image();
                 img.src = me.texture!
                 img.onload = () => {

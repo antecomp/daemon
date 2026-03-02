@@ -11,7 +11,6 @@ import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
 import red from '@/assets/placeholders/red.png';
-import attachToConsole from '@/devtools/attachToConsole';
 
 import starfield from "@/assets/3d/textures/starfield.png"
 import viyaTexture from "@/assets/artwork/characters/viya.png"
@@ -25,6 +24,7 @@ import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
 //import viya_root from "./dialogues/viya_dialogue"
 
 import viya_root from '@/tests/dialogues/v'
+import { DGDEV } from "@/devtools/dev";
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -39,8 +39,6 @@ export default function Porch() {
         {yaw: -72, pitch: 0},
         {maxYaw: 45, maxPitch: 30}
     );
-
-    attachToConsole(cameraController, "camCon");
 
     let mapRef: ObjModel | undefined;
 
@@ -117,7 +115,7 @@ export default function Porch() {
                     () => {
                         const dialogueMusic = MusicManager.pushTrack({src: 'PWL/pw_celesta_meloD.mp3'}).id
                         viyaDialogue.start().finally(() => {
-                            console.log("Viya dialogue done!");
+                            DGDEV.log("Viya dialogue done!");
                             MusicManager.removeTrack(dialogueMusic)
                         })
                     },
@@ -136,7 +134,7 @@ export default function Porch() {
                             () => addLogMessage('You pet the rabbit.'),
                             () => {
                                 DialogueService.startDialogue(rabbit_root, {overlay: red, ctx: {actions: {hideRabbit: () => setShowRabbit(false)}}}).then(
-                                    () => console.log("Rabbit dialogue complete")
+                                    () => DGDEV.log("Rabbit dialogue complete")
                                 )
                             },
                             //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')

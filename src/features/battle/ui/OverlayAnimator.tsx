@@ -13,7 +13,6 @@ export default function OverlayAnimator(props: {
     const processedAnimationRequests = new Set();
 
     const overlayAnimTable: OverlayAnimationTable = {...COMMON_OVERLAY_ANIMATION_DEFINITIONS, ...props.overlayAnimTableOverrides}
-    console.log(overlayAnimTable)
 
     createEffect(() => {
             props.overlayAnimationRequests().forEach(({name, position, id, onFinish}) => {
@@ -41,7 +40,6 @@ export default function OverlayAnimator(props: {
                 video.style.mixBlendMode = config.blendMode ?? 'difference';
 
                 video.onended = () => {
-                    //console.log("overlay animation done playing");
                     processedAnimationRequests.delete(id);
                     video.remove();
                     onFinish();

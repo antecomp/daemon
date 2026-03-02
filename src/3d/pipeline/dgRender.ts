@@ -117,7 +117,6 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized', dimensionOverride?: {width: number, height: number}) => {
 
     const x = () => {
-        // console.log('attempting'); // seems to only play onceundefined
         requestAnimationFrame(() => {
             const s = getScene();
             if (!s) sleep(10).then(x) // retry

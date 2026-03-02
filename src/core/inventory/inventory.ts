@@ -31,4 +31,4 @@ const Inventory = {
 
 export default Inventory;
 
-attachToConsole(Inventory, 'DG_INVENTORY');
+attachToConsole(Inventory, 'INVENTORY');

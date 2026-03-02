@@ -23,7 +23,7 @@ import viya_texture from "@/assets/artwork/characters/viya.png"
 
 const dr = makeDialogueNode('Hello.', 'Strange Girl');
 import viya_root from '@/tests/dialogues/v'
-import attachToConsole from '@/devtools/attachToConsole';
+import { DGDEV } from '@/devtools/dev';
 
 export default function Test() {
 
@@ -52,12 +52,9 @@ export default function Test() {
     }
     const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_root, {fadeTransition: true});
 
-    // You can edit the ovrCam in realtime in the console to test positions!
-    //attachToConsole(ovrCam, 'OVR');
+    DGDEV.attach(viyaCam, 'OVR');
 
-    attachToConsole(viyaCam, 'OVR');
-
-    navListen((e => console.log(e)));
+    navListen((e => DGDEV.log(e)));
 
     navListen(e => (e.type == 'move' && !e.success) && playSoundOnce(bonk_sound))
 
