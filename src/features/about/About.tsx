@@ -3,9 +3,13 @@ import './about.css';
 import ascma from '@/assets/ui/misc/ASCMA.png';
 import { toggleFullscreen } from '@/platform/settings';
 import { setCurrentScene } from '@/app/shell/scene-container/sceneState';
+import { createTooltip } from '@/shared/hooks/createTooltip';
 
 
 export default function About(props: {closeSelf: () => void}) {
+
+    const {showTooltip, hideTooltip, TooltipComponent} = createTooltip();
+
     return (
         <div
             class="dg-about"
@@ -22,12 +26,17 @@ export default function About(props: {closeSelf: () => void}) {
                     </section>
                     <section data-label="ABOUT:SOFTWARE">
                         VI-LINK REGISTERED FOR ARDA M. <br />
-                        COVERED UNDER LIMITED WARRANTY. FOR TECHNICAL SUPPORT <a href="mailto:adm@omni.vi">CONTACT US.</a>
+                        COVERED UNDER LIMITED WARRANTY. FOR TECHNICAL SUPPORT <a
+                         href="https://omni.vi/card/"
+                         target='_blank'
+                         onMouseEnter={(() => showTooltip(() => <p style={{background: 'black', padding: '5px', border: 'solid white 1px', color: 'mediumseagreen'}}>Game is in early development! <br /> Please reach out if you encounter any bugs!</p>))}
+                         onMouseLeave={hideTooltip}
+                         >CONTACT US.</a>
                     </section>
                     <section data-label="CREDITS">
                         CREATED BY THE <a href="https://omni.vi" target='_blank'>OMNIDISPLAY CORPORATION</a>, A SUBSIDIARY OF ASURACOM. <br />
                         VISUAL RENDERING: KERS INC. <br />
-                        PSYCHOLOGICAL OPERATIONS: THE MORIBUND GROUP & CHELL LABS. <br />
+                        PSYCHOLOGICAL OPERATIONS: THE MORIBUND GROUP & FLOWERS OF THE MOON <br />
                         QUALITY CONTROL: MGDC.
                     </section>
                     <section data-label="SETTINGS" style={{ display: 'flex' }}>
@@ -38,6 +47,7 @@ export default function About(props: {closeSelf: () => void}) {
             </div>
             <hr />
             <button onclick={props.closeSelf}>CLOSE</button>
+            <TooltipComponent/>
         </div>
     )
 }

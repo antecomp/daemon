@@ -4,14 +4,12 @@ import IModePicker from "./shell/hud/IMode.tsx"
 import EventLog from "./shell/hud/EventLog.tsx"
 
 import './main.css'
-import vl_badge from './assets/vl_badge.png'
 import UILayerHost from "./shell/layers/UILayerHost"
 import InteractionProvider from "@/core/interaction/InteractionProvider"
 import { createSignal, Match, Switch } from "solid-js"
 import { SKIP_NEW_GAME_LOGIN } from "@/config/init.config.ts"
 import Login from "@/features/login/Login.tsx"
-import { pushUILayer } from "./shell/layers/UILayerManager.ts"
-import About from "@/features/about/About.tsx"
+import VLBadge from "./shell/hud/VLBadge.tsx"
 
 /* Warning that these IDs are used for createTooltips portal / rendered scale calculations!*/
 export default function Main() {
@@ -25,13 +23,7 @@ export default function Main() {
                     <InteractionProvider>
                         <Sidebar />
                         <SceneContainer />
-                        <img class="vl-badge" src={vl_badge} onClick={() => {
-                            const { popLayer } = pushUILayer({
-                                component: () => <About closeSelf={() => popLayer()} />,
-                                blockBehind: true,
-                                classList: { centered: true }
-                            })
-                        }} />
+                        <VLBadge/>
                         <div id="bottom-bar">
                             <EventLog />
                             <IModePicker />
