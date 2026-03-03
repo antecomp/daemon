@@ -10,6 +10,8 @@ import InteractionProvider from "@/core/interaction/InteractionProvider"
 import { createSignal, Match, Switch } from "solid-js"
 import { SKIP_NEW_GAME_LOGIN } from "@/config/init.config.ts"
 import Login from "@/features/login/Login.tsx"
+import { pushUILayer } from "./shell/layers/UILayerManager.ts"
+import About from "@/features/about/About.tsx"
 
 /* Warning that these IDs are used for createTooltips portal / rendered scale calculations!*/
 export default function Main() {
@@ -23,7 +25,13 @@ export default function Main() {
                     <InteractionProvider>
                         <Sidebar />
                         <SceneContainer />
-                        <img src={vl_badge} />
+                        <img class="vl-badge" src={vl_badge} onClick={() => {
+                            const { popLayer } = pushUILayer({
+                                component: () => <About closeSelf={() => popLayer()} />,
+                                blockBehind: true,
+                                classList: { centered: true }
+                            })
+                        }} />
                         <div id="bottom-bar">
                             <EventLog />
                             <IModePicker />
@@ -32,7 +40,7 @@ export default function Main() {
                     </InteractionProvider>
                 </Match>
                 <Match when={!gameStart()}>
-                    <Login setGameStart={setGameStart}/>
+                    <Login setGameStart={setGameStart} />
                 </Match>
             </Switch>
             {/* targeted by Portals for modals, tooltips, etc. Always top level.

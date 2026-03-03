@@ -15,6 +15,7 @@ import botb from "./assets/botb.png";
 import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
+import { MAIN_CHARACTER_VLID } from "@/config/init.config";
 
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
@@ -247,7 +248,7 @@ export default function Hermes(
 
       </div>
       <div class="hermes-footer">
-        <span>S-VLID:91ae0:ffc13</span>
+        <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
         <span>R-VLID:0000:0000</span>
         <img src={ntwrk_gif} />
       </div>

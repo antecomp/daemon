@@ -3,9 +3,14 @@ main {
 
     display: grid;
     grid-template-columns: auto auto;
-    grid-template-rows: auto 81px; /* 81 is the width of the imode-picker image */
+    grid-template-rows: auto 81px;
+    /* 81 is the width of the imode-picker image */
 
     gap: 2px 0px;
+}
+
+.vl-badge:active {
+    translate: 2px;
 }
 
 #bottom-bar {
@@ -41,7 +46,7 @@ main {
     }
 }
 
-@keyframes fade-in { 
+@keyframes fade-in {
     to {
         opacity: 1;
     }

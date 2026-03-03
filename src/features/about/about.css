@@ -1,0 +1,70 @@
+.dg-about {
+
+    & a {
+        color: cyan;
+    }
+
+    & button {
+        border-image-slice: 3 3 3 3;
+        border-image-width: 3px 3px 3px 3px;
+        border-image-outset: 0px 0px 0px 0px;
+        border-image-repeat: stretch stretch;
+        border-image-source: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAIAAABv85FHAAAAAXNSR0IB2cksfwAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+oBGwQ3JGp+h1MAAAAySURBVAjXfY4xEgAwCMKg//9zOrROipk4c6JWAWikiz8ZN4BYBRxlNpePbR9K7s72Cxd/pSPm3ZaU0wAAAABJRU5ErkJggg==");
+        border-style: solid;
+        padding: 4px;
+        width: 100%;
+        font-size: 15px;
+
+        position: relative;
+    }
+
+    text-align: center;
+
+    padding: 20px;
+
+    border-image-slice: 4 4 4 4 fill;
+    border-image-width: 4px 4px 4px 4px;
+    border-image-outset: 0px 0px 0px 0px;
+    border-image-repeat: stretch stretch;
+    border-image-source: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IB2cksfwAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAuIwAALiMBeKU/dgAAAAd0SU1FB+oDAwQVCWd+sRYAAABASURBVCjP7ZIxCgAgDMSa/v/PdVDPTXrgaOYECj1iU1XRAMtegWzgok4tm7ZIyz5Bnx+8DPTftGwAY3ZgnKTtDNnfGBcHPDVaAAAAAElFTkSuQmCC");
+    border-style: solid;
+
+    hr {
+        margin: 10px 0px;
+    }
+
+    div.sl {
+        display: grid;
+        grid-template-columns: min-content auto;
+        gap: 10px;
+
+        div:first-of-type {
+            display: grid;
+            place-items: center;
+        }
+
+        div.dg-about-right {
+            text-align: left;
+
+            & section {
+                margin-bottom: 15px;
+                border: dotted 1px white;
+                position: relative;
+                padding: 3px;
+            }
+
+            & section::before {
+                content: attr(data-label);
+                font-family: 'teeny';
+                font-size: 5px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transform: translateY(-100%);
+                background: black;
+                padding: 0px 4px;
+            }
+        }
+
+    }
+}
