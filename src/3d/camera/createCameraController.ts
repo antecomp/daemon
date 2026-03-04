@@ -16,8 +16,8 @@ import { CameraSettings, CameraOverride, CameraController, CameraControlSignals,
 export default function createCameraController( // Initial does not use CameraSettings to enforce existence of properties. 
     initialPos: XYZ,
     initialOri: Orientation,
-    maxTilts: {maxYaw: number, maxPitch: number}
-) : {
+    maxTilts: { maxYaw: number, maxPitch: number }
+): {
     cameraControlSignals: CameraControlSignals,
     cameraController: CameraController
 } {
@@ -35,10 +35,10 @@ export default function createCameraController( // Initial does not use CameraSe
     function createOverride(ovr: CameraSettings) {
         const id = nextOverrideID++;
         return {
-            commit(anim?: boolean) { // still want to change how this anim stuff works, but keeping it to maintain similar signature for testing.
-                if(overrideStack().some(o => o.id == id)) return; // override already in stack.
+            commit(anim?: boolean) {
+                if (overrideStack().some(o => o.id == id)) return; // override already in stack.
                 (anim != undefined) && setBaseAnim(anim);
-                setOverrideStack(prev => [...prev, {id, ...ovr}]);
+                setOverrideStack(prev => [...prev, { id, ...ovr }]);
             },
             release(anim?: boolean) {
                 (anim != undefined) && setBaseAnim(anim);
@@ -53,7 +53,7 @@ export default function createCameraController( // Initial does not use CameraSe
 
     const shouldAnim = () => {
         const ovrAnim = overrideStack().at(-1)?.anim;
-        if(ovrAnim == undefined) return baseAnim();
+        if (ovrAnim == undefined) return baseAnim();
         return ovrAnim;
     }
 
@@ -62,7 +62,7 @@ export default function createCameraController( // Initial does not use CameraSe
         setOverrideStack([]);
     }
 
-    function setBase({pos, ori, anim, tilts} : BaseCameraSettings) {
+    function setBase({ pos, ori, anim, tilts }: BaseCameraSettings) {
         (anim != undefined) && setBaseAnim(anim);
         pos && setBasePos(pos);
         ori && setBaseOri(ori);
@@ -89,10 +89,10 @@ export default function createCameraController( // Initial does not use CameraSe
     const currentOverride = () => {
         const ori = currentOverrideOri();
         const pos = currentOverridePos();
-        if(ori == undefined && pos == undefined) return null;
+        if (ori == undefined && pos == undefined) return null;
         return { pos, ori };
     }
-    
+
     return {
         // Signals to spread into playercam component
         cameraControlSignals,
@@ -104,7 +104,7 @@ export default function createCameraController( // Initial does not use CameraSe
             setBase,
             setBasePos,
             setBaseOri,
-            currentBase, 
+            currentBase,
             currentOverride
         },
     }

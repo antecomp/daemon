@@ -1,5 +1,5 @@
 import { ParentProps, createContext, createSignal, onCleanup, onMount, useContext } from "solid-js";
-import { InteractionContextInt, InteractionMode } from "./interactable.types";
+import { InteractionContextInt, InteractionMode, NUM_INTERACTION_MODES } from "./interactable.types";
 
 const InteractionContext = createContext<InteractionContextInt>();
 export const useInteractionContext = () => useContext(InteractionContext)!;
@@ -12,10 +12,10 @@ export const useInteractionContext = () => useContext(InteractionContext)!;
 export default function InteractionProvider(props: ParentProps) {
 
     const [currentInteractionMode, setCurrentInteractionMode] = createSignal<InteractionMode>(InteractionMode.Interact);
-    const cycleInteractionMode = () => setCurrentInteractionMode(prev => (prev + 1) % 3);
+    const cycleInteractionMode = () => setCurrentInteractionMode(prev => (prev + 1) % NUM_INTERACTION_MODES);
     function changeInteractionModeWithKeybind(ev: KeyboardEvent) {
         let kn = Number(ev.key) - 1;
-        if(0 <= kn && kn <= 2) {
+        if(0 <= kn && kn < NUM_INTERACTION_MODES) {
             setCurrentInteractionMode(kn);
         }
     }

@@ -3,6 +3,15 @@ import { Setter } from "solid-js";
 import * as THREE from "three";
 import { Vector2 } from "three";
 
+/** Represents the key "interaction modes" the player can use when interfacing with the game scene. 
+ * Interactable components and other pieces of game logic respond to the current interaction mode. See `InteractionProvider.tsx` */
+export enum InteractionMode {
+    Interact,
+    Chat,
+    Observe,
+}
+
+export const NUM_INTERACTION_MODES = 3;
 
 export interface InteractableObject3D extends THREE.Object3D {
     userData: {
@@ -19,12 +28,6 @@ export interface InteractableObject3D extends THREE.Object3D {
  */
 export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
 
-export enum InteractionMode {
-    Interact,
-    Chat,
-    Observe,
-}
-
 /**
  * Map of interaction modes to a CB to run for handling that interaction type.
  * Used by YBillboard and Interactable
@@ -35,11 +38,33 @@ export type InteractionMap = {
     [mode in InteractionMode]?: interactionCB
 } | [interactionCB?, interactionCB?, interactionCB?]
 
+
+/**
+ * Describes a component that can respond to user interactions (clicks, hover, and mode-specific actions).
+ *
+ * This interface exposes a set of optional callbacks and a flexible interaction map so a component can:
+ * - react to any click (regardless of the current interaction mode),
+ * - respond to hover begin/leave events (raycast hit semantics),
+ * - and provide handlers for specific interaction modes (e.g., interact, chat, observe).
+ *
+ * Remarks:
+ * - onClick and onHover are global handlers that run for any click or hover respectively.
+ * - interactions is a mode-to-handler mapping that may be supplied either as an object keyed by the
+ *   interaction enum or as a shorthand array form (for example: `[interact(), chat(), observe()]`).
+ *
+ * @property onClick - Optional callback invoked for any click interaction.
+ * @property onHover - Optional callback invoked when the component is hovered (raycast detects it).
+ * @property interactions - Optional mapping of interaction modes to handlers. Supports both
+ *                          an enum-keyed object and an ordered shorthand array representation.
+ * @property onHoverLeave - Optional callback invoked when the hover (raycast) ends / pointer leaves.
+ */
 export interface InteractableComponent {
     /** interactionCB that runs regardless of interaction mode, for any user click. */
     onClick?: interactionCB
     /** interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit) */
     onHover?: interactionCB
+    /** CB that runs regardless of interaction mode, when mouse leaves. */
+    onHoverLeave?: () => void
     /**
      * Map of interaction modes to a CB to run for handling that interaction type.
      * Used by YBillboard and Interactable.
@@ -47,8 +72,6 @@ export interface InteractableComponent {
      * An InteractionMap can either be an object that maps to the enum directly, or you can just shorthand as an array of `[interact(), chat(), observe()]`
      */
     interactions?: InteractionMap
-    /** CB that runs regardless of interaction mode, when mouse leaves. */
-    onHoverLeave?: () => void,
 }
 
 /** Context provided by InteractionProvider for reading and changing interaction mode state. */

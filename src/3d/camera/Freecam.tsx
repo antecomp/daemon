@@ -1,7 +1,7 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { clamp, Scene } from "lume";
-import {createSignal, onCleanup, onMount} from 'solid-js'
+import { createSignal, onCleanup, onMount } from 'solid-js'
 import PlayerCam from "./PlayerCam";
 
 interface FreecamProps {
@@ -15,7 +15,6 @@ interface FreecamProps {
 const DEFAULT_ROT_SPEED = 50;
 const MAX_ROT = 90;
 const DEFAULT_MOVEMENT_SPEED = 3;
-
 
 /**
  * Freecam component provides a free-flying camera controller for 3D scenes.
@@ -61,7 +60,6 @@ export default function Freecam(props: FreecamProps) {
             rotSpeed *= 2;
         }
 
-
         let newYaw = yaw;
         let newPitch = pitch;
         if (keysdown.has("j")) newYaw += rotSpeed * dtSec;
@@ -91,7 +89,7 @@ export default function Freecam(props: FreecamProps) {
 
         rafID = requestAnimationFrame(step);
 
-        if(keysdown.has("p")) {
+        if (keysdown.has("p")) {
             exportTransform();
         }
     }
@@ -122,27 +120,27 @@ export default function Freecam(props: FreecamProps) {
         console.log("[Freecam export]", config, "\n\nSnippet:\n", snippet);
     }
 
-      onMount(() => {
-    window.addEventListener("keydown", keydown);
-    window.addEventListener("keyup", keyup);
-    last = performance.now();
-    rafID = requestAnimationFrame(step);
-  });
+    onMount(() => {
+        window.addEventListener("keydown", keydown);
+        window.addEventListener("keyup", keyup);
+        last = performance.now();
+        rafID = requestAnimationFrame(step);
+    });
 
     onCleanup(() => {
-    cancelAnimationFrame(rafID);
-    window.removeEventListener("keydown", keydown);
-    window.removeEventListener("keyup", keyup);
-  });
+        cancelAnimationFrame(rafID);
+        window.removeEventListener("keydown", keydown);
+        window.removeEventListener("keyup", keyup);
+    });
 
-  return (
-    <PlayerCam
-        basePos={basePos()}
-        baseOri={baseOri()}
-        maxYaw={10}
-        maxPitch={10}
-        animate
-        sceneRef={props.sceneRef}
-    />
-  )
+    return (
+        <PlayerCam
+            basePos={basePos()}
+            baseOri={baseOri()}
+            maxYaw={10}
+            maxPitch={10}
+            animate
+            sceneRef={props.sceneRef}
+        />
+    )
 }

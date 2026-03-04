@@ -103,6 +103,7 @@ export default function Billboard(props: BillboardProps) {
                 img.src = me.texture!
                 img.onload = () => {
                     const aspect = img.width / img.height;
+                    // TODO: Consider allowing configuring width or height, then inferring the other. Instead of always being based on height.
                     me.size = `${(props.scale ?? 1) * aspect} ${(props.scale ?? 1)}`;
                     maskData = generateAlphaMask(img);
                 }

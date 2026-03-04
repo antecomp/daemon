@@ -9,8 +9,10 @@ import { XYZ } from "@/shared/types/3d.types";
 import { sceneLock } from "@/app/shell/locks/UILockManager";
 import { DEFAULT_CAMERA_SPEED } from "@/config/3d.config";
 
-// Helper function to return updated x,y,z values given current and target.
-// will either lerp or snap (based on animate bool).
+/** 
+ * Helper function to return updated x,y,z values given current and target.
+ * will either lerp or snap (based on animate bool).
+*/
 function getCameraTransform(
     prev: [number, number, number],
     target: [number, number, number],
@@ -30,7 +32,7 @@ function getCameraTransform(
     }
 }
 
-// Lerp angles in degrees along the shortest path to avoid unwinding spins.
+/** Lerp angles in degrees along the shortest path to avoid unwinding spins. */
 function lerpAngleDeg(prev: number, target: number, t: number) {
     const clampedT = Math.min(Math.max(t, 0), 1);
     let delta = ((target - prev + 180) % 360) - 180;
@@ -225,7 +227,7 @@ export default function PlayerCam(props: {
                 : lerp(mouseInter.pitch, mouseOffset.pitch, (props.speed ?? DEFAULT_CAMERA_SPEED) * (dt / 1000));
 
             const basePitch = props.baseOri.pitch;
-            const effectivePitch = props.overrideOri
+            const effectivePitch = (props.overrideOri)
                 ? props.overrideOri.pitch
                 : basePitch + mouseInter.pitch;
 

@@ -1,12 +1,26 @@
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import { Accessor, Setter } from "solid-js";
 
+/**
+ * Configuration options for a 3D camera.
+ *
+ * To supply one or more settings when positioning or orienting
+ * a camera in the scene. All fields are optional: unspecified values should be
+ * treated as "leave unchanged" or replaced by the system's defaults.
+*/
 export interface CameraSettings {
+    /** XYZ (three-digit-tuple [X,Y,Z]) position of the camera in world coordinates. */
     pos?: XYZ,
+    /** Orientation describing the camera's (Eurler) rotation. */
     ori?: Orientation,
+    /** Boolean flag to indicate if the cameras properties should be interpolated. */
     anim?: boolean
 }
 
+/**
+ * Configuration options for a 3D "base" camera (representing the tilting point and click camera).
+ * Extends {@link CameraSettings}, adding a tilts property.
+ */
 export interface BaseCameraSettings extends CameraSettings {
     tilts?: {
         maxYaw: number;
@@ -14,6 +28,9 @@ export interface BaseCameraSettings extends CameraSettings {
     }
 }
 
+/** Represents settings for "overriding" the player camera. Takes {@link CameraSettings} and attaches an id for tracking. 
+ * Used internally by the cameraController system.
+ */
 export type CameraOverride = CameraSettings & {id: number}
 
 /**
