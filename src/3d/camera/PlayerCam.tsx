@@ -1,13 +1,12 @@
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
-import { Orientation } from "@/shared/types/3d.types";
 import lerp from "@/shared/utils/lerp";
 import { setHoverCursor } from "@/app/shell/scene-container/SceneContainer";
 import { Scene, PerspectiveCamera, Element3D } from "lume";
 import { onCleanup, onMount, createEffect } from "solid-js";
 import { Object3D, Raycaster, Vector2 } from "three";
-import { XYZ } from "@/shared/types/3d.types";
 import { sceneLock } from "@/app/shell/locks/UILockManager";
 import { DEFAULT_CAMERA_SPEED } from "@/config/3d.config";
+import { PlayerCameraControls } from "./camera.types";
 
 /** 
  * Helper function to return updated x,y,z values given current and target.
@@ -45,37 +44,8 @@ function lerpAngleDeg(prev: number, target: number, t: number) {
  * which runs and performs all the raycast/interaction logic + head movement on mouse move. This camera can then 
  * be temporarily overridden (disabling the interaction/mouse logic) by setting override position/orientation paramaters.
  * These override params can be used for cinematic sequences, in-dialogue VN cameras, etc.
- *
- * @param props.basePos - The base position of the camera in the 3D space. [x,y,z]
- * @param props.baseOri - The base orientation of the camera. {yaw: #, pitch: #}
- * @param props.overridePos - An optional override for the camera's position.
- * @param props.overrideOri - An optional override for the camera's orientation.
- * @param props.animate - Whether the camera's movements should be animated (lerp from current value to new base/override values). Defaults to `false`. 
- * @param props.speed - The speed of the camera's animation. Defaults to `10`.
- * @param props.maxYaw - The maximum yaw offset for mouse movement. As in, how far can we look left/right from base ori
- * @param props.maxPitch - The maximum pitch offset for mouse movement. As in, how far can we tilt our head up/down from base ori.
- * @param props.sceneRef - A reference to the 3D scene containing the camera, used to attach event listeners.
- *
- * @remarks
- * - The camera uses raycasting to detect hover and click interactions with objects in the scene.
- * - Mouse movements adjust the camera's yaw and pitch within the specified limits.
- * - The camera's position and orientation can be overridden programmatically.
- * - Cleanup is performed on component unmount to remove event listeners.
- * - The camera system live-reads the value of input props, meaning transitions and updates are performed simply
- * - by updating the props (typically by using signals for prop inputs and changing those as needed.)
- *
- * @returns A JSX element representing the camera system.
  */
-export default function PlayerCam(props: {
-    basePos: XYZ, baseOri: Orientation,
-    overridePos?: XYZ, overrideOri?: Orientation
-    animate?: boolean;
-    speed?: number
-    maxYaw: number,
-    maxPitch: number,
-    interactionDistance?: number,
-    sceneRef: Scene
-}) {
+export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene}) {
 
     const raycaster = new Raycaster();
     createEffect(() => {

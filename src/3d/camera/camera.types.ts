@@ -33,6 +33,21 @@ export interface BaseCameraSettings extends CameraSettings {
  */
 export type CameraOverride = CameraSettings & {id: number}
 
+/** Represents the Camera-related properties for PlayerCam
+ * TODO: Document properties.
+ */
+export type PlayerCameraControls = {
+    basePos: XYZ;
+    baseOri: Orientation;
+    overrideOri: Orientation | undefined;
+    overridePos: XYZ | undefined;
+    animate: boolean;
+    maxYaw: number;
+    maxPitch: number;
+    interactionDistance?: number
+    speed?: number
+}
+
 /**
  * CameraController provides an API for imperatively managing a PlayerCams state (for easy programmatic movement).
  */
@@ -93,12 +108,4 @@ export interface CameraController {
 }
 
 /* Matches the props of PlayerCam */
-export type CameraControlSignals = Accessor<{
-    basePos: XYZ;
-    baseOri: Orientation;
-    overrideOri: Orientation | undefined;
-    overridePos: XYZ | undefined;
-    animate: boolean;
-    maxYaw: number;
-    maxPitch: number;
-}>
+export type PlayerCameraControlSignals = Accessor<PlayerCameraControls>

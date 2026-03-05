@@ -69,6 +69,7 @@ export default function Islands() {
         <PlayerCam
           sceneRef={sceneRef}
           {...cameraControlSignals()}
+          //interactionDistance={100}
         />
 
         <lume-ambient-light intensity="6.5" />

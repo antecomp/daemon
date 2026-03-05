@@ -43,7 +43,7 @@ export default function TestA() {
             <PlayerCam
                 sceneRef={sceneRef}
                 {...cameraControlSignals()}
-                interactionDistance={120}
+                interactionDistance={50} // larger than default provided by tilenav
             />
 
             <lume-ambient-light intensity={4} />

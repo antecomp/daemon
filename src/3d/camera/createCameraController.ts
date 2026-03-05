@@ -1,7 +1,7 @@
 import { Orientation } from "@/shared/types/3d.types";
 import { XYZ } from "@/shared/types/3d.types";
 import { createMemo, createSignal } from "solid-js";
-import { CameraSettings, CameraOverride, CameraController, CameraControlSignals, BaseCameraSettings } from "./camera.types";
+import { CameraSettings, CameraOverride, CameraController, PlayerCameraControlSignals, BaseCameraSettings } from "./camera.types";
 
 /**
  * Helper function for generating signals that can be passed to a playerCamera, alongside standard API functions for
@@ -18,7 +18,7 @@ export default function createCameraController( // Initial does not use CameraSe
     initialOri: Orientation,
     maxTilts: { maxYaw: number, maxPitch: number }
 ): {
-    cameraControlSignals: CameraControlSignals,
+    cameraControlSignals: PlayerCameraControlSignals,
     cameraController: CameraController
 } {
     const [basePos, setBasePos] = createSignal(initialPos);

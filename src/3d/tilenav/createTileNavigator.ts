@@ -4,7 +4,7 @@ import { Orientation, XYZ } from "@/shared/types/3d.types";
 import { createPayloadEmitter } from "@/shared/utils/emitter";
 import {
     BaseCameraSettings,
-    CameraControlSignals,
+    PlayerCameraControlSignals,
     CameraController,
     CameraOverride,
     CameraSettings
@@ -134,6 +134,9 @@ export interface NavController {
  *     - createOverride returns a handle with commit/release helpers that may set
  *       the base animation flag when provided with an anim boolean.
  * 
+ * - Interaction Distance:
+ *     - Generated camera signals use a default suggested interaction distance of the tilesize * 2. 
+ * 
  * - Errors:
  *     - setBase, setBasePos, and setBaseOri throw if called because this navigator
  *       enforces base camera driven by tile+direction and does not accept direct
@@ -142,7 +145,7 @@ export interface NavController {
 export default function createTileNavigator(
     initialNM: NavMap
 ): {
-    cameraControlSignals: CameraControlSignals,
+    cameraControlSignals: PlayerCameraControlSignals,
     cameraController: CameraController,
     navController: NavController,
     navListen: (fn: (event: NavActionEvent) => void) => void
@@ -239,7 +242,7 @@ export default function createTileNavigator(
     };
 
 
-    const cameraControlSignals: CameraControlSignals = createMemo(() => ({
+    const cameraControlSignals: PlayerCameraControlSignals = createMemo(() => ({
         basePos: cameraPositionForTile(currentTile()),
         baseOri: {
             yaw: currentYaw(),
@@ -249,7 +252,8 @@ export default function createTileNavigator(
         overridePos: currentOverridePos(),
         animate: shouldAnim(),
         maxYaw: 20,
-        maxPitch: 30
+        maxPitch: 30,
+        interactionDistance: navMap.config.tileSize * 2
     }));
 
     // Movement Stuff -------------------------------------
