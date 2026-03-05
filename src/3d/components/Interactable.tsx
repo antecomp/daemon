@@ -3,7 +3,7 @@ import {createEffect, ParentProps} from "solid-js"
 import { InteractableComponent } from "@/core/interaction/interactable.types";
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { useInteractionContext } from "@/core/interaction/InteractionProvider";
-import { hoveredItem, setHoveredItem } from "../pipeline/dgRender";
+import { outlinedMesh, setOutlinedMesh } from "../pipeline/dgRender";
 
 interface InteractableProps extends InteractableComponent, ParentProps {
     /** boolean that indicates to the OutlinePass whether to highlight (draw white border) 
@@ -30,10 +30,10 @@ export default function Interactable(props: InteractableProps) {
     // Live disable hover border if prop changes.
     createEffect(() => {
         if(!props.showHoverBorder) {
-            const currentHovered = hoveredItem();
+            const currentHovered = outlinedMesh();
             const hoverTarget = containerRef?.children?.[0] as Element3D | undefined;
             if(currentHovered && currentHovered === hoverTarget?.three) {
-                setHoveredItem(null);
+                setOutlinedMesh(null);
             }
         }
     });
@@ -53,11 +53,11 @@ export default function Interactable(props: InteractableProps) {
                 // We want to make the direct child of the interact container to be the receiver of the 
                 // glow effect - this often differs from the Three object calling onHover.
                 // Ref HeadCam implementation but tldr we check every ancestor of raycast target for method in case of grouping.
-                if(containerRef.children.length > 0 && props.showHoverBorder) setHoveredItem((containerRef.children[0] as Element3D).three);
+                if(containerRef.children.length > 0 && props.showHoverBorder) setOutlinedMesh((containerRef.children[0] as Element3D).three);
             };
             containerRef.three.userData.onHoverLeave = () => {
                 props.onHoverLeave?.();
-                setHoveredItem(null);
+                setOutlinedMesh(null);
             }
         }
     });

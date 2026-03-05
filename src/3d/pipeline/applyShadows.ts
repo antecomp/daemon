@@ -19,8 +19,7 @@ export default function applyShadows(ref: Element3D | ObjModel, cast = true, rec
     //     });
     // }
 
-    /* WARNING: THIS EVENT LISTENER SYSTEM WILL BE DEPRECATED AND REPLACED IN LATER
-    VERSIONS OF LUME. WORKS FOR NOW.  */
+    // Ignoring deprecation warning. Suggested new method does not work.
     ref.on('MODEL_LOAD', (_m: any) => {
         ref.three.traverse(n => {
             //@ts-ignore // (property does exist but it's not typed in)

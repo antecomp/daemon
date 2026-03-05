@@ -11,7 +11,11 @@ export enum InteractionMode {
     Observe,
 }
 
-export const NUM_INTERACTION_MODES = 3;
+/** 
+ * Size of InteractionMode enum, indicates number of interaction modes.
+ *  @ref https://stackoverflow.com/questions/38034673/determine-the-number-of-enum-elements-typescript
+*/
+export const NUM_INTERACTION_MODES = Object.keys(InteractionMode).length / 2;
 
 export interface InteractableObject3D extends THREE.Object3D {
     userData: {

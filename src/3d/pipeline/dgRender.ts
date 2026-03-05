@@ -1,20 +1,20 @@
 import { FOV } from "@/config/3d.config";
 import { SCENE_DIMENSIONS } from "@/config/ui.config";
 import { Scene, toRadians } from "lume";
-import {createSignal, onMount} from "solid-js"
+import { createSignal, onMount } from "solid-js"
 import { EffectComposer, OutlinePass, OutputPass, RenderPass, ShaderPass } from "three/examples/jsm/Addons.js";
 import pp_fragshader from "@/3d/shaders/post-processing/dg.frag.glsl"
 import pp_vertshader from "@/3d/shaders/post-processing/pass.vert.glsl"
 import { Object3D, Object3DEventMap, Vector2 } from "three";
 import sleep from "@/shared/utils/sleep";
 
-function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
-    
-    if(mode == "normal") return;
-    
-    //@ts-ignore
+function updateDitherUniforms(pass: ShaderPass, scene: Scene, sceneWidth: number, sceneHeight: number, mode: "normal" | "stable" | "quantized") {
+
+    if (mode == "normal") return;
+
+    //@ts-expect-error - property does exist, just not typed.
     const aspect = scene.threeCamera.aspect;
-    //@ts-ignore
+    //@ts-expect-error - property does exist, just not typed.
     const FOV = scene.threeCamera.fov
 
     const HFOV = 2 * Math.atan(Math.tan(toRadians(FOV) / 2) * aspect)
@@ -26,68 +26,67 @@ function updateDitherUniforms (pass: ShaderPass, scene: Scene, sceneWidth: numbe
     const offsetX = -(sceneWidth * yaw) / HFOV;
     const offsetY = (sceneHeight * pitch) / toRadians(FOV);
 
-    if(mode == "stable") {
-        pass.uniforms.offsetX.value = Math.round(offsetX); 
+    if (mode == "stable") {
+        pass.uniforms.offsetX.value = Math.round(offsetX);
         pass.uniforms.offsetY.value = Math.round(offsetY);
-    } else if (mode == "quantized") {
+    }
+
+    if (mode == "quantized") {
         // Ref: https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
-        // Tldr only move @ 2px increments to lessen flicker. Not a resolution but it helps.
+        // TLDR; only move @ 2px increments to lessen flicker.
         pass.uniforms.offsetX.value = 2 * Math.floor(offsetX / 2 + 0.5);
         pass.uniforms.offsetY.value = 2 & Math.floor(offsetY / 2 + 0.5);
     }
 
 }
 
-// Global signal so the OutlinePass in dgRender can easily observe who is actively being hovered.
-export const [hoveredItem, setHoveredItem] = createSignal<Object3D<Object3DEventMap> | null>(null);
+// Indicates a mesh to by outlined by the OutlinePass effect. Currently associated with "hovering" (mouseover).
+export const [outlinedMesh, setOutlinedMesh] = createSignal<Object3D<Object3DEventMap> | null>(null);
 
 function updateOutlineUniforms(pass: OutlinePass) {
-    pass.selectedObjects = hoveredItem() ? [hoveredItem()!] : [];
+    pass.selectedObjects = outlinedMesh() ? [outlinedMesh()!] : [];
 }
 
-export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable", dimensionOverride?: {width: number, height: number}) {
-    if(!scene.glRenderer) {
-        console.warn('[applyDGShader] Scene GL instance not ready yet.');
+export default function applyDGShader(scene: Scene, mode = "quantized" as "quantized" | "normal" | "stable", dimensionOverride?: { width: number, height: number }) {
+    if (!scene.glRenderer) {
         throw new Error("[applyDGShader] Scene GL instance not ready yet. scene.glRenderer could not be found.");
-        return;
     };
 
     const composer = new EffectComposer(scene.glRenderer);
 
-    // Constant render dimensions regardless of scale.
-    const {width: WIDTH, height: HEIGHT} = dimensionOverride ?? SCENE_DIMENSIONS;
+    // Constant render dimensions regardless of scale. Preserve pixelation.
+    const { width: WIDTH, height: HEIGHT } = dimensionOverride ?? SCENE_DIMENSIONS;
 
-    // composer 1 + window.devicePixelRatio on glRenderer seems to be the combination needed to make this work
-    // well on both HiDPI and normal displays.
-    // This is only because we're no longer zooming to scale UI (which would change reported ratio)
-    // and instead we're scaling the whole UI with css.
+    /*
+    Composer pixel ratio controls the render/PP resolution. Keep resolution reliable through pipeline. We don't want to distort the dithering pattern on HiDPI.
+    glRenderer pixel ratio relates to the canvas being painted on. It should use the device ratio to keep pixels sharp and handle resizing correctly.
+    This configuration works well on both HiDPI and normal displays.
+    */
+    composer.setPixelRatio(1);
+    scene.glRenderer.setPixelRatio(window.devicePixelRatio);
 
-	composer.setPixelRatio(1);
-	composer.setSize(WIDTH, HEIGHT);
-
-    
-	scene.glRenderer.setPixelRatio(window.devicePixelRatio);
-	scene.glRenderer.setSize(WIDTH, HEIGHT, false); // false = don't update canvas.style
+    composer.setSize(WIDTH, HEIGHT);
+    scene.glRenderer.setSize(WIDTH, HEIGHT, false); // false = don't update canvas.style
 
     // Some constants and data needed for shader logic...
     // @ts-ignore
     scene.camera.fov = FOV;
-   
 
     // Generic Passes
     const renderPass = new RenderPass(scene.three, scene.threeCamera);
-	const outputPass = new OutputPass();
+    const outputPass = new OutputPass();
 
-    const effectPass = new ShaderPass({
+    // Main Effect (Dithering).
+    const visualEffectPass = new ShaderPass({
         vertexShader: pp_vertshader,
         fragmentShader: pp_fragshader,
         uniforms: {
             tDiffuse: { value: null },
-            lumaCutoff: { value : 0.0 },
-            screensize: {value : new Vector2(WIDTH, HEIGHT)},
-            gamma: {value : 0.95},
-            offsetX: {value: 0},
-            offsetY: {value: 0}
+            lumaCutoff: { value: 0.0 },
+            screensize: { value: new Vector2(WIDTH, HEIGHT) },
+            gamma: { value: 0.95 },
+            offsetX: { value: 0 },
+            offsetY: { value: 0 }
         },
     });
 
@@ -99,27 +98,32 @@ export default function applyDGShader(scene: Scene, mode = "quantized" as "quant
 
     composer.addPass(renderPass);
     composer.addPass(outlinePass);
-    composer.addPass(effectPass); // Dithering, gamma correction, etc...
-	composer.addPass(outputPass);
+    composer.addPass(visualEffectPass); // Dithering, gamma correction, etc...
+    composer.addPass(outputPass);
 
     // Always render the scene from the active camera
-	scene.drawScene = () => {
-		renderPass.camera = scene.threeCamera;
+    scene.drawScene = () => {
+        renderPass.camera = scene.threeCamera;
         outlinePass.renderCamera = scene.threeCamera;
 
-        updateDitherUniforms(effectPass, scene, WIDTH, HEIGHT, mode);
+        updateDitherUniforms(visualEffectPass, scene, WIDTH, HEIGHT, mode);
         updateOutlineUniforms(outlinePass);
 
-		composer.render();
-	};
+        composer.render();
+    };
 }
 
-export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized', dimensionOverride?: {width: number, height: number}) => {
+export const useDGShader = (getScene: () => Scene, mode?: 'normal' | 'stable' | 'quantized', dimensionOverride?: { width: number, height: number }) => {
+    const ATTEMPT_TIMEOUT_MS = 5000;
 
+    const start = performance.now();
     const x = () => {
         requestAnimationFrame(() => {
             const s = getScene();
-            if (!s) sleep(10).then(x) // retry
+            if (!s) {
+                if (performance.now() - start >= ATTEMPT_TIMEOUT_MS) return;
+                sleep(10).then(x); // retry
+            }
             else applyDGShader(s, mode, dimensionOverride);
         })
     }
