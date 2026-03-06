@@ -19,8 +19,7 @@ import NavCompass from '@/3d/tilenav/NavCompass';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import AtTile from '@/3d/tilenav/AtTile';
 import Interactable from '@/3d/components/Interactable';
-import { DialogueService } from '@/core/dialogue/dialogueService';
-import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
+import { EMPTY_RENDER, makeDialogueNode } from '@/core/dialogue/dialogueNode';
 import { createEffect, createReaction, createSignal, JSX, onMount, Show, untrack } from 'solid-js';
 import createPopup from '@/app/shell/popup/Popup';
 import lerp from '@/shared/utils/lerp';
@@ -31,6 +30,13 @@ import sleep from '@/shared/utils/sleep';
 import { DGDEV } from '@/devtools/dev';
 import { listenForRelicDecrypt } from '@/data/items/ITEM_RELIC';
 import Inventory from '@/core/inventory/inventory';
+import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
+import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
+import { startBattle } from '@/features/battle/startBattle';
+import { OPPONENT_BNUY } from '@/data/battles/bnuy';
+import { createDialogueBuilder } from '@/core/dialogue/dialogueBuilder';
+import { BattleOutcome } from '@/core/battle/model/battle';
+import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
 
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
@@ -49,13 +55,64 @@ const tutPopup = (content: JSX.Element) => {
     )
 }
 
+enum Characters {
+    Dithon = "Dithon",
+    Arda = "Arda"
+}
+
+const dithonDialogueRoot = createDialogueBuilder("Hello Arda. I am impressed you made it this far", Characters.Dithon);
+
+dithonDialogueRoot
+    .chain(
+        "But I am afriad there is one last challenge for you.",
+        "You see, this game is called daemon garden because it has DAEMONS IN IT.",
+        "And you will have to fight plenty of them!"
+    )
+    .addCar(["What are those", "What are daemons?"], "Daemons are the spirits that populate this realm. Not all of them are friendly.",
+        r => {
+            let battleOutcome: BattleOutcome;
+            return r
+                .chain("By the sounds of it, you won't know how to fight them either. I will make sure to throw a tutorial in for you.")
+                .then(EMPTY_RENDER)
+                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_BNUY, showBattleTutorial))
+                .do(bn => bn
+                    .node.next = () => {
+                        switch (battleOutcome) {
+                            case (BattleOutcome.PlayerVictory): return makeDialogueNode("Wow, nice job. I'm impressed.", Characters.Dithon);
+                            case (BattleOutcome.OpponentVictory): return makeDialogueNode("Damn you suck.", Characters.Dithon);
+                            case (BattleOutcome.Draw): return makeDialogueNode("Draw. In a real fight that would still count as a loss.", Characters.Dithon);
+                            default: return makeDialogueNode("What.", Characters.Dithon);
+                        }
+                    }
+                )
+        }
+    )
+    .addCar(["Go ahead.", "Go ahead, I've already forsaken plenty of daemons."], "Impressive. I won't waste your time then!",
+        r => {
+            let battleOutcome: BattleOutcome;
+            return r
+                .then(EMPTY_RENDER)
+                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_BNUY))
+                .do(bn => bn
+                    .node.next = () => {
+                        switch (battleOutcome) {
+                            case (BattleOutcome.PlayerVictory): return makeDialogueNode("Wow, nice job. As expected.", Characters.Dithon);
+                            case (BattleOutcome.OpponentVictory): return makeDialogueNode("Damn you suck. I thought you knew what you were doing!", Characters.Dithon);
+                            case (BattleOutcome.Draw): return makeDialogueNode("Draw. In a real fight that would still count as a loss.", Characters.Dithon);
+                            default: return makeDialogueNode("What.", Characters.Dithon);
+                        }
+                    }
+                )
+        }
+    )
+
 export default function Demo() {
     let sceneRef!: Scene;
 
     applyRoomEnvironment(() => sceneRef);
     useDGShader(() => sceneRef);
 
-    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController, navListen, cameraController } = createTileNavigator(NM as NavMap);
     const { spawnMenu } = useSceneMenu();
 
     const [areDoorsOpen, setDoorsOpen] = createSignal(false);
@@ -80,34 +137,34 @@ export default function Demo() {
         )
     }
 
-    // onMount(async () => {
-    //     await new Promise<void>((resolve) => createPopup(
-    //         tutPopup(<p><img src='./logo.png' /> <br />Welcome to daemon.garden! <br /> This is a game I have been developing over the past year. <br /> It runs entirely in your web browser!</p>),
-    //         [{ prompt: 'OK', action: resolve }]
-    //     ))
-    //     await new Promise<void>((resolve) => createPopup(
-    //         tutPopup(<p>Let's start by learning some controls. You can click around the scene to interact with objects. Try opening the door ahead of you.</p>),
-    //         [{ prompt: 'OK', action: resolve }]
-    //     ))
-    // });
+    onMount(async () => {
+        await new Promise<void>((resolve) => createPopup(
+            tutPopup(<p><img src='./logo.png' /> <br />Welcome to daemon.garden! <br /> This is a game I have been developing over the past year. <br /> It runs entirely in your web browser!</p>),
+            [{ prompt: 'OK', action: resolve }]
+        ))
+        await new Promise<void>((resolve) => createPopup(
+            tutPopup(<p>Let's start by learning some controls. You can click around the scene to interact with objects. Try opening the door ahead of you.</p>),
+            [{ prompt: 'OK', action: resolve }]
+        ))
+    });
 
-    // createEffect(() => {
-    //     areDoorsOpen() && untrack(() => sleep(500).then(_ => createPopup((
-    //         <div
-    //             style={{
-    //                 'padding': '20px',
-    //                 'display': 'flex',
-    //                 'gap': '10px',
-    //                 'width': '450px',
-    //                 'justify-content': 'center',
-    //                 'align-items': 'center',
-    //             }}
-    //         >
-    //             <img src={controls_dia} />
-    //             <p style={{ transform: 'perspective(0px)' }}>Nice! Now you can walk through the scene using WASD and QE.</p>
-    //         </div>
-    //     ), undefined, "TUTORIAL")))
-    // })
+    createEffect(() => {
+        areDoorsOpen() && untrack(() => sleep(500).then(_ => createPopup((
+            <div
+                style={{
+                    'padding': '20px',
+                    'display': 'flex',
+                    'gap': '10px',
+                    'width': '450px',
+                    'justify-content': 'center',
+                    'align-items': 'center',
+                }}
+            >
+                <img src={controls_dia} />
+                <p style={{ transform: 'perspective(0px)' }}>Nice! Now you can walk through the scene using WASD and QE.</p>
+            </div>
+        ), undefined, "TUTORIAL")))
+    })
 
     const [isFightRevealed, setRevealFight] = createSignal(false);
     // Reaction will only run once.
@@ -137,9 +194,42 @@ export default function Demo() {
         })
     });
 
+    // gross.
     listenForRelicDecrypt(() => setRevealFight(true));
 
     const [hasPickedUpRelic, setHasPickedUpRelic] = createSignal(false);
+
+    let hasCrossedItemTrigger = false;
+    navListen(e => {
+        if (e.type !== 'move' || !e.success) return;
+        if (hasCrossedItemTrigger) return;
+
+        const [x, z] = navCoordToTuple(e.target);
+        if (x == 2 && 24 < z && z < 29) {
+            hasCrossedItemTrigger = true;
+            createPopup(tutPopup("There is a strange relic on the table there. You can pick it up by interacting with it."))
+        }
+    })
+
+    function pickUpRelic() {
+        Inventory.addItem('relic');
+        setHasPickedUpRelic(true);
+        createPopup(tutPopup('Sweet! You can access the item in your "file browser" (inventory), which is opened by clicking the folder icon on the side.'))
+    }
+
+    function dithonChatSequence() {
+        const OVR = {
+            pos: [69, -51, 420] as [number, number, number],
+            ori: { yaw: 157, pitch: 4 },
+            anim: false
+        }
+        createDialogueWithCamOvr(cameraController, OVR, dithonDialogueRoot.unwrap(), { fadeTransition: true }).start();
+    }
+
+    DGDEV.attach(() => {
+        setRevealFight(true)
+        dithonChatSequence();
+    }, "INSANITY")
 
     return (
         <>
@@ -155,6 +245,8 @@ export default function Demo() {
 
                 <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef} interactionDistance={30} />
 
+                {/* <Freecam sceneRef={sceneRef}/> */}
+
                 <lume-gltf-model
                     align-point="0.5 0.5"
                     scale="10 10 10"
@@ -163,7 +255,7 @@ export default function Demo() {
 
                 <AtTile pos='6,43' nm={navController.navMap} nc={navController}>
                     <Interactable
-                        interactions={[, () => DialogueService.startDialogue(makeDialogueNode('hello.', 'Dithon')),]}
+                        interactions={[, dithonChatSequence,]}
                     >
                         <lume-gltf-model
                             id="DEVON"
@@ -251,7 +343,7 @@ export default function Demo() {
                 <Show when={!hasPickedUpRelic()} >
                     <AtTile pos="5,31" nm={navController.navMap} nc={navController} occupying={false}>
                         <Interactable interactions={[
-                            () => {setHasPickedUpRelic(true); Inventory.addItem('relic')},
+                            pickUpRelic,
                             () => addLogMessage("Best not to talk to this thing."),
                             () => addLogMessage("A strange relic lies on the table"),
                         ]}>

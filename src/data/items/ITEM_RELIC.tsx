@@ -89,7 +89,7 @@ const ITEM_RELIC: Item = {
         createPopup(
             (<div style={POPUP_STYLE}>
                 <img src={alert_icon} />
-                <p>Unable to read or execute cache. Data is encrypted. Attempt to decrypt?</p>
+                <p>Often items are "encrypted," and you must solve a small puzzle for them to function.</p>
             </div>),
             [
                 {
