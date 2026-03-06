@@ -39,9 +39,9 @@ export type CameraOverride = CameraSettings & {id: number}
 export type PlayerCameraControls = {
     basePos: XYZ;
     baseOri: Orientation;
-    overrideOri: Orientation | undefined;
-    overridePos: XYZ | undefined;
-    animate: boolean;
+    overrideOri?: Orientation | undefined;
+    overridePos?: XYZ | undefined;
+    animate?: boolean;
     maxYaw: number;
     maxPitch: number;
     interactionDistance?: number

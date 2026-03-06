@@ -1,29 +1,42 @@
-import { onCleanup, Scene } from "lume";
+import { Scene } from "lume";
+import { onMount, onCleanup } from 'solid-js';
 import * as THREE from 'three'
 import { RoomEnvironment } from "three/examples/jsm/Addons.js";
 
-export default function applyRoomEnvironment(scene: Scene) {
-    const threeScene = scene.three;
-    const renderer = scene.glRenderer as THREE.WebGLRenderer
-    if (!renderer) {
-        console.error("AAAAAA");
-        return;
-    }
+export default function applyRoomEnvironment(getScene: () => Scene) {
 
-    if (!threeScene) {
-        console.error("BBBBB");
-        return;
-    }
+    let pmremGenerator: THREE.PMREMGenerator | undefined;
+    let envRT: THREE.WebGLRenderTarget<THREE.Texture> | undefined;
 
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
     const room = new RoomEnvironment();
-    const envRT = pmremGenerator.fromScene(room);
 
-    threeScene.environment = envRT.texture;
+    // Weird defer thing we have to do to wait for the scene to actually mount.
+    // Same issue as dgRender.
+    onMount(() => requestAnimationFrame(() => {
+        let scene = getScene();
+        if (!scene) throw new Error("Unable to get scene for room env!");
+
+        const threeScene = scene.three;
+        const renderer = scene.glRenderer as THREE.WebGLRenderer
+        if (!renderer) {
+            throw new Error("Scene WebGL Rendering Not Yet Attached! Unable to Apply Room Env.");
+        }
+
+        if (!threeScene) {
+            throw new Error("Scene THREE Entry Not Attached! Unable to apply room enviornment.");
+            return;
+        }
+
+        pmremGenerator = new THREE.PMREMGenerator(renderer);
+        envRT = pmremGenerator.fromScene(room);
+
+        threeScene.environment = envRT.texture;
+    }));
+
 
     onCleanup(() => {
-        envRT.dispose();
+        envRT?.dispose();
         room.dispose();
-        pmremGenerator.dispose();
+        pmremGenerator?.dispose();
     })
 }
