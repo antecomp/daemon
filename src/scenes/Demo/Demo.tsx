@@ -11,6 +11,9 @@ import { NavMap } from '@/3d/tilenav/tilenav.types';
 import NavCompass from '@/3d/tilenav/NavCompass';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import AtTile from '@/3d/tilenav/AtTile';
+import Interactable from '@/3d/components/Interactable';
+import { DialogueService } from '@/core/dialogue/dialogueService';
+import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
 
 export default function Demo() {
     let sceneRef!: Scene;
@@ -32,7 +35,7 @@ export default function Demo() {
                 perspective="800"
             >
 
-                <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef}/>
+                <PlayerCam {...cameraControlSignals()} sceneRef={sceneRef} interactionDistance={30}/>
 
                 <lume-gltf-model
                     align-point="0.5 0.5"
@@ -40,15 +43,19 @@ export default function Demo() {
                     src={world}
                 />
 
-                <AtTile pos='5,31' nm={navController.navMap} nc={navController}>
-                    <lume-gltf-model
-                        id="DEVON"
-                        align-point="0.5 0.5"
-                        scale="0.3 0.3 0.3"
-                        src={devon}
-                        position='4 -30 -9'
-                        rotation="0 300 0"
-                    />
+                <AtTile pos='6,43' nm={navController.navMap} nc={navController}>
+                    <Interactable
+                        interactions={[,() => DialogueService.startDialogue(makeDialogueNode('hello.', 'Dithon')),]}
+                    >
+                        <lume-gltf-model
+                            id="DEVON"
+                            align-point="0.5 0.5"
+                            scale="0.6 0.6 0.6"
+                            src={devon}
+                            position='-3 0 0'
+                            rotation="0 300 0"
+                        />
+                    </Interactable>
                 </AtTile>
 
             </lume-scene>
