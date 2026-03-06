@@ -11,6 +11,7 @@ interface OnTileProps extends ParentProps {
     nm: NavMap,
     nc: NavController,
     onWalkInto?: () => void
+    occupying?: boolean
 }
 
 /**
@@ -30,6 +31,8 @@ export default function AtTile(props: OnTileProps) {
         // Release tile that was previously occupied
         releaseTileOccupancy && releaseTileOccupancy();
 
+        const shouldOccupy = props.occupying ?? true;
+        if(!shouldOccupy) return;
         // Occupy new tile, update release for new tile.
         releaseTileOccupancy = props.nc.occupyTile(
             // Round fractional pos (i.e 1.5,1.3) to integer tile coords.
