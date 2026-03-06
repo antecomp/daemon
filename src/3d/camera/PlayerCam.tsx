@@ -173,9 +173,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
                 : lerp(mouseInter.yaw, mouseOffset.yaw, (props.speed ?? DEFAULT_CAMERA_SPEED) * (dt / 1000));
 
             const baseYaw = props.baseOri.yaw;
-            const effectiveYaw = props.overrideOri
-                ? props.overrideOri.yaw
-                : baseYaw + mouseInter.yaw;
+            const effectiveYaw = props.overrideOri?.yaw ?? baseYaw + mouseInter.yaw
 
             if (props.animate) {
                 const dtInSec = dt / 1000;
@@ -197,9 +195,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
                 : lerp(mouseInter.pitch, mouseOffset.pitch, (props.speed ?? DEFAULT_CAMERA_SPEED) * (dt / 1000));
 
             const basePitch = props.baseOri.pitch;
-            const effectivePitch = (props.overrideOri)
-                ? props.overrideOri.pitch
-                : basePitch + mouseInter.pitch;
+            const effectivePitch = props.overrideOri?.pitch ?? basePitch + mouseInter.pitch;
 
             if (props.animate) {
                 const dtInSec = dt / 1000;
