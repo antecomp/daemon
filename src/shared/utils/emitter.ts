@@ -11,8 +11,9 @@ export function createEmitter() {
     emit: () => setTick((t) => t + 1),
     listen: (fn: () => void) =>
       createEffect(() => {
-        tick();     // subscribe
-        untrack(fn);
+        // prevent fire on mount
+        if (tick() > 0)
+          untrack(fn);
       })
   };
 }
@@ -22,7 +23,7 @@ export function createEmitter() {
  * @returns An object with `emit` and `listen` methods for pub/sub pattern with data.
  */
 export function createPayloadEmitter<T>() {
-  const [event, setEvent] = createSignal<{data: T, ts: number}>();
+  const [event, setEvent] = createSignal<{ data: T, ts: number }>();
 
   return {
     // ts to ensure uniqueness.

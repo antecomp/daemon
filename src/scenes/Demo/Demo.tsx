@@ -8,7 +8,9 @@ import door_l from '@/scenes/Doors/assets/door_l.png';
 import door_r from '@/scenes/Doors/assets/door_r.png'
 import controls_dia from '@/assets/misc/controls dia.png';
 
-import { Scene } from "lume";
+import relic from './assets/relic.glb';
+
+import { Motor, Plane, Scene } from "lume";
 import applyRoomEnvironment from '@/3d/pipeline/applyRoomEnvironment';
 import { useDGShader } from '@/3d/pipeline/dgRender';
 import createTileNavigator from '@/3d/tilenav/createTileNavigator';
@@ -19,7 +21,7 @@ import AtTile from '@/3d/tilenav/AtTile';
 import Interactable from '@/3d/components/Interactable';
 import { DialogueService } from '@/core/dialogue/dialogueService';
 import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
-import { createEffect, createReaction, createSignal, JSX, onMount, untrack } from 'solid-js';
+import { createEffect, createReaction, createSignal, JSX, onMount, Show, untrack } from 'solid-js';
 import createPopup from '@/app/shell/popup/Popup';
 import lerp from '@/shared/utils/lerp';
 import { InteractionCB } from '@/core/interaction/interactable.types';
@@ -27,6 +29,8 @@ import { useSceneMenu } from '@/app/shell/scene-menu/SceneMenuContext';
 import { addLogMessage } from '@/app/shell/hud/EventLog';
 import sleep from '@/shared/utils/sleep';
 import { DGDEV } from '@/devtools/dev';
+import { listenForRelicDecrypt } from '@/data/items/ITEM_RELIC';
+import Inventory from '@/core/inventory/inventory';
 
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
@@ -78,7 +82,7 @@ export default function Demo() {
 
     // onMount(async () => {
     //     await new Promise<void>((resolve) => createPopup(
-    //         tutPopup(<p><img src='./logo.png' /> <br />Welcome to daemon.garden! <br/> This is a game I have been developing over the past year. <br/> It runs entirely in your web browser!</p>),
+    //         tutPopup(<p><img src='./logo.png' /> <br />Welcome to daemon.garden! <br /> This is a game I have been developing over the past year. <br /> It runs entirely in your web browser!</p>),
     //         [{ prompt: 'OK', action: resolve }]
     //     ))
     //     await new Promise<void>((resolve) => createPopup(
@@ -112,6 +116,30 @@ export default function Demo() {
     })(() => isFightRevealed())
 
     DGDEV.attach(setRevealFight, "SRF");
+
+    /* currently lume has a bug where deltaTime is not attached for the property animator on opacity.
+    See: https://github.com/lume/lume/blob/6336e365f1c02af6316017bcd6d7f79bd2efe13b/src/core/PropertyAnimator.ts#L75
+    vs: https://github.com/lume/lume/blob/6336e365f1c02af6316017bcd6d7f79bd2efe13b/src/core/PropertyAnimator.ts#L100
+
+    Since I don't want to deal with patching the package, or using any other hacks. Im just going to shove the opacity change anim in a motor.
+    */
+    let obfuscationPlane!: Plane;
+    onMount(() => {
+        Motor.addRenderTask((_t, dt) => {
+            if (!obfuscationPlane) {
+                return;
+            }
+
+            if (isFightRevealed()) {
+                const currentOpacity = obfuscationPlane.opacity;
+                obfuscationPlane.opacity = lerp(currentOpacity, 0, dt / 2000);
+            }
+        })
+    });
+
+    listenForRelicDecrypt(() => setRevealFight(true));
+
+    const [hasPickedUpRelic, setHasPickedUpRelic] = createSignal(false);
 
     return (
         <>
@@ -220,7 +248,28 @@ export default function Demo() {
                     </Interactable>
                 </AtTile>
 
+                <Show when={!hasPickedUpRelic()} >
+                    <AtTile pos="5,31" nm={navController.navMap} nc={navController} occupying={false}>
+                        <Interactable interactions={[
+                            () => {setHasPickedUpRelic(true); Inventory.addItem('relic')},
+                            () => addLogMessage("Best not to talk to this thing."),
+                            () => addLogMessage("A strange relic lies on the table"),
+                        ]}>
+                            <lume-gltf-model
+                                id="pain"
+                                position="5 -30 -5"
+                                rotation="0 0 0"
+                                src={relic}
+                                scale="10 10 10"
+                                // mount-point="0.5 0.5"
+                                align-point="0.5 0.5"
+                            />
+                        </Interactable>
+                    </AtTile>
+                </Show>
+
                 <lume-plane
+                    ref={obfuscationPlane}
                     align-point="0.5 0.5"
                     mount-point="0.5 1"
                     position='60 -20 365'
@@ -228,12 +277,8 @@ export default function Demo() {
                     sidedness='double'
                     color="black"
                     id="egg"
-                    has="basic-material"
-
                     //@ts-expect-error
-                    opacity={(opacity, _t, dt) => 
-                        {console.log(dt, opacity); return isFightRevealed() ? lerp(opacity, 0, 5 * dt / 1000) : 1}
-                    }
+                    has="basic-material"
                 />
 
             </lume-scene>

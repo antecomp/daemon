@@ -5,6 +5,7 @@ import { AssetURL } from "@/shared/types/misc.types";
 import { playTextOverlay } from "@/features/text-overlay/TextOverlay";
 import decrypt_textscene from "@/scenes/TheGem/data/decrypt_textscene";
 import { ITEM_ICONS } from "./itemIcons";
+import ITEM_RELIC from "@/data/items/ITEM_RELIC";
 
 export type ItemCategory = "data" | "caches" | "misc"
 
@@ -61,7 +62,8 @@ export const ITEM_REGISTRY = {
         action() {playTextOverlay(decrypt_textscene)}
     },
     dv_mod: ITEM_DV_MOD,
-    example: ITEM_EXAMPLE
+    example: ITEM_EXAMPLE,
+    relic: ITEM_RELIC
 } as const satisfies Record<string, Item>
 
 export type ItemKey = keyof typeof ITEM_REGISTRY;
