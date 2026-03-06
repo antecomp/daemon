@@ -12,11 +12,16 @@ import PainterPreviewMap from "./PainterPreviewMap";
 import downloadObjectAsJson from "@/shared/utils/downloadAsJson";
 
 import 'lume'
-import { render } from "lume";
+import { render, Scene } from "lume";
 import { getWSPositionOfTile } from "./tilenav.utils";
 import playStepSound from "./stepsound";
+import applyRoomEnvironment from "../pipeline/applyRoomEnvironment";
 
 export default function NavTilePainter() {
+
+    let sceneRef!: Scene;
+    applyRoomEnvironment(() => sceneRef);
+
     const [nm, setNm] = createStore<NavMap>({
         config: {
             playerHeight: 10,
@@ -319,6 +324,7 @@ export default function NavTilePainter() {
                     id='SCENE'
                     physically-correct-lights
                     perspective='800'
+                    ref={sceneRef}
                 >
 
                     <NavTilePreviewCamera
