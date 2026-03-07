@@ -19,9 +19,9 @@ export const NUM_INTERACTION_MODES = Object.keys(InteractionMode).length / 2;
 
 export interface InteractableObject3D extends THREE.Object3D {
     userData: {
-        onHover?: interactionCB;
+        onHover?: InteractionCB;
         onHoverLeave?: () => void;
-        onClick?: interactionCB;
+        onClick?: InteractionCB;
         cursor?: AssetURL;
     };
 }
@@ -30,7 +30,7 @@ export interface InteractableObject3D extends THREE.Object3D {
  * @argument uv: Vector2 - (u,v) indicating where the object was clicked (as a u,v point, however that is mapped).
  * @argument mouse: Vector2 - location of the mouse; relative to the entire scene container, in 2D space. The center of the screen is [0,0], ranging from [-1,-1] (bottom left) to [1,1] (top right).
  */
-export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
+export type InteractionCB = (uv: Vector2, mouse: Vector2) => void;
 
 /**
  * Map of interaction modes to a CB to run for handling that interaction type.
@@ -39,8 +39,8 @@ export type interactionCB = (uv: Vector2, mouse: Vector2) => void;
  * A map can either be an object that maps to the enum directly, or you can just shorthand as an array of [interact(), chat(), observe()]
  */
 export type InteractionMap = {
-    [mode in InteractionMode]?: interactionCB
-} | [interactionCB?, interactionCB?, interactionCB?]
+    [mode in InteractionMode]?: InteractionCB
+} | [InteractionCB?, InteractionCB?, InteractionCB?]
 
 
 /**
@@ -64,9 +64,9 @@ export type InteractionMap = {
  */
 export interface InteractableComponent {
     /** interactionCB that runs regardless of interaction mode, for any user click. */
-    onClick?: interactionCB
+    onClick?: InteractionCB
     /** interactionCB that runs regardless of interaction mode, on mouse over (as in, raycast hit) */
-    onHover?: interactionCB
+    onHover?: InteractionCB
     /** CB that runs regardless of interaction mode, when mouse leaves. */
     onHoverLeave?: () => void
     /**

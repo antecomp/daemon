@@ -1,5 +1,5 @@
 import icon from '@/assets/artwork/dæmons/debug_angel_icon.png';
-import sprite from '@/assets/artwork/dæmons/placeholder/prepare.png';
+import sprite from '@/assets/artwork/dæmons/prep.png';
 import backgroundShader from '@/assets/background-shaders/rings.glsl';
 import { CLAW_DRAMA } from './crow';
 import { OpponentProfile } from '@/features/battle/bridge/battleProfiles';
@@ -20,6 +20,10 @@ export const OPPONENT_PRESCIENTIA: OpponentProfile = {
         name: "Prescientia",
         initMessage: "A Prescientia swoops forward!",
         icon, sprite, backgroundShader,
+        spriteOffset: {
+            x: 0,
+            y: 20
+        },
         lexicon: {
             attack: { label: 'claw' },
             heal: { label: 'roost' }

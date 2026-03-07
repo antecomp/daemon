@@ -21,6 +21,8 @@ type DialogueCamOptions = StartDialogueOptions & {
  * @param dialogueOptions - Optional options forwarded to the dialogue service.
  * @returns An object containing `start`, which commits the override and launches the dialogue,
  *          and `ovrMgr`, which exposes the underlying override handle (commit/release/id) to be used for advanced mid-dialogue camera control.
+ * 
+ * TODO: ADD EXAMPLE USAGE
  */
 export function createDialogueWithCamOvr(
     cameraController: CameraController,

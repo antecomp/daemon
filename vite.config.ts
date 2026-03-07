@@ -2,19 +2,19 @@ import { defineConfig } from 'vite'
 import string from 'vite-plugin-string'
 import solid from 'vite-plugin-solid'
 import path from "path"
-import devtools from 'solid-devtools/vite'
+//import devtools from 'solid-devtools/vite'
 
 export default defineConfig({
   plugins: [
-    devtools({
-      /* features options - all disabled by default */
-      autoname: true, // e.g. enable autoname      
-      locator: {
-        targetIDE: 'vscode',
-        componentLocation: true,
-        jsxLocation: true,
-      },
-    }),
+    // devtools({
+    //   /* features options - all disabled by default */
+    //   autoname: true, // e.g. enable autoname      
+    //   locator: {
+    //     targetIDE: 'vscode',
+    //     componentLocation: true,
+    //     jsxLocation: true,
+    //   },
+    // }),
     solid(),
     string({
       include: ['**/*.glsl'],

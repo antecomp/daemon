@@ -1,8 +1,8 @@
-import world from '@/scenes/Islands/assets/malice.glb';
+import world from '@/scenes/Demo/assets/dgdemo.glb';
 
 export default function PainterPreviewMap() {
     return <>
-        <lume-ambient-light intensity={1} />
+        {/* <lume-ambient-light intensity={1} /> */}
 
         <lume-gltf-model
             align-point="0.5 0.5"

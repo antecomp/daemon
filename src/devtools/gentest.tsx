@@ -6,13 +6,13 @@ import { onMount } from 'solid-js';
 
 import shader from '@/assets/background-shaders/rings.glsl'
 import createShaderPlane from '@/shared/hooks/createShaderPlane';
-import About from '@/features/about/About';
+// import About from '@/features/about/About';
 
 function Comp() {
     let canvasRef!: HTMLCanvasElement;
     onMount(() => createShaderPlane(canvasRef, shader));
     return <>
-        <About/>
+        {/* <About/> */}
         {/* <canvas ref={canvasRef} width={800} height={600}/> */}
     </>
 }
