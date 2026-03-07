@@ -19,7 +19,7 @@ import NavCompass from '@/3d/tilenav/NavCompass';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import AtTile from '@/3d/tilenav/AtTile';
 import Interactable from '@/3d/components/Interactable';
-import { EMPTY_RENDER, makeDialogueNode } from '@/core/dialogue/dialogueNode';
+import { EMPTY_RENDER } from '@/core/dialogue/dialogueNode';
 import { createEffect, createReaction, createSignal, JSX, onMount, Show, untrack } from 'solid-js';
 import createPopup from '@/app/shell/popup/Popup';
 import lerp from '@/shared/utils/lerp';
@@ -61,7 +61,7 @@ enum Characters {
 }
 
 const dithonDialogueRoot = createDialogueBuilder("Hello Arda. I am impressed you made it this far", Characters.Dithon);
-
+const dithonDialoueTail = createDialogueBuilder("That's it for the demo. Thanks for playing!", Characters.Dithon).unwrap();
 dithonDialogueRoot
     .chain(
         "But I am afriad there is one last challenge for you.",
@@ -78,10 +78,10 @@ dithonDialogueRoot
                 .do(bn => bn
                     .node.next = () => {
                         switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return makeDialogueNode("Wow, nice job. I'm impressed.", Characters.Dithon);
-                            case (BattleOutcome.OpponentVictory): return makeDialogueNode("Damn you suck.", Characters.Dithon);
-                            case (BattleOutcome.Draw): return makeDialogueNode("Draw. In a real fight that would still count as a loss.", Characters.Dithon);
-                            default: return makeDialogueNode("What.", Characters.Dithon);
+                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. I'm impressed.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Too bad! Speak to me again if you want to try again.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
                         }
                     }
                 )
@@ -95,10 +95,10 @@ dithonDialogueRoot
                 .do(bn => bn
                     .node.next = () => {
                         switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return makeDialogueNode("Wow, nice job. As expected.", Characters.Dithon);
-                            case (BattleOutcome.OpponentVictory): return makeDialogueNode("Damn you suck. I thought you knew what you were doing!", Characters.Dithon);
-                            case (BattleOutcome.Draw): return makeDialogueNode("Draw. In a real fight that would still count as a loss.", Characters.Dithon);
-                            default: return makeDialogueNode("What.", Characters.Dithon);
+                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. As expected.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Wow you suck. I thought you knew what you were doing!", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
+                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
                         }
                     }
                 )
