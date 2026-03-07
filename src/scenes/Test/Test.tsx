@@ -27,7 +27,7 @@ import { DGDEV } from '@/devtools/dev';
 
 export default function Test() {
 
-    const { cameraControlSignals, cameraController, navController, navListen } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, cameraController, navController, navListen, NavContextProvider } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef, 'normal');
 
@@ -59,8 +59,8 @@ export default function Test() {
     navListen(e => (e.type == 'move' && !e.success) && playSoundOnce(bonk_sound))
 
     return (
-        <>
-            <NavCompass nc={navController} nm={navController.navMap} />
+        <NavContextProvider>
+            <NavCompass/>
             <lume-scene
                 ref={sceneRef}
                 webgl
@@ -125,6 +125,6 @@ export default function Test() {
 
                 {/* <NavTilePreviewer NM={NM as NavMap}/> */}
             </lume-scene>
-        </>
+        </NavContextProvider>
     )
 }

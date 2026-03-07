@@ -21,17 +21,20 @@ import world from './assets/world1.glb';
 import NM from './assets/NM.json';
 import AtTile from "@/3d/tilenav/AtTile";
 import attachToConsole from "@/devtools/attachToConsole";
+import applyRoomEnvironment from "@/3d/pipeline/applyRoomEnvironment";
 
 export default function TestA() {
-    const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, NavContextProvider } = createTileNavigator(NM as NavMap);
     let sceneRef!: Scene;
     useDGShader(() => sceneRef);
+    applyRoomEnvironment(() => sceneRef);
 
     const [rabbitTile, setRabbitTile] = createSignal<NavCoord>('-5,-5');
     attachToConsole(setRabbitTile, 'TEST_SETRT');
 
-    return (<>
-        <NavCompass nc={navController} nm={navController.navMap}></NavCompass>
+    return (
+    <NavContextProvider>
+        <NavCompass/>
         <lume-scene
             ref={sceneRef}
             webgl
@@ -46,19 +49,13 @@ export default function TestA() {
                 interactionDistance={50} // larger than default provided by tilenav
             />
 
-            <lume-ambient-light intensity={4} />
-
             <lume-gltf-model
                 align-point="0.5 0.5"
                 scale="10 10 10"
                 src={world}
             />
 
-        <AtTile
-            pos={rabbitTile()}
-            nm={navController.navMap}
-            nc={navController}
-        >
+        <AtTile pos={rabbitTile()}>
                 <Billboard
                     texture={friend_texture}
                     scale={7.5}
@@ -79,5 +76,5 @@ export default function TestA() {
             />
 
         </lume-scene>
-    </>)
+    </NavContextProvider>)
 }

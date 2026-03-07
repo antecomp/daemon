@@ -84,15 +84,15 @@ export default function Bridge() {
 
     createMusicTrack({ src: windsfx });
 
-    const { cameraControlSignals, navController, navListen } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController, navListen, NavContextProvider } = createTileNavigator(NM as NavMap);
 
     navListen(e => e.type == 'move' && e.target == '13,4' && !e.success && addLogMessage('No turning back now.'));
 
     //navListen(e => e.type == 'move' && e.success && playStepSound('dirt'));
 
     return (
-        <>
-            <NavCompass nc={navController} nm={NM as NavMap} />
+        <NavContextProvider>
+            <NavCompass/>
             <lume-scene
                 webgl
                 ref={sceneRef}
@@ -134,6 +134,6 @@ export default function Bridge() {
                     initialTime={-100}
                 />
             </lume-scene>
-        </>
+        </NavContextProvider>
     )
 }

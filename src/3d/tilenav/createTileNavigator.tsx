@@ -1,5 +1,5 @@
-import { Accessor, Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { Direction, NavCoord, NavMap, NavTileMask } from "./tilenav.types";
+import { Setter, createMemo, createSignal, onCleanup, onMount, createContext, ParentComponent, useContext } from "solid-js";
+import { Direction, NavAction, NavActionEvent, NavController, NavCoord, NavMap, NavTileMask } from "./tilenav.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import { createPayloadEmitter } from "@/shared/utils/emitter";
 import {
@@ -9,21 +9,12 @@ import {
     CameraOverride,
     CameraSettings
 } from "../camera/camera.types";
-import { createStore, SetStoreFunction } from "solid-js/store";
+import { createStore } from "solid-js/store";
 import { navCoordToTuple } from "./tilenav.utils"
 import playStepSound from "./stepsound";
 import { sceneLock } from "@/app/shell/locks/UILockManager";
 
-export enum NavAction {
-    StepForward,
-    StepBack,
-    StrafeLeft,
-    StrafeRight,
-    TurnLeft,
-    TurnRight
-}
-
-const keyToActions: Record<string, NavAction[]> = {
+const KEYS_TO_ACTIONS: Record<string, NavAction[]> = {
     w: [NavAction.StepForward],
     s: [NavAction.StepBack],
     a: [NavAction.StrafeLeft],
@@ -32,39 +23,12 @@ const keyToActions: Record<string, NavAction[]> = {
     e: [NavAction.TurnRight]
 } as const;
 
-export type NavActionEvent =
-    | {
-        type: "move";
-        action: NavAction;
-        origin: NavCoord;
-        originDirection: Direction;
-        target: NavCoord;
-        success: boolean;
-    }
-    | {
-        type: "turn";
-        origin: NavCoord;
-        originDirection: Direction;
-        action: NavAction;
-        targetDirection: Direction;
-    };
 
-export interface NavController {
-    state: Accessor<{
-        direction: Direction
-        tile: NavCoord
-        base: {
-            pos: XYZ,
-            ori: Orientation
-        }
-    }>
-    navMap: NavMap,
-    setNavMap: SetStoreFunction<NavMap>
-    performNavAction: (action: NavAction) => void;
-    setCurrentTile: Setter<NavCoord>;
-    occupiedTiles: Accessor<NavCoord[]>;
-    occupyTile: (coord: NavCoord) => () => void;
-    navListen: (fn: (event: NavActionEvent) => void) => void
+const NavContext = createContext<NavController>();
+export const useNavContext = () => {
+    const ctx = useContext(NavContext);
+    if (!ctx) throw new Error("Unable to access Nav Controller Context. Is this component inside the context provider?");
+    return ctx;
 }
 
 /**
@@ -78,17 +42,7 @@ export interface NavController {
  *   (height, active, occupied, edges bitmask, etc.).
  *
  * @returns An object containing:
- *   - cameraControlSignals: CameraControlSignals
- *       A memoized signals object used by PlayerCam. It
- *       provides:
- *         - basePos: computed XYZ position at the current tile (takes tile
- *           height and player height into account).
- *         - baseOri: base orientation with current yaw and zero pitch.
- *         - overridePos / overrideOri: the top-most active camera override
- *           (if any) from the override stack.
- *         - animate: whether camera transitions should animate (considers both
- *           base animation flag and top-most override's anim flag).
- *         - maxYaw / maxPitch: clamped limits used by the camera consumer.
+ *   - cameraControlSignals: CameraControlSignals. A memoized signals object used by PlayerCam. 
  *
  *   - cameraController: CameraController
  *       A small API to manage camera overrides and query current base/override (replicating return of normal createCameraController)
@@ -119,28 +73,8 @@ export interface NavController {
  *   - listen: (fn: (event: NavActionEvent) => void) => void
  *       Subscribe to navigation actions (move/turn), receiving a payload with the
  *       action, intended target (for moves), and whether the move succeeded.
- *
- * @remarks
- * - Input handling:
- *     - Keyboard mapping (keyToActions): w/s/q/e/a/d -> StepForward/StepBack/StrafeLeft/StrafeRight/TurnLeft/TurnRight.
- *     - Initial keydown triggers one action immediately (OS auto-repeat is ignored via e.repeat).
- *     - Held-key repeats are implemented with a RAF-driven loop plus per-action
- *       timing stored in ACTION_TIMING, using performance.now() and a nextAllowedTime map.
- *     - handleKeyUp clears held state for the associated actions.
- *
- * - Camera override stack:
- *     - Overrides are pushed to an internal stack; the top-most override determines
- *       overridePos/overrideOri and its anim flag influences the animate signal.
- *     - createOverride returns a handle with commit/release helpers that may set
- *       the base animation flag when provided with an anim boolean.
  * 
- * - Interaction Distance:
- *     - Generated camera signals use a default suggested interaction distance of the tilesize * 2. 
- * 
- * - Errors:
- *     - setBase, setBasePos, and setBaseOri throw if called because this navigator
- *       enforces base camera driven by tile+direction and does not accept direct
- *       base overrides through those methods.
+ *   - NavContextProvider: A Parent Component that provides context of the NavController. Required for AtTile and NavCompass.
 */
 export default function createTileNavigator(
     initialNM: NavMap
@@ -148,7 +82,8 @@ export default function createTileNavigator(
     cameraControlSignals: PlayerCameraControlSignals,
     cameraController: CameraController,
     navController: NavController,
-    navListen: (fn: (event: NavActionEvent) => void) => void
+    navListen: (fn: (event: NavActionEvent) => void) => void,
+    NavContextProvider: ParentComponent
 } {
     const [navMap, setNavMap] = createStore<NavMap>(initialNM);
 
@@ -296,7 +231,7 @@ export default function createTileNavigator(
     // Controls
     function performNavAction(action: NavAction) {
 
-        if(sceneLock.isLocked()) return;
+        if (sceneLock.isLocked()) return;
 
         const originDirection = currentDirection();
         const origin = currentTile();
@@ -384,7 +319,7 @@ export default function createTileNavigator(
         // Ignore OS's autorepeat.
         if (e.repeat) return;
 
-        const actions = keyToActions[key];
+        const actions = KEYS_TO_ACTIONS[key];
         if (!actions) return;
 
         const now = performance.now();
@@ -402,7 +337,7 @@ export default function createTileNavigator(
 
     function handleKeyUp(e: KeyboardEvent) {
         const key = e.key.toLocaleLowerCase();
-        const actions = keyToActions[key];
+        const actions = KEYS_TO_ACTIONS[key];
         if (!actions) return;
 
         for (const action of actions) {
@@ -481,6 +416,19 @@ export default function createTileNavigator(
         base: currentBase(),
     }));
 
+    const navController = {
+        state: navState,
+        performNavAction,
+        setCurrentTile,
+        navMap,
+        setNavMap,
+        occupiedTiles,
+        occupyTile,
+        navListen: listenNavAction
+    }
+
+    const NavContextProvider: ParentComponent = (props) => (<NavContext.Provider value={navController}>{props.children}</NavContext.Provider>)
+
     return {
         cameraControlSignals,
         cameraController: {
@@ -493,18 +441,9 @@ export default function createTileNavigator(
             currentBase,
             currentOverride
         },
-
-        navController: {
-            state: navState,
-            performNavAction,
-            setCurrentTile,
-            navMap,
-            setNavMap,
-            occupiedTiles,
-            occupyTile,
-            navListen: listenNavAction
-        },
-        navListen: listenNavAction
+        navController,
+        navListen: listenNavAction,
+        NavContextProvider
     };
 
 }

@@ -111,7 +111,7 @@ export default function Demo() {
     applyRoomEnvironment(() => sceneRef);
     useDGShader(() => sceneRef);
 
-    const { cameraControlSignals, navController, navListen, cameraController } = createTileNavigator(NM as NavMap);
+    const { cameraControlSignals, navController, navListen, cameraController, NavContextProvider } = createTileNavigator(NM as NavMap);
     const { spawnMenu } = useSceneMenu();
 
     const [areDoorsOpen, setDoorsOpen] = createSignal(false);
@@ -231,8 +231,8 @@ export default function Demo() {
     }, "INSANITY")
 
     return (
-        <>
-            <NavCompass nm={navController.navMap} nc={navController} />
+        <NavContextProvider>
+            <NavCompass/>
             <lume-scene
                 ref={sceneRef}
                 webgl
@@ -252,7 +252,7 @@ export default function Demo() {
                     src={world}
                 />
 
-                <AtTile pos='6,43' nm={navController.navMap} nc={navController}>
+                <AtTile pos='6,43'>
                     <Interactable
                         interactions={[, dithonChatSequence,]}
                     >
@@ -267,7 +267,7 @@ export default function Demo() {
                     </Interactable>
                 </AtTile>
 
-                <AtTile pos="1,1" nm={navController.navMap} nc={navController} occupying={false}>
+                <AtTile pos="1,1" occupying={false}>
                     <lume-box
                         size="9.99 30 10"
                         color="black"
@@ -279,7 +279,7 @@ export default function Demo() {
                     </lume-box>
                 </AtTile>
 
-                <AtTile pos="-2,1" nm={navController.navMap} nc={navController} occupying={false}>
+                <AtTile pos="-2,1" occupying={false}>
                     <lume-box
                         size="9.99 30 10"
                         color="black"
@@ -291,7 +291,7 @@ export default function Demo() {
                     </lume-box>
                 </AtTile>
 
-                <AtTile pos='0,1' nm={navController.navMap} nc={navController} occupying={!areDoorsOpen()}>
+                <AtTile pos='0,1' occupying={!areDoorsOpen()}>
                     <Interactable interactions={[
                         doorClickHandler
                         // Add other interactions here later.
@@ -315,7 +315,7 @@ export default function Demo() {
                     </Interactable>
                 </AtTile>
 
-                <AtTile pos='-1,1' nm={navController.navMap} nc={navController} occupying={!areDoorsOpen()}>
+                <AtTile pos='-1,1' occupying={!areDoorsOpen()}>
                     <Interactable interactions={[
                         doorClickHandler
                         // Add other interactions here later.
@@ -340,7 +340,7 @@ export default function Demo() {
                 </AtTile>
 
                 <Show when={!hasPickedUpRelic()} >
-                    <AtTile pos="5,31" nm={navController.navMap} nc={navController} occupying={false}>
+                    <AtTile pos="5,31" occupying={false}>
                         <Interactable interactions={[
                             pickUpRelic,
                             () => addLogMessage("Best not to talk to this thing."),
@@ -373,6 +373,6 @@ export default function Demo() {
                 />
 
             </lume-scene>
-        </>
+        </NavContextProvider>
     )
 }

@@ -1,10 +1,10 @@
 import { createMemo, For, Show } from "solid-js";
-import { NavController } from "./createTileNavigator";
-import { NavCoord, NavMap, NavTileMask } from "./tilenav.types";
+import { NavCoord, NavTileMask } from "./tilenav.types";
 import { navCoordToTuple } from "./tilenav.utils";
 import cn from './assets/needle.png';
 import './nav-compass.css'
 import { DialogueService } from "@/core/dialogue/dialogueService";
+import { useNavContext } from "./createTileNavigator";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
@@ -24,20 +24,18 @@ const COMPASS_SPAN = 4;
  * @example
  * <NavCompass nc={navController} nm={navController.navMap} />
  */
-export default function NavCompass(props: {
-    nc: NavController
-    nm: NavMap
-}) {
+export default function NavCompass() {
+
+    const navController = useNavContext();
+
     const gridTiles = createMemo(() => {
-        const currentTile = props.nc.state().tile;
+        const currentTile = navController.state().tile;
         const [cx, cz] = navCoordToTuple(currentTile);
-        const spawn = props.nm.config.spawn;
 
         const out: {
             coord: NavCoord
             exists: boolean
             isCenter: boolean
-            isSpawn: boolean
             borderMask: number
             occupied: boolean
         }[] = [];
@@ -47,7 +45,7 @@ export default function NavCompass(props: {
                 const tx = cx + dx;
                 const tz = cz + dz;
                 const coord = `${tx},${tz}` as NavCoord;
-                const tileData = props.nm.tiles[coord];
+                const tileData = navController.navMap.tiles[coord];
                 const exists = !!tileData && tileData.active;
                 const edges = exists ? (tileData.edges) : 0;
                 const borderMask = edges & 15;
@@ -55,15 +53,17 @@ export default function NavCompass(props: {
                     coord,
                     exists,
                     isCenter: dx === 0 && dz === 0,
-                    isSpawn: spawn === coord,
                     borderMask,
-                    occupied: props.nc.occupiedTiles().includes(coord)
+                    occupied: navController.occupiedTiles().includes(coord)
                 });
             }
         }
 
         return out;
     });
+
+    //const ctx = useNavContext();
+    //createEffect(() => console.log(ctx.navMap.tiles));
 
     return (
         <Show when={!DialogueService.dialogueOngoing()}>
@@ -79,7 +79,6 @@ export default function NavCompass(props: {
                                     "is-existing": tile.exists,
                                     "is-empty": !tile.exists,
                                     "is-center": tile.isCenter,
-                                    "is-spawn": tile.isSpawn,
                                     "is-occupied": tile.occupied
                                 }}
                                 style={{
@@ -97,7 +96,7 @@ export default function NavCompass(props: {
                     src={cn}
                     width="20px"
                     style={{
-                        'rotate': -props.nc.state().base.ori.yaw + 'deg',
+                        'rotate': -navController.state().base.ori.yaw + 'deg',
                         'transition': 'rotate 0.5s ease'
                     }}
                 />

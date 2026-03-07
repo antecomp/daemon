@@ -41,7 +41,7 @@ export default function Islands() {
   let sceneRef!: Scene;
   useDGShader(() => sceneRef, 'quantized');
 
-  const { cameraControlSignals, navController } = createTileNavigator(NM as NavMap);
+  const { cameraControlSignals, NavContextProvider } = createTileNavigator(NM as NavMap);
 
   const [completedBattles, setCompletedBattles] = createStore({
     crow: false,
@@ -62,8 +62,8 @@ export default function Islands() {
   }
 
   return (
-    <>
-      <NavCompass nc={navController} nm={navController.navMap} />
+    <NavContextProvider>
+      <NavCompass/>
       <lume-scene webgl perspective="800" ref={sceneRef}
       >
         <PlayerCam
@@ -83,8 +83,6 @@ export default function Islands() {
         <Show when={!completedBattles.fox}>
           <AtTile
             pos='-6,-10'
-            nm={navController.navMap}
-            nc={navController}
             onWalkInto={() => addLogMessage('The fox is blocking your path.')}
           >
             <Billboard
@@ -111,8 +109,6 @@ export default function Islands() {
         <Show when={!completedBattles.crow}>
           <AtTile
             pos='1,-8'
-            nm={navController.navMap}
-            nc={navController}
             onWalkInto={() => addLogMessage('There is a crow blocking your path.')}
           >
             <Billboard
@@ -132,8 +128,6 @@ export default function Islands() {
         <Show when={!completedBattles.pres}>
           <AtTile
             pos='1,-2'
-            nm={navController.navMap}
-            nc={navController}
             onWalkInto={() => battleToContinue('pres')}
           >
             <Billboard
@@ -147,8 +141,6 @@ export default function Islands() {
         <Show when={!completedBattles.astra}>
           <AtTile
             pos='1,2'
-            nm={navController.navMap}
-            nc={navController}
             onWalkInto={() => battleToContinue('astra')}
           >
             <Billboard
@@ -163,8 +155,6 @@ export default function Islands() {
         <Show when={!completedBattles.para}>
           <AtTile
             pos='3,7'
-            nm={navController.navMap}
-            nc={navController}
             onWalkInto={() => battleToContinue('para')}
           >
             <Billboard
@@ -182,6 +172,6 @@ export default function Islands() {
         />
 
       </lume-scene>
-    </>
+    </NavContextProvider>
   )
 }
