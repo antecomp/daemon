@@ -33,10 +33,10 @@ import Inventory from '@/core/inventory/inventory';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { startBattle } from '@/features/battle/startBattle';
-import { OPPONENT_BNUY } from '@/data/battles/bnuy';
 import { createDialogueBuilder } from '@/core/dialogue/dialogueBuilder';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
+import { OPPONENT_CROW } from '@/data/battles/crow';
 
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
@@ -74,7 +74,7 @@ dithonDialogueRoot
             return r
                 .chain("By the sounds of it, you won't know how to fight them either. I will make sure to throw a tutorial in for you.")
                 .then(EMPTY_RENDER)
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_BNUY, showBattleTutorial))
+                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW, showBattleTutorial))
                 .do(bn => bn
                     .node.next = () => {
                         switch (battleOutcome) {
@@ -91,8 +91,7 @@ dithonDialogueRoot
         r => {
             let battleOutcome: BattleOutcome;
             return r
-                .then(EMPTY_RENDER)
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_BNUY))
+                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW))
                 .do(bn => bn
                     .node.next = () => {
                         switch (battleOutcome) {
