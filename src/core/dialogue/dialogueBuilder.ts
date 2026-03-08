@@ -398,14 +398,14 @@ export class DialogueNodeBuilder {
             ? makeDialogueNode(loopbackPrompt, this.node.name)
             : makeDialogueNode(loopbackPrompt[0], loopbackPrompt[1])
 
-        const exthaustedNode = typeof exhausted == 'string' || typeof exhausted == 'function'
+        const exhaustedNode = typeof exhausted == 'string' || typeof exhausted == 'function'
             ? makeDialogueNode(exhausted, this.node.name)
             : makeDialogueNode(exhausted[0], exhausted[1])
 
         // Maybe there's a better way of doing this, but this is good enough for now.
         const exitNode = makeDialogueNode(EMPTY_RENDER, this.node.name);
 
-        exthaustedNode.next = exitNode;
+        exhaustedNode.next = exitNode;
 
         const consumedQuestions = new Set<string>();
 
@@ -426,7 +426,7 @@ export class DialogueNodeBuilder {
                 : answerRoot;
 
             tail.node.next = () => allQuestionsExhausted()
-                ? exthaustedNode
+                ? exhaustedNode
                 : loopbackNode
 
             const qop: DialogueOption = {

@@ -45,14 +45,14 @@ export type Sides<T> = { player: T; opponent: T };
  */
 export function makeSidesMap<T>(player: T, opponent: T): Sides<T> { return { player, opponent } }
 
-/* Returns the opposite side. Useful for when logic needs to flip perspective.
+/** Returns the opposite side. Useful for when logic needs to flip perspective.
  * 
  * @param side The current side.
  * @returns The opposite side ('player' <-> 'opponent').
  * @example
  * oppositeSide('player') // 'opponent'
  */
-export const oppositeSide = (r: Side): Side => (r == 'player' ? 'opponent' : 'player');
+export const oppositeSide = (side: Side): Side => (side == 'player' ? 'opponent' : 'player');
 
 /**
  * Maps the values of a `Sides<Input>` to a new `Sides<Output>.`
@@ -82,7 +82,7 @@ export function mapSides<Input, Output>(pair: Sides<Input>, mapper: (value: Inpu
  * @example
  * forEachSide(combatants, (c) => c.tickStatuses());
  */
-export function forEachSide<T>(pair: Sides<T>, action: ((value: T, roll: Side) => void)) {
+export function forEachSide<T>(pair: Sides<T>, action: ((value: T, role: Side) => void)) {
     for(const [role, entry] of Object.entries(pair)) {
         action(entry, role as Side);
     }

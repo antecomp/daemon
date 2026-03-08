@@ -35,7 +35,7 @@ function updateDitherUniforms(pass: ShaderPass, scene: Scene, sceneWidth: number
         // Ref: https://devforum.play.date/t/preventing-dither-flashing-flickering-on-moving-objects-by-snapping-to-even-pixels/3924
         // TLDR; only move @ 2px increments to lessen flicker.
         pass.uniforms.offsetX.value = 2 * Math.floor(offsetX / 2 + 0.5);
-        pass.uniforms.offsetY.value = 2 & Math.floor(offsetY / 2 + 0.5);
+        pass.uniforms.offsetY.value = 2 * Math.floor(offsetY / 2 + 0.5);
     }
 
 }

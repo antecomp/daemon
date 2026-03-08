@@ -11,18 +11,11 @@ type SceneMenuContextType = {
      *  - `onSelect` - The callback that runs when the option is selected
      **/
     spawnMenu: (prompt: string, options: MenuOption[], mouse: Vector2, width?: number) => void;
+    /** closeMenu: method that closes the active scene menu (wow) */
     closeMenu: () => void;
 }
 
 export const SceneMenuContext = createContext<SceneMenuContextType>();
 
-/** Hook to provide access to the SceneMenuContext, which provides the methods to spawn and close a menu.
- * @returns spawnMenu: A method for initiating a new scene menu;
- * - spawnMenu takes two arguments: [prompt: string - the menu prompt to show] & [options array, where each option is an object {label: <option string>, onSelect: <CB to run on select>}]
- * 
- * @returns closeMenu: method that closes the active scene menu (wow)
- * 
- * @ref SceneMenuContextType in SceneMenuContext.ts
- * 
- */
+/** Hook to provide access to the SceneMenuContext, which provides the methods to spawn and close a menu. */
 export const useSceneMenu = () => useContext(SceneMenuContext)!;

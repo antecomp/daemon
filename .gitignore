@@ -25,3 +25,7 @@ dist-ssr
 
 # Test Assets I Probably Don't Have The Rights To Haphazardly Upload To Github lol
 public/PWL/*
+
+# Clone of src with assets stripped. Used for simplified code review.
+src_clone/
+src_clone.zip
