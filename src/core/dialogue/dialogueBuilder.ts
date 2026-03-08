@@ -289,7 +289,6 @@ export class DialogueNodeBuilder {
 
         const { summaryText, fullText: callText } = normalizeOptionText(call);
 
-        // why.
         const responseNode = isNode(response)
             ? response
             : typeof response == 'string' || typeof response == 'function'

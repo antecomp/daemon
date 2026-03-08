@@ -6,6 +6,7 @@ import { EvadeDamageReduction, EvadeRoll, HealSelf, PreparedAttackBonus, ReduceI
 import { PreparedStatus } from "../statuses/statuses";
 import { VulnerableStatus } from "../statuses/statuses";
 
+/** Fallback/Error move. For example when mirror fails. */
 export const nothingMove: Move = {
     name: 'nothingMove',
     type: MoveType.Passive,
@@ -27,7 +28,6 @@ export const observe: Move = {
         postEffect: effectPipeline(
             // extend before apply.
             extendStatusOf('them', VulnerableStatus),
-            //applyStatusTo('them', VulnerableStatus)
             (ctx) => {applyStatusTo('them', VulnerableStatus, 1 + ctx.self.getStatusLevelIncludingExpired('prepared'))(ctx)}, 
         )
     }
@@ -75,8 +75,7 @@ export const defend: Move = {
     }
 }
 
-// Seperate from NothingMove. This is an intended absent move, for use with lexicons, 
-// nothingMove is reserved for some sort of fallback/error.
+/* Purposefully absent move.  */
 export const idle: Move = {
     name: 'idle',
     type: MoveType.Passive,

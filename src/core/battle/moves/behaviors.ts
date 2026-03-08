@@ -49,7 +49,7 @@ export const EvadeRoll: PreMoveSideEffect = ({ self }) => {
     const success = Math.random() <= chance;
 
     // This result will be added to the context of subsequent operations (damage mults, post effect)
-    return [reportMoveOutcome('failure', 'rng'), reportMoveOutcome('success', 'rng')][Number(success)]
+    return success ? reportMoveOutcome('success', 'rng') : reportMoveOutcome('failure', 'rng');
 }
 
 export const EvadeDamageReduction: DamageMultiplierFunction = ({ preEffectOutcome }) => {

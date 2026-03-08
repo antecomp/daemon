@@ -59,7 +59,7 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             moves.opponent.tags?.includes('mirrored')
             && postCtx.opponent.damageDealt > 0,
         run: async ({ requestOverlayAnimation, fulfillDramaObligation }) => {
-            sleep(500).then(() => playSound(deflect_noise));
+            sleep(500).then(() => playSound(deflect_noise)); // non-blocking on purpose. Trugger deflect noise partly into animation.
             await requestOverlayAnimation('mirror');
             fulfillDramaObligation.playerDamage();
         }

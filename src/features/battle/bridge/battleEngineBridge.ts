@@ -94,7 +94,7 @@ export function createUIBridgedBattleEngine(
         }
     }
 
-    // Disgusting. Used to signal the player has clicked the "forsake" button on their victory.
+    // Used to signal the player has clicked the "forsake" button on their victory.
     const { resolve: forsake, promise: forsakePromise } = Promise.withResolvers<undefined>();
 
     // Startup.
@@ -116,7 +116,6 @@ export function createUIBridgedBattleEngine(
             endOutcome
         };
 
-        // this fills me with contempt.
         const dramaObli = new Obligations({
             opponentDamage() {
                 if (evdata.postCtx.opponent.damageTaken > 0) {
@@ -166,7 +165,6 @@ export function createUIBridgedBattleEngine(
             }
 
             dramaObli.resolveObligations();
-            //dramaObli.resetCompleted(); // ready for next call.
             return places.length;
         }
     }

@@ -25,13 +25,14 @@ const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
  *
  * @param opponentAI - The AI logic responsible for generating the opponent's move sequences and behaviors.
  * @param opponentStats - The statistics object describing the opponent's initial state (e.g., max health).
+ * @param playerStats - The statistics object describing the player's initial state (e.g., max health).
  * @param reactions - An object mapping battle events to arrays of asynchronous event handler functions.
  *                  - These 'reactions' fire (and block) at their associated battle stages and are provided information about battle state.
  *                  - Namely used to interweave animations into logic (@ref BattleEngineBridge)
  * @returns An object containing methods and properties to control the battle flow:
  *   - `executeRound(playerPlan: PlannedSequence): Promise<void>`: Executes a round using the player's planned sequence of moves.
  *   - `setupRound(): Promise<void>`: Prepares the next round, generating the opponent's plan and emitting relevant events.
- *   - `handleBattleEnd(): void`: Forces a battle end state with a given outcome (namely used for "Eject")
+ *   - `forceBattleEnd(): void`: Forces a battle end state with a given outcome (namely used for "Eject")
  *
  * @remarks
  * The engine manages combatants, move execution, event emission, and battle resolution. Consumers should call `setupRound` before each round and `executeRound` with the player's moves. The engine emits events at key points for UI updates or logging.

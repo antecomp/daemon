@@ -45,7 +45,7 @@ export function getBaseMultipliers(type: MoveType): DamageMultipliers {
  * and combines them using `combineMultiplierSets`. The combination starts from
  * the `PASSTHROUGH_MULTPLIERS` as the initial accumulator.
  *
- * @param statusList - An array of tuples, where each tuple contains a `Status` object and a corresponding level (`number`). <- this is returned by combatant's `getStatuses()` method.
+ * @param statusList - An array of tuples, where each tuple contains a `Status` object and a corresponding level (`number`).
  * @returns The resulting combined multipliers after applying all statuses in the list.
  */
 export function computeStatusMultipliers(statusList: [Status, number][]) {
@@ -78,8 +78,6 @@ export function calculateAndApplyDamage({player, opponent}: Sides<Combatant>, mu
     return {player: playerDamageDealt, opponent: opponentDamageDealt};
 }
 
-
-// Move these below to a move utils file?
 export function runMovePreEffect(move: Move, context: PreMoveContext): MoveSideEffectOutcome | undefined {
     return move.behaviors.preEffect?.(context) ?? undefined;
 }
