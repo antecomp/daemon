@@ -21,13 +21,13 @@ const CROW_PLANBANK = {
 
 export const CLAW_DRAMA: DramaEntry = {
     ...COMMON_DRAMA_TABLE['opp-attack'],
-    run: async ({requestOverlayAnimation, fufillDramaObligation}) => {
+    run: async ({requestOverlayAnimation, fulfillDramaObligation}) => {
         playSound(claw_sound_a);
         requestOverlayAnimation('claw-a', [-280, -100]);
         await sleep(380);
         playSound(claw_sound_b);
         await requestOverlayAnimation('claw-b', [280, 80]);
-        fufillDramaObligation.playerDamage();
+        fulfillDramaObligation.playerDamage();
     }
 }
 

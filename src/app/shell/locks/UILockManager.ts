@@ -35,6 +35,7 @@ function makeCompositeLock(...locks: Array<UILock>) {
             }
         },
         isLocked() {
+            // Using every since we want all locks aquired. With composite we shouldnt ever release individually.
             return locks.every(lock => lock.isLocked())
         }
     }
@@ -43,7 +44,6 @@ function makeCompositeLock(...locks: Array<UILock>) {
 const sceneLock = makeLockCounter();
 const sidebarLock = makeLockCounter();
 const shellLock = makeCompositeLock(sceneLock, sidebarLock);
-// How can I make a nice helper for ShellLock here?
 
 
 export { sceneLock, sidebarLock, shellLock };

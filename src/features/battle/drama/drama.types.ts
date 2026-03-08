@@ -27,11 +27,11 @@ export type DramaObligations = {
 }
 
 /** Utilities handed to the drama runner to perform various UI effects and animations */
-export type DramaDependancies = {
+export type DramaDependencies = {
     refRegistry: RefRegistry<BattleRefNames>,
     requestOverlayAnimation: OverlayAnimationRequester,
     appendActionMessage: ActionMessageAppender,
-    fufillDramaObligation: DramaObligations,
+    fulfillDramaObligation: DramaObligations,
     startMeltAnimation?: MeltAnimationFn
 }
 
@@ -46,7 +46,7 @@ export interface DramaEntry {
     /** Predicate function that determines if the DramaEntry should run given move clash state provided through data. */
     when: (data: DramaData) => boolean | undefined,
     /** Actual side-effect executing function to perform the dramatization associated with the condition/place above. */
-    run: (deps: DramaDependancies, data: DramaData) => Promise<unknown> | void;
+    run: (deps: DramaDependencies, data: DramaData) => Promise<unknown> | void;
 
     /** Delay (in ms) before this entry will run if and only if some entry has already run before it. */
     preDelay?: number
@@ -67,7 +67,7 @@ export enum PLACES {
     POST_CLASH = 300
 }
 
-/** Reduced dependancies for other drama actions (damage, death). Does not have the obligation functions. */
-export type ReducedDramaDependancies = Omit<DramaDependancies, 'fufillDramaObligation'>;
+/** Reduced dependencies for other drama actions (damage, death). Does not have the obligation functions. */
+export type ReducedDramaDependencies = Omit<DramaDependencies, 'fulfillDramaObligation'>;
 /** Dramatization for damage taken */
-export type SimpleDramaEffect = (deps: ReducedDramaDependancies) => Promise<void> | void;
+export type SimpleDramaEffect = (deps: ReducedDramaDependencies) => Promise<void> | void;

@@ -36,7 +36,7 @@ export default function Liminality() {
             baseRef && applyShadows(baseRef);
             dmnRef && applyShadows(dmnRef);
         });
-    })
+    });
 
     createMusicTrack({src: "PWL/loop_a.wav"})
 
@@ -63,7 +63,6 @@ export default function Liminality() {
                 ref={baseRef}
                 obj={baseobj}
                 mtl={basemtl}
-                recieve-shadow="true"
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
@@ -100,7 +99,6 @@ export default function Liminality() {
                     ref={dmnRef}
                     obj={dmnobj}
                     mtl={dmnmtl}
-                    recieve-shadow="true"
                     cast-shadow="true"
                     align-point="0.5 0.5"
                     mount-point="0.5 0.5"

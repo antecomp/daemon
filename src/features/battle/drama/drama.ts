@@ -1,10 +1,10 @@
 import { Side, sides } from "@/core/battle/utils/sides.utils";
-import { DramaData, DramaDependancies, DramaEntry, DramaTable } from "./drama.types";
+import { DramaData, DramaDependencies, DramaEntry, DramaTable } from "./drama.types";
 
 type SideSpec = {
   place: number | ((side: Side) => number);
   when: (data: DramaData, side: Side) => boolean | undefined;
-  run: (deps: DramaDependancies, data: DramaData, side: Side) => Promise<unknown> | void;
+  run: (deps: DramaDependencies, data: DramaData, side: Side) => Promise<unknown> | void;
 };
 
 type SideOverrides = Partial<Record<Side, Partial<SideSpec>>>;

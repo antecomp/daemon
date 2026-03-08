@@ -26,7 +26,7 @@ import { createActionMessageStack } from "../ui/ActionMessages";
 import battleOpeningAnimation from "../animation/battle-opening-animation";
 import { Obligations } from "@/shared/utils/obligation";
 import COMMON_DRAMA_TABLE, { DEFAULT_DAMAGE_DRAMAS } from "../drama/commonDrama";
-import { ReducedDramaDependancies, DramaData, DramaDependancies, DramaEntry, DramaObligations } from "../drama/drama.types";
+import { ReducedDramaDependencies, DramaData, DramaDependencies, DramaEntry, DramaObligations } from "../drama/drama.types";
 import { BattleUIState } from "./battleUIState";
 import { DGDEV } from "@/devtools/dev";
 
@@ -105,7 +105,7 @@ export function createUIBridgedBattleEngine(
     });
 
     const dramaTable = { ...COMMON_DRAMA_TABLE, ...data.profiles.opponent.display.dramas };
-    const baseDramaDeps: ReducedDramaDependancies = { ...deps, refRegistry, appendActionMessage };
+    const baseDramaDeps: ReducedDramaDependencies = { ...deps, refRegistry, appendActionMessage };
 
     // Defined here to capture all the config stuff in this scope easily.
     function makeDramaRunner(evdata: BattleEventPayload['MoveEnd'], endOutcome: BattleOutcome | undefined) {
@@ -133,15 +133,15 @@ export function createUIBridgedBattleEngine(
             }
         });
 
-        const fufillDramaObligation: DramaObligations = {
+        const fulfillDramaObligation: DramaObligations = {
             opponentDamage() { dramaObli.run('opponentDamage') },
             playerDamage() { dramaObli.run('playerDamage') }
         };
 
         return async () => {
-            const dramaDeps: DramaDependancies = {
+            const dramaDeps: DramaDependencies = {
                 ...baseDramaDeps,
-                fufillDramaObligation
+                fulfillDramaObligation
             }
 
             const activeDramas = Object.entries(dramaTable)

@@ -20,7 +20,7 @@ export type CombatantSnapshot = {
  * 
  * @remarks
  * Statuses are handled in a "stack" of durations, where each time the same status is applied it's duration is individually tracked.
- * The 'level' of a status is then determined by how many simulatenous instances of said status are currently in the duration stack and nonzero
+ * The 'level' of a status is then determined by how many simultaneous instances of said status are currently in the duration stack and nonzero
  * 
  *
  * @example

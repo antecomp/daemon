@@ -58,10 +58,10 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
             //plannedMoves.opponent.name == 'mirror' // (fails on repeat, use below)
             moves.opponent.tags?.includes('mirrored')
             && postCtx.opponent.damageDealt > 0,
-        run: async ({ requestOverlayAnimation, fufillDramaObligation }) => {
+        run: async ({ requestOverlayAnimation, fulfillDramaObligation }) => {
             sleep(500).then(() => playSound(deflect_noise));
             await requestOverlayAnimation('mirror');
-            fufillDramaObligation.playerDamage();
+            fulfillDramaObligation.playerDamage();
         }
     },
 
@@ -78,10 +78,10 @@ const COMMON_OPPONENT_MOVE_DRAMAS: DramaTable = {
     'opp-attack': {
         place: PLACES.CLASH_TWO,
         when: ({ moves }) => moves.opponent.name == 'attack' && !moves.opponent.tags?.includes('mirrored'),
-        run: async ({ requestOverlayAnimation, fufillDramaObligation }) => {
+        run: async ({ requestOverlayAnimation, fulfillDramaObligation }) => {
             await playSound(opp_attack_noise)[0];
             await requestOverlayAnimation('opp-attack');
-            fufillDramaObligation.playerDamage();
+            fulfillDramaObligation.playerDamage();
         },
         preDelay: 300
     },
@@ -122,7 +122,7 @@ const COMMON_PLAYER_MOVE_DRAMAS: DramaTable = {
         when: ({ moves }) =>
             moves.player.name == 'attack'
             && !moves.player.tags?.includes('mirrored'),
-        async run({ requestOverlayAnimation, fufillDramaObligation: dramaObligations }, { moves, postCtx, combatantHistory }) {
+        async run({ requestOverlayAnimation, fulfillDramaObligation: dramaObligations }, { moves, postCtx, combatantHistory }) {
             const [slashSoundReady, _] = playSound(slash_sfx);
             await slashSoundReady;
 

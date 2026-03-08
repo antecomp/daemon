@@ -104,7 +104,7 @@ export default function AnotherScene() {
                 obj={mapobj}
                 mtl={mapmtl}
                 color="white"
-                recieve-shadow="true"
+                receive-shadow="true"
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"

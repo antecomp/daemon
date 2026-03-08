@@ -147,7 +147,6 @@ export default function Porch() {
                 obj={mapobj}
                 mtl={mapmtl}
                 ref={mapRef}
-                recieve-shadow="true"
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"

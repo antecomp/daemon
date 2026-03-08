@@ -32,7 +32,6 @@ export default function ThirdScene() {
                 id="map"
                 obj={mapobj}
                 mtl={mapmtl}
-                recieve-shadow="true"
                 cast-shadow="true"
                 align-point="0.5 0.5"
                 mount-point="0.5 0.5"
