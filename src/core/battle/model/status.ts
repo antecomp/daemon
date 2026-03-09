@@ -14,6 +14,22 @@ const DEFAULT_STATUS_TYPE = "__EMPTY_STATUS_OVERRIDE_REQUIRED__";
  * To create a new status effect, extend this class and override the `name`
  * property with a unique identifier and, if necessary, override the
  * `getStatusMultipliers` method to provide custom multiplier logic.
+ * 
+ * @example
+ * // Simple 'flag' statuses (that moves can check for to change behavior) are declared like this;
+ * export class FlagStatus extends Status {
+ *   name = "flagstatus";
+ * }
+ * 
+ * @example
+ * // Combat-oriented statuses that change damage multipliers look like this;
+ * export class CombatStatus extends Status {
+ *   name = "combatstatus";
+ *   // override status multipliers with whatever this status does...
+ *   getStatusMultipliers(level: number): DamageMultipliers {
+ *       return {incoming: 1, outgoing: 2 ** level}
+ *   }
+ * }
  */
 export class Status {
     /** Class Field Declaration Of Status Name -- Used for keying statuses in Combatant by name and other checks. 
@@ -27,21 +43,3 @@ export class Status {
 
     // omitting pre/post effect stuff as we never used it. Feel free to add.
 }
-
-/*
-Example; Simple 'flag' statuses (that moves can check for to change behavior) are declared like this;
-export class FlagStatus extends Status {
-    name = "flagstatus";
-}
-
-Example; Combat-oriented statuses that change damage multipliers look like this;
-export class CombatStatus extends Status {
-    name = "combatstatus";
-    // no icon, inherit default from Status (which rn is just undefined but we could totally have a stock icon!)
-
-    // override status multipliers with whatever this status does...
-    getStatusMultipliers(level: number): DamageMultipliers {
-        return {incoming: 1, outgoing: 2 ** level}
-    }
-}
-*/

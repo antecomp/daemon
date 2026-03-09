@@ -27,9 +27,10 @@ export type MoveSideEffectOutcome = {
 
 /** Factory function to shorthand the creation of a new MoveSideEffectOutcome. */
 export function reportMoveOutcome(status: MoveSideEffectOutcome['status'], reason: MoveSideEffectOutcome['reason']): MoveSideEffectOutcome {
-    return {status, reason}
+    return { status, reason }
 }
 
+/** Required context for a Moves PreEffects (before mult calc) to run. */
 export interface PreMoveContext {
     deps: BattleEngineDependencies;
 
@@ -41,13 +42,14 @@ export interface PreMoveContext {
     }
 }
 
+/** Required context for a moves damage multiplier computations. */
 export interface DamageMultiplierContext extends PreMoveContext {
     preEffectOutcome: MoveSideEffectOutcome | undefined;
 }
 
 export interface ClashResult {
-    damageDealt: number; 
-    damageTaken: number; 
+    damageDealt: number;
+    damageTaken: number;
     ourMults: DamageMultipliers;
     theirMults: DamageMultipliers;
 }
@@ -58,26 +60,29 @@ export type PreMoveSideEffect = (context: PreMoveContext) => MoveSideEffectOutco
 export type DamageMultiplierFunction = (context: DamageMultiplierContext) => DamageMultipliers;
 export type PostMoveSideEffect = (context: PostMoveContext) => MoveSideEffectOutcome | void;
 
-// Wrapper methods for DamageMultiplierFunction and MoveSideEffect to add common conditionals.
+
+/** Wrapper for {@link DamageMultiplierFunction}, used to add common conditionals/modifications. */
 export type MoveMultiplierWrapper = (pipelineStep: DamageMultiplierFunction) => DamageMultiplierFunction;
+/** Wrapper for {@link PreMoveSideEffect} or {@link PostMoveSideEffect}, used to add common conditions/modifications. */
 export type MoveSideEffectWrapper<SEType = PreMoveSideEffect | PostMoveSideEffect> = (effect: SEType) => SEType;
 
 
 /**
  * Represents a battle move with a unique name, type, and associated behaviors.
- *
- * @property name - Move name used for internal tracking, comparison, and event mapping.
- * @property type - The type/category of the move. Used for logical checks and to set initial damage multipliers.
- * @property behaviors - Optional hooks for move side effects and damage calculation:
- *   - preEffect: Function executed before the move's main effect.
- *   - damageMultipliers: Function to calculate damage multipliers.
- *   - postEffect: Function executed after the move's main effect.
  */
 export interface Move {
-    /** Move name - used for internal tracking and comparison. Can be used for mapping in emitted events. Should rarely be used otherwise. */
+    /** Move name used for internal tracking, comparison, and event mapping. */
     name: string;
+    /** The type/category of the move. Used for logical checks and to set initial damage multipliers. */
     type: MoveType;
+    /** Optional tagging of the move when it is the result of special instantiation (e.g mirror, repeat). */
     tags?: MoveTags
+    /**
+     * Optional hooks for move side effects and damage calculation:
+     *   @method preEffect: Function executed before the move's main effect, i.e before the main "clash."
+     *   @method damageMultipliers: Function to calculate damage multipliers. Multiplied with it's initial damage multipliers.
+     *   @method postEffect: Function executed after the move's main effect and damages are dealt out.
+     */
     behaviors: {
         preEffect?: PreMoveSideEffect;
         damageMultipliers?: DamageMultiplierFunction;

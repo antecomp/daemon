@@ -4,19 +4,8 @@ import { Combatant, CombatantSnapshot } from "./combatant";
 import { MoveSideEffectOutcome, Move, PostMoveContext } from "./move.types";
 import { PlannedMove, PlannedSequence } from "./plannedMove";
 
-/** Discriminated set of lifecycle events emitted by battle engine. Keys for `BattleReactions` */
-export type BattleEvent =
-    | "RoundPrepared"
-    | "RoundStart"
-    | "MoveStart"
-    | "PreEffectResolved"
-    | "MultipliersComputed"
-    | "DamagesApplied"
-    | "PostEffectResolved"
-    | "MoveEnd"
-    | "RoundEnd"
-    | "BattleEnd"
-    | "BattleForceEnd"
+/** Discriminated set of lifecycle events emitted by battle engine. Keys for {@link BattleReactions} and {@link BattleEventPayload} */
+export type BattleEvent = keyof BattleEventPayload;
 
 /** Payload shape for each of the battle events (lifecycle stages). Provided by battleEngine.
  * Update as needed.
@@ -94,11 +83,10 @@ type BattleReaction<K extends BattleEvent> = (payload: BattleEventPayload[K]) =>
   */
 export type BattleReactions = Partial<{ [K in BattleEvent]: BattleReaction<K> }>;
 
-/** Record of {@link CombatantSnapshot}s associating a snapshot of combatant state with battle event stages
- */
+/** Record of {@link CombatantSnapshot}s associating a snapshot of combatant state with battle event stages */
 export type CombatantHistory = Record<
     Extract<BattleEvent,
-        'MoveStart'
+        | 'MoveStart'
         | 'PreEffectResolved'
         | 'MultipliersComputed'
         | 'DamagesApplied'

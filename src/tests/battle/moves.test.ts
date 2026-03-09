@@ -1,4 +1,5 @@
-import { OpponentAI, CombatantInitStats } from "@/core/battle/ai/opponentAI.types";
+import { OpponentAI } from "@/core/battle/ai/opponentAI.types";
+import { CombatantInitStats } from "@/core/battle/model/combatant";
 import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { PlannedMove, PlannedSequence } from "@/core/battle/model/plannedMove";
 import { COMMON_PLANNED_MOVES as PLN } from "@/core/battle/moves/plannedMoves";

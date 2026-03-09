@@ -6,6 +6,9 @@ type StatusEntry = {
     durationStack: number[]
 }
 
+/** Represents important Combatant State at a single point in time. 
+ * Used by BattleReactions to view/diff combatant information at various phases. 
+*/
 export type CombatantSnapshot = {
     health: number,
     maxHealth: number,
@@ -13,6 +16,13 @@ export type CombatantSnapshot = {
         [statusName: string]: { maxDur: number, level: number } | undefined
     }
 };
+
+
+/** Info used to initialize a combatant instance. */
+export interface CombatantInitStats {
+    maxHealth: number; // for Combatant constuctor.
+}
+
 
 /**
  * The `Combatant` class tracks the health and status effects of a combatant in the battle system. It provides methods for taking damage,
@@ -82,6 +92,7 @@ export class Combatant {
         }
     }
 
+    /** Decrements the duration of every currenrly applied status by 1. */
     tickStatuses() {
         for (const [_, entry] of this.statuses) {
             entry.durationStack = entry.durationStack.map(dur => dur - 1);

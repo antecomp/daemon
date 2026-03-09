@@ -17,10 +17,10 @@ export type OpponentAIBehaviorDeps = {combatants: Sides<Combatant>, engineDeps: 
  * 
  * Each behavior has a...
  * @property `key` - .Used for internal tracking, can be anything as long as it's unique per behavior.
- * @property run `(deps: OpponentAIBehaviorDeps)` => void;` The actual behavior side-effect. Takes in dependencies (@ref OpponentAIBehaviorDeps) to perform needed actions.
+ * @property run `(deps: OpponentAIBehaviorDeps)` => void;` The actual behavior side-effect. Takes in dependencies {@link OpponentAIBehaviorDeps} to perform needed actions.
  * And can optionally take...
  * @property `when (args: OpponentAIBehaviorPredicateArgs)` - A predicate for if the behavior should run at all. 
- *           Use this instead of conditionals inside `run`. Takes in context (@ref OpponentAIBehaviorPredicateArgs)
+ *           Use this instead of conditionals inside `run`. Takes in context {@link OpponentAIBehaviorPredicateArgs}
  * @property `once` - Apply if this effect should only run one time.
 */
 export interface OpponentAIBehavior {
@@ -28,12 +28,6 @@ export interface OpponentAIBehavior {
     when?: (args: OpponentAIBehaviorPredicateArgs) => boolean;
     run: (deps: OpponentAIBehaviorDeps) => Promise<void> | void;
     once?: boolean
-}
-
-/** Info used to initialize an opponent combatant instance. */
-export interface CombatantInitStats {
-    maxHealth: number // for Combatant constuctor.
-    // could also do stuff like initial statuses if u want.
 }
 
 /** OpponentAI describes the logic and behavior for a given battle opponent.

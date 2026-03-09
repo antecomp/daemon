@@ -4,7 +4,8 @@ import { createBattleEngine } from "@/core/battle/engine/battleEngine";
 import { BattleReactions } from "@/core/battle/model/battleReactions";
 import { PlannedSequence } from "@/core/battle/model/plannedMove";
 import { PlannedMove } from "@/core/battle/model/plannedMove";
-import { OpponentAI, CombatantInitStats } from "@/core/battle/ai/opponentAI.types";
+import { OpponentAI } from "@/core/battle/ai/opponentAI.types";
+import { CombatantInitStats } from "@/core/battle/model/combatant";
 import { describe, expect, vi, test } from "vitest";
 import { BattleOutcome } from "@/core/battle/model/battle";
 

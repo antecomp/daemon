@@ -68,7 +68,7 @@ export function getPhaseMultipliers(move: Move, ctx: DamageMultiplierContext) {
 /**
  * Cross-multiplies player and opponent multipliers and performs corresponding .takeDamage on each actor.
  */
-export function calculateAndApplyDamage({player, opponent}: Sides<Combatant>, multipliers:{opponent: DamageMultipliers, player: DamageMultipliers}) {
+export function calculateAndApplyDamage({player, opponent}: Sides<Combatant>, multipliers: Sides<DamageMultipliers>) {
     const playerDamageDealt = multipliers.player.outgoing * multipliers.opponent.incoming;
     const opponentDamageDealt = multipliers.opponent.outgoing * multipliers.player.incoming;
 

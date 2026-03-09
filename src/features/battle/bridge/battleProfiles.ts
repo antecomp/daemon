@@ -8,7 +8,8 @@
  * - Player display lexicon
  */
 
-import { OpponentAI, CombatantInitStats } from '@/core/battle/ai/opponentAI.types';
+import { OpponentAI } from '@/core/battle/ai/opponentAI.types';
+import { CombatantInitStats } from "@/core/battle/model/combatant";
 import { Point } from '@/shared/types/3d.types';
 import { AssetURL } from '@/shared/types/misc.types';
 import { MoveLexiconOverrides } from '../lexicon/moveLexicon';
