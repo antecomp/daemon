@@ -9,6 +9,8 @@ type SideSpec = {
 
 type SideOverrides = Partial<Record<Side, Partial<SideSpec>>>;
 
+/** Helper to generate a similar drama for each side. Similar structure to existing drama definitions, 
+ * but also granted "side" as a param for place, when, run to conditionally change behavior based on side. */
 export function defineSideDrama(
   id: string,
   base: SideSpec,

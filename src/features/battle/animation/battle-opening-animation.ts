@@ -9,6 +9,7 @@ import sleep from "@/shared/utils/sleep";
 
 const FADE_IN_KEYFRAMES = [{ opacity: 0 }, { opacity: 1 }];
 
+/** Reads the battle ref registry and performs various animate calls for a "bootup" animation sequence. */
 export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNames>, setBattleUIState: Setter<BattleUIState>) {
     // Guard clause for everything. Let's just fail the animation if we're missing anything.
     if (!(
@@ -49,8 +50,7 @@ export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNa
     rbRunes.forEach(rune => rune.style.opacity = '0');
     rbActionButtons.forEach(btn => btn.style.opacity = '0');
 
-
-
+    /////////////////////////////////////////////////////////////////////
 
     await sleep(500);
 
@@ -73,11 +73,10 @@ export default async function battleOpeningAnimation(rr: RefRegistry<BattleRefNa
 
     await sleep(1500);
 
-    await animateAsync(rr.initMessage, [{opacity: 1}, {opacity: 0}], {
+    await animateAsync(rr.initMessage, [{ opacity: 1 }, { opacity: 0 }], {
         fill: 'forwards',
         duration: 500,
     })
-
 
 
     // This UI state closes the init prompt and indicates the opening animation has started.

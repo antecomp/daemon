@@ -4,6 +4,7 @@ import { ManiaStatus } from "../statuses/statuses";
 import { combineMultiplierSets, getBaseMultipliers } from "../utils/engine.utils";
 import { Status } from "../model/status";
 
+/** Utility used to chain multiple pre/post-effect methods together. Runs them in sequence, reports the latest *defined* outcome. */
 export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pipeline: ((ctx: T) => MoveSideEffectOutcome | void)[]): ((ctx: T) => MoveSideEffectOutcome | void) {
     return (ctx) => {
         let result: MoveSideEffectOutcome | undefined = undefined;
@@ -14,6 +15,7 @@ export function effectPipeline<T extends PreMoveContext | PostMoveContext>(...pi
     };
 }
 
+/** Utility to run multiple multiplier methods together. Runs them in sequence, multiplying their results together (reduce). */
 export function multiplierPipeline(...pipeline: DamageMultiplierFunction[]): DamageMultiplierFunction {
     return (context) => {
         return pipeline.reduce(

@@ -31,7 +31,7 @@ export default function Forsake(props: { forsake: (v: any) => void }) {
         return animation.finished;
     }
 
-    let svgRef!: SVGSVGElement // bruh what the hell is this type name lol.
+    let svgRef!: SVGSVGElement
     let circleRef!: SVGCircleElement;
     let divRef!: HTMLDivElement
 

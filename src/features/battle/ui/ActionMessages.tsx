@@ -10,19 +10,17 @@ import ai_mania_icon from '@/features/battle/assets/icons/battle-alerts/mania.pn
 import { NOTIFICATION_CLEAR_STAGGER, NOTIFICATION_LIFESPAN } from '../config/timings.config';
 
 /** Mapping of a action message icon by name to it's AssetURL */
-export const actionIcons = {
+export const ACTION_MESSAGE_ICONS = {
     "default": ai_plain_icon,
     "heal": ai_heal_icon,
     "focus": ai_focus_icon,
     "mania": ai_mania_icon
 }
 
-/**
- * Narrowed set of icon identifiers that can be referenced by action messages.
- */
-type AvailableActionIcons = keyof typeof actionIcons;
+/** Narrowed set of icon identifiers that can be referenced by action messages. */
+type AvailableActionIcons = keyof typeof ACTION_MESSAGE_ICONS;
 
-/** A single "Action Message" (battle notification). Has some text and can be decorated with an icon (@ref AvailableActtionIcons) */
+/** A single "Action Message" (battle notification). Has some text and can be decorated with an icon {@link AvailableActionIcons} */
 export interface ActionMessage {
     iconName?: AvailableActionIcons
     text: string,
@@ -50,7 +48,7 @@ export default function ActionMessages(props: ActionMessagesProps) {
                     {message => (
                         <div class="action-message">
                             <span>{message.text}</span>
-                            <img src={(message.iconName && actionIcons[message.iconName]) ?? actionIcons.default} />
+                            <img src={(message.iconName && ACTION_MESSAGE_ICONS[message.iconName]) ?? ACTION_MESSAGE_ICONS.default} />
                         </div>
                     )}
                 </For>

@@ -31,7 +31,7 @@ export default function Runebuilder(props: {
     return (
         <>
             <TooltipComponent/>
-            <svg width={SVG_DIM} height={SVG_DIM} class="runebuilder" ref={runeBuilderRef as any}>
+            <svg width={SVG_DIM} height={SVG_DIM} class="runebuilder" ref={runeBuilderRef}>
                 {/* Main container circle */}
                 <circle
                     cx={CENTER} cy={CENTER}

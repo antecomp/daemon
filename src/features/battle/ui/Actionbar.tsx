@@ -31,6 +31,7 @@ import { useSound } from '@/core/audio/audio'
 
 const rbSounds = [rb1, rb2, rb3, rb4, rb5];
 
+// Visualizes a selected move at the top of the action bar.
 function SelectedMove(props: {
     lexicon: MoveLexicon
     moveName: MoveLexeme
@@ -95,7 +96,7 @@ export default function Actionbar(props: ActionbarProps) {
         setPlanBuffer(prev => {
             // Validate Before Adding
             if(prev.length == SEQUENCE_LENGTH) return prev; // Sequence Full
-            if (prev.some(item => item == toAdd)) return prev;
+            if (prev.some(item => item == toAdd)) return prev; // Sequence already contains move.
 
             const canPerform = PLAYER_RUNE_REGISTRY[toAdd].canPerform
             if (canPerform && !canPerform(actualizePlan(prev))) {

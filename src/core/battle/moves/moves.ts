@@ -82,7 +82,6 @@ export const idle: Move = {
     behaviors: {}
 }
 
-// Could probably change this to do logic check in pre/post effect so we can have an outcome from this!
 export const overwhelm: Move = {
     name: 'overwhelm',
     type: MoveType.Overwhelming,

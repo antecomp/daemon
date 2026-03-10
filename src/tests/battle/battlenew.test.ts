@@ -551,3 +551,75 @@ describe("Death tests", () => {
 
 
 })
+
+describe("Opponent AI behaviors", () => {
+    test("runs behaviors by stage and respects when predicates", async () => {
+        const preRoundRun = vi.fn();
+        const preRoundSkipped = vi.fn();
+        const postRoundRun = vi.fn();
+        const postRoundSkipped = vi.fn();
+
+        const engine = createBattleEngine(
+            {
+                getSequence: () => idlePlan,
+                behaviors: {
+                    preRound: [
+                        { key: "pre-run", run: preRoundRun },
+                        { key: "pre-skip", when: () => false, run: preRoundSkipped }
+                    ],
+                    postRound: [
+                        { key: "post-run", run: postRoundRun },
+                        { key: "post-skip", when: () => false, run: postRoundSkipped }
+                    ]
+                }
+            },
+            SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
+            {}
+        );
+
+        await engine.setupRound();
+        await engine.executeRound(idlePlan);
+
+        expect(preRoundRun).toHaveBeenCalledTimes(1);
+        expect(preRoundSkipped).not.toHaveBeenCalled();
+        expect(postRoundRun).toHaveBeenCalledTimes(1);
+        expect(postRoundSkipped).not.toHaveBeenCalled();
+    });
+
+    test("once behaviors run only once without blocking non-once behaviors", async () => {
+        const preRoundOnce = vi.fn();
+        const preRoundAlways = vi.fn();
+        const postRoundOnce = vi.fn();
+        const postRoundAlways = vi.fn();
+
+        const engine = createBattleEngine(
+            {
+                getSequence: () => idlePlan,
+                behaviors: {
+                    preRound: [
+                        { key: "shared-pre", once: true, run: preRoundOnce },
+                        { key: "always-pre", run: preRoundAlways }
+                    ],
+                    postRound: [
+                        { key: "shared-post", once: true, run: postRoundOnce },
+                        { key: "always-post", run: postRoundAlways }
+                    ]
+                }
+            },
+            SAMPLE_OPPONENT_STATS,
+            SAMPLE_PLAYER_STATS,
+            {}
+        );
+
+        await engine.setupRound();
+        await engine.executeRound(idlePlan);
+        await engine.setupRound();
+        await engine.executeRound(idlePlan);
+
+        expect(preRoundOnce).toHaveBeenCalledTimes(1);
+        expect(preRoundAlways).toHaveBeenCalledTimes(2);
+        expect(postRoundOnce).toHaveBeenCalledTimes(1);
+        expect(postRoundAlways).toHaveBeenCalledTimes(2);
+    });
+});

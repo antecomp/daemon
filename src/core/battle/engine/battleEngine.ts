@@ -30,6 +30,7 @@ const ENGINE_DEP_FALLBACK: BattleEngineDependencies = {
  * @param reactions - An object mapping battle events to arrays of asynchronous event handler functions.
  *                  - These 'reactions' fire (and block) at their associated battle stages and are provided information about battle state.
  *                  - Namely used to interweave animations into logic (@ref BattleEngineBridge)
+ * @param deps - Injected Dependencies ({@link BattleEngineDependencies})for the battle engine. 
  * @returns An object containing methods and properties to control the battle flow:
  *   - `executeRound(playerPlan: PlannedSequence): Promise<void>`: Executes a round using the player's planned sequence of moves.
  *   - `setupRound(): Promise<void>`: Prepares the next round, generating the opponent's plan and emitting relevant events.
@@ -64,6 +65,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Combat
         await emitBattleEvent('BattleForceEnd', { outcome });
     }
 
+    // Used to track and enforce 'once' tag for opponent behaviors.
     const opponentRanBehaviors = {
         preRound: new Set<string>(),
         postRound: new Set<string>()
@@ -77,20 +79,15 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Combat
         const behaviors = opponentAI.behaviors?.[stage];
         if (!behaviors) return;
 
-        // This is going to fire every SE at once, which is probably what you want but be aware that your 
-        // array order will have no meaning on execution order.
-        // we can instead change this for a for of with the await inside...
-        await Promise.all(
-            behaviors
-                .filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))
-                .map(async behavior => {
-                    if (behavior.once) {
-                        if (opponentRanBehaviors[stage].has(behavior.key)) return;
-                        opponentRanBehaviors[stage].add(behavior.key);
-                    }
-                    await behavior.run(runnerDeps);
-                })
-        );
+        for(const behavior of behaviors.filter(behavior => behavior.when === undefined || behavior.when(predicateArgs))) {
+            if(behavior.once) {
+                if (opponentRanBehaviors[stage].has(behavior.key)) continue;
+                opponentRanBehaviors[stage].add(behavior.key);
+            }
+            await behavior.run(runnerDeps);
+        }
+
+        // Consider adding an event here.
     }
 
     async function setupRound() {
@@ -103,6 +100,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Combat
         const plans = makeSidesMap(playerPlan, opponentPlan);
 
         // Consider *not* having an await here, things like the UIState rely on RoundStart running immediately on execute.
+        // That or implement the opponent behavior event to give us an entry point for handling it.
         await handleOpponentBehaviors('preRound', { combatants }, { combatants, engineDeps: deps });
 
         await emitBattleEvent('RoundStart', { plans, combatants });
@@ -156,7 +154,7 @@ export function createBattleEngine(opponentAI: OpponentAI, opponentStats: Combat
                 damageTaken: damagesDealt[oppositeSide(side)],
             }));
 
-            // death.
+            // death check and run.
             const outcome = outcomeCheck();
             if (outcome !== null) {
                 combatantHistory.DamagesApplied = mapSides(combatants, s => s.snapshot());

@@ -1,6 +1,6 @@
 import animateAsync from "@/shared/utils/animateAsync";
 
-async function damageFlash(spriteRef: HTMLElement | undefined) {
+async function damageFlash(spriteRef: HTMLElement | SVGElement | undefined) {
     if (!spriteRef) return;
 
     await animateAsync(spriteRef, [
@@ -14,7 +14,7 @@ async function damageFlash(spriteRef: HTMLElement | undefined) {
     )    
 }
 
-async function fadeToBlackAndTransparent(spriteRef: HTMLElement | undefined) {
+async function fadeToBlackAndTransparent(spriteRef: HTMLElement | SVGElement | undefined) {
     if (!spriteRef) return;
 
     await animateAsync(spriteRef, 
@@ -25,7 +25,7 @@ async function fadeToBlackAndTransparent(spriteRef: HTMLElement | undefined) {
     )
 }
 
-async function fadeElementOut(ref: HTMLElement | undefined) {
+async function fadeElementOut(ref: HTMLElement | SVGElement | undefined) {
     if (!ref) return;
 
     await animateAsync(ref,
@@ -34,7 +34,7 @@ async function fadeElementOut(ref: HTMLElement | undefined) {
     )
 }
 
-async function fadeElementIn(ref: HTMLElement | undefined) {
+async function fadeElementIn(ref: HTMLElement | SVGElement | undefined) {
     if (!ref) return;
 
     await animateAsync(ref, 

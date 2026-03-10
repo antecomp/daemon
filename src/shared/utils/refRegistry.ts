@@ -11,7 +11,7 @@
  * @template {readonly string[]} K - Tuple of allowed string keys.
  */
 export type RefRegistry<K extends readonly string[]> = {
-    [Key in K[number]]?: HTMLElement;
+    [Key in K[number]]?: HTMLElement | SVGElement;
 };
 
 /**
@@ -19,7 +19,7 @@ export type RefRegistry<K extends readonly string[]> = {
  *
  * @template {readonly string[]} K - Tuple of allowed string keys.
  */
-export type RegistryAttacher<K extends readonly string[]> = (val: K[number], ref: HTMLElement) => void;
+export type RegistryAttacher<K extends readonly string[]> = (val: K[number], ref: HTMLElement | SVGElement) => void;
 
 /**
  * Creates a typed element reference registry and an attacher for a finite set

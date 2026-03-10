@@ -15,6 +15,7 @@ import claw_a from '@/assets/artwork/battle_overlay_animations/opponent/clawa.we
 import claw_b from '@/assets/artwork/battle_overlay_animations/opponent/clawb.webm';
 import opp_overwhem_left from '@/assets/artwork/battle_overlay_animations/opponent/opp_overwhelm_left.webm'
 import opp_overwhem_right from '@/assets/artwork/battle_overlay_animations/opponent/opp_overwhelm_right.webm'
+// TODO: Clean up these file name conventions & glob import.
 
 
 import requestAssetPrefetch from '@/shared/utils/reqPrefetch'
