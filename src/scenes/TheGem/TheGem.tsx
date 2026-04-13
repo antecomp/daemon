@@ -107,7 +107,7 @@ export default function TheGem() {
                     position={"-1110 -118 515"}
                     scale={100}
                     interactions={[
-                        undefined, // no action for interact.
+                        () => addLogMessage("The man is too far to reach. Besides, I should probably talk to him instead."),
                         () => manDialogue.start(),
                         () => addLogMessage("A man in a suit. He has something I need.") // simple message for "observe" interaction
                     ]}

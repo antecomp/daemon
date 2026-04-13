@@ -26,6 +26,8 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { default as dialogue_root } from '@/tests/dialogues/x'
 import { DialogueNode } from "@/core/dialogue/dialogueNode.types";
 import Inventory from "@/core/inventory/inventory";
+import applyRoomEnvironment from "@/3d/pipeline/applyRoomEnvironment";
+import Freecam from "@/3d/camera/Freecam";
 
 export default function GemmaBar() {
     let sceneRef!: Scene;
@@ -76,7 +78,7 @@ export default function GemmaBar() {
             perspective="800"
             shadowmap-type="pcfsoft"
         >
-            <lume-ambient-light id="ambientLight" intensity={1.8}/>
+            <lume-ambient-light id="ambientLight" intensity={0.25}/>
             <lume-directional-light 
                 id="whar"
                 position="-794, -80, 448" 
@@ -113,7 +115,7 @@ export default function GemmaBar() {
                 color="white"
             />
 
-            <Show when={!hasManDeparted()}>
+            {/* <Show when={!hasManDeparted()}>
                 <Billboard
                     texture={suited_man}
                     position="-505 -45 390"
@@ -124,12 +126,13 @@ export default function GemmaBar() {
                         () => addLogMessage("A man in a suit. He has something I need.") // simple message for "observe" interaction
                     ]}
                 />
-            </Show>
+            </Show> */}
 
-            <PlayerCam
+            {/* <PlayerCam
                 {...cameraControlSignals()}
                 sceneRef={sceneRef}
-            />
+            /> */}
+            <Freecam sceneRef={sceneRef}/>
 
             <Show when={cacheOnTable()}>
                 <Interactable

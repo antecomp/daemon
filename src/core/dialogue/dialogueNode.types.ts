@@ -41,11 +41,13 @@ export type RenderOrNode = DialogueRender | DialogueNode
  * 
  * @property id - Internal tracking of dialogue nodes for keying and visualization. This should never be changed.
  * @property name - who is speaking.
- * @property render - a string or a method that returns a string, represents the actual message content being sent. The method that returns a string type is if you want to make the messages change their content based on game-state, or if you want to use helpers such as pickRandom().
+ * @property render - a string or a method that returns a string, represents the actual message content being sent. 
+ *                    The method that returns a string type is if you want to make the messages change their content based on game-state, 
+ *                    or if you want to use helpers such as pickRandom().
  * @property options - an array of "options" ({summaryText, fullText, next}), these are the players response-points, forks in the dialogue tree.
  * @property next - pointer to the subsequent node, typically a child DialogueNode, but this can also loop/point to other parts of the Dialogue Graph.
  * @property sideEffect - method that runs whenever a dialogue node renders, allows you to update game state based on dialogue events.
- * @property waitFor - blocking async side effect that is used for advancement instead of use interaction.
+ * @property waitFor - blocking async method that is used for advancement instead of player-interaction.
  */
 export type DialogueNode = {
     id: string;
