@@ -22,14 +22,6 @@ import { BattleOutcome } from "@/core/battle/model/battle";
 import islands_glb from './assets/malice.glb';
 
 import crow_sprite from '@/assets/artwork/dæmons/crow_sketch_world.png';
-import fox_sprite from '@/assets/artwork/dæmons/fox.png';
-//import test_girl_sprite from '../Test/assets/girl2.png';
-
-import { OPPONENT_FOX } from "@/data/battles/fox";
-import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial";
-import { DialogueService } from "@/core/dialogue/dialogueService";
-
-import fox_dialogue_root from "./data/fox_dialogue";
 
 import bttle_placeholder from '../../assets/placeholders/BTTLE.png';
 import { OPPONENT_ASTRAVEILLAN } from "@/data/battles/astraveillan";
@@ -45,7 +37,6 @@ export default function Islands() {
 
   const [completedBattles, setCompletedBattles] = createStore({
     crow: false,
-    fox: false,
     astra: false,
     pres: false,
     para: false
@@ -54,11 +45,10 @@ export default function Islands() {
   function battleToContinue(who: keyof typeof completedBattles) {
     startBattle({
       crow: OPPONENT_CROW,
-      fox: OPPONENT_FOX,
       astra: OPPONENT_ASTRAVEILLAN,
       pres: OPPONENT_PRESCIENTIA,
       para: OPPONENT_PARALLACTIC
-    }[who], (who == 'fox') ? showBattleTutorial : undefined).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
+    }[who]).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
   }
 
   return (
@@ -79,32 +69,6 @@ export default function Islands() {
           scale="10 10 10"
           ref={islands_ref}
         />
-
-        <Show when={!completedBattles.fox}>
-          <AtTile
-            pos='-6,-10'
-            onWalkInto={() => addLogMessage('The fox is blocking your path.')}
-          >
-            <Billboard
-              texture={fox_sprite}
-              scale={60}
-              position='0 -25 0'
-              interactions={[
-                () => addLogMessage("As you reach out, the fox snarls loudly."),
-                () => {
-                  DialogueService.startDialogue(fox_dialogue_root, {
-                    ctx: {
-                      actions: {
-                        foxBattle: () => battleToContinue('fox')
-                      }
-                    }
-                  })
-                },
-                () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
-              ]}
-            />
-          </AtTile>
-        </Show>
 
         <Show when={!completedBattles.crow}>
           <AtTile

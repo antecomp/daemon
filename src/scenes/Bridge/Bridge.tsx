@@ -24,26 +24,28 @@ import { createMusicTrack } from "@/core/audio/createMusicTrack";
 import { UniformsLib } from "three";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 
+import fox_sprite from '@/assets/artwork/dæmons/fox.png';
+import fox_dialogue_root from "../Islands/data/fox_dialogue";
+import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial";
+import { DialogueService } from "@/core/dialogue/dialogueService";
+import AtTile from "@/3d/tilenav/AtTile";
+import Billboard from "@/3d/components/Billboard";
+import { startBattle } from "@/features/battle/startBattle";
+import { OPPONENT_FOX } from "@/data/battles/fox";
+import { BattleOutcome } from "@/core/battle/model/battle";
+
 export default function Bridge() {
     let sceneRef!: Scene;
 
     let riverRef!: GltfModel
 
-    const [hasCrossedBridge, setHasCrossedBridge] = createSignal(false);
+    const [hasDefeatedFox, setHasDefeatedFox] = createSignal(false);
 
     useDGShader(() => sceneRef);
 
     let sceneTransitionStart = false;
-
     createEffect(() => {
-        // Crossing the bridge.
-        if (navController.state().tile == '1,0') {
-            if (!hasCrossedBridge()) {
-                setHasCrossedBridge(true);
-                addLogMessage("The air suddenly feels much heavier.");
-            }
-        }
-
+        // Crossing into the islands scene. Change this to navlisten?
         if (navController.state().tile == '22,0' && !sceneTransitionStart) {
             sceneTransitionStart = true;
             setCurrentScene('Islands');
@@ -88,11 +90,9 @@ export default function Bridge() {
 
     navListen(e => e.type == 'move' && e.target == '13,4' && !e.success && addLogMessage('No turning back now.'));
 
-    //navListen(e => e.type == 'move' && e.success && playStepSound('dirt'));
-
     return (
         <NavContextProvider>
-            <NavCompass/>
+            <NavCompass />
             <lume-scene
                 webgl
                 ref={sceneRef}
@@ -118,7 +118,7 @@ export default function Bridge() {
                     ref={riverRef}
                 />
 
-                <Show when={hasCrossedBridge()}>
+                <Show when={hasDefeatedFox()}>
                     <lume-gltf-model
                         align-point="0.5 0.5"
                         mount-point="0.5 0.5"
@@ -126,6 +126,33 @@ export default function Bridge() {
                         position="1100,0,0"
                         src={island_surface}
                     />
+                </Show>
+
+                <Show when={!hasDefeatedFox()}>
+                    <AtTile
+                        pos="0,0"
+                        onWalkInto={() => addLogMessage('A strange fox is blocking my path.')}
+                    >
+                        <Billboard
+                            texture={fox_sprite}
+                            scale={50}
+                            position='0 -18 0'
+                            interactions={[
+                                () => addLogMessage("As you reach out, the fox snarls loudly."),
+                                () => {
+                                    DialogueService.startDialogue(fox_dialogue_root, {
+                                        ctx: {
+                                            actions: {
+                                                // TODO: Handle loose. How should we revert?
+                                                foxBattle: () => startBattle(OPPONENT_FOX).then(r => setHasDefeatedFox(r == BattleOutcome.PlayerVictory))
+                                            }
+                                        }
+                                    })
+                                },
+                                () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
+                            ]}
+                        />
+                    </AtTile>
                 </Show>
 
                 <Clouds
