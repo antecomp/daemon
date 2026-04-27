@@ -28,10 +28,14 @@ import { OPPONENT_ASTRAVEILLAN } from "@/data/battles/astraveillan";
 import { OPPONENT_PRESCIENTIA } from "@/data/battles/prescientia";
 import { OPPONENT_PARALLACTIC } from "@/data/battles/parallactic";
 
+import scarecrow from './assets/placeholder_scarecrow.glb';
+import applyRoomEnvironment from "@/3d/pipeline/applyRoomEnvironment";
+
 export default function Islands() {
   let islands_ref!: GltfModel;
   let sceneRef!: Scene;
   useDGShader(() => sceneRef, 'quantized');
+  // applyRoomEnvironment(() => sceneRef)
 
   const { cameraControlSignals, NavContextProvider } = createTileNavigator(NM as NavMap);
 
@@ -128,6 +132,15 @@ export default function Islands() {
             />
           </AtTile>
         </Show>
+
+        <AtTile pos="10,7">
+          <lume-gltf-model
+            align-point="0.5 0.5"
+            scale="10 10 10"
+            rotation="0 180 0"
+            src={scarecrow}
+          />
+        </AtTile>
 
 
         <Clouds
