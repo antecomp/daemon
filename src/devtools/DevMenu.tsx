@@ -49,6 +49,7 @@ import { OPPONENT_MYSTERYMAN } from "@/data/battles/mysteryman.ts";
 import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial.tsx";
 import { OPPONENT_GHOST } from "@/data/battles/ghost.ts";
 import { DGDEV } from "./dev.ts";
+import triggerGameOver from "@/features/gameover/GameOver.tsx";
 
 export default function DevMenu() {
 
@@ -116,6 +117,8 @@ export default function DevMenu() {
                 { prompt: 'NC', action() { alert('action no close') }, dontClose: true },
                 { prompt: 'CL', action() { alert('action, close') } }
             ])}>Popup 2</button>
+            <hr />
+            <button onClick={() => triggerGameOver(() => console.log("rez"))}>GAME OVER</button>
         </div>
     )
 }

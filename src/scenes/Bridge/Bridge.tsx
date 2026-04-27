@@ -33,6 +33,7 @@ import Billboard from "@/3d/components/Billboard";
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_FOX } from "@/data/battles/fox";
 import { BattleOutcome } from "@/core/battle/model/battle";
+import triggerGameOver from "@/features/gameover/GameOver";
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -144,7 +145,13 @@ export default function Bridge() {
                                         ctx: {
                                             actions: {
                                                 // TODO: Handle loose. How should we revert?
-                                                foxBattle: () => startBattle(OPPONENT_FOX).then(r => setHasDefeatedFox(r == BattleOutcome.PlayerVictory))
+                                                foxBattle: () => startBattle(OPPONENT_FOX).then(r => {
+                                                    if (r == BattleOutcome.PlayerVictory) {
+                                                        setHasDefeatedFox(r == BattleOutcome.PlayerVictory);
+                                                    } else {
+                                                        triggerGameOver(() => setCurrentScene('Liminality'))
+                                                    }
+                                                })
                                             }
                                         }
                                     })

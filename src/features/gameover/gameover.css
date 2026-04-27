@@ -1,0 +1,8 @@
+#game-over {
+    display: grid;
+    grid-template-rows: auto;
+    place-items: center;
+    gap: 15px;
+
+    cursor: var(--cursor_pointer);
+}
