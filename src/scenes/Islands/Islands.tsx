@@ -7,7 +7,7 @@ import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NEONM.json'
 import PlayerCam from "@/3d/camera/PlayerCam";
 import NavCompass from "@/3d/tilenav/NavCompass";
-import { NavMap } from "@/3d/tilenav/tilenav.types";
+import { Direction, NavMap } from "@/3d/tilenav/tilenav.types";
 
 import Billboard from "@/3d/components/Billboard";
 import Clouds from "@/shared/components/Clouds/Clouds";
@@ -29,7 +29,7 @@ import { OPPONENT_PRESCIENTIA } from "@/data/battles/prescientia";
 import { OPPONENT_PARALLACTIC } from "@/data/battles/parallactic";
 
 import scarecrow from './assets/placeholder_scarecrow.glb';
-import applyRoomEnvironment from "@/3d/pipeline/applyRoomEnvironment";
+import triggerGameOver from "@/features/gameover/GameOver";
 
 export default function Islands() {
   let islands_ref!: GltfModel;
@@ -37,7 +37,7 @@ export default function Islands() {
   useDGShader(() => sceneRef, 'quantized');
   // applyRoomEnvironment(() => sceneRef)
 
-  const { cameraControlSignals, NavContextProvider } = createTileNavigator(NM as NavMap);
+  const { cameraControlSignals, NavContextProvider, navController } = createTileNavigator(NM as NavMap);
 
   const [completedBattles, setCompletedBattles] = createStore({
     crow: false,
@@ -46,13 +46,30 @@ export default function Islands() {
     para: false
   });
 
+  function resetProgress() {
+    setCompletedBattles({
+      crow: false,
+      astra: false,
+      pres: false,
+      para: false
+    });
+    //navController.setDirection(Direction.EAST);
+    navController.setCurrentTile('-10,-10');
+  }
+
   function battleToContinue(who: keyof typeof completedBattles) {
     startBattle({
       crow: OPPONENT_CROW,
       astra: OPPONENT_ASTRAVEILLAN,
       pres: OPPONENT_PRESCIENTIA,
       para: OPPONENT_PARALLACTIC
-    }[who]).then(outcome => setCompletedBattles(who, outcome === BattleOutcome.PlayerVictory));
+    }[who]).then(outcome => {
+      if(outcome === BattleOutcome.PlayerVictory) {
+        setCompletedBattles(who, true);
+      } else {
+        triggerGameOver(resetProgress);
+      }
+    });
   }
 
   return (

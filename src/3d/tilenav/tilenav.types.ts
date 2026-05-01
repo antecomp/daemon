@@ -93,6 +93,8 @@ export interface NavController {
     setNavMap: SetStoreFunction<NavMap>;
     performNavAction: (action: NavAction) => void;
     setCurrentTile: Setter<NavCoord>;
+    // TODO: Add support for this.
+    //setDirection: Setter<Direction>;
     occupiedTiles: Accessor<NavCoord[]>;
     occupyTile: (coord: NavCoord) => () => void;
     navListen: (fn: (event: NavActionEvent) => void) => void;

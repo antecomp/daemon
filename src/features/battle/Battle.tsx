@@ -56,7 +56,7 @@ export default function Battle(props: {
         }
     );
 
-    createMusicTrack({src: 'PWL/battle.mp3'});
+    //createMusicTrack({src: 'PWL/battle.mp3'});
 
     return (
         <BattleRefRegistryCTX.Provider value={{ attachToRegistry: bridge.attachToRegistry }}>

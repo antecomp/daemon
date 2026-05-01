@@ -81,16 +81,16 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
                                 VISUALIZER
                             )
                     },
-                    {
-                        id: "x",
-                        option: 'Another question',
-                        answer: "Answer to another question"
-                    },
-                    {
-                        id: "y",
-                        option: 'Third question',
-                        answer: 'Answer to the 3rd question.'
-                    }
+                    // {
+                    //     id: "x",
+                    //     option: 'Another question',
+                    //     answer: "Answer to another question"
+                    // },
+                    // {
+                    //     id: "y",
+                    //     option: 'Third question',
+                    //     answer: 'Answer to the 3rd question.'
+                    // }
                 ],
                 'No more questions.' // Send a message indicating that arda actually says this.
             )

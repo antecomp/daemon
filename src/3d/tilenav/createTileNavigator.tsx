@@ -237,6 +237,7 @@ export default function createTileNavigator(
         const origin = currentTile();
 
         // using & to modulo with bitmask, equiv to (dir + X) % 4
+        // TODO: WHY IS IT CODED LIKE THIS? WHAT IS THIS IMPERATIVE GARBAGE. HAVE YAW REACT TO/DERIVE FROM DIRECTION SIGNAL, NOT PLAYER INPUT!!!!
         switch (action) {
             case NavAction.TurnLeft:
                 {
@@ -424,6 +425,7 @@ export default function createTileNavigator(
         setNavMap,
         occupiedTiles,
         occupyTile,
+        setDirection: setCurrentDirection,
         navListen: listenNavAction
     }
 
