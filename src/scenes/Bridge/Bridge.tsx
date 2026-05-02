@@ -145,11 +145,11 @@ export default function Bridge() {
                                         ctx: {
                                             actions: {
                                                 // TODO: Handle loose. How should we revert?
-                                                foxBattle: () => startBattle(OPPONENT_FOX).then(r => {
+                                                foxBattle: () => startBattle(OPPONENT_FOX, showBattleTutorial).then(r => {
                                                     if (r == BattleOutcome.PlayerVictory) {
                                                         setHasDefeatedFox(r == BattleOutcome.PlayerVictory);
                                                     } else {
-                                                        triggerGameOver(() => setCurrentScene('Liminality'))
+                                                        triggerGameOver(() => navController.setCurrentTile('-7,34'))
                                                     }
                                                 })
                                             }
