@@ -55,6 +55,7 @@ export function GameOver(props: {
                     src={go_anim}
                     autoplay
                     muted
+                    playsinline
                     onended={handleVideoEnded}
                     onclick={handleVideoClick}
                 />

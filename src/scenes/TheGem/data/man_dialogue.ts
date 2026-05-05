@@ -15,7 +15,7 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
     "Why does it matter?",
     "Could be the difference between your brain melting and not.",
     "XA-3.",
-    "Damn. Fancy for someone like you. Doing this to rebel against your rich daddy?"
+    "Damn. Fancy for someone like you. Doing this to rebel against your rich dad?"
 )
     .addCarBranch( // "Call and response" branch - player says something and we get a response.
         // Summary Text, Text That Is Sent In Dialogue.
@@ -115,11 +115,13 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
             .t("Behind his sunglasses, the glint suggest he is speaking from experience.", VISUALIZER)
             .t("But hey - your F-CH hits critical, it'll still yank you.", MAN)
             .t("Just... no promises it'll be clean, or leave you whole.")
+            // TODO: Move this clarification later so all routes see it.
             .car('F-CH?', "Feedback Coherence.", r => r.chain(
                 'Without getting too technical...',
                 'When rendering this place, your VI-LINK checks that what you see is, well, what it intended.',
                 "If you have a daemon, uh- interfering with your perception, the VI-LINK picks up on that as incoherence.",
                 "Too many discordant signals traveling through the VI-LINK into your brain-stem is obviously a problem.",
+                "So, when your F-CH is too low, you get ejected to protect your brain.",
                 "I mean, that's the justifiable reason for your daemonveil existing at all. Keeping your brainwaves stable.",
                 "Asuracom just tunes it to be overzealous."
             ))
@@ -178,8 +180,17 @@ root.chainAlt( // Chain alternate just takes two speakers and a bunch of strings
     .joinBranches("He slides a small diskette across the table", VISUALIZER)
     // Initialization of dialogue defines these methods and saves them in CTX.
     .attachSideEffect(ctx => ctx?.actions?.cacheHandoverAnimation())
-    .then("Enjoy your contraband. Next point of contact is on the diskette.", MAN)
+    .then("Enjoy your contraband.", MAN)
     .attachSideEffect(ctx => ctx?.actions?.returnCamera())
+    .chain(
+        "Included with the mod are some coordinates.",
+        "You see, even if commercial VI-LINKs eject when nearing The Fringe, ASCM still monitors the perimeter.",
+        "Usually just to catch delirious people, but they're also looking for folks like you.",
+        "Coordinates are somewhere they don't monitor often, or so I've heard.",
+        "So when you're ready to go, that will be your best shot.",
+        "Understand?"
+    )
+    .car('Yes', 'Great. Then we\'re done here.')
     .then("Before you say anything more, the man abruptly rises out of his chair and departs.", VISUALIZER)
     .attachSideEffect(ctx => ctx?.actions?.departTheMan())
 // Dialogue Naturally Ends here.
