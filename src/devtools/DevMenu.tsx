@@ -67,7 +67,6 @@ export default function DevMenu() {
                 "BarScene",
                 "Crumbling",
                 "Elevator",
-                "GemmaBar",
                 "Bridge",
                 "TheGem",
                 "Test",

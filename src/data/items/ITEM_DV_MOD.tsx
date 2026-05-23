@@ -3,7 +3,7 @@ import { popUILayer, pushUILayer } from "@/app/shell/layers/UILayerManager";
 import createPopup from "@/app/shell/popup/Popup";
 import type { Item } from "@/core/inventory/Items";
 import EnochPuzzle from "@/features/puzzles/enoch/EnochPuzzle";
-import cache_model from '@/scenes/GemmaBar/models/cache.fbx'
+import cache_model from '@/assets/3d/models/cache.fbx'
 import pickRandom from "@/shared/utils/pickRandom";
 import { Scene } from "lume";
 import alert_icon from '@/assets/ui/icons/popup-icons/alert.png';

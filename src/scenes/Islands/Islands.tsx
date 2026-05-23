@@ -7,7 +7,7 @@ import createTileNavigator from "@/3d/tilenav/createTileNavigator";
 import NM from './assets/NEONM.json'
 import PlayerCam from "@/3d/camera/PlayerCam";
 import NavCompass from "@/3d/tilenav/NavCompass";
-import { Direction, NavMap } from "@/3d/tilenav/tilenav.types";
+import { NavMap } from "@/3d/tilenav/tilenav.types";
 
 import Billboard from "@/3d/components/Billboard";
 import Clouds from "@/shared/components/Clouds/Clouds";

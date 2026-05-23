@@ -15,7 +15,7 @@ import starfield from "@/assets/3d/textures/starfield.png"
 import man_sprite from './assets/placeholder_man.png'
 import dia_overlay from '@/assets/ui/misc/dia_dither.png';
 import bar_model from './assets/GEM.glb'
-import cache_model from './assets/cache.fbx'
+import cache_model from '@/assets/3d/models/cache.fbx'
 
 import { default as dialogue_root } from './data/man_dialogue';
 
