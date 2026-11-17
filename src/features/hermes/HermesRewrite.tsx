@@ -56,6 +56,8 @@ export default function Hermes(
 
     function showOptions(pause: BnyPauseBody<'select'>) {
         setOptionsPage(0);
+        shouldAutomaticallyClose = false;
+        
         setOptions(pause.options.map((option, index) => {
             const noCar = option.text.startsWith('^');
             const rawOptionText = noCar ? option.text.slice(1) : option.text;
@@ -65,7 +67,6 @@ export default function Hermes(
                 [summary, full] = rawOptionText.split('\\').map(s => s.trim());
             }
 
-            shouldAutomaticallyClose = false;
             return {
                 summary, full,
                 select: () => {
@@ -91,6 +92,7 @@ export default function Hermes(
     }
 
     const onEmission: BnyEmissionHandler = (emission) => {
+        if(stopped) return;
         switch (emission.kind) {
             case 'say':
                 shouldAutomaticallyClose = false;
@@ -105,6 +107,7 @@ export default function Hermes(
     }
 
     const onPause: BnyPauseHandler = (pause) => {
+        if(stopped) return;
         switch (pause.kind) {
             case 'select':
                 showOptions(pause);
