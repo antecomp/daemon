@@ -57,7 +57,7 @@ export default function Hermes(
     function showOptions(pause: BnyPauseBody<'select'>) {
         setOptionsPage(0);
         shouldAutomaticallyClose = false;
-        
+
         setOptions(pause.options.map((option, index) => {
             const noCar = option.text.startsWith('^');
             const rawOptionText = noCar ? option.text.slice(1) : option.text;
@@ -82,7 +82,7 @@ export default function Hermes(
                     } else {
                         addMessage({ name: 'Arda', text: full });
                         sleep(CAR_DELAY_MS).then(() => {
-                            if(stopped) return;
+                            if (stopped) return;
                             pause.resume(index)
                         })
                     }
@@ -92,7 +92,7 @@ export default function Hermes(
     }
 
     const onEmission: BnyEmissionHandler = (emission) => {
-        if(stopped) return;
+        if (stopped) return;
         switch (emission.kind) {
             case 'say':
                 shouldAutomaticallyClose = false;
@@ -102,12 +102,12 @@ export default function Hermes(
                 ctx?.onMemoryUpdate?.(emission);
                 return;
             case 'signal':
-                ctx?.onSignal?.(emission.identifier, emission.value);
+                ctx?.onSignal?.(emission.identifier, emission.value, { memory: vm.memory });
         }
     }
 
     const onPause: BnyPauseHandler = (pause) => {
-        if(stopped) return;
+        if (stopped) return;
         switch (pause.kind) {
             case 'select':
                 showOptions(pause);
@@ -121,7 +121,7 @@ export default function Hermes(
                 return;
             case 'yield':
                 ctx?.onYield
-                    ? ctx.onYield(pause.identifier, pause.value).then(() => stopped || pause.resume())
+                    ? ctx.onYield(pause.identifier, pause.value, { memory: vm.memory }).then(() => stopped || pause.resume())
                     : pause.resume();
                 return;
             case 'end':
