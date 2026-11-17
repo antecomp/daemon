@@ -65,6 +65,7 @@ export default function Hermes(
                 [summary, full] = rawOptionText.split('\\').map(s => s.trim());
             }
 
+            shouldAutomaticallyClose = false;
             return {
                 summary, full,
                 select: () => {
@@ -74,7 +75,7 @@ export default function Hermes(
                     if (noCar) {
                         // If we have an option and then immediately hit end, that option 
                         // should be seen as a termination option (f.e a "goodbye! [END]")
-                        // sensibly this should only apply to non-car things too, keep the same error.
+                        // sensibly this should only apply to non-car things too.
                         shouldAutomaticallyClose = true;
                         pause.resume(index)
                     } else {
@@ -90,9 +91,9 @@ export default function Hermes(
     }
 
     const onEmission: BnyEmissionHandler = (emission) => {
-        shouldAutomaticallyClose = false;
         switch (emission.kind) {
             case 'say':
+                shouldAutomaticallyClose = false;
                 addMessage({ name: emission.speaker, text: emission.text });
                 return;
             case 'memory':
