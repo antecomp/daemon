@@ -13,6 +13,11 @@ import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
 import { MAIN_CHARACTER_VLID } from "@/config/init.config";
+import sleep from "@/shared/utils/sleep";
+
+// Reply beat for CAR after a player selects an option.
+// [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
+const CAR_DELAY_MS = 1200;
 
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
@@ -47,19 +52,30 @@ export default function Hermes(
     function showOptions(pause: BnyPauseBody<'select'>) {
         setOptionsPage(0);
         setOptions(pause.options.map((option, index) => {
+            const noCar = option.text.startsWith('^');
+            const rawOptionText = noCar ? option.text.slice(1) : option.text;
+            let summary = rawOptionText;
+            let full = rawOptionText;
+            if (rawOptionText.split('\\').length == 2) {
+                [summary, full] = rawOptionText.split('\\').map(s => s.trim());
+            }
+
             return {
-                // split into summary/full and handle (non)car custom syntax here...
-                summary: option.text,
-                full: option.text,
+                summary, full,
                 select: () => {
                     setOptions([]);
                     setHoveredOption('');
                     setOptionsPage(0);
-                    // handle (non) CAR handling here...
-                    // If we have an option and then immediately hit end, that option 
-                    // should be seen as a termination option (f.e a "goodbye! [END]")
-                    shouldAutomaticallyClose = true;
-                    pause.resume(index)
+                    if (noCar) {
+                        // If we have an option and then immediately hit end, that option 
+                        // should be seen as a termination option (f.e a "goodbye! [END]")
+                        // sensibly this should only apply to non-car things too, keep the same error.
+                        shouldAutomaticallyClose = true;
+                        pause.resume(index)
+                    } else {
+                        addMessage({name: 'Arda', text: full});
+                        sleep(CAR_DELAY_MS).then(() => pause.resume(index))
+                    }
                 }
             }
         }))

@@ -4,6 +4,7 @@ import { render } from "solid-js/web";
 import Hermes from '@/features/hermes/HermesRewrite';
 //////////////////////////////////////////////
 import dia from '../tests/dialogues/basic.bny';
+import sleep from '@/shared/utils/sleep';
 
 
 function Comp() {
@@ -11,7 +12,7 @@ function Comp() {
         <Hermes
             program={dia}
             ctx={{
-                
+                onYield: () => sleep(2000)
             }}
         />
     </>
