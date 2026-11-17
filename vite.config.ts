@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import string from 'vite-plugin-string'
 import solid from 'vite-plugin-solid'
 import path from "path"
+import bunnarray from '@bunnarray/vite';
 //import devtools from 'solid-devtools/vite'
 
 export default defineConfig({
@@ -16,6 +17,7 @@ export default defineConfig({
     //   },
     // }),
     solid(),
+    bunnarray(),
     string({
       include: ['**/*.glsl'],
     }),

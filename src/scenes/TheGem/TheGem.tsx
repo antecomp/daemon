@@ -17,6 +17,8 @@ import dia_overlay from '@/assets/ui/misc/dia_dither.png';
 import bar_model from './assets/GEM.glb'
 import cache_model from '@/assets/3d/models/cache.fbx'
 
+import dia from './data/man.bny';
+
 import { default as dialogue_root } from './data/man_dialogue';
 
 export default function TheGem() {
