@@ -1,7 +1,10 @@
+import { BnyMemoryUpdateHandler } from "@bunnarray/vm";
+
 export type DialogueContext = {
     onSignal?: (id: string, value?: string) => void;
     onYield?: (id: string, value?: string) => Promise<void>;
-    initialMemory?: Record<string, string>
+    onMemoryUpdate?: BnyMemoryUpdateHandler;
+    initialMemory?: Record<string, string>;
 }
 
 export type DialogueOption = {
