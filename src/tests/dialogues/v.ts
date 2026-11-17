@@ -92,7 +92,11 @@ questionsRoot
                         ["Dialogue", "This dialogue system."],
                         "The dialogue system we're using right now is called Hermes",
                         d => d
-                            .chain("It was made in-house by omni.", "it uses some really evil reference and callback magic to work.", "I am not sure if I like it.")
+                            .chain(
+                                "It was made in-house by omni.",
+                                "it uses some really evil reference and callback magic to work.",
+                                "I am not sure if I like it."
+                            )
                             .then(questionLoopback.node)
                     )
             )
