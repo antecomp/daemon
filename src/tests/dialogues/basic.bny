@@ -1,0 +1,9 @@
+:SPEAKER mold
+Hello!!! 
+How are you? {
+    ?: Good!
+        Great!
+    ?: Bad!
+        Dang!
+    ?: Fuck you!
+}

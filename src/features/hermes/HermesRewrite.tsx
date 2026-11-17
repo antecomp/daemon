@@ -1,5 +1,5 @@
 import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
-import { BnyEmissionHandler, BnyMemory, BnyMemoryUpdateHandler, BnyOption, BnyPause, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
+import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
 import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
@@ -16,7 +16,7 @@ import { MAIN_CHARACTER_VLID } from "@/config/init.config";
 
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
-    { program, ctx }: { program: BnyProgram, ctx: DialogueContext }
+    { program, ctx }: { program: BnyProgram, ctx?: DialogueContext }
 ) {
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
     const addMessage = ({ name, text }: { name: string | null; text: string }) => setMessages((prev) => [...prev, { name, text }]);
@@ -56,6 +56,8 @@ export default function Hermes(
                     setHoveredOption('');
                     setOptionsPage(0);
                     // handle (non) CAR handling here...
+                    // If we have an option and then immediately hit end, that option 
+                    // should be seen as a termination option (f.e a "goodbye! [END]")
                     shouldAutomaticallyClose = true;
                     pause.resume(index)
                 }
@@ -70,10 +72,10 @@ export default function Hermes(
                 addMessage({ name: emission.speaker, text: emission.text });
                 return;
             case 'memory':
-                ctx.onMemoryUpdate?.(emission);
+                ctx?.onMemoryUpdate?.(emission);
                 return;
             case 'signal':
-                ctx.onSignal?.(emission.identifier, emission.value);
+                ctx?.onSignal?.(emission.identifier, emission.value);
         }
     }
 
@@ -91,7 +93,7 @@ export default function Hermes(
                 });
                 return;
             case 'yield':
-                ctx.onYield
+                ctx?.onYield
                     ? ctx.onYield(pause.identifier, pause.value).then(pause.resume)
                     : pause.resume();
                 return;
@@ -110,7 +112,7 @@ export default function Hermes(
     }
 
     const vm = createVM(program, {
-        memory: ctx.initialMemory,
+        memory: ctx?.initialMemory,
         onEmission, onPause
     });
 

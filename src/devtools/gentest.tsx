@@ -1,13 +1,18 @@
 import 'lume';
 import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
-import { GameOver } from '@/features/gameover/GameOver';
+import Hermes from '@/features/hermes/HermesRewrite';
 //////////////////////////////////////////////
+import dia from '../tests/dialogues/basic.bny';
+
 
 function Comp() {
     return <>
-        <GameOver
-            reset={() => alert('ok')}
+        <Hermes
+            program={dia}
+            ctx={{
+                
+            }}
         />
     </>
 }
