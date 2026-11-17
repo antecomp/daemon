@@ -121,7 +121,9 @@ export default function Hermes(
                 return;
             case 'yield':
                 ctx?.onYield
-                    ? ctx.onYield(pause.identifier, pause.value, { memory: vm.memory }).then(() => stopped || pause.resume())
+                    ? ctx.onYield(pause.identifier, pause.value, { memory: vm.memory })
+                        .then(() => stopped || pause.resume())
+                        // todo: add a catch here with clean handling.
                     : pause.resume();
                 return;
             case 'end':
@@ -134,6 +136,7 @@ export default function Hermes(
                 }
                 return;
             case 'error':
+                // todo: handle this better, add recovery.
                 throw pause.error;
         }
     }
