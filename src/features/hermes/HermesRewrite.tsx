@@ -1,6 +1,6 @@
 import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
 import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
-import { createSignal, For, Match, onMount, Show, Switch } from "solid-js";
+import { createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
 import { DialogueService } from "@/core/dialogue/dialogueService";
@@ -31,10 +31,15 @@ export default function Hermes(
     const optionsOffset = () => optionsPage() * 3;
     const numPages = () => Math.ceil(options().length / 3);
 
+    // resume CB for normal next pauses. Existence implies in that pause state.
     const [advance, setAdvance] = createSignal<VoidFunction | null>(null);
 
     // Whether or not we show the [END] option first.
     let shouldAutomaticallyClose = false;
+
+    // Prevent continuation after unmmount
+    let stopped = false;
+    onCleanup(() => { stopped = true });
 
     // Helper function to generate pagination for options (little thingy on the side.)
     const generatePages = () =>
@@ -73,8 +78,11 @@ export default function Hermes(
                         shouldAutomaticallyClose = true;
                         pause.resume(index)
                     } else {
-                        addMessage({name: 'Arda', text: full});
-                        sleep(CAR_DELAY_MS).then(() => pause.resume(index))
+                        addMessage({ name: 'Arda', text: full });
+                        sleep(CAR_DELAY_MS).then(() => {
+                            if(stopped) return;
+                            pause.resume(index)
+                        })
                     }
                 }
             }
@@ -102,7 +110,6 @@ export default function Hermes(
                 return;
             case 'next':
                 // yeah you have to do this because otherwise it thinks it's a setter CB.
-                // TODO: consider changing the advance shape to avoid this.
                 setAdvance(() => () => {
                     setAdvance(null);
                     pause.resume();
@@ -110,7 +117,7 @@ export default function Hermes(
                 return;
             case 'yield':
                 ctx?.onYield
-                    ? ctx.onYield(pause.identifier, pause.value).then(pause.resume)
+                    ? ctx.onYield(pause.identifier, pause.value).then(() => stopped || pause.resume())
                     : pause.resume();
                 return;
             case 'end':
