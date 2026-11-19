@@ -19,6 +19,11 @@ import sleep from "@/shared/utils/sleep";
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
 const CAR_DELAY_MS = 1200;
 
+function parseOptionText(raw: string): {summary: string; full: string} {
+    const [summary, full = summary] = raw.split('\\', 2).map((part) => part.trim());
+    return { summary, full };
+}
+
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
     { program, ctx }: { program: BnyProgram, ctx?: DialogueContext }
@@ -61,11 +66,7 @@ export default function Hermes(
         setOptions(pause.options.map((option, index) => {
             const noCar = option.text.startsWith('^');
             const rawOptionText = noCar ? option.text.slice(1) : option.text;
-            let summary = rawOptionText;
-            let full = rawOptionText;
-            if (rawOptionText.split('\\').length == 2) {
-                [summary, full] = rawOptionText.split('\\').map(s => s.trim());
-            }
+            const {summary, full} = parseOptionText(rawOptionText);
 
             return {
                 summary, full,
