@@ -12,7 +12,7 @@ function Comp() {
         <Hermes
             program={dia}
             ctx={{
-                onYield: () => sleep(2000)
+                onYield: async () => { await sleep(2000); return { advance: true } }
             }}
         />
     </>

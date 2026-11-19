@@ -11,5 +11,6 @@ How are you? {
     ?:^ AKJHDAFSJKHSJKFDHSFDJKHK
         :SIGNAL shit
 }
-#Now is time for a yield test!
-#:YIELD whatever
+Now is time for a yield test!
+:YIELD whatever
+This should show without a continue.

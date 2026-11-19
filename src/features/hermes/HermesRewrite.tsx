@@ -42,6 +42,9 @@ export default function Hermes(
     // Whether or not we show the [END] option first.
     let shouldAutomaticallyClose = false;
 
+    // Automatically normal dialogue advance after yield ("wait for" functionality)
+    let advanceAfterYield = false;
+
     // Prevent continuation after unmmount
     let stopped = false;
     onCleanup(() => { stopped = true });
@@ -114,6 +117,12 @@ export default function Hermes(
                 showOptions(pause);
                 return;
             case 'next':
+                if(advanceAfterYield) {
+                    advanceAfterYield = false;
+                    pause.resume();
+                    return;
+                }
+
                 // yeah you have to do this because otherwise it thinks it's a setter CB.
                 setAdvance(() => () => {
                     setAdvance(null);
@@ -123,7 +132,11 @@ export default function Hermes(
             case 'yield':
                 ctx?.onYield
                     ? ctx.onYield(pause.identifier, pause.value, { memory: vm.memory })
-                        .then(() => stopped || pause.resume())
+                        .then(res => {
+                            if (stopped) return;
+                            advanceAfterYield = res?.advance === true;
+                            pause.resume();
+                        })
                         // todo: add a catch here with clean handling.
                     : pause.resume();
                 return;
