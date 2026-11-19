@@ -11,7 +11,7 @@ import botb from "./assets/botb.png";
 import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
-import { MAIN_CHARACTER_VLID } from "@/config/init.config";
+import { MAIN_CHARACTER_NAME, MAIN_CHARACTER_VLID } from "@/config/init.config";
 import sleep from "@/shared/utils/sleep";
 
 // Reply beat for CAR after a player selects an option.
@@ -67,6 +67,26 @@ export default function Hermes(
     const [hoveredOption, setHoveredOption] = createSignal("");
     const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
 
+    async function selectOption(
+        pause: BnyPauseBody<'select'>,
+        index: number,
+        full: string,
+        noCar: boolean
+    ) {
+        if (stopped) return;
+
+        setOptions([]);
+        setHoveredOption('');
+        setOptionsPage(0)
+
+        if (!noCar) {
+            addMessage({ name: MAIN_CHARACTER_NAME, text: full });
+            await sleep(CAR_DELAY_MS);
+        }
+
+        if (!stopped) pause.resume(index);
+    }
+
     function showOptions(pause: BnyPauseBody<'select'>) {
         setOptionsPage(0);
         shouldAutomaticallyClose = false;
@@ -78,24 +98,7 @@ export default function Hermes(
 
             return {
                 summary, full,
-                select: () => {
-                    setOptions([]);
-                    setHoveredOption('');
-                    setOptionsPage(0);
-                    if (noCar) {
-                        // If we have an option and then immediately hit end, that option 
-                        // should be seen as a termination option (f.e a "goodbye! [END]")
-                        // sensibly this should only apply to non-car things too.
-                        shouldAutomaticallyClose = true;
-                        pause.resume(index)
-                    } else {
-                        addMessage({ name: 'Arda', text: full });
-                        sleep(CAR_DELAY_MS).then(() => {
-                            if (stopped) return;
-                            pause.resume(index)
-                        })
-                    }
-                }
+                select: () => selectOption(pause, index, full, noCar)
             }
         }))
     }
