@@ -18,7 +18,7 @@ import sleep from "@/shared/utils/sleep";
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
 const CAR_DELAY_MS = 1200;
 
-function parseOptionText(raw: string): {summary: string; full: string} {
+function parseOptionText(raw: string): { summary: string; full: string } {
     const [summary, full = summary] = raw.split('\\', 2).map((part) => part.trim());
     return { summary, full };
 }
@@ -28,15 +28,21 @@ export default function Hermes(
     { program, ctx, onClose: close }: { program: BnyProgram, ctx?: DialogueContext, onClose: VoidFunction }
 ) {
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
-    const addMessage = ({ name, text }: { name: string | null; text: string }) => setMessages((prev) => [...prev, { name, text }]);
+    const addMessage = ({ name, text }: { name: string | null; text: string }) =>
+        setMessages((prev) => [...prev, { name, text }]);
 
     const [options, setOptions] = createSignal<DialogueOption[]>([]);
     const [optionsPage, setOptionsPage] = createSignal(0);
     const optionsOffset = () => optionsPage() * 3;
     const numPages = () => Math.ceil(options().length / 3);
 
-    // resume CB for normal next pauses. Existence implies in that pause state.
-    const [advance, setAdvance] = createSignal<VoidFunction | null>(null);
+    const [pendingNext, setPendingNext] = createSignal<BnyPauseBody<'next'> | null>(null);
+    function advance() {
+        const pause = pendingNext();
+        if (stopped || !pause) return;
+        setPendingNext(null);
+        pause.resume();
+    }
 
     // Whether or not we show the [END] option first.
     let shouldAutomaticallyClose = false;
@@ -68,7 +74,7 @@ export default function Hermes(
         setOptions(pause.options.map((option, index) => {
             const noCar = option.text.startsWith('^');
             const rawOptionText = noCar ? option.text.slice(1) : option.text;
-            const {summary, full} = parseOptionText(rawOptionText);
+            const { summary, full } = parseOptionText(rawOptionText);
 
             return {
                 summary, full,
@@ -116,17 +122,13 @@ export default function Hermes(
                 showOptions(pause);
                 return;
             case 'next':
-                if(advanceAfterYield) {
+                if (advanceAfterYield) {
                     advanceAfterYield = false;
                     pause.resume();
                     return;
                 }
 
-                // yeah you have to do this because otherwise it thinks it's a setter CB.
-                setAdvance(() => () => {
-                    setAdvance(null);
-                    pause.resume();
-                });
+                setPendingNext(pause);
                 return;
             case 'yield':
                 ctx?.onYield
@@ -136,7 +138,7 @@ export default function Hermes(
                             advanceAfterYield = res?.advance === true;
                             pause.resume();
                         })
-                        // todo: add a catch here with clean handling.
+                    // todo: add a catch here with clean handling.
                     : pause.resume();
                 return;
             case 'end':
@@ -190,11 +192,11 @@ export default function Hermes(
                         );
                     })
                 }>
-                    <Match when={advance()}>
+                    <Match when={pendingNext()}>
                         <img
                             src={continuePanel}
                             class='hermes-next-prompt'
-                            onClick={advance()!}
+                            onClick={advance}
                         />
                     </Match>
                 </Switch>
