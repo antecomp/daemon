@@ -26,7 +26,7 @@ function startDialogue(program: BnyProgram, options?: StartDialogueOptions) {
             <Show when={DialogueService.currentDialogueOverlay()}>
                 <div id="dialogue-overlay" class="fademein" style={{ background: `url(${DialogueService.currentDialogueOverlay()})` }}></div>
             </Show>
-            <Hermes program={program} ctx={options?.ctx} />
+            <Hermes program={program} ctx={options?.ctx} onClose={endDialogue} />
         </>
     });
 

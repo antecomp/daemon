@@ -14,6 +14,7 @@ function Comp() {
             ctx={{
                 onYield: async () => { await sleep(2000); return { advance: true } }
             }}
+            onClose={() => window.location.reload()}
         />
     </>
 }

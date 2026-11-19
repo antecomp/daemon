@@ -3,7 +3,6 @@ import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM
 import { createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -26,7 +25,7 @@ function parseOptionText(raw: string): {summary: string; full: string} {
 
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
-    { program, ctx }: { program: BnyProgram, ctx?: DialogueContext }
+    { program, ctx, onClose: close }: { program: BnyProgram, ctx?: DialogueContext, onClose: VoidFunction }
 ) {
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
     const addMessage = ({ name, text }: { name: string | null; text: string }) => setMessages((prev) => [...prev, { name, text }]);
@@ -142,10 +141,10 @@ export default function Hermes(
                 return;
             case 'end':
                 if (shouldAutomaticallyClose) {
-                    DialogueService.endDialogue();
+                    close();
                 } else {
                     setOptions([
-                        { summary: "[END]", full: "", select: DialogueService.endDialogue }
+                        { summary: "[END]", full: "", select: close }
                     ])
                 }
                 return;
