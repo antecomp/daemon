@@ -1,6 +1,6 @@
 import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
-import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
-import { createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
+import { BnyEmissionHandler, BnyMemory, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
+import { createMemo, createSignal, For, Match, onCleanup, onMount, Setter, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
 
@@ -13,6 +13,7 @@ import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
 import { MAIN_CHARACTER_NAME, MAIN_CHARACTER_VLID } from "@/config/init.config";
 import sleep from "@/shared/utils/sleep";
+import { AssetURL } from "@/shared/types/misc.types";
 
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
@@ -25,9 +26,15 @@ function parseOptionText(raw: string): { summary: string; full: string } {
     return { summary, full };
 }
 
+type HermesRuntime = {
+    setOverlay: Setter<AssetURL | undefined>
+    memory: BnyMemory
+}
+
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
-    { program, ctx, onClose: close }: { program: BnyProgram, ctx?: DialogueContext, onClose: VoidFunction }
+    { program, ctx, onClose: close, setOverlay }: 
+    { program: BnyProgram, ctx?: DialogueContext, onClose: VoidFunction, setOverlay: Setter<AssetURL | undefined> }
 ) {
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
     const addMessage = ({ name, text }: { name: string | null; text: string }) =>
@@ -165,7 +172,7 @@ export default function Hermes(
         onEmission, onPause
     });
 
-    const runtime = { memory: vm.memory }
+    const runtime: HermesRuntime = { memory: vm.memory, setOverlay }
 
     onMount(vm.start);
 
