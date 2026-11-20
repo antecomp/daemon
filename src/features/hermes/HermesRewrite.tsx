@@ -114,8 +114,19 @@ export default function Hermes(
                 ctx?.onMemoryUpdate?.(emission);
                 return;
             case 'signal':
-                ctx?.onSignal?.(emission.identifier, emission.value, { memory: vm.memory });
+                ctx?.onSignal?.(emission.identifier, emission.value, runtime);
         }
+    }
+
+    async function handleYield(pause: BnyPauseBody<'yield'>) {
+        const res = await ctx?.onYield?.(
+            pause.identifier, pause.value, runtime
+        );
+
+        if (stopped) return;
+
+        advanceAfterYield = res?.advance === true;
+        pause.resume();
     }
 
     const onPause: BnyPauseHandler = (pause) => {
@@ -134,15 +145,7 @@ export default function Hermes(
                 setPendingNext(pause);
                 return;
             case 'yield':
-                ctx?.onYield
-                    ? ctx.onYield(pause.identifier, pause.value, { memory: vm.memory })
-                        .then(res => {
-                            if (stopped) return;
-                            advanceAfterYield = res?.advance === true;
-                            pause.resume();
-                        })
-                    // todo: add a catch here with clean handling.
-                    : pause.resume();
+                handleYield(pause);
                 return;
             case 'end':
                 if (shouldAutomaticallyClose) {
@@ -163,6 +166,8 @@ export default function Hermes(
         memory: ctx?.initialMemory,
         onEmission, onPause
     });
+
+    const runtime = { memory: vm.memory }
 
     onMount(vm.start);
 
