@@ -1,12 +1,8 @@
-import { createSignal, For, Match, onCleanup, Switch } from "solid-js";
-import { DialogueContext, DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
-import { onMount } from "solid-js";
-import MessageBox from "./MessageBox";
-import { MessageBoxProps } from "./MessageBox";
+import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
+import { BnyEmissionHandler, BnyMemory, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
+import { createMemo, createSignal, For, Match, onCleanup, onMount, Setter, Show, Switch } from "solid-js";
+import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
-import { DialogueService } from "@/core/dialogue/dialogueService";
-import sleep from "@/shared/utils/sleep";
-import { evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode"
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -15,253 +11,242 @@ import botb from "./assets/botb.png";
 import ntwrk_gif from "./assets/ntwrk.gif";
 import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
-import { MAIN_CHARACTER_VLID } from "@/config/init.config";
+import { MAIN_CHARACTER_NAME, MAIN_CHARACTER_VLID } from "@/config/init.config";
+import sleep from "@/shared/utils/sleep";
+import { AssetURL } from "@/shared/types/misc.types";
 
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
 const CAR_DELAY_MS = 1200;
+const OPTION_BACKGROUNDS = [topb, midb, botb];
+const OPTIONS_PER_PAGE = OPTION_BACKGROUNDS.length;
 
-/**
- * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
- * Hermes is added as a UI layer by utilizing DialogueService.startDialogue
- * @see dialogueManager.tsx
- * @param root - The root node of the dialogue tree
- * @param ctx - "Context" object that can be passed, which is globally accessible by all dialogue nodes in this current traversal. 
- * Allows passing local context, signals, and methods to the nodes; which can be used for conditional rendering, side effects, etc.
- */
+function parseOptionText(raw: string): { summary: string; full: string } {
+    const [summary, full = summary] = raw.split('\\', 2).map((part) => part.trim());
+    return { summary, full };
+}
+
+type HermesRuntime = {
+    setOverlay: Setter<AssetURL | undefined>
+    memory: BnyMemory
+}
+
 export default function Hermes(
-  // Destructure out of laziness. All of this should be static anyways.
-  { root, ctx }: { root: DialogueNode, ctx?: DialogueContext }
+    // Destructure out of laziness. All of this should be static anyways.
+    { program, ctx, onClose: close, setOverlay }: 
+    { 
+        program: BnyProgram, 
+        ctx?: DialogueContext, 
+        onClose: VoidFunction, 
+        setOverlay: Setter<AssetURL | undefined> 
+    }
 ) {
-  const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
-  const addMessage = ({ name, text }: { name: string; text: string }) => setMessages((prev) => [...prev, { name, text }]);
+    const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
+    const addMessage = ({ name, text }: { name: string | null; text: string }) =>
+        setMessages((prev) => [...prev, { name, text }]);
 
-  const [currentOptions, setCurrentOptions] = createSignal<DialogueOption[]>([]);
-  const [currentOptionPage, setCurrentOptionPage] = createSignal(0);
-  const optionsOffset = () => currentOptionPage() * 3;
-  const numPages = () => Math.ceil(currentOptions().length / 3);
+    const [options, setOptions] = createSignal<DialogueOption[]>([]);
+    const [optionsPage, setOptionsPage] = createSignal(0);
+    const optionPages = createMemo(() =>
+        Array.from({ length: Math.ceil(options().length / OPTIONS_PER_PAGE) }, (_, index) => index)
+    );
+    const visibleOptions = createMemo(() => {
+        const offset = optionsPage() * OPTIONS_PER_PAGE;
+        return options().slice(offset, offset + OPTIONS_PER_PAGE);
+    });
 
-  // Helper function to generate pagination for options (little thingy on the side.)
-  const generatePages = () =>
-    Array.from({ length: numPages() }, (_, i) => (
-      <a
-        class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`}
-        onClick={() => setCurrentOptionPage(i)}
-      ></a>
-  ));
-
-  // Preview message for hovered option.
-  const [hoveredOption, setHoveredOption] = createSignal("");
-  const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
-
-  // Helper functions to extract and setup option stuff.
-  function visibleOptionsOf(node: DialogueNode, ctx?: DialogueContext): DialogueOption[] {
-    return node.options.filter(o => !o.onlyShowWhen || o.onlyShowWhen(ctx));
-  }
-
-  function showOptions(opts: DialogueOption[]) {
-    setCurrentOptionPage(0);
-    setCurrentOptions(opts);
-    setCanClickNext(false);
-    pendingNextNode = null;
-  }
-
-  // Next-button state. (This is for linear, non-empty nodes. I.e a chain of .nexts with no option)
-  const [canClickNext, setCanClickNext] = createSignal(false);
-  // caches the node to be rendered for when we click next.
-  let pendingNextNode: DialogueNode | null = null;
-
-  // Prevent continuation after unmmount
-  let stopped = false;
-  onCleanup(() => {stopped = true});
-
-  // Da big traversal shieeeeeettttttt
-  async function advanceDialogue(node: DialogueNode) {
-    if (stopped) return;
-    
-    // Renda'
-    const text = (typeof node.render === 'string') ? node.render : node.render()
-    addMessage({ name: node.name, text});
-
-    node.sideEffect && node.sideEffect(ctx);
-    if (stopped) return; // Just in case the side effect does a close action lol.
-
-    // waitFor overtakes progression, it is up to the dialogue writer to time things accordingly with the body of this.
-    if(node.waitFor) {
-      // while waiting, hide options/next
-      setCurrentOptions([]);
-      setCanClickNext(false);
-      pendingNextNode = null;
-
-      await node.waitFor(ctx);
-      if (stopped) return;
-
-      // Node has options...
-      const options = visibleOptionsOf(node, ctx);
-      if(options.length > 0) {
-        showOptions(options)
-        return;
-      }
-
-      // Node has next. We instantly and automatically run through this one.
-      // Remember the timing should be handled by waitFors methid here!
-      if(node.next) {
-        const n = evalDialogueNodeNext(node.next, ctx)!;
-        await advanceDialogue(n);
-        return;
-      }
-
-      // Otherwise autogen terminator for leaf...
-      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-
-      return;
+    const [pendingNext, setPendingNext] = createSignal<BnyPauseBody<'next'> | null>(null);
+    function advance() {
+        const pause = pendingNext();
+        if (stopped || !pause) return;
+        setPendingNext(null);
+        pause.resume();
     }
 
-    // Options
-    const options = visibleOptionsOf(node, ctx);
-    if (options.length > 0) {
-      showOptions(options);
-      return;
+    // Whether or not we show the [END] option first.
+    let shouldAutomaticallyClose = false;
+
+    // Automatically normal dialogue advance after yield ("wait for" functionality)
+    let advanceAfterYield = false;
+
+    // Prevent continuation after unmmount
+    let stopped = false;
+    onCleanup(() => { stopped = true });
+
+    // Preview message for hovered option.
+    const [hoveredOption, setHoveredOption] = createSignal("");
+    const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
+
+    async function selectOption(
+        pause: BnyPauseBody<'select'>,
+        index: number,
+        full: string,
+        noCar: boolean
+    ) {
+        if (stopped) return;
+
+        setOptions([]);
+        setHoveredOption('');
+        setOptionsPage(0)
+
+        if (!noCar) {
+            addMessage({ name: MAIN_CHARACTER_NAME, text: full });
+            await sleep(CAR_DELAY_MS);
+        }
+
+        if (!stopped) pause.resume(index);
     }
 
-    // Next flow.
-    if (node.next) {
-      const next = evalDialogueNodeNext(node.next, ctx)!;
+    function showOptions(pause: BnyPauseBody<'select'>) {
+        setOptionsPage(0);
+        shouldAutomaticallyClose = false;
 
-      // EMPTY_RENDER nodes auto-advance.
-      if (isDialogueNodeEmpty(node)) {
-        await advanceDialogue(next);
-        return;
-      }
+        setOptions(pause.options.map((option, index) => {
+            const noCar = option.text.startsWith('^');
+            const rawOptionText = noCar ? option.text.slice(1) : option.text;
+            const { summary, full } = parseOptionText(rawOptionText);
 
-      // Click to advance...
-      setCurrentOptions([]);
-      pendingNextNode = next;
-      setCanClickNext(true);
-      return;
+            return {
+                summary, full,
+                select: () => selectOption(pause, index, full, noCar)
+            }
+        }))
     }
 
-    // Fallback (leaf), generate terminator option.
-    setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-  }
-
-  async function selectOption(option: DialogueOption) {
-    if(stopped) return;
-
-    // Clear/Reset.
-    setCurrentOptions([]); 
-    setHoveredOption("") 
-    setCurrentOptionPage(0);
-
-    option.sideEffect?.(ctx);
-    if(stopped) return;
-
-    // Termination Option -> kill this dialogue NOW.
-    if (!option.next) {
-      if(!stopped) DialogueService.endDialogue();
-      return;
+    const onEmission: BnyEmissionHandler = (emission) => {
+        if (stopped) return;
+        switch (emission.kind) {
+            case 'say':
+                shouldAutomaticallyClose = false;
+                addMessage({ name: emission.speaker, text: emission.text });
+                return;
+            case 'memory':
+                ctx?.onMemoryUpdate?.(emission);
+                return;
+            case 'signal':
+                ctx?.onSignal?.(emission.identifier, emission.value, runtime);
+        }
     }
 
-    // Option next is an EMPTY_RENDER, auto-advance (for chaining options without sending messages)
-    if((typeof option.next == 'object' && isDialogueNodeEmpty(option.next))) {
-      await advanceDialogue(option.next)
-      return;
+    async function handleYield(pause: BnyPauseBody<'yield'>) {
+        const res = await ctx?.onYield?.(
+            pause.identifier, pause.value, runtime
+        );
+
+        if (stopped) return;
+
+        advanceAfterYield = res?.advance === true;
+        pause.resume();
     }
 
-    if(typeof option.next == 'function' && isDialogueNodeEmpty(option.next(ctx))) {
-      await advanceDialogue(option.next(ctx));
-      return;
+    const onPause: BnyPauseHandler = (pause) => {
+        if (stopped) return;
+        switch (pause.kind) {
+            case 'select':
+                showOptions(pause);
+                return;
+            case 'next':
+                if (advanceAfterYield) {
+                    advanceAfterYield = false;
+                    pause.resume();
+                    return;
+                }
+
+                setPendingNext(pause);
+                return;
+            case 'yield':
+                handleYield(pause);
+                return;
+            case 'end':
+                if (shouldAutomaticallyClose) {
+                    close();
+                } else {
+                    setOptions([
+                        { summary: "[END]", full: "", select: close }
+                    ])
+                }
+                return;
+            case 'error':
+                // todo: handle this better, add recovery.
+                throw pause.error;
+        }
     }
 
-    // CaR handler. (Show option message, sleep, show response node, advance from there.)
-    // Render Call Right Away.
-    const call = evalDialogueNodeNext(option.next, ctx)!
-    const text = (typeof call.render === 'string') ? call.render : call.render()
-    addMessage({ name: call.name, text});
+    const vm = createVM(program, {
+        memory: ctx?.initialMemory,
+        onEmission, onPause
+    });
 
-    // Reply "beat" (delay)
-    await sleep(CAR_DELAY_MS);
-    if(stopped) return; // closure during sleep.
+    const runtime: HermesRuntime = { memory: vm.memory, setOverlay }
 
-    const response = evalDialogueNodeNext(call.next, ctx)
-    if (!response) { // Only call but no response!
-      console.warn('[Dialogue Early Termination] Option had a next, but this next goes nowhere! Call but no response')
-      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-      return;
-    }
+    onMount(vm.start);
 
-    // Retvrn to normal evaluation with response onwards...
-    await advanceDialogue(response!)
-  }
+    return (
+        <div class='hermes-container'>
+            <div class='messages-container'>
+                <div class='message-spacer-nightmare' />
+                <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
+            </div>
+            <div class='sender-container'>
+                <div class='text-preview'>
+                    <img src={nameplateBorder} />
+                    <span class='name'>Arda</span>
+                    {optionPreviewText()}
+                </div>
 
-  async function handleClickNext() {
-    if (!canClickNext() || stopped) return;
-    setCanClickNext(false);
-    const n = pendingNextNode;
-    pendingNextNode = null;
-    if (n) await advanceDialogue(n);
-  }
+                <Switch fallback={
+                    OPTION_BACKGROUNDS.map((background, index) => {
+                        const option = () => visibleOptions()[index];
+                        return (
+                            <div
+                                class="hermes-resp-container"
+                                classList={{ inactive: !option() }}
+                                onClick={() => option()?.select()}
+                                onMouseOver={() => {
+                                    const hovered = option();
+                                    if (hovered) setHoveredOption(hovered.full);
+                                }}
+                            >
+                                <p>{option()?.summary}</p>
+                                <span />
+                                <img src={background} />
+                            </div>
+                        );
+                    })
+                }>
+                    <Match when={pendingNext()}>
+                        <img
+                            src={continuePanel}
+                            class='hermes-next-prompt'
+                            onClick={advance}
+                        />
+                    </Match>
+                </Switch>
+            </div>
 
-  onMount(() => {
-    advanceDialogue(root);
-  })
+            <div class="hermes-footer">
+                <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
+                <span>R-VLID:0000:0000</span>
+                <img src={ntwrk_gif} />
+            </div>
 
-  return (
-    <div class="hermes-container">
-      <div class="messages-container">
-        <div class="message-spacer-nightmare"></div>
-        <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
-      </div>
-      <div class='sender-container'>
-        <div class="text-preview">
-          <img src={nameplateBorder} alt="" />
-          <span class="name">Arda</span>
-          {optionPreviewText()}
+            <Show when={optionPages().length > 1}>
+                <div classList={{
+                    "hermes-pages": true,
+                    "hp-first": optionsPage() === 0,
+                    "hp-last": optionsPage() === optionPages().length - 1
+                }}>
+                    <For each={optionPages()}>{(page) => (
+                        <a
+                            class="hermes-page-opt"
+                            classList={{ "hpo-active": optionsPage() === page }}
+                            onClick={() => setOptionsPage(page)}
+                        />
+                    )}</For>
+                </div>
+            </Show>
+
         </div>
+    )
 
-        <Switch fallback={
-          // render options
-          [0, 1, 2].map((index) => {
-                    const option = currentOptions()[optionsOffset() + index];
-                    return (
-                      <div
-                        class={"hermes-resp-container " + (option ? "" : "inactive")}
-                        onClick={() => option && selectOption(option)}
-                        onMouseOver={() => option && setHoveredOption(option.fullText)}
-                      >
-                        <p>{option?.summaryText ?? ""}</p>
-                        <span></span>
-                        <img src={[topb, midb, botb][index]} alt="" />
-                      </div>
-                    );
-                  })
-        }>
-            {/* Continue button */}
-            <Match when={canClickNext()}>
-              <img 
-                src={continuePanel}
-                class='hermes-next-prompt'
-                onClick={handleClickNext}
-              />
-            </Match>
-        </Switch>
-
-      </div>
-      <div class="hermes-footer">
-        <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
-        <span>R-VLID:0000:0000</span>
-        <img src={ntwrk_gif} />
-      </div>
-      {
-        (currentOptions().length > 3) &&
-        <div classList={{
-          "hermes-pages": true,
-          "hp-first": (currentOptionPage() == 0),
-          "hp-last": (currentOptionPage() == numPages() - 1)
-        }}>
-          {generatePages()}
-        </div>
-      }
-    </div>
-  );
 }

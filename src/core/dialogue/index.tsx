@@ -4,7 +4,7 @@ import { createSignal } from "solid-js";
 import { BnyProgram } from "@bunnarray/vm";
 import { pushUILayer } from "@/app/shell/layers/UILayerManager";
 import { Show } from "solid-js";
-import Hermes from "@/features/hermes/HermesRewrite";
+import Hermes from "@/features/hermes/Hermes";
 
 type DialogueSession = {
     popLayer: VoidFunction;

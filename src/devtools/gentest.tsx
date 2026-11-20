@@ -1,7 +1,7 @@
 import 'lume';
 import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
-import Hermes from '@/features/hermes/HermesRewrite';
+import Hermes from '@/features/hermes/Hermes';
 //////////////////////////////////////////////
 import dia from '../tests/dialogues/basic.bny';
 import sleep from '@/shared/utils/sleep';
