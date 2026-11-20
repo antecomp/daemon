@@ -38,6 +38,8 @@ import { BattleOutcome } from '@/core/battle/model/battle';
 import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
 import { OPPONENT_CROW } from '@/data/battles/crow';
 
+import dia from './data/dithon.bny';
+
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
     'padding-top': '20px',
@@ -54,56 +56,6 @@ const tutPopup = (content: JSX.Element) => {
         </p>
     )
 }
-
-enum Characters {
-    Dithon = "Dithon",
-    Arda = "Arda"
-}
-
-const dithonDialogueRoot = createDialogueBuilder("Hello Arda. I am impressed you made it this far", Characters.Dithon);
-const dithonDialoueTail = createDialogueBuilder("That's it for the demo. Thanks for playing!", Characters.Dithon).unwrap();
-dithonDialogueRoot
-    .chain(
-        "But I am afriad there is one last challenge for you.",
-        "You see, this game is called daemon garden because it has DAEMONS IN IT.",
-        "And you will have to fight plenty of them!"
-    )
-    .addCar(["What are those", "What are daemons?"], "Daemons are the spirits that populate this realm. Not all of them are friendly.",
-        r => {
-            let battleOutcome: BattleOutcome;
-            return r
-                .chain("By the sounds of it, you won't know how to fight them either. I will make sure to throw a tutorial in for you.")
-                .then(EMPTY_RENDER)
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW, showBattleTutorial))
-                .do(bn => bn
-                    .node.next = () => {
-                        switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. I'm impressed.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Too bad! Speak to me again if you want to try again.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                        }
-                    }
-                )
-        }
-    )
-    .addCar(["Go ahead.", "Go ahead, I've already forsaken plenty of daemons."], "Impressive. I won't waste your time then!",
-        r => {
-            let battleOutcome: BattleOutcome;
-            return r
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW))
-                .do(bn => bn
-                    .node.next = () => {
-                        switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. As expected.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Wow you suck. I thought you knew what you were doing!", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                        }
-                    }
-                )
-        }
-    )
 
 export default function Demo() {
     let sceneRef!: Scene;
