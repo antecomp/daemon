@@ -18,7 +18,7 @@ export type StartDialogueOptions = {
 }
 
 const [session, setSession] = createSignal<DialogueSession | null>(null);
-export const dialogueOngoing = () => !!session;
+export const dialogueOngoing = () => !!session();
 
 export async function startDialogue(program: BnyProgram, options?: StartDialogueOptions) {
     if (dialogueOngoing()) throw new Error("Dialogue already in progress.");
@@ -27,7 +27,7 @@ export async function startDialogue(program: BnyProgram, options?: StartDialogue
 
     const { popLayer } = pushUILayer({
         lock: 'all', // for now I don't see any case where we'd change this.
-        blockBehind: !!options?.blockBehind,
+        blockBehind: options?.blockBehind === undefined ? true : options.blockBehind,
         component: () => <>
             <Show when={overlay()}>
                 <div

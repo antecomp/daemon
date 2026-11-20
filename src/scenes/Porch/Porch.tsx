@@ -27,6 +27,7 @@ import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { BattleOutcome } from "@/core/battle/model/battle";
 import sleep from "@/shared/utils/sleep";
 import { startDialogue } from "@/core/dialogue";
+import pickRandom from "@/shared/utils/pickRandom";
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -70,6 +71,11 @@ export default function Porch() {
                     if (id === 'sleep') {
                         await sleep(Number(value ?? 1000))
                         return { advance: true }
+                    }
+                },
+                onSignal(s, _, runtime) {
+                    if (s === 'get_question_prompt') {
+                        runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']));
                     }
                 }
             }
