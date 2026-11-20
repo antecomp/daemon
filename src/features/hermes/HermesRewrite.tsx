@@ -1,6 +1,6 @@
 import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
 import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
-import { createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
+import { createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
 
@@ -17,6 +17,8 @@ import sleep from "@/shared/utils/sleep";
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
 const CAR_DELAY_MS = 1200;
+const OPTION_BACKGROUNDS = [topb, midb, botb];
+const OPTIONS_PER_PAGE = OPTION_BACKGROUNDS.length;
 
 function parseOptionText(raw: string): { summary: string; full: string } {
     const [summary, full = summary] = raw.split('\\', 2).map((part) => part.trim());
@@ -33,8 +35,13 @@ export default function Hermes(
 
     const [options, setOptions] = createSignal<DialogueOption[]>([]);
     const [optionsPage, setOptionsPage] = createSignal(0);
-    const optionsOffset = () => optionsPage() * 3;
-    const numPages = () => Math.ceil(options().length / 3);
+    const optionPages = createMemo(() =>
+        Array.from({ length: Math.ceil(options().length / OPTIONS_PER_PAGE) }, (_, index) => index)
+    );
+    const visibleOptions = createMemo(() => {
+        const offset = optionsPage() * OPTIONS_PER_PAGE;
+        return options().slice(offset, offset + OPTIONS_PER_PAGE);
+    });
 
     const [pendingNext, setPendingNext] = createSignal<BnyPauseBody<'next'> | null>(null);
     function advance() {
@@ -53,15 +60,6 @@ export default function Hermes(
     // Prevent continuation after unmmount
     let stopped = false;
     onCleanup(() => { stopped = true });
-
-    // Helper function to generate pagination for options (little thingy on the side.)
-    const generatePages = () =>
-        Array.from({ length: numPages() }, (_, i) => (
-            <a
-                class={`hermes-page-opt ${optionsPage() === i ? 'hpo-active' : ''}`}
-                onClick={() => setOptionsPage(i)}
-            ></a>
-        ));
 
     // Preview message for hovered option.
     const [hoveredOption, setHoveredOption] = createSignal("");
@@ -185,17 +183,21 @@ export default function Hermes(
                 </div>
 
                 <Switch fallback={
-                    [0, 1, 2].map((index) => {
-                        const option = options()[optionsOffset() + index];
+                    OPTION_BACKGROUNDS.map((background, index) => {
+                        const option = () => visibleOptions()[index];
                         return (
                             <div
-                                class={"hermes-resp-container " + (option ? "" : "inactive")}
-                                onClick={() => option && option.select()}
-                                onMouseOver={() => option && setHoveredOption(option.full)}
+                                class="hermes-resp-container"
+                                classList={{ inactive: !option() }}
+                                onClick={() => option()?.select()}
+                                onMouseOver={() => {
+                                    const hovered = option();
+                                    if (hovered) setHoveredOption(hovered.full);
+                                }}
                             >
-                                <p>{option?.summary}</p>
+                                <p>{option()?.summary}</p>
                                 <span />
-                                <img src={[topb, midb, botb][index]} />
+                                <img src={background} />
                             </div>
                         );
                     })
@@ -216,13 +218,19 @@ export default function Hermes(
                 <img src={ntwrk_gif} />
             </div>
 
-            <Show when={options().length > 3}>
+            <Show when={optionPages().length > 1}>
                 <div classList={{
                     "hermes-pages": true,
-                    "hp-first": (optionsPage() == 0),
-                    "hp-last": (optionsPage() == numPages() - 1)
+                    "hp-first": optionsPage() === 0,
+                    "hp-last": optionsPage() === optionPages().length - 1
                 }}>
-                    {generatePages()}
+                    <For each={optionPages()}>{(page) => (
+                        <a
+                            class="hermes-page-opt"
+                            classList={{ "hpo-active": optionsPage() === page }}
+                            onClick={() => setOptionsPage(page)}
+                        />
+                    )}</For>
                 </div>
             </Show>
 

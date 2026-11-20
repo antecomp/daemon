@@ -11,6 +11,11 @@ How are you? {
         :SPEAKER Rabbit
     ?:^ AKJHDAFSJKHSJKFDHSFDJKHK
         :SIGNAL shit
+    ?: 1
+    ?: 2
+    ?: 3
+    ?: 4
+    ?: 5
 }
 Now is time for a yield test!
 :YIELD whatever
