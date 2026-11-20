@@ -156,7 +156,8 @@ export default function Porch() {
                         //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                         () => addLogMessage('You pet the rabbit.'),
                         () => {
-                            startDialogue(rabbit_dialogue, {overlay: red, ctx: {
+                            startDialogue(rabbit_dialogue, {ctx: {
+                                initialOverlay: red,
                                 onSignal(s) {
                                     if (s === 'rabbit_depart') setShowRabbit(false)
                                 }

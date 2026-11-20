@@ -15,7 +15,6 @@ function Comp() {
                 onYield: async () => { await sleep(2000); return { advance: true } }
             }}
             onClose={() => window.location.reload()}
-            setOverlay={() => undefined}
         />
     </>
 }
