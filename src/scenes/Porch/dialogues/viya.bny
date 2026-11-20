@@ -7,15 +7,15 @@ I imagine you have a lot of questions right now. {
     ?:^ No \ Nah, not really. (End Conversation)
         -> end
     ?: Battle \ No questions, start a battle with the mimicry please.
-        :YIELD BATTLE:MIMICRY # this will set an outcome variable
+        :YIELD battle:MIMICRY # this will set an outcome variable
         [branch]
-            [when:outcome=player_victory]
+            [when:outcome=PlayerVictory]
                 Wow, nicew job. I'm impressed.
-            [when:outcome=opponent_victory]
+            [when:outcome=OpponentVictory]
                 Damn you suck at this. How are you going to survive the fringenet?
-            [when:outcome=draw]
+            [when:outcome=Draw]
                 Close call! Things will only get harder from here...
-            [when:outcome=player_eject]
+            [when:outcome=PlayerEject]
                 Coward.
                 If you're not going to fight, do you at least have some questions? {
                     ?: Yes \ Sure.
@@ -38,7 +38,7 @@ I imagine you have a lot of questions right now. {
 [/skip]
 
 [skip:questions]
-    # get random response from caller: "Go for it.", "I'll try my best.", "Alright."
+    # get random response from caller: "Go for it.", "I'll try my best.", "Alright."F
     :SIGNAL get_question_prompt
     $question_prompt {
         ?:^ What \ What... {
