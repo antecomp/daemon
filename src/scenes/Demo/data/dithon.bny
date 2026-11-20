@@ -9,11 +9,11 @@ And you will have to fight plenty of them! {
         :YIELD battle:with_tutorial
         # battle sets outcome...
         [branch]
-            [when:outcome=victory]
+            [when:outcome=PlayerVictory]
                 Wow, nice job. I'm impressed.
-            [when:outcome=failure]
+            [when:outcome=OpponentVictory]
                 Too bad! Speak to me again if you want another try.
-            [when:outcome=draw]
+            [when:outcome=Draw]
                 Draw. In a real fight that would still count as a loss.
             [unless:outcome]
                 What.
@@ -24,11 +24,11 @@ And you will have to fight plenty of them! {
         :YIELD battle
         # battle sets outcome
         [branch]
-            [when:outcome=victory]
+            [when:outcome=PlayerVictory]
                 Wow, nice job. As expected.
-            [when:outcome=failure]
+            [when:outcome=OpponentVictory]
                 Wow you suck. I thought you knew what you were doing!
-            [when:outcome=draw]
+            [when:outcome=Draw]
                 Draw. In a real fight that would still count as a loss.
             [unless:outcome]
                 What.

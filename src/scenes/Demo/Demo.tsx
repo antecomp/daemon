@@ -19,7 +19,6 @@ import NavCompass from '@/3d/tilenav/NavCompass';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import AtTile from '@/3d/tilenav/AtTile';
 import Interactable from '@/3d/components/Interactable';
-import { EMPTY_RENDER } from '@/core/dialogue/dialogueNode';
 import { createEffect, createReaction, createSignal, JSX, onMount, Show, untrack } from 'solid-js';
 import createPopup from '@/app/shell/popup/Popup';
 import lerp from '@/shared/utils/lerp';
@@ -33,12 +32,11 @@ import Inventory from '@/core/inventory/inventory';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { startBattle } from '@/features/battle/startBattle';
-import { createDialogueBuilder } from '@/core/dialogue/dialogueBuilder';
 import { BattleOutcome } from '@/core/battle/model/battle';
 import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
 import { OPPONENT_CROW } from '@/data/battles/crow';
 
-import dia from './data/dithon.bny';
+import dithon_dialogue from './data/dithon.bny';
 
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
@@ -174,7 +172,13 @@ export default function Demo() {
             ori: { yaw: 157, pitch: 4 },
             anim: false
         }
-        createDialogueWithCamOvr(cameraController, OVR, dithonDialogueRoot.unwrap(), { fadeTransition: true }).start();
+        createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, { fadeTransition: true, ctx: {
+            async onYield(id, value, runtime) {
+                if(id !== 'battle') return;
+                const outcome = await startBattle(OPPONENT_CROW, value === 'with_tutorial' ? showBattleTutorial : undefined);
+                runtime.memory.set('outcome', BattleOutcome[outcome])
+            }
+        } }).start();
     }
 
     DGDEV.attach(() => {
