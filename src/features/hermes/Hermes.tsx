@@ -89,6 +89,8 @@ export default function Hermes(
         setHoveredOption('');
         setOptionsPage(0)
 
+        shouldAutomaticallyClose = noCar;
+
         if (!noCar) {
             addMessage({ name: MAIN_CHARACTER_NAME, text: full });
             await sleep(CAR_DELAY_MS);
