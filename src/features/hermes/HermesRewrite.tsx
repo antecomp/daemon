@@ -34,7 +34,12 @@ type HermesRuntime = {
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
     { program, ctx, onClose: close, setOverlay }: 
-    { program: BnyProgram, ctx?: DialogueContext, onClose: VoidFunction, setOverlay: Setter<AssetURL | undefined> }
+    { 
+        program: BnyProgram, 
+        ctx?: DialogueContext, 
+        onClose: VoidFunction, 
+        setOverlay: Setter<AssetURL | undefined> 
+    }
 ) {
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
     const addMessage = ({ name, text }: { name: string | null; text: string }) =>

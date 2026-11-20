@@ -25,28 +25,28 @@ export async function startDialogue(program: BnyProgram, options?: StartDialogue
 
     const [overlay, setOverlay] = createSignal<AssetURL | undefined>(options?.overlay);
 
-    const {popLayer} = pushUILayer({
+    const { popLayer } = pushUILayer({
         lock: 'all', // for now I don't see any case where we'd change this.
         blockBehind: !!options?.blockBehind,
         component: () => <>
             <Show when={overlay()}>
-                <div 
-                    id='dialogue-overlay' 
-                    class='fademein' 
-                    style={{background: `url(${overlay()})`}}
+                <div
+                    id='dialogue-overlay'
+                    class='fademein'
+                    style={{ background: `url(${overlay()})` }}
                 />
             </Show>
-            <Hermes program={program} ctx={options?.ctx} onClose={endDialogue} setOverlay={setOverlay}/>
+            <Hermes program={program} ctx={options?.ctx} onClose={endDialogue} setOverlay={setOverlay} />
         </>
     });
 
-    return new Promise<void>(resolve => setSession({popLayer, resolve}));
+    return new Promise<void>(resolve => setSession({ popLayer, resolve }));
 }
 
 export function endDialogue() {
     const ses = session();
-    if(!ses) {
-        console.warn('Close dialogue called, but no active dialogue was detected!'); 
+    if (!ses) {
+        console.warn('Close dialogue called, but no active dialogue was detected!');
         return;
     }
 
