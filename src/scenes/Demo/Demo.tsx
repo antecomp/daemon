@@ -172,13 +172,15 @@ export default function Demo() {
             ori: { yaw: 157, pitch: 4 },
             anim: false
         }
-        createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, { fadeTransition: true, ctx: {
+        createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, {
+            fadeTransition: true,
             async onYield(id, value, runtime) {
-                if(id !== 'battle') return;
+                if (id !== 'battle') return;
                 const outcome = await startBattle(OPPONENT_CROW, value === 'with_tutorial' ? showBattleTutorial : undefined);
                 runtime.memory.set('outcome', BattleOutcome[outcome])
+
             }
-        } }).start();
+        }).start();
     }
 
     DGDEV.attach(() => {
@@ -188,7 +190,7 @@ export default function Demo() {
 
     return (
         <NavContextProvider>
-            <NavCompass/>
+            <NavCompass />
             <lume-scene
                 ref={sceneRef}
                 webgl

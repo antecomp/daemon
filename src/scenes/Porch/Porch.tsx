@@ -61,22 +61,20 @@ export default function Porch() {
         { pos: [-183, -322, 34], ori: { yaw: -84, pitch: 0 }, anim: true },
         viya_dialogue,
         {
-            ctx: {
-                // TODO MAKE A GENERIC ONYIELD HANDLER FOR THESE CASES.
-                async onYield(id, value, runtime) {
-                    if (id === 'battle') {
-                        const outcome = await startBattle(OPPONENT_MIMICRY)
-                        runtime.memory.set('outcome', BattleOutcome[outcome]);
-                    }
-                    if (id === 'sleep') {
-                        await sleep(Number(value ?? 1000))
-                        return { advance: true }
-                    }
-                },
-                onSignal(s, _, runtime) {
-                    if (s === 'get_question_prompt') {
-                        runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']));
-                    }
+            // TODO MAKE A GENERIC ONYIELD HANDLER FOR THESE CASES.
+            async onYield(id, value, runtime) {
+                if (id === 'battle') {
+                    const outcome = await startBattle(OPPONENT_MIMICRY)
+                    runtime.memory.set('outcome', BattleOutcome[outcome]);
+                }
+                if (id === 'sleep') {
+                    await sleep(Number(value ?? 1000))
+                    return { advance: true }
+                }
+            },
+            onSignal(s, _, runtime) {
+                if (s === 'get_question_prompt') {
+                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']));
                 }
             }
         }
@@ -156,12 +154,12 @@ export default function Porch() {
                         //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                         () => addLogMessage('You pet the rabbit.'),
                         () => {
-                            startDialogue(rabbit_dialogue, {ctx: {
+                            startDialogue(rabbit_dialogue, {
                                 initialOverlay: red,
                                 onSignal(s) {
                                     if (s === 'rabbit_depart') setShowRabbit(false)
                                 }
-                            }})
+                            })
                         },
                         //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
                         (uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}. For the rabbit this is ${uv.toArray()}`)
