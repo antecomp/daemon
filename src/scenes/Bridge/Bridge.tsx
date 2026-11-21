@@ -142,7 +142,7 @@ export default function Bridge() {
                             interactions={[
                                 () => addLogMessage("As you reach out, the fox snarls loudly."),
                                 async () => {
-                                    await startDialogue(fox_dialogue);
+                                    await startDialogue(fox_dialogue, {speakerNames: {FOX: 'A Rogue Zenko'}});
                                     const outcome = await startBattle(OPPONENT_FOX, showBattleTutorial)
                                     if(outcome === BattleOutcome.PlayerVictory) {
                                         setHasDefeatedFox(true);

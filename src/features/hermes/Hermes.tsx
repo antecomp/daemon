@@ -127,8 +127,14 @@ export default function Hermes(
         if (stopped) return;
         switch (emission.kind) {
             case 'say':
+                const speaker = emission.speaker
                 shouldAutomaticallyClose = false;
-                addMessage({ name: emission.speaker, text: emission.text });
+                addMessage({ 
+                    name: speaker === null
+                        ? null
+                        : ctx?.speakerNames?.[speaker] ?? speaker, 
+                    text: emission.text 
+                });
                 return;
             case 'memory':
                 ctx?.onMemoryUpdate?.(emission);

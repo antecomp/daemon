@@ -14,7 +14,8 @@ export type DialogueContext = {
     onMemoryUpdate?: BnyMemoryUpdateHandler;
     initialMemory?: Record<string, string>;
     yieldHandlers?: YieldHandlerMap,
-    signalHandlers?: SignalHandlerMap
+    signalHandlers?: SignalHandlerMap,
+    speakerNames?: Record<string, string>
 }
 
 export type DialogueOption = {
