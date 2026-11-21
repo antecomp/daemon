@@ -13,6 +13,7 @@ import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
 import { MAIN_CHARACTER_NAME, MAIN_CHARACTER_VLID } from "@/config/init.config";
 import sleep from "@/shared/utils/sleep";
+import { createDialogueSignalHandler, createDialogueYieldHandler } from "@/core/dialogue/handlers";
 
 // Reply beat for CAR after a player selects an option.
 // [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
@@ -28,11 +29,11 @@ function parseOptionText(raw: string): { summary: string; full: string } {
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
     { program, ctx, onClose: close }:
-    { 
-        program: BnyProgram, 
-        ctx?: DialogueContext, 
-        onClose: VoidFunction,
-    }
+        {
+            program: BnyProgram,
+            ctx?: DialogueContext,
+            onClose: VoidFunction,
+        }
 ) {
     const [overlay, setOverlay] = createSignal(ctx?.initialOverlay);
     const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
@@ -109,6 +110,19 @@ export default function Hermes(
         }))
     }
 
+    // todo: I should probably have better names here lol.
+    const yieldHandler = createDialogueYieldHandler(ctx?.yieldHandlers);
+    async function handleYield(pause: BnyPauseBody<'yield'>) {
+        const res = await yieldHandler(pause.identifier, pause.value, runtime);
+
+        if (stopped) return;
+
+        advanceAfterYield = res?.advance === true;
+        pause.resume();
+    }
+
+    const handleSignal = createDialogueSignalHandler(ctx?.signalHandlers)
+
     const onEmission: BnyEmissionHandler = (emission) => {
         if (stopped) return;
         switch (emission.kind) {
@@ -120,19 +134,8 @@ export default function Hermes(
                 ctx?.onMemoryUpdate?.(emission);
                 return;
             case 'signal':
-                ctx?.onSignal?.(emission.identifier, emission.value, runtime);
+                handleSignal(emission.identifier, emission.value, runtime);
         }
-    }
-
-    async function handleYield(pause: BnyPauseBody<'yield'>) {
-        const res = await ctx?.onYield?.(
-            pause.identifier, pause.value, runtime
-        );
-
-        if (stopped) return;
-
-        advanceAfterYield = res?.advance === true;
-        pause.resume();
     }
 
     const onPause: BnyPauseHandler = (pause) => {
@@ -178,80 +181,80 @@ export default function Hermes(
     onMount(vm.start);
 
     return (
-    <>
-        <Show when={overlay()}>
-            <div
-                id='dialogue-overlay'
-                class='fademein'
-                style={{ background: `url(${overlay()})` }}
-            />
-        </Show>
-        <div class='hermes-container'>
-            <div class='messages-container'>
-                <div class='message-spacer-nightmare' />
-                <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
-            </div>
-            <div class='sender-container'>
-                <div class='text-preview'>
-                    <img src={nameplateBorder} />
-                    <span class='name'>Arda</span>
-                    {optionPreviewText()}
-                </div>
-
-                <Switch fallback={
-                    OPTION_BACKGROUNDS.map((background, index) => {
-                        const option = () => visibleOptions()[index];
-                        return (
-                            <div
-                                class="hermes-resp-container"
-                                classList={{ inactive: !option() }}
-                                onClick={() => option()?.select()}
-                                onMouseOver={() => {
-                                    const hovered = option();
-                                    if (hovered) setHoveredOption(hovered.full);
-                                }}
-                            >
-                                <p>{option()?.summary}</p>
-                                <span />
-                                <img src={background} />
-                            </div>
-                        );
-                    })
-                }>
-                    <Match when={pendingNext()}>
-                        <img
-                            src={continuePanel}
-                            class='hermes-next-prompt'
-                            onClick={advance}
-                        />
-                    </Match>
-                </Switch>
-            </div>
-
-            <div class="hermes-footer">
-                <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
-                <span>R-VLID:0000:0000</span>
-                <img src={ntwrk_gif} />
-            </div>
-
-            <Show when={optionPages().length > 1}>
-                <div classList={{
-                    "hermes-pages": true,
-                    "hp-first": optionsPage() === 0,
-                    "hp-last": optionsPage() === optionPages().length - 1
-                }}>
-                    <For each={optionPages()}>{(page) => (
-                        <a
-                            class="hermes-page-opt"
-                            classList={{ "hpo-active": optionsPage() === page }}
-                            onClick={() => setOptionsPage(page)}
-                        />
-                    )}</For>
-                </div>
+        <>
+            <Show when={overlay()}>
+                <div
+                    id='dialogue-overlay'
+                    class='fademein'
+                    style={{ background: `url(${overlay()})` }}
+                />
             </Show>
+            <div class='hermes-container'>
+                <div class='messages-container'>
+                    <div class='message-spacer-nightmare' />
+                    <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
+                </div>
+                <div class='sender-container'>
+                    <div class='text-preview'>
+                        <img src={nameplateBorder} />
+                        <span class='name'>Arda</span>
+                        {optionPreviewText()}
+                    </div>
 
-        </div>
-    </>
+                    <Switch fallback={
+                        OPTION_BACKGROUNDS.map((background, index) => {
+                            const option = () => visibleOptions()[index];
+                            return (
+                                <div
+                                    class="hermes-resp-container"
+                                    classList={{ inactive: !option() }}
+                                    onClick={() => option()?.select()}
+                                    onMouseOver={() => {
+                                        const hovered = option();
+                                        if (hovered) setHoveredOption(hovered.full);
+                                    }}
+                                >
+                                    <p>{option()?.summary}</p>
+                                    <span />
+                                    <img src={background} />
+                                </div>
+                            );
+                        })
+                    }>
+                        <Match when={pendingNext()}>
+                            <img
+                                src={continuePanel}
+                                class='hermes-next-prompt'
+                                onClick={advance}
+                            />
+                        </Match>
+                    </Switch>
+                </div>
+
+                <div class="hermes-footer">
+                    <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
+                    <span>R-VLID:0000:0000</span>
+                    <img src={ntwrk_gif} />
+                </div>
+
+                <Show when={optionPages().length > 1}>
+                    <div classList={{
+                        "hermes-pages": true,
+                        "hp-first": optionsPage() === 0,
+                        "hp-last": optionsPage() === optionPages().length - 1
+                    }}>
+                        <For each={optionPages()}>{(page) => (
+                            <a
+                                class="hermes-page-opt"
+                                classList={{ "hpo-active": optionsPage() === page }}
+                                onClick={() => setOptionsPage(page)}
+                            />
+                        )}</For>
+                    </div>
+                </Show>
+
+            </div>
+        </>
     )
 
 }

@@ -1,22 +1,20 @@
 import { BnyMemory, BnyMemoryUpdateHandler } from "@bunnarray/vm";
 import { AssetURL } from "@/shared/types/misc.types";
 import { Setter } from "solid-js";
+import { SignalHandlerMap, YieldHandlerMap } from "./handlers";
 
 export type DialogueRuntime = {
     memory: BnyMemory;
     setOverlay: Setter<AssetURL | undefined>;
 }
 
-type YieldResult = void | { advance: true }
-
 // TODO: Consider adding a speaker map as part of the context!
 export type DialogueContext = {
     initialOverlay?: AssetURL;
-    // TODO: Extract this type.
-    onSignal?: (id: string, value: string | undefined, runtime: DialogueRuntime) => void;
-    onYield?: (id: string, value: string | undefined, runtime: DialogueRuntime) => Promise<YieldResult>;
     onMemoryUpdate?: BnyMemoryUpdateHandler;
     initialMemory?: Record<string, string>;
+    yieldHandlers?: YieldHandlerMap,
+    signalHandlers?: SignalHandlerMap
 }
 
 export type DialogueOption = {
