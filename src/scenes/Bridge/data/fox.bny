@@ -1,0 +1,29 @@
+# Todo, rewrite. This is very rough.
+:SPEAKER FOX
+Hello, Arda. I'm afraid I must stop you here.
+|| You suppress thousands of errors spewing from your VI-LINK.
+:SPEAKER FOX
+{
+    ?: How do you know my name?
+        Just because you are blind to smething doesn't mean it also cannot see you.
+    ?: Why \ And why is that?
+}
+Do you think that now, just because you can see me, that you are strong?
+That you're welcome here?
+I will let you leave this place, but others will not share such mercy.
+The woman I found in the sunlit rain won't let me eat you.
+But the others...
+The others are proper daemons.
+They only wish to grow.
+I have grown enough, and I don't want to see anyone else devoured.
+Especially not in the name of that horrid scarecrow.
+{
+    ?: Let me through \ I did not come this far just to turn around.
+        I was afraid you'd say that. You strays are always so incredibly arrogant.
+        Very well, prove yourself now, while you still won't loose your head over it.
+        {
+            ?:^ (FIGHT) \
+                # Not yielding for battle here, since this is the forced end.
+                # we can instead just await on the dialogue completing.
+        }
+}

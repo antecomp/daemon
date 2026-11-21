@@ -8,7 +8,6 @@ import girl_sprite from './assets/yeah.png';
 import { useDGShader } from '@/3d/pipeline/dgRender';
 import Billboard from '@/3d/components/Billboard';
 import { addLogMessage } from '@/app/shell/hud/EventLog';
-import { makeDialogueNode } from '@/core/dialogue/dialogueNode';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { playSoundOnce } from '@/shared/utils/playSound';
 
@@ -20,9 +19,9 @@ import { CameraSettings } from '@/3d/camera/camera.types';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 
 import viya_texture from "@/assets/artwork/characters/viya.png"
+import viya_dialogue from './data/viya.bny';
+import neko_dialogue from './data/strange.bny';
 
-const dr = makeDialogueNode('Hello.', 'Strange Girl');
-import viya_root from '@/tests/dialogues/v'
 import { DGDEV } from '@/devtools/dev';
 
 export default function Test() {
@@ -43,14 +42,14 @@ export default function Test() {
         },
         //'anim': false
     };
-    const necoDia = createDialogueWithCamOvr(cameraController, necoCam, dr);
+    const necoDia = createDialogueWithCamOvr(cameraController, necoCam, neko_dialogue);
 
     const viyaCam: CameraSettings = {
         pos: [470, -56, -8],
         ori: { yaw: 90, pitch: 0 },
         anim: false,
     }
-    const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_root, {fadeTransition: true});
+    const viyaDialogue = createDialogueWithCamOvr(cameraController, viyaCam, viya_dialogue, {fadeTransition: true});
 
     DGDEV.attach(viyaCam, 'OVR');
 

@@ -1,0 +1,83 @@
+:SPEAKER Viya
+Hey, welcome to daemon.garden.
+:YIELD sleep:1000 # set this to autoAdvance
+I imagine you have a lot of questions right now. {
+    ?: Yes
+        -> questions
+    ?:^ No \ Nah, not really. (End Conversation)
+        -> end
+    ?: Battle \ No questions, start a battle with the mimicry please.
+        :YIELD battle:MIMICRY # this will set an outcome variable
+        [branch]
+            [when:outcome=PlayerVictory]
+                Wow, nicew job. I'm impressed.
+            [when:outcome=OpponentVictory]
+                Damn you suck at this. How are you going to survive the fringenet?
+            [when:outcome=Draw]
+                Close call! Things will only get harder from here...
+            [when:outcome=PlayerEject]
+                Coward.
+                If you're not going to fight, do you at least have some questions? {
+                    ?: Yes \ Sure.
+                        -> questions
+                    ?:^ No (END) \ No, fuck off.
+                        -> end
+                }
+            [unless:outcome]
+                idk what happened.
+        [/branch]
+}
+
+[skip:questions_loopback]
+    Any more questions? {
+        ?: Yeah
+            -> questions
+        ?:^ Nah (END Conversation) \ Nah, not really.
+            -> end
+    }
+[/skip]
+
+[skip:questions]
+    # get random response from caller: "Go for it.", "I'll try my best.", "Alright."F
+    :SIGNAL get_question_prompt
+    $question_prompt {
+        ?:^ What \ What... {
+            ?: Game? \ What is this game?
+                @game_exp
+                daemon.garden is a point-and-click RPG created by omni.vi
+                Episode 0 takes place in the year 2095", "Long after the VI-LINK has become widespread.
+                {
+                    ?: VI-LINK? \ What is a VI-LINK?
+                        The VI-LINK is a neural-interface that allows users to connect to NULLSPACE.
+                        -> questions_loopback
+                    ?: Cool.
+                        Yeah :)
+                        -> questions_loopback
+                    ?: Lame. \ Sounds boring and LARP-ey.
+                        Okay buddy.
+                        -> questions_loopback
+                }
+
+            ?: This? \ What is this?
+                This as in...? {
+                    ?: Game \ This game, I mean.
+                        -> game_exp
+                    ?: Dialogue \ This dialogue system.
+                        The dialogue system we're using right now is called Hermes.
+                        It was made in-house by omni.
+                        It is built on the BunNarraY dialogue scripting language.
+                        I like it a lot!
+                        -> questions_loopback
+                }
+        }
+
+        ?:^ Why \ Why... {
+            ?: Game style \ Why does the game look like this?
+                Because it looks cool. What kind of question is that?
+                -> questions_loopback
+        }
+    }
+[/skip]
+
+
+@end

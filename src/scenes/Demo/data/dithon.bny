@@ -1,0 +1,37 @@
+:SPEAKER Dithon
+Hello Arda. I am impressed you made it this far.
+But I am afraid thee is one last challenge for you.
+You see, this game is called daemon garden because it has DAEMONS in it.
+And you will have to fight plenty of them! {
+    ?: Daemons? (Show Tutorial) \ What are daemons?
+        Daemons are the spirits that populate this realm. Some friendly, many not.
+        By the sound of it, you won't know how to fight them either. I'll make sure to throw a tutorial in for you.
+        :YIELD battle:with_tutorial
+        # battle sets outcome...
+        [branch]
+            [when:outcome=PlayerVictory]
+                Wow, nice job. I'm impressed.
+            [when:outcome=OpponentVictory]
+                Too bad! Speak to me again if you want another try.
+            [when:outcome=Draw]
+                Draw. In a real fight that would still count as a loss.
+            [unless:outcome]
+                What.
+        [/branch]
+
+    ?: Go ahead \ Go ahead, I've already forsaken plenty of daemons.
+        Impressive! I won't waste your time then.
+        :YIELD battle
+        # battle sets outcome
+        [branch]
+            [when:outcome=PlayerVictory]
+                Wow, nice job. As expected.
+            [when:outcome=OpponentVictory]
+                Wow you suck. I thought you knew what you were doing!
+            [when:outcome=Draw]
+                Draw. In a real fight that would still count as a loss.
+            [unless:outcome]
+                What.
+        [/branch]
+}
+That's it for the demo. Thanks for playing!

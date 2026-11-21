@@ -15,7 +15,7 @@
     "noEmit": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client", "@testing-library/jest-dom"],
+    "types": ["vite/client", "@testing-library/jest-dom", "@bunnarray/vite/client"],
 
     /* Linting */
     "strict": true,
@@ -24,9 +24,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    "ignoreDeprecations": "6.0",
-
-      "baseUrl": ".",
       "paths": {
         "@/*": [
           "./src/*"

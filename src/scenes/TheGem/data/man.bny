@@ -1,0 +1,160 @@
+|| His eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.
+
+:ALTERNATE MAN; Arda
+    What model VI-LINK do you have?
+    Why does it matter?
+    Could be the difference between your brain melting and not.
+    XA-3.
+    Damn. Fancy for someone like you. Doing this to rebel against your rich dad? {
+        ?:^ Say Nothing \ ...
+            || His smirk fails as quickly as it appeared.
+        ?: Tell him off \ None of your fucking business.
+            |MAN| Like hell it isn't my business, I'm here to make sure you don't snitch right off the link.
+                  I got what I needed from that response though.
+                  Hold on to that angst kid, it'll keep you going.
+    }
+|MAN| Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers.
+      I hand off the mod, then you're on your own. Understand? 
+{
+    ?: Yes \ Yeah, of course.
+        Plus, I have your VLID, and you're the only client I've had in the past 3 weeks.
+        I'll know it's you if Asuracom comes knocking on my door.
+        Don't think my team can't just as easily break your VI-LINK.
+        |Arda| Are you done threatening me so we can get on with it?
+        |MAN| I'm not threatening you, just some... terms and conditions.
+        |Arda| Right... Moving on.
+        || He smirks, though it's hard to tell if it's out of amusement or annoyance.
+        |MAN| Moving on...
+                What you're getting isn't a patch or plug-in. It's a permanent bypass.
+                Burn once. Firmware update, you know how it goes.
+    ?: Questions \ Can I ask some questions first?
+        |MAN| If it's anything technical, no, I don't make the mods.
+        # This is a very messy way to configure a question loop, but it is possible!!!
+        :SET asked_caught = false
+        :SET asked_x = false
+        :SET asked_y = false
+        [skip:questionloop]
+            |MAN| Any other questions?
+        [/skip]
+        {
+            ?: [when:asked_caught=false] Caught \ What if I get caught with this thing?
+                :SET asked_caught = true
+                |MAN| You never check the feeds? Or is this your idea of a joke?
+                      Asuracom has an agreement with every country they serve.
+                      Unauthorized VI-LINK modification is usually a federal offense and Fringe trespass is an aggravating circumstance.
+                || He looks frustrated, almost to the point of suspicion; that'd you'd come in and ask him to explain the risks.
+            ?: [when:asked_x=false] Other \ Some other question
+                :SET asked_x = true
+                Some other answer.
+            ?: [when:asked_y=false] Another \ A 3rd question
+                :SET asked_y = true
+                A third answer.
+            ?: No
+                -> endloop
+        }
+        # Shows the re-ask prompt.
+        [branch]
+            [when:asked_caught=false]
+                -> questionloop
+        [/branch]
+        [branch]
+            [when:asked_x=false]
+                -> questionloop
+        [/branch]
+        [branch]
+            [when:asked_y=false]
+                -> questionloop
+        [/branch]        
+        # Fallback when we run out of questions.
+        |MAN| Alright, enough questions, I have other things to do today, kid.
+        @endloop
+        |MAN| The only other warning I got for you is that this is a permanent bypass.
+              Burn once. Only way to get it to work.
+}
+|MAN| So... when you slot it, you're exposed. That clear? {
+    ?: Yes
+        I would envy your confidence if I didn't know it will get you killed.
+        Remember, your daemonveil will have to be manually controlled. Don't get too comfortable.
+    
+    # Skip question about the guide when we say no.
+    ?: No
+        Look, if you don't know what the hell the mod is doing, I can't help you.
+        I'm only giving you that disclaimer out of good conscience.
+        I'm still selling, if you don't heed my warnings, it's your funeral.
+        In any case, you'll have to prove your worth to some degree to get the mod working anyway.
+        |Arda| What does that mean?
+        -> skip_guide_question
+
+    ?: Ask a technical question \ Is it disabling my daemonveil entirely? Sounds suicidal.
+        || He raises an eyebrow, slightly, a hint that you've set something outside his usual script.
+        |MAN| No. Not entirely. We're not trying to kill you.
+              Even if you're paying us "getting killed" rates.
+        || He shifts in his seat.
+        |MAN| It forces your DV into manual, just like how the suits have it.
+              The safety net's still there, but it's last-ditch stuff.
+              There's some basic automation here and there- but if you depend on it, high odds it will get you killed.
+              You'll feel and see things almost as they are. Take care not to get too attached.
+        || Behind his sunglasses, the glint suggest he is speaking from experience.
+        # TODO: Move this clarification later so all routes see it.
+        |MAN| But hey - your F-CH hits critical, it'll still yank you.
+              Just... no promises it'll be clean, or leave you whole.
+        {
+            ?: F-CH?
+                Feedback Coherence.
+                Without getting too technical...
+                When rendering this place, your VI-LINK checks that what you see is, well, what it intended.
+                If you have a daemon, uh- interfering with your perception, the VI-LINK picks up on that as incoherence.
+                Too many discordant signals traveling through the VI-LINK into your brain-stem is obviously a problem.
+                So, when your F-CH is too low, you get ejected to protect your brain.
+                I mean, that's the justifiable reason for your daemonveil existing at all. Keeping your brainwaves stable.
+                Asuracom just tunes it to be overzealous.
+        }
+}
+
+# Yes and the technical question force this follow-up question...
+{
+    ?: Guide \ There's no documentation for manual mode, at least anything public.
+        |Arda| Does this mod come with a guide?
+        || He snorts
+        |MAN| You have to learn how to select sigils, and thread runes, on your own.
+              If you aren't quick on the pickup, you aren't meant for the Fringe.
+        || His tone shifts
+        |MAN| Daemons don't exactly make sigils, but whatever they send at you will be rendered as such.
+              Try to build something that counteracts it.
+              Closest thing I got to a guide.
+        |Arda| Got it. Anything else I should know?
+        || He exhales slowly, as if the question is an inconvenience.
+        |MAN| Yeah... one more thing.
+}
+
+@skip_guide_question
+|MAN| The cache is sealed. Encrypted, obfuscated - whatever term makes you feel smart.
+      The point is, we don't open it. Keeps the chain clean.
+      You need to crack it yourself. That's part of the entry.
+      You solve it, mod works. You don't solve it: deadlock, your fault.
+{
+    ?: Insurance \ For the amount I paid, I would hope there'd be some insurance
+        || He lets out a chuckle
+        |MAN| Fringe Net doesn't come with insurance.
+              Asuracom doesn't even bail out their own. Company policy, or so I've heard.
+    ?:^ Say nothing \ ...
+        |MAN| You'll figure it out, kid.
+}
+
+|| He slides a small diskette across the table
+   :SIGNAL cache_handover_animation
+   
+|MAN| Enjoy your contraband
+      :SIGNAL return_camera
+
+|MAN| Included with the mod are some coordinates.
+      You see, even if commericial VI-LINKs eject when nearing The Fringe, ASCM still monitors the perimeter.
+      Usually just to catch delirious people, but they're also looking for folks like you.
+      Coordinates are somewhere they don't monitor often, apparently.
+      So when you're ready to go, that will be your best shot.
+      Understand? {
+        ?: Yes
+            Great. Then we're done here.
+      }
+|| Before you say anything more, the man abruptly rises out of his chair and departs.
+:SIGNAL depart_man

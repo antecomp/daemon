@@ -1,7 +1,6 @@
 import { ObjModel, Scene } from "lume";
-import {onMount, createSignal, Show,} from "solid-js"
+import { onMount, createSignal, Show, } from "solid-js"
 import { addLogMessage } from "@/app/shell/hud/EventLog";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import applyShadows from "@/3d/pipeline/applyShadows";
 import Billboard from "@/3d/components/Billboard";
 import { useDGShader } from '@/3d/pipeline/dgRender';
@@ -19,12 +18,14 @@ import pallasTexture from "@/assets/artwork/characters/pallas.png"
 import mapobj from './models/map.obj';
 import mapmtl from './models/map.mtl';
 
-import rabbit_root from "@/scenes/Porch/dialogues/porchRabbit";
+import viya_dialogue from './dialogues/viya.bny';
+import rabbit_dialogue from './dialogues/porch_rabbit.bny';
 
-//import viya_root from "./dialogues/viya_dialogue"
-
-import viya_root from '@/tests/dialogues/v'
 import { DGDEV } from "@/devtools/dev";
+import { createBattleYieldHandler } from "@/features/battle/createBattleYieldHandler";
+import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
+import { startDialogue } from "@/core/dialogue/dialogueSession";
+import pickRandom from "@/shared/utils/pickRandom";
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -34,29 +35,40 @@ export default function Porch() {
 
     const [viyaTex, setViyaTex] = createSignal(viyaTexture);
 
-    const {cameraControlSignals, cameraController} = createCameraController(
+    const { cameraControlSignals, cameraController } = createCameraController(
         [-230, -317, 128],
-        {yaw: -72, pitch: 0},
-        {maxYaw: 45, maxPitch: 30}
+        { yaw: -72, pitch: 0 },
+        { maxYaw: 45, maxPitch: 30 }
     );
 
     let mapRef: ObjModel | undefined;
 
     onMount(() => {
-        if(mapRef) {
+        if (mapRef) {
             applyShadows(mapRef);
         }
     });
 
-    const test = createMusicTrack({src: "PWL/erokia-786215.wav"})
+    const test = createMusicTrack({ src: "PWL/erokia-786215.wav" })
     setTimeout(() => { // Will crossfade between tracks
         test.src = "PWL/erokia-496757.wav"
     }, 30000);
 
     const viyaDialogue = createDialogueWithCamOvr(
-        cameraController, 
-        {pos: [-183, -322, 34], ori: {yaw: -84, pitch: 0}, anim: true},
-        viya_root,
+        cameraController,
+        { pos: [-183, -322, 34], ori: { yaw: -84, pitch: 0 }, anim: true },
+        viya_dialogue,
+        {
+            yieldHandlers: {
+                battle: createBattleYieldHandler(OPPONENT_MIMICRY)
+            },
+
+            signalHandlers: {
+                get_question_prompt(_, runtime) {
+                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
+                }
+            }
+        }
     )
 
     return (
@@ -64,7 +76,7 @@ export default function Porch() {
             webgl
             ref={sceneRef}
             id='SCENE'
-            shadow-mode="pcf" 
+            shadow-mode="pcf"
             perspective="800"
             shadowmap-type="pcf"
         >
@@ -76,20 +88,20 @@ export default function Porch() {
 
             <lume-ambient-light intensity={4} />
 
-            <lume-point-light 
-                intensity="5500" 
-                align-point="0.5 0.5" 
-                mount-point="0.5 0.5" 
-                position="100 -356 200" 
+            <lume-point-light
+                intensity="5500"
+                align-point="0.5 0.5"
+                mount-point="0.5 0.5"
+                position="100 -356 200"
                 color="white"
                 cast-shadow="true"
             />
 
-            <lume-point-light 
-                intensity="5500" 
-                align-point="0.5 0.5" 
-                mount-point="0.5 0.5" 
-                position="100 -356 0" 
+            <lume-point-light
+                intensity="5500"
+                align-point="0.5 0.5"
+                mount-point="0.5 0.5"
+                position="100 -356 0"
                 color="white"
                 cast-shadow="true"
             />
@@ -113,7 +125,7 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        const dialogueMusic = MusicManager.pushTrack({src: 'PWL/pw_celesta_meloD.mp3'}).id
+                        const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
                         viyaDialogue.start().finally(() => {
                             DGDEV.log("Viya dialogue done!");
                             MusicManager.removeTrack(dialogueMusic)
@@ -121,25 +133,28 @@ export default function Porch() {
                     },
                     //() => addLogMessage(`She is smoking a cigarette.`)
                     () => setViyaTex(pallasTexture)
-            ]}
+                ]}
             />
 
             <Show when={showRabbit()}>
                 <Billboard
-                        texture={friendTexture}
-                        scale={50}
-                        position="-70 -266 200"
-                        interactions={[
-                            //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
-                            () => addLogMessage('You pet the rabbit.'),
-                            () => {
-                                DialogueService.startDialogue(rabbit_root, {overlay: red, ctx: {actions: {hideRabbit: () => setShowRabbit(false)}}}).then(
-                                    () => DGDEV.log("Rabbit dialogue complete")
-                                )
-                            },
-                            //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
-                            (uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}. For the rabbit this is ${uv.toArray()}`)
-                        ]}
+                    texture={friendTexture}
+                    scale={50}
+                    position="-70 -266 200"
+                    interactions={[
+                        //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
+                        () => addLogMessage('You pet the rabbit.'),
+                        () => {
+                            startDialogue(rabbit_dialogue, {
+                                initialOverlay: red,
+                                signalHandlers: {
+                                    rabbit_depart() { setShowRabbit(false) }
+                                }
+                            })
+                        },
+                        //() => addLogMessage(`WARNING: CLASS 4B ENTITY. CEASE OBSERVATION IMMEDIATELY.`, 'yellow')
+                        (uv, mouse) => addLogMessage(`Clicked at ${mouse.toArray().toString()}. For the rabbit this is ${uv.toArray()}`)
+                    ]}
                 />
             </Show>
             <lume-obj-model

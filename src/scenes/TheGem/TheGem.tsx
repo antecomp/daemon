@@ -17,7 +17,7 @@ import dia_overlay from '@/assets/ui/misc/dia_dither.png';
 import bar_model from './assets/GEM.glb'
 import cache_model from '@/assets/3d/models/cache.fbx'
 
-import { default as dialogue_root } from './data/man_dialogue';
+import dia from './data/man.bny';
 
 export default function TheGem() {
     let sceneRef!: Scene;
@@ -39,27 +39,29 @@ export default function TheGem() {
         { pos: [-1061, -138, 636], ori: { yaw: 0, pitch: 55 }, anim: true }
     );
 
-    const dialogueActions = {
-        cacheHandoverAnimation() {
-            setCacheOnTable(true);
-            showCacheCamera.commit();
-        },
-        returnCamera() {
-            showCacheCamera.release();
-        },
-        departTheMan() {
-            SceneFadeManager.fadeTransition(() => {
-                setManDeparted(true);
-                manDialogue.ovrMgr.release(); // Release camera early.
-            })
-        }
-    }
-
     const manDialogue = createDialogueWithCamOvr(
         cameraController,
         { pos: [-1061, -138, 636], ori: { yaw: 6, pitch: 0 }, anim: true },
-        dialogue_root,
-        { overlay: dia_overlay, ctx: { actions: dialogueActions } }
+        dia,
+        {
+            speakerNames: {MAN: "The Man"},
+            initialOverlay: dia_overlay,
+            signalHandlers: {
+                cache_handover_animation() {
+                    setCacheOnTable(true);
+                    showCacheCamera.commit();
+                },
+                return_camera() {
+                    showCacheCamera.release();
+                },
+                depart_man() {
+                    SceneFadeManager.fadeTransition(() => {
+                        setManDeparted(true);
+                        manDialogue.ovrMgr.release();
+                    })
+                }
+            }
+        }
     )
 
     return (

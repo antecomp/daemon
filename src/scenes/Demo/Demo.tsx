@@ -19,7 +19,6 @@ import NavCompass from '@/3d/tilenav/NavCompass';
 import PlayerCam from '@/3d/camera/PlayerCam';
 import AtTile from '@/3d/tilenav/AtTile';
 import Interactable from '@/3d/components/Interactable';
-import { EMPTY_RENDER } from '@/core/dialogue/dialogueNode';
 import { createEffect, createReaction, createSignal, JSX, onMount, Show, untrack } from 'solid-js';
 import createPopup from '@/app/shell/popup/Popup';
 import lerp from '@/shared/utils/lerp';
@@ -32,11 +31,11 @@ import { listenForRelicDecrypt } from '@/data/items/ITEM_RELIC';
 import Inventory from '@/core/inventory/inventory';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
-import { startBattle } from '@/features/battle/startBattle';
-import { createDialogueBuilder } from '@/core/dialogue/dialogueBuilder';
-import { BattleOutcome } from '@/core/battle/model/battle';
+import { createBattleYieldHandler } from '@/features/battle/createBattleYieldHandler';
 import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
 import { OPPONENT_CROW } from '@/data/battles/crow';
+
+import dithon_dialogue from './data/dithon.bny';
 
 const DEMO_POPUP_STYLE: JSX.HTMLAttributes<HTMLParagraphElement>['style'] = {
     padding: '10px',
@@ -54,56 +53,6 @@ const tutPopup = (content: JSX.Element) => {
         </p>
     )
 }
-
-enum Characters {
-    Dithon = "Dithon",
-    Arda = "Arda"
-}
-
-const dithonDialogueRoot = createDialogueBuilder("Hello Arda. I am impressed you made it this far", Characters.Dithon);
-const dithonDialoueTail = createDialogueBuilder("That's it for the demo. Thanks for playing!", Characters.Dithon).unwrap();
-dithonDialogueRoot
-    .chain(
-        "But I am afriad there is one last challenge for you.",
-        "You see, this game is called daemon garden because it has DAEMONS IN IT.",
-        "And you will have to fight plenty of them!"
-    )
-    .addCar(["What are those", "What are daemons?"], "Daemons are the spirits that populate this realm. Not all of them are friendly.",
-        r => {
-            let battleOutcome: BattleOutcome;
-            return r
-                .chain("By the sounds of it, you won't know how to fight them either. I will make sure to throw a tutorial in for you.")
-                .then(EMPTY_RENDER)
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW, showBattleTutorial))
-                .do(bn => bn
-                    .node.next = () => {
-                        switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. I'm impressed.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Too bad! Speak to me again if you want to try again.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                        }
-                    }
-                )
-        }
-    )
-    .addCar(["Go ahead.", "Go ahead, I've already forsaken plenty of daemons."], "Impressive. I won't waste your time then!",
-        r => {
-            let battleOutcome: BattleOutcome;
-            return r
-                .makeNodeWaitFor(async () => battleOutcome = await startBattle(OPPONENT_CROW))
-                .do(bn => bn
-                    .node.next = () => {
-                        switch (battleOutcome) {
-                            case (BattleOutcome.PlayerVictory): return createDialogueBuilder("Wow, nice job. As expected.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.OpponentVictory): return createDialogueBuilder("Wow you suck. I thought you knew what you were doing!", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            case (BattleOutcome.Draw): return createDialogueBuilder("Draw. In a real fight that would still count as a loss.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                            default: return createDialogueBuilder("What.", Characters.Dithon).do(t => t.then(dithonDialoueTail)).unwrap();
-                        }
-                    }
-                )
-        }
-    )
 
 export default function Demo() {
     let sceneRef!: Scene;
@@ -222,7 +171,15 @@ export default function Demo() {
             ori: { yaw: 157, pitch: 4 },
             anim: false
         }
-        createDialogueWithCamOvr(cameraController, OVR, dithonDialogueRoot.unwrap(), { fadeTransition: true }).start();
+        createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, {
+            fadeTransition: true,
+            yieldHandlers: {
+                battle: createBattleYieldHandler(OPPONENT_CROW, {
+                    onStart: value => value === 'with_tutorial' ? showBattleTutorial : undefined,
+                    advance: true
+                })
+            }
+        }).start();
     }
 
     DGDEV.attach(() => {
@@ -232,7 +189,7 @@ export default function Demo() {
 
     return (
         <NavContextProvider>
-            <NavCompass/>
+            <NavCompass />
             <lume-scene
                 ref={sceneRef}
                 webgl

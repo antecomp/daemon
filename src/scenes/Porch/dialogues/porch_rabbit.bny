@@ -1,0 +1,14 @@
+:SPEAKER The Rabbit
+Hello Arda. {
+    ?: What are you?
+        I am a rabbit, one of many...
+        We have roamed here for millennia,
+        before the corporeal thoughts.
+        We feasted upon the tears of angels.
+        And now we are starving.
+        || The rabbit pauses.
+        |The Rabbit| We have taken an interest in your journey
+                     Tread safely, Asuramancer.
+        || The rabbit vanishes.
+        :SIGNAL rabbit_depart
+}

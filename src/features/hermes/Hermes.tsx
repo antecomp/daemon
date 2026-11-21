@@ -1,12 +1,7 @@
-import { createSignal, For, Match, onCleanup, Switch } from "solid-js";
-import { DialogueContext, DialogueNode, DialogueOption } from "@/core/dialogue/dialogueNode.types";
-import { onMount } from "solid-js";
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch } from "solid-js";
 import MessageBox from "./MessageBox";
-import { MessageBoxProps } from "./MessageBox";
 import createTypewriter from "@/shared/hooks/createTypewriter";
-import { DialogueService } from "@/core/dialogue/dialogueService";
-import sleep from "@/shared/utils/sleep";
-import { evalDialogueNodeNext, isDialogueNodeEmpty } from "@/core/dialogue/dialogueNode"
+import createHermesController, { HermesProps } from "./createHermesController";
 
 import "./hermes.css";
 import topb from "./assets/topb.png";
@@ -17,251 +12,106 @@ import nameplateBorder from "./assets/nameplate_border.png";
 import continuePanel from "./assets/continue_prompt.png"
 import { MAIN_CHARACTER_VLID } from "@/config/init.config";
 
-// Reply beat for CAR after a player selects an option.
-// [option select] -> send option message -> (wait CAR_DELAY_MS) -> send reply message.
-const CAR_DELAY_MS = 1200;
+const OPTION_BACKGROUNDS = [topb, midb, botb];
+const OPTIONS_PER_PAGE = OPTION_BACKGROUNDS.length;
 
-/**
- * Hermes is the main UI component for visualizing and traversing dialogue graphs. 
- * Hermes is added as a UI layer by utilizing DialogueService.startDialogue
- * @see dialogueManager.tsx
- * @param root - The root node of the dialogue tree
- * @param ctx - "Context" object that can be passed, which is globally accessible by all dialogue nodes in this current traversal. 
- * Allows passing local context, signals, and methods to the nodes; which can be used for conditional rendering, side effects, etc.
- */
-export default function Hermes(
-  // Destructure out of laziness. All of this should be static anyways.
-  { root, ctx }: { root: DialogueNode, ctx?: DialogueContext }
-) {
-  const [messages, setMessages] = createSignal<MessageBoxProps[]>([]);
-  const addMessage = ({ name, text }: { name: string; text: string }) => setMessages((prev) => [...prev, { name, text }]);
+/** Dialogue display used by `startDialogue`; for a temporary camera view, use `createDialogueWithCamOvr(...).start()`. */
+export default function Hermes(props: HermesProps) {
+    const { overlay, messages, options, pendingNext, advance } = createHermesController(props);
+    const [optionsPage, setOptionsPage] = createSignal(0);
+    const optionPages = createMemo(() =>
+        Array.from({ length: Math.ceil(options().length / OPTIONS_PER_PAGE) }, (_, index) => index)
+    );
+    const visibleOptions = createMemo(() => {
+        const offset = optionsPage() * OPTIONS_PER_PAGE;
+        return options().slice(offset, offset + OPTIONS_PER_PAGE);
+    });
 
-  const [currentOptions, setCurrentOptions] = createSignal<DialogueOption[]>([]);
-  const [currentOptionPage, setCurrentOptionPage] = createSignal(0);
-  const optionsOffset = () => currentOptionPage() * 3;
-  const numPages = () => Math.ceil(currentOptions().length / 3);
+    // Preview message for hovered option.
+    const [hoveredOption, setHoveredOption] = createSignal("");
+    const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
 
-  // Helper function to generate pagination for options (little thingy on the side.)
-  const generatePages = () =>
-    Array.from({ length: numPages() }, (_, i) => (
-      <a
-        class={`hermes-page-opt ${currentOptionPage() === i ? 'hpo-active' : ''}`}
-        onClick={() => setCurrentOptionPage(i)}
-      ></a>
-  ));
+    createEffect(() => {
+        options();
+        setOptionsPage(0);
+        setHoveredOption('');
+    });
 
-  // Preview message for hovered option.
-  const [hoveredOption, setHoveredOption] = createSignal("");
-  const { displayText: optionPreviewText } = createTypewriter(hoveredOption);
+    return (
+        <>
+            <Show when={overlay()}>
+                <div
+                    id='dialogue-overlay'
+                    class='fademein'
+                    style={{ background: `url(${overlay()})` }}
+                />
+            </Show>
+            <div class='hermes-container'>
+                <div class='messages-container'>
+                    <div class='message-spacer-nightmare' />
+                    <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
+                </div>
+                <div class='sender-container'>
+                    <div class='text-preview'>
+                        <img src={nameplateBorder} />
+                        <span class='name'>Arda</span>
+                        {optionPreviewText()}
+                    </div>
 
-  // Helper functions to extract and setup option stuff.
-  function visibleOptionsOf(node: DialogueNode, ctx?: DialogueContext): DialogueOption[] {
-    return node.options.filter(o => !o.onlyShowWhen || o.onlyShowWhen(ctx));
-  }
+                    <Switch fallback={
+                        OPTION_BACKGROUNDS.map((background, index) => {
+                            const option = () => visibleOptions()[index];
+                            return (
+                                <div
+                                    class="hermes-resp-container"
+                                    classList={{ inactive: !option() }}
+                                    onClick={() => option()?.select()}
+                                    onMouseOver={() => {
+                                        const hovered = option();
+                                        if (hovered) setHoveredOption(hovered.full);
+                                    }}
+                                >
+                                    <p>{option()?.summary}</p>
+                                    <span />
+                                    <img src={background} />
+                                </div>
+                            );
+                        })
+                    }>
+                        <Match when={pendingNext()}>
+                            <img
+                                src={continuePanel}
+                                class='hermes-next-prompt'
+                                onClick={advance}
+                            />
+                        </Match>
+                    </Switch>
+                </div>
 
-  function showOptions(opts: DialogueOption[]) {
-    setCurrentOptionPage(0);
-    setCurrentOptions(opts);
-    setCanClickNext(false);
-    pendingNextNode = null;
-  }
+                <div class="hermes-footer">
+                    <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
+                    <span>R-VLID:0000:0000</span>
+                    <img src={ntwrk_gif} />
+                </div>
 
-  // Next-button state. (This is for linear, non-empty nodes. I.e a chain of .nexts with no option)
-  const [canClickNext, setCanClickNext] = createSignal(false);
-  // caches the node to be rendered for when we click next.
-  let pendingNextNode: DialogueNode | null = null;
+                <Show when={optionPages().length > 1}>
+                    <div classList={{
+                        "hermes-pages": true,
+                        "hp-first": optionsPage() === 0,
+                        "hp-last": optionsPage() === optionPages().length - 1
+                    }}>
+                        <For each={optionPages()}>{(page) => (
+                            <a
+                                class="hermes-page-opt"
+                                classList={{ "hpo-active": optionsPage() === page }}
+                                onClick={() => setOptionsPage(page)}
+                            />
+                        )}</For>
+                    </div>
+                </Show>
 
-  // Prevent continuation after unmmount
-  let stopped = false;
-  onCleanup(() => {stopped = true});
+            </div>
+        </>
+    )
 
-  // Da big traversal shieeeeeettttttt
-  async function advanceDialogue(node: DialogueNode) {
-    if (stopped) return;
-    
-    // Renda'
-    const text = (typeof node.render === 'string') ? node.render : node.render()
-    addMessage({ name: node.name, text});
-
-    node.sideEffect && node.sideEffect(ctx);
-    if (stopped) return; // Just in case the side effect does a close action lol.
-
-    // waitFor overtakes progression, it is up to the dialogue writer to time things accordingly with the body of this.
-    if(node.waitFor) {
-      // while waiting, hide options/next
-      setCurrentOptions([]);
-      setCanClickNext(false);
-      pendingNextNode = null;
-
-      await node.waitFor(ctx);
-      if (stopped) return;
-
-      // Node has options...
-      const options = visibleOptionsOf(node, ctx);
-      if(options.length > 0) {
-        showOptions(options)
-        return;
-      }
-
-      // Node has next. We instantly and automatically run through this one.
-      // Remember the timing should be handled by waitFors methid here!
-      if(node.next) {
-        const n = evalDialogueNodeNext(node.next, ctx)!;
-        await advanceDialogue(n);
-        return;
-      }
-
-      // Otherwise autogen terminator for leaf...
-      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-
-      return;
-    }
-
-    // Options
-    const options = visibleOptionsOf(node, ctx);
-    if (options.length > 0) {
-      showOptions(options);
-      return;
-    }
-
-    // Next flow.
-    if (node.next) {
-      const next = evalDialogueNodeNext(node.next, ctx)!;
-
-      // EMPTY_RENDER nodes auto-advance.
-      if (isDialogueNodeEmpty(node)) {
-        await advanceDialogue(next);
-        return;
-      }
-
-      // Click to advance...
-      setCurrentOptions([]);
-      pendingNextNode = next;
-      setCanClickNext(true);
-      return;
-    }
-
-    // Fallback (leaf), generate terminator option.
-    setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-  }
-
-  async function selectOption(option: DialogueOption) {
-    if(stopped) return;
-
-    // Clear/Reset.
-    setCurrentOptions([]); 
-    setHoveredOption("") 
-    setCurrentOptionPage(0);
-
-    option.sideEffect?.(ctx);
-    if(stopped) return;
-
-    // Termination Option -> kill this dialogue NOW.
-    if (!option.next) {
-      if(!stopped) DialogueService.endDialogue();
-      return;
-    }
-
-    // Option next is an EMPTY_RENDER, auto-advance (for chaining options without sending messages)
-    if((typeof option.next == 'object' && isDialogueNodeEmpty(option.next))) {
-      await advanceDialogue(option.next)
-      return;
-    }
-
-    if(typeof option.next == 'function' && isDialogueNodeEmpty(option.next(ctx))) {
-      await advanceDialogue(option.next(ctx));
-      return;
-    }
-
-    // CaR handler. (Show option message, sleep, show response node, advance from there.)
-    // Render Call Right Away.
-    const call = evalDialogueNodeNext(option.next, ctx)!
-    const text = (typeof call.render === 'string') ? call.render : call.render()
-    addMessage({ name: call.name, text});
-
-    // Reply "beat" (delay)
-    await sleep(CAR_DELAY_MS);
-    if(stopped) return; // closure during sleep.
-
-    const response = evalDialogueNodeNext(call.next, ctx)
-    if (!response) { // Only call but no response!
-      console.warn('[Dialogue Early Termination] Option had a next, but this next goes nowhere! Call but no response')
-      setCurrentOptions([{ summaryText: "[END]", fullText: "" }]);
-      return;
-    }
-
-    // Retvrn to normal evaluation with response onwards...
-    await advanceDialogue(response!)
-  }
-
-  async function handleClickNext() {
-    if (!canClickNext() || stopped) return;
-    setCanClickNext(false);
-    const n = pendingNextNode;
-    pendingNextNode = null;
-    if (n) await advanceDialogue(n);
-  }
-
-  onMount(() => {
-    advanceDialogue(root);
-  })
-
-  return (
-    <div class="hermes-container">
-      <div class="messages-container">
-        <div class="message-spacer-nightmare"></div>
-        <For each={messages()}>{(message) => <MessageBox {...message} />}</For>
-      </div>
-      <div class='sender-container'>
-        <div class="text-preview">
-          <img src={nameplateBorder} alt="" />
-          <span class="name">Arda</span>
-          {optionPreviewText()}
-        </div>
-
-        <Switch fallback={
-          // render options
-          [0, 1, 2].map((index) => {
-                    const option = currentOptions()[optionsOffset() + index];
-                    return (
-                      <div
-                        class={"hermes-resp-container " + (option ? "" : "inactive")}
-                        onClick={() => option && selectOption(option)}
-                        onMouseOver={() => option && setHoveredOption(option.fullText)}
-                      >
-                        <p>{option?.summaryText ?? ""}</p>
-                        <span></span>
-                        <img src={[topb, midb, botb][index]} alt="" />
-                      </div>
-                    );
-                  })
-        }>
-            {/* Continue button */}
-            <Match when={canClickNext()}>
-              <img 
-                src={continuePanel}
-                class='hermes-next-prompt'
-                onClick={handleClickNext}
-              />
-            </Match>
-        </Switch>
-
-      </div>
-      <div class="hermes-footer">
-        <span>S-VLID:{MAIN_CHARACTER_VLID}</span>
-        <span>R-VLID:0000:0000</span>
-        <img src={ntwrk_gif} />
-      </div>
-      {
-        (currentOptions().length > 3) &&
-        <div classList={{
-          "hermes-pages": true,
-          "hp-first": (currentOptionPage() == 0),
-          "hp-last": (currentOptionPage() == numPages() - 1)
-        }}>
-          {generatePages()}
-        </div>
-      }
-    </div>
-  );
 }

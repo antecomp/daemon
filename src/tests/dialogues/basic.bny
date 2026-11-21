@@ -1,0 +1,22 @@
+:SPEAKER Rabbit
+Hello!!! 
+Blah blah blah
+How are you? {
+    ?: Good! \ Doing Good!
+        Great!
+    ?: Bad! \ Doing Terrible!
+        Dang!
+    ?:^ Fuck you!
+        |ARDA| I HATE YOU I HATE YOU I HATE YOU I HATE YOU I HATE YOU I HATE YOU I HATE YOU
+        :SPEAKER Rabbit
+    ?:^ AKJHDAFSJKHSJKFDHSFDJKHK
+        :SIGNAL shit
+    ?: 1
+    ?: 2
+    ?: 3
+    ?: 4
+    ?: 5
+}
+Now is time for a yield test!
+:YIELD whatever
+This should show without a continue.
