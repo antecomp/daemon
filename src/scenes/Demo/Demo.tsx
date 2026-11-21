@@ -31,8 +31,7 @@ import { listenForRelicDecrypt } from '@/data/items/ITEM_RELIC';
 import Inventory from '@/core/inventory/inventory';
 import { navCoordToTuple } from '@/3d/tilenav/tilenav.utils';
 import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
-import { startBattle } from '@/features/battle/startBattle';
-import { BattleOutcome } from '@/core/battle/model/battle';
+import { createBattleYieldHandler } from '@/features/battle/createBattleYieldHandler';
 import showBattleTutorial from '@/features/battle/tutorial/BattleTutorial';
 import { OPPONENT_CROW } from '@/data/battles/crow';
 
@@ -175,12 +174,10 @@ export default function Demo() {
         createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, {
             fadeTransition: true,
             yieldHandlers: {
-                // TODO: Hopefully I have a generic version of this soon
-                async battle(value, runtime) {
-                    const outcome = await startBattle(OPPONENT_CROW, value === 'with_tutorial' ? showBattleTutorial : undefined);
-                    runtime.memory.set('outcome', BattleOutcome[outcome]);
-                    return { advance: true }
-                }
+                battle: createBattleYieldHandler(OPPONENT_CROW, {
+                    onStart: value => value === 'with_tutorial' ? showBattleTutorial : undefined,
+                    advance: true
+                })
             }
         }).start();
     }

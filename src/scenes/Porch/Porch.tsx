@@ -22,9 +22,8 @@ import viya_dialogue from './dialogues/viya.bny';
 import rabbit_dialogue from './dialogues/porch_rabbit.bny';
 
 import { DGDEV } from "@/devtools/dev";
-import { startBattle } from "@/features/battle/startBattle";
+import { createBattleYieldHandler } from "@/features/battle/createBattleYieldHandler";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
-import { BattleOutcome } from "@/core/battle/model/battle";
 import { startDialogue } from "@/core/dialogue";
 import pickRandom from "@/shared/utils/pickRandom";
 
@@ -61,11 +60,7 @@ export default function Porch() {
         viya_dialogue,
         {
             yieldHandlers: {
-                // todo: hopefully I will have a generic version of this eventually.
-                async battle(_, runtime) {
-                    const outcome = await startBattle(OPPONENT_MIMICRY);
-                    runtime.memory.set('outcome', BattleOutcome[outcome]);
-                }
+                battle: createBattleYieldHandler(OPPONENT_MIMICRY)
             },
 
             signalHandlers: {

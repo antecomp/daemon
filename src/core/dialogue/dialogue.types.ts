@@ -8,7 +8,6 @@ export type DialogueRuntime = {
     setOverlay: Setter<AssetURL | undefined>;
 }
 
-// TODO: Consider adding a speaker map as part of the context!
 export type DialogueContext = {
     initialOverlay?: AssetURL;
     onMemoryUpdate?: BnyMemoryUpdateHandler;
