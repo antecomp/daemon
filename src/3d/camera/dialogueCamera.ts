@@ -15,10 +15,13 @@ type DialogueCamOptions = StartDialogueOptions & {
  * @param cameraController Camera whose view is temporarily changed.
  * @param ovr View to use during the dialogue.
  * @param program Dialogue to play.
- * @param dialogueOptions Optional {@link StartDialogueOptions}: `initialOverlay` sets the starting image,
- * `initialMemory` seeds dialogue values, `onMemoryUpdate` receives memory changes,
- * `signalHandlers` and `yieldHandlers` handle named program events, and `speakerNames`
- * replaces displayed speaker names. `blockBehind` defaults to `true`; `fadeTransition` adds fades.
+ * @param dialogueOptions Optional {@link StartDialogueOptions}: 
+ * - `initialOverlay` shows a starting image,
+ * - `initialMemory` seeds dialogue values, 
+ * - `onMemoryUpdate` receives memory changes,
+ * - `signalHandlers` map of signals to handlers  `{[identifier]: (value, runtime) => void}`,
+ * - `yieldHandlers` map of yield handlers. `{[identifier]: YieldHandler`,
+ * - and `speakerNames` replaces displayed speaker names.
  */
 export function createDialogueWithCamOvr(
     cameraController: CameraController,
