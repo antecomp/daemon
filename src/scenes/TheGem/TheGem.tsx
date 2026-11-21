@@ -44,6 +44,7 @@ export default function TheGem() {
         { pos: [-1061, -138, 636], ori: { yaw: 6, pitch: 0 }, anim: true },
         dia,
         {
+            speakerNames: {MAN: "The Man"},
             initialOverlay: dia_overlay,
             signalHandlers: {
                 cache_handover_animation() {

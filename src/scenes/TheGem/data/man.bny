@@ -1,6 +1,6 @@
 || His eyes dart and glimmer briefly behind his sunglasses - likely verifying my VLID.
 
-:ALTERNATE MAN; ARDA
+:ALTERNATE MAN; Arda
     What model VI-LINK do you have?
     Why does it matter?
     Could be the difference between your brain melting and not.
@@ -20,9 +20,9 @@
         Plus, I have your VLID, and you're the only client I've had in the past 3 weeks.
         I'll know it's you if Asuracom comes knocking on my door.
         Don't think my team can't just as easily break your VI-LINK.
-        |ARDA| Are you done threatening me so we can get on with it?
+        |Arda| Are you done threatening me so we can get on with it?
         |MAN| I'm not threatening you, just some... terms and conditions.
-        |ARDA| Right... Moving on.
+        |Arda| Right... Moving on.
         || He smirks, though it's hard to tell if it's out of amusement or annoyance.
         |MAN| Moving on...
                 What you're getting isn't a patch or plug-in. It's a permanent bypass.
@@ -82,7 +82,7 @@
         I'm only giving you that disclaimer out of good conscience.
         I'm still selling, if you don't heed my warnings, it's your funeral.
         In any case, you'll have to prove your worth to some degree to get the mod working anyway.
-        |ARDA| What does that mean?
+        |Arda| What does that mean?
         -> skip_guide_question
 
     ?: Ask a technical question \ Is it disabling my daemonveil entirely? Sounds suicidal.
@@ -114,7 +114,7 @@
 # Yes and the technical question force this follow-up question...
 {
     ?: Guide \ There's no documentation for manual mode, at least anything public.
-        |ARDA| Does this mod come with a guide?
+        |Arda| Does this mod come with a guide?
         || He snorts
         |MAN| You have to learn how to select sigils, and thread runes, on your own.
               If you aren't quick on the pickup, you aren't meant for the Fringe.
@@ -122,7 +122,7 @@
         |MAN| Daemons don't exactly make sigils, but whatever they send at you will be rendered as such.
               Try to build something that counteracts it.
               Closest thing I got to a guide.
-        |ARDA| Got it. Anything else I should know?
+        |Arda| Got it. Anything else I should know?
         || He exhales slowly, as if the question is an inconvenience.
         |MAN| Yeah... one more thing.
 }
