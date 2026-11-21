@@ -25,15 +25,16 @@ import { UniformsLib } from "three";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 
 import fox_sprite from '@/assets/artwork/dæmons/fox.png';
-import fox_dialogue_root from "../Islands/data/fox_dialogue";
 import showBattleTutorial from "@/features/battle/tutorial/BattleTutorial";
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import AtTile from "@/3d/tilenav/AtTile";
 import Billboard from "@/3d/components/Billboard";
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_FOX } from "@/data/battles/fox";
 import { BattleOutcome } from "@/core/battle/model/battle";
 import triggerGameOver from "@/features/gameover/GameOver";
+import { startDialogue } from "@/core/dialogue";
+
+import fox_dialogue from './data/fox.bny';
 
 export default function Bridge() {
     let sceneRef!: Scene;
@@ -140,21 +141,14 @@ export default function Bridge() {
                             position='0 -18 0'
                             interactions={[
                                 () => addLogMessage("As you reach out, the fox snarls loudly."),
-                                () => {
-                                    DialogueService.startDialogue(fox_dialogue_root, {
-                                        ctx: {
-                                            actions: {
-                                                // TODO: Handle loose. How should we revert?
-                                                foxBattle: () => startBattle(OPPONENT_FOX, showBattleTutorial).then(r => {
-                                                    if (r == BattleOutcome.PlayerVictory) {
-                                                        setHasDefeatedFox(r == BattleOutcome.PlayerVictory);
-                                                    } else {
-                                                        triggerGameOver(() => navController.setCurrentTile('-7,34'))
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
+                                async () => {
+                                    await startDialogue(fox_dialogue);
+                                    const outcome = await startBattle(OPPONENT_FOX, showBattleTutorial)
+                                    if(outcome === BattleOutcome.PlayerVictory) {
+                                        setHasDefeatedFox(true);
+                                    } else {
+                                        triggerGameOver(() => navController.setCurrentTile('-7,34'))
+                                    }
                                 },
                                 () => addLogMessage("There is a strange fox blocking my path. It is staring at me intensely.")
                             ]}
