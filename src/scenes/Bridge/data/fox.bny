@@ -22,7 +22,7 @@ Especially not in the name of that horrid scarecrow.
         I was afraid you'd say that. You strays are always so incredibly arrogant.
         Very well, prove yourself now, while you still won't loose your head over it.
         {
-            ?:^ (FIGHT)
+            ?:^ (FIGHT) \
                 # Not yielding for battle here, since this is the forced end.
                 # we can instead just await on the dialogue completing.
         }
