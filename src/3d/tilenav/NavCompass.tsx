@@ -3,8 +3,8 @@ import { NavCoord, NavTileMask } from "./tilenav.types";
 import { navCoordToTuple } from "./tilenav.utils";
 import cn from './assets/needle.png';
 import './nav-compass.css'
-import { DialogueService } from "@/core/dialogue/dialogueService";
 import { useNavContext } from "./createTileNavigator";
+import { dialogueOngoing } from "@/core/dialogue";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"
@@ -66,7 +66,7 @@ export default function NavCompass() {
     //createEffect(() => console.log(ctx.navMap.tiles));
 
     return (
-        <Show when={!DialogueService.dialogueOngoing()}>
+        <Show when={!dialogueOngoing()}>
             <div class='nav-compass'>
                 <div class='nav-compass-grid'
                     style={{ 'grid-template-columns': `repeat(${1 + (2 * COMPASS_SPAN)}, 1fr)` }}

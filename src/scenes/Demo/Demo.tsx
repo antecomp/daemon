@@ -174,11 +174,13 @@ export default function Demo() {
         }
         createDialogueWithCamOvr(cameraController, OVR, dithon_dialogue, {
             fadeTransition: true,
-            async onYield(id, value, runtime) {
-                if (id !== 'battle') return;
-                const outcome = await startBattle(OPPONENT_CROW, value === 'with_tutorial' ? showBattleTutorial : undefined);
-                runtime.memory.set('outcome', BattleOutcome[outcome])
-
+            yieldHandlers: {
+                // TODO: Hopefully I have a generic version of this soon
+                async battle(value, runtime) {
+                    const outcome = await startBattle(OPPONENT_CROW, value === 'with_tutorial' ? showBattleTutorial : undefined);
+                    runtime.memory.set('outcome', BattleOutcome[outcome]);
+                    return { advance: true }
+                }
             }
         }).start();
     }
