@@ -1,5 +1,5 @@
 import { DialogueContext } from "@/core/dialogue/dialogue.types";
-import { createDialogueSignalHandler, createDialogueYieldHandler } from "@/core/dialogue/handlers";
+import { createDialogueSignalHandler, createDialogueYieldHandler } from "./dialogueHandlers";
 import { MAIN_CHARACTER_NAME } from "@/config/init.config";
 import sleep from "@/shared/utils/sleep";
 import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";

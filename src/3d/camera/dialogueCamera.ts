@@ -1,4 +1,4 @@
-import { dialogueOngoing, startDialogue, StartDialogueOptions } from "@/core/dialogue";
+import { dialogueOngoing, startDialogue, StartDialogueOptions } from "@/core/dialogue/dialogueSession";
 import { CameraController, CameraSettings } from "./camera.types";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import { BnyProgram } from "@bunnarray/vm";

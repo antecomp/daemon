@@ -1,17 +1,7 @@
 import { setCurrentScene } from "@/app/shell/scene-container/sceneState"
 import sleep from "@/shared/utils/sleep";
-import { DialogueRuntime } from "./dialogue.types";
+import { DialogueRuntime, SignalHandler, SignalHandlerMap, YieldHandler, YieldHandlerMap } from "@/core/dialogue/dialogue.types";
 import { SparseRecord } from "@/shared/types/misc.types";
-
-/** Reacts to a signal without pausing the dialogue. */
-type SignalHandler = (value: string | undefined, runtime: DialogueRuntime) => void
-/** Runs while dialogue is paused; return `{ advance: true }` to skip the next continue prompt. */
-type YieldHandler = (value: string | undefined, runtime: DialogueRuntime) => Promise<void | { advance: true }>
-
-/** Signal handlers keyed by identifier, used in the dialogue program. */
-export type SignalHandlerMap = { [identifier: string]: SignalHandler }
-/** Yield handlers keyed by identifier, used in the dialogue program. */
-export type YieldHandlerMap = { [identifier: string]: YieldHandler }
 
 /** Built-in signal handlers. */
 export const DEFAULT_DIALOGUE_SIGNAL_HANDLERS = {

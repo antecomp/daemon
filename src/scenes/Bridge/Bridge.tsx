@@ -32,7 +32,7 @@ import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_FOX } from "@/data/battles/fox";
 import { BattleOutcome } from "@/core/battle/model/battle";
 import triggerGameOver from "@/features/gameover/GameOver";
-import { startDialogue } from "@/core/dialogue";
+import { startDialogue } from "@/core/dialogue/dialogueSession";
 
 import fox_dialogue from './data/fox.bny';
 

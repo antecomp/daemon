@@ -4,7 +4,7 @@ import { navCoordToTuple } from "./tilenav.utils";
 import cn from './assets/needle.png';
 import './nav-compass.css'
 import { useNavContext } from "./createTileNavigator";
-import { dialogueOngoing } from "@/core/dialogue";
+import { dialogueOngoing } from "@/core/dialogue/dialogueSession";
 
 const EDGE_BORDER = "dashed white 1px"
 const NOEDGE_BORDER = "solid black 1px;"

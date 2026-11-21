@@ -24,7 +24,7 @@ import rabbit_dialogue from './dialogues/porch_rabbit.bny';
 import { DGDEV } from "@/devtools/dev";
 import { createBattleYieldHandler } from "@/features/battle/createBattleYieldHandler";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
-import { startDialogue } from "@/core/dialogue";
+import { startDialogue } from "@/core/dialogue/dialogueSession";
 import pickRandom from "@/shared/utils/pickRandom";
 
 export default function Porch() {
