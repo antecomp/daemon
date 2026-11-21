@@ -3,10 +3,23 @@ import { CameraController, CameraSettings } from "./camera.types";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import { BnyProgram } from "@bunnarray/vm";
 
+/** {@link StartDialogueOptions} plus an optional fade into and out of the camera view. */
 type DialogueCamOptions = StartDialogueOptions & {
+    /** Fade when applying and releasing the camera view (default: false). */
     fadeTransition?: boolean;
 };
 
+/**
+ * Prepare a dialogue with a temporary camera view. Call the returned `start()` to show it.
+ * The view is restored after the dialogue closes.
+ * @param cameraController Camera whose view is temporarily changed.
+ * @param ovr View to use during the dialogue.
+ * @param program Dialogue to play.
+ * @param dialogueOptions Optional {@link StartDialogueOptions}: `initialOverlay` sets the starting image,
+ * `initialMemory` seeds dialogue values, `onMemoryUpdate` receives memory changes,
+ * `signalHandlers` and `yieldHandlers` handle named program events, and `speakerNames`
+ * replaces displayed speaker names. `blockBehind` defaults to `true`; `fadeTransition` adds fades.
+ */
 export function createDialogueWithCamOvr(
     cameraController: CameraController,
     ovr: CameraSettings,
@@ -25,6 +38,7 @@ export function createDialogueWithCamOvr(
     };
 
     return {
+        /** Show the dialogue and moves the camera. Camera restores when dialogue ends. */
         start: async () => {
             if (dialogueOngoing()) return; // dialogue already active. Prevent double commit.
             await runWithFadeTransition(() => ovrMgr.commit());

@@ -1,4 +1,4 @@
-import { DialogueContext, DialogueOption } from "@/core/dialogue/dialogue.types";
+import { DialogueContext } from "@/core/dialogue/dialogue.types";
 import { BnyEmissionHandler, BnyPauseBody, BnyPauseHandler, BnyProgram, createVM } from "@bunnarray/vm";
 import { createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch } from "solid-js";
 import MessageBox, { MessageBoxProps } from "./MessageBox";
@@ -26,6 +26,17 @@ function parseOptionText(raw: string): { summary: string; full: string } {
     return { summary, full };
 }
 
+/** A choice shown to the player. */
+type DialogueOption = {
+    /** Short label shown on the choice. */
+    summary: string,
+    /** Text previewed on hover and sent for ordinary choices. */
+    full: string,
+    /** Select this choice. */
+    select: () => void;
+}
+
+/** Dialogue display used by `startDialogue`; for a temporary camera view, use `createDialogueWithCamOvr(...).start()`. */
 export default function Hermes(
     // Destructure out of laziness. All of this should be static anyways.
     { program, ctx, onClose: close }:
