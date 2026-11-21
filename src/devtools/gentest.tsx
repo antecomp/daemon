@@ -3,17 +3,14 @@ import '@/shared/styles/base.css';
 import { render } from "solid-js/web";
 import Hermes from '@/features/hermes/Hermes';
 //////////////////////////////////////////////
-import dia from '../tests/dialogues/basic.bny';
-import sleep from '@/shared/utils/sleep';
+//import dia from '../tests/dialogues/basic.bny';
+import dia from '../scenes/TheGem/data/man.bny'
 
 
 function Comp() {
     return <>
         <Hermes
             program={dia}
-            ctx={{
-                onYield: async () => { await sleep(2000); return { advance: true } }
-            }}
             onClose={() => window.location.reload()}
         />
     </>

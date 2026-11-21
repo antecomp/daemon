@@ -6,9 +6,9 @@
     Could be the difference between your brain melting and not.
     XA-3.
     Damn. Fancy for someone like you. Doing this to rebel against your rich dad? {
-        ?: (Say Nothing; ...)
+        ?:^ Say Nothing \ ...
             || His smirk fails as quickly as it appeared.
-        ?: (Tell him off; None of your fucking business.)
+        ?: Tell him off \ None of your fucking business.
             |MAN| Like hell it isn't my business, I'm here to make sure you don't snitch right off the link.
                   I got what I needed from that response though.
                   Hold on to that angst kid, it'll keep you going.
@@ -16,7 +16,7 @@
 |MAN| Here's the deal. This isn't a tour, and it's not like one of those schlocky sim-thrillers.
       I hand off the mod, then you're on your own. Understand? 
 {
-    ?: (Yes; Yeah, of course.)
+    ?: Yes \ Yeah, of course.
         Plus, I have your VLID, and you're the only client I've had in the past 3 weeks.
         I'll know it's you if Asuracom comes knocking on my door.
         Don't think my team can't just as easily break your VI-LINK.
@@ -27,7 +27,7 @@
         |MAN| Moving on...
                 What you're getting isn't a patch or plug-in. It's a permanent bypass.
                 Burn once. Firmware update, you know how it goes.
-    ?: (Questions; Can I ask some questions first?)
+    ?: Questions \ Can I ask some questions first?
         |MAN| If it's anything technical, no, I don't make the mods.
         # This is a very messy way to configure a question loop, but it is possible!!!
         :SET asked_caught = false
@@ -37,16 +37,16 @@
             |MAN| Any other questions?
         [/skip]
         {
-            ?: [when:asked_caught=false] (Caught; What if I get caught with this thing?)
+            ?: [when:asked_caught=false] Caught \ What if I get caught with this thing?
                 :SET asked_caught = true
                 |MAN| You never check the feeds? Or is this your idea of a joke?
                       Asuracom has an agreement with every country they serve.
                       Unauthorized VI-LINK modification is usually a federal offense and Fringe trespass is an aggravating circumstance.
                 || He looks frustrated, almost to the point of suspicion; that'd you'd come in and ask him to explain the risks.
-            ?: [when:asked_x=false] (Other; Some other question)
+            ?: [when:asked_x=false] Other \ Some other question
                 :SET asked_x = true
                 Some other answer.
-            ?: [when:asked_y=false] (Another; A 3rd question)
+            ?: [when:asked_y=false] Another \ A 3rd question
                 :SET asked_y = true
                 A third answer.
             ?: No
@@ -85,7 +85,7 @@
         |ARDA| What does that mean?
         -> skip_guide_question
 
-    ?: (Ask a technical question; Is it disabling my daemonveil entirely? Sounds suicidal.)
+    ?: Ask a technical question \ Is it disabling my daemonveil entirely? Sounds suicidal.
         || He raises an eyebrow, slightly, a hint that you've set something outside his usual script.
         |MAN| No. Not entirely. We're not trying to kill you.
               Even if you're paying us "getting killed" rates.
@@ -113,7 +113,7 @@
 
 # Yes and the technical question force this follow-up question...
 {
-    ?: (Guide; There's no documentation for manual mode, at least anything public.)
+    ?: Guide \ There's no documentation for manual mode, at least anything public.
         |ARDA| Does this mod come with a guide?
         || He snorts
         |MAN| You have to learn how to select sigils, and thread runes, on your own.
@@ -133,11 +133,11 @@
       You need to crack it yourself. That's part of the entry.
       You solve it, mod works. You don't solve it: deadlock, your fault.
 {
-    ?: (Insurance; For the amount I paid, I would hope there'd be some insurance)
+    ?: Insurance \ For the amount I paid, I would hope there'd be some insurance
         || He lets out a chuckle
         |MAN| Fringe Net doesn't come with insurance.
               Asuracom doesn't even bail out their own. Company policy, or so I've heard.
-    ?: (Say nothing; ...)
+    ?:^ Say nothing \ ...
         |MAN| You'll figure it out, kid.
 }
 
@@ -145,7 +145,7 @@
    :SIGNAL cache_handover_animation
    
 |MAN| Enjoy your contraband
-      :YIELD return_camera
+      :SIGNAL return_camera
 
 |MAN| Included with the mod are some coordinates.
       You see, even if commericial VI-LINKs eject when nearing The Fringe, ASCM still monitors the perimeter.
