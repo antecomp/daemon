@@ -25,7 +25,6 @@ import { DGDEV } from "@/devtools/dev";
 import { startBattle } from "@/features/battle/startBattle";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { BattleOutcome } from "@/core/battle/model/battle";
-import sleep from "@/shared/utils/sleep";
 import { startDialogue } from "@/core/dialogue";
 import pickRandom from "@/shared/utils/pickRandom";
 
@@ -61,20 +60,17 @@ export default function Porch() {
         { pos: [-183, -322, 34], ori: { yaw: -84, pitch: 0 }, anim: true },
         viya_dialogue,
         {
-            // TODO MAKE A GENERIC ONYIELD HANDLER FOR THESE CASES.
-            async onYield(id, value, runtime) {
-                if (id === 'battle') {
-                    const outcome = await startBattle(OPPONENT_MIMICRY)
+            yieldHandlers: {
+                // todo: hopefully I will have a generic version of this eventually.
+                async battle(_, runtime) {
+                    const outcome = await startBattle(OPPONENT_MIMICRY);
                     runtime.memory.set('outcome', BattleOutcome[outcome]);
                 }
-                if (id === 'sleep') {
-                    await sleep(Number(value ?? 1000))
-                    return { advance: true }
-                }
             },
-            onSignal(s, _, runtime) {
-                if (s === 'get_question_prompt') {
-                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']));
+
+            signalHandlers: {
+                get_question_prompt(_, runtime) {
+                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
                 }
             }
         }
@@ -156,8 +152,8 @@ export default function Porch() {
                         () => {
                             startDialogue(rabbit_dialogue, {
                                 initialOverlay: red,
-                                onSignal(s) {
-                                    if (s === 'rabbit_depart') setShowRabbit(false)
+                                signalHandlers: {
+                                    rabbit_depart() { setShowRabbit(false) }
                                 }
                             })
                         },
