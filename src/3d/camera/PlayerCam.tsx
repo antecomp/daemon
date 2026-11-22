@@ -45,7 +45,7 @@ function lerpAngleDeg(prev: number, target: number, t: number) {
  * be temporarily overridden (disabling the interaction/mouse logic) by setting override position/orientation paramaters.
  * These override params can be used for cinematic sequences, in-dialogue VN cameras, etc.
  */
-export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene}) {
+export default function PlayerCam(props: PlayerCameraControls & {sceneRef?: Scene}) {
 
     const raycaster = new Raycaster();
     createEffect(() => {
@@ -59,6 +59,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
 
     let camRef!: PerspectiveCamera;
     let bodyRef!: Element3D
+    let scene: Scene;
 
     function runHoverRaycast() {
         if (props.overrideOri || props.overridePos || sceneLock.isLocked()) {
@@ -76,7 +77,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
 
         raycaster.setFromCamera(mouse, camRef.three);
 
-        const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
+        const intersects = raycaster.intersectObjects(scene.three.children, true);
         const hoveredIntersection = intersects.length > 0 ? intersects[0] : null;
         const hoveredObject: (InteractableObject3D | null) = hoveredIntersection?.object ?? null;
         const uv = hoveredIntersection?.uv ? hoveredIntersection.uv.clone() : new Vector2();
@@ -106,7 +107,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
 
     function handleClick() {
         if (sceneLock.isLocked() || props.overrideOri || props.overridePos) return;
-        const intersects = raycaster.intersectObjects(props.sceneRef.three.children, true);
+        const intersects = raycaster.intersectObjects(scene.three.children, true);
         if (intersects.length > 0) {
             const clickedIntersection = intersects[0];
             const clickedObject: InteractableObject3D = clickedIntersection.object;
@@ -123,7 +124,7 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
     function handleMouseMove(e: MouseEvent) {
         // Keep guard - feels for natural that the camera moves after we move the mouse, not right when the lock is released.
         if (sceneLock.isLocked()) return;
-        const rect = props.sceneRef.getBoundingClientRect();
+        const rect = scene.getBoundingClientRect();
         const xNorm = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const yNorm = ((e.clientY - rect.top) / rect.height) * 2 - 1;
 
@@ -134,8 +135,9 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
     }
 
     onMount(() => {
-        props.sceneRef.addEventListener("mousemove", handleMouseMove);
-        props.sceneRef.addEventListener("click", handleClick);
+        scene = camRef.scene!;
+        scene.addEventListener("mousemove", handleMouseMove);
+        scene.addEventListener("click", handleClick);
 
         // Imperative set of initial values, updater functions take off from here.
         bodyRef.position = props.overridePos ?? props.basePos
@@ -208,8 +210,8 @@ export default function PlayerCam(props: PlayerCameraControls & {sceneRef: Scene
     });
 
     onCleanup(() => {
-        props.sceneRef.removeEventListener("mousemove", handleMouseMove);
-        props.sceneRef.removeEventListener("click", handleClick);
+        scene.removeEventListener("mousemove", handleMouseMove);
+        scene.removeEventListener("click", handleClick);
         setHoverCursor(undefined);
     });
 

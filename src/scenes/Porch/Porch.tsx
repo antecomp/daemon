@@ -83,7 +83,6 @@ export default function Porch() {
 
             <PlayerCam
                 {...cameraControlSignals()}
-                sceneRef={sceneRef!}
             />
 
             <lume-ambient-light intensity={4} />
