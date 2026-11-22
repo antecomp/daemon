@@ -26,6 +26,7 @@ import { createBattleYieldHandler } from "@/features/battle/createBattleYieldHan
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { startDialogue } from "@/core/dialogue/dialogueSession";
 import pickRandom from "@/shared/utils/pickRandom";
+import createCamera from "@/3d/cam/createCamera";
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -71,6 +72,8 @@ export default function Porch() {
         }
     )
 
+    const c = createCamera();
+
     return (
         <lume-scene
             webgl
@@ -81,9 +84,10 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            <PlayerCam
+            {/* <PlayerCam
                 {...cameraControlSignals()}
-            />
+            /> */}
+            <c.Camera/>
 
             <lume-ambient-light intensity={4} />
 
