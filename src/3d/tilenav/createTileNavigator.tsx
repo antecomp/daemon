@@ -238,6 +238,8 @@ export default function createTileNavigator(
 
         // using & to modulo with bitmask, equiv to (dir + X) % 4
         // TODO: WHY IS IT CODED LIKE THIS? WHAT IS THIS IMPERATIVE GARBAGE. HAVE YAW REACT TO/DERIVE FROM DIRECTION SIGNAL, NOT PLAYER INPUT!!!!
+        // this is, of course, to prevent, spinning all the way back roun' on the modulo. But I don't see why we couldn't just have direction state be
+        // a plain number that translates to degrees. The modulo is not necessary
         switch (action) {
             case NavAction.TurnLeft:
                 {
