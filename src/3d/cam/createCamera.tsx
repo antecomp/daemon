@@ -83,14 +83,25 @@ export default function createCamera(
 
     // -- ticker --
     const step = (dt: number) => {
+        let next: Pose;
         const current = cur();
-        let next: Pose = {
-            pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
-            yaw: damp(current.yaw, target.yaw, LAMBDA, dt), // todo replace with shortest path + "winding" handle
-            pitch: damp(current.pitch, target.pitch, LAMBDA, dt) // todo replace with shortest path + "winding" handle
-        };
-        if (inflight && settled(next, target)) { next = target; inflight('arrived'); inflight = null; }
-        setCur(next);
+        if (trans === 'cut') {
+            next = target;
+        } else {
+            next = {
+                pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
+                yaw: damp(current.yaw, target.yaw, LAMBDA, dt), // todo replace with shortest path + "winding" handle
+                pitch: damp(current.pitch, target.pitch, LAMBDA, dt) // todo replace with shortest path + "winding" handle
+            };
+        }
+
+        if(inflight && settled(next, target)) {
+            setCur(target);
+            inflight('arrived');
+            inflight = null;
+        } else {
+            setCur(next);
+        }
     };
 
 
