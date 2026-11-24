@@ -72,7 +72,7 @@ export default function Porch() {
         }
     )
 
-    const c = createCamera();
+    const c = createCamera({pos: [-100, -300, 100]});
 
     return (
         <lume-scene

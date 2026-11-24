@@ -20,12 +20,14 @@ function settled(current: Pose, target: Pose) {
 }
 
 export default function createCamera(
-    initial: Pose = {
-        pos: [0, 0, 0],
-        yaw: 0,
-        pitch: 0
-    }
+    init: Partial<Pose> = {}
 ) {
+
+    const initial: Pose = {
+        ...{pos: [0,0,0], yaw: 0, pitch: 0},
+        ...init
+    }
+
     // hoisted for passing to other hooks...
     let scene: Scene;
 
