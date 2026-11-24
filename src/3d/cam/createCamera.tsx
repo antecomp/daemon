@@ -19,8 +19,9 @@ function settled(current: Pose, target: Pose) {
         && Math.abs(current.pitch - target.pitch) < ANG_EPS
 }
 
-type Outcome = 'arrived' | 'diverted';
+type Outcome = 'arrived' | 'diverted' | 'unchanged';
 
+/** that fucking camera that I hate. */
 export default function createCamera() {
     // hoisted for passing to other hooks...
     let scene: Scene;
@@ -48,8 +49,8 @@ export default function createCamera() {
         const current = pose();
         let next: Pose = {
             pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
-            yaw: damp(current.yaw, target.yaw, LAMBDA, dt),
-            pitch: damp(current.pitch, target.pitch, LAMBDA, dt)
+            yaw: damp(current.yaw, target.yaw, LAMBDA, dt), // todo replace with shortest path + "winding" handle
+            pitch: damp(current.pitch, target.pitch, LAMBDA, dt) // todo replace with shortest path + "winding" handle
         };
         if (pending && settled(next, target)) { next = target; pending('arrived'); pending = null; }
         setPose(next);
