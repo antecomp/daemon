@@ -59,13 +59,27 @@ export default function createCamera(
     const override = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
         const layer: Layer = { pose: null!, trans: t };
         return {
-            commit() {},
-            release(rt: TransitionMode = t) {}
+            commit() {
+                // todo: should I add a quick guard here to prevent running it
+                // if it's already at the top of the stack (prevent double commit on top)
+                layer.pose = { ...top(), ...to };
+                stack.push(layer);
+                return retarget(t);
+            },
+            release(rt: TransitionMode = t) {
+                const i = stack.indexOf(layer);
+                if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
+                stack.splice(i, 1);
+                return i === stack.length // was at top?
+                    ? retarget(rt)
+                    : Promise.resolve<Outcome>('unchanged');
+            }
         }
     }
 
 
     DGDEV.attach(goto, 'tgoto');
+    DGDEV.attach(override, 'tover');
 
     // -- ticker --
     const step = (dt: number) => {
@@ -81,7 +95,7 @@ export default function createCamera(
 
 
     return {
-        goto,
+        goto, override,
 
         Camera: () => {
             // Hoist if/when needed.
