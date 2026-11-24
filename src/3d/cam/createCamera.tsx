@@ -3,7 +3,7 @@ import { XYZ } from "@/shared/types/3d.types";
 import { Motor, onCleanup, onMount, RenderTask, type Element3D, type PerspectiveCamera, type Scene } from "lume";
 import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
-import { Pose } from "./cam.types";
+import { Layer, Outcome, Pose, TransitionMode } from "./cam.types";
 
 // Corresponds to the speed/acceleration curve for the damp function
 const LAMBDA = 4;
@@ -19,41 +19,64 @@ function settled(current: Pose, target: Pose) {
         && Math.abs(current.pitch - target.pitch) < ANG_EPS
 }
 
-type Outcome = 'arrived' | 'diverted' | 'unchanged';
-
-/** that fucking camera that I hate. */
-export default function createCamera() {
+export default function createCamera(
+    initial: Pose = {
+        pos: [0, 0, 0],
+        yaw: 0,
+        pitch: 0
+    }
+) {
     // hoisted for passing to other hooks...
     let scene: Scene;
 
     // -- state --
-    const [pose, setPose] = createSignal<Pose>({
-        pos: [0, 0, 0],
-        yaw: 0,
-        pitch: 0
-    });
-    let target: Pose = pose();
+    const [cur, setCur] = createSignal<Pose>(initial);
+    let target: Pose = initial;
 
-    let pending: ((o: Outcome) => void) | null = null;
+    let trans: TransitionMode = 'ease';
+
+    const stack: Layer[] = [{ pose: initial, trans }];
+    const top = () => stack[stack.length - 1].pose;
+
+    let inflight: ((o: Outcome) => void) | null = null;
+
+    // -- logic & helpers
+
+    // "head for whatever is on top now"
+    const retarget = (t: TransitionMode) => {
+        inflight?.('diverted');
+        target = top();
+        trans = t;
+        return new Promise<Outcome>(r => (inflight = r));
+    }
 
     // -- api --
-    const goto = (u: Partial<Pose>) => {
-        target = { ...target, ...u };
-        pending?.('diverted');
-        return new Promise<Outcome>(r => { pending = r });
+    const goto = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
+        stack[0].pose = { ...stack[0].pose, ...to };
+        return stack.length > 1 ? Promise.resolve<Outcome>('unchanged') : retarget(t);
     }
+
+    const override = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
+        const layer: Layer = { pose: null!, trans: t };
+        return {
+            commit() {},
+            release(rt: TransitionMode = t) {}
+        }
+    }
+
+
     DGDEV.attach(goto, 'tgoto');
 
-    // -- logic, ticker --
+    // -- ticker --
     const step = (dt: number) => {
-        const current = pose();
+        const current = cur();
         let next: Pose = {
             pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
             yaw: damp(current.yaw, target.yaw, LAMBDA, dt), // todo replace with shortest path + "winding" handle
             pitch: damp(current.pitch, target.pitch, LAMBDA, dt) // todo replace with shortest path + "winding" handle
         };
-        if (pending && settled(next, target)) { next = target; pending('arrived'); pending = null; }
-        setPose(next);
+        if (inflight && settled(next, target)) { next = target; inflight('arrived'); inflight = null; }
+        setCur(next);
     };
 
 
@@ -76,17 +99,17 @@ export default function createCamera() {
             onCleanup(() => Motor.removeRenderTask(task));
 
             return (
-                <lume-element3d 
-                    id="cam_body" 
-                    align-point="0.5 0.5" 
-                    ref={bodyRef} 
-                    rotation={`0 ${pose().yaw} 0`} 
-                    position={pose().pos.join(' ')}
+                <lume-element3d
+                    id="cam_body"
+                    align-point="0.5 0.5"
+                    ref={bodyRef}
+                    rotation={`0 ${cur().yaw} 0`}
+                    position={cur().pos.join(' ')}
                 >
                     <lume-perspective-camera id="
                         cam_head" active ref={camRef}
                         far="9999" // for dev purposes, see everything. Remove for prod.
-                        rotation={`${pose().pitch}`}
+                        rotation={`${cur().pitch}`}
                     />
                 </lume-element3d>
             )

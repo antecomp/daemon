@@ -5,3 +5,12 @@ export type Pose = {
     yaw: number;
     pitch: number;
 }
+
+export type TransitionMode = 'ease' | 'cut';
+
+export type Layer = {
+    pose: Pose,
+    trans: TransitionMode
+}
+
+export type Outcome = 'arrived' | 'diverted' | 'unchanged';
