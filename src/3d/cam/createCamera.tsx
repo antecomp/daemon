@@ -60,8 +60,7 @@ export default function createCamera(
         const layer: Layer = { pose: null!, trans: t };
         return {
             commit() {
-                // todo: should I add a quick guard here to prevent running it
-                // if it's already at the top of the stack (prevent double commit on top)
+                if (stack[stack.length - 1] === layer) return Promise.resolve<Outcome>('unchanged');
                 layer.pose = { ...top(), ...to };
                 stack.push(layer);
                 return retarget(t);
