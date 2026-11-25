@@ -82,8 +82,8 @@ export default function createCamera(
         const layer: Layer = { pose: null!, trans: t };
         return {
             commit() {
-                if (stack[stack.length - 1] === layer)
-                    return Promise.resolve<Outcome>('unchanged');
+                if (stack.includes(layer))
+                    throw new Error('Override is already committed.');
 
                 const com = { ...top(), ...to };
                 layer.pose = {
