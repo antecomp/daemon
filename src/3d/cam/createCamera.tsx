@@ -62,34 +62,45 @@ export default function createCamera(
         const base = stack[0].pose;
         stack[0].pose = {
             ...base, ...to,
+            // Based on target, rather than current position, so updates stack cleanly.
             yaw: to.yaw === undefined
                 ? base.yaw
                 : resolveYaw(to.yaw, base.yaw, w)
         }
-        return stack.length > 1 
-            ? Promise.resolve<Outcome>('unchanged') 
+        return stack.length > 1
+            ? Promise.resolve<Outcome>('unchanged')
             : retarget(t);
     }
 
-    const override = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
+    const override = (to: Partial<Pose>, t: TransitionMode = 'ease', w: Winding = 'short') => {
         const layer: Layer = { pose: null!, trans: t };
         return {
             commit() {
-                if (stack[stack.length - 1] === layer) 
+                if (stack[stack.length - 1] === layer)
                     return Promise.resolve<Outcome>('unchanged');
 
-                layer.pose = { ...top(), ...to };
+                const com = { ...top(), ...to };
+                layer.pose = {
+                    ...com,
+                    // based on current position, for clean diversions
+                    yaw: resolveYaw(com.yaw, cur().yaw, w)
+                }
                 stack.push(layer);
                 return retarget(t);
             },
-            release(rt: TransitionMode = t) {
+            release(rt: TransitionMode = t, rw: Winding = 'short') {
                 const i = stack.indexOf(layer);
                 if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
                 stack.splice(i, 1);
 
-                return i === stack.length // was at top?
-                    ? retarget(rt)
-                    : Promise.resolve<Outcome>('unchanged');
+                if(i !== stack.length) return Promise.resolve<Outcome>('unchanged');
+
+                // code so rotten it's hosting a whole ecosystem of edge cases.
+                // write wind into layer below.
+                const below = top();
+                below.yaw = resolveYaw(below.yaw, cur().yaw, rw);
+
+                return retarget(rt);
             }
         }
     }
