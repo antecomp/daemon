@@ -1,0 +1,1 @@
+export default (angle: number, ref: number) => ref + ((((angle - ref + 180) % 360) + 360) % 360) - 180;

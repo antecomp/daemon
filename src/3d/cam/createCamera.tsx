@@ -3,7 +3,8 @@ import { XYZ } from "@/shared/types/3d.types";
 import { Motor, onCleanup, onMount, RenderTask, type Element3D, type PerspectiveCamera, type Scene } from "lume";
 import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
-import { Layer, Outcome, Pose, TransitionMode } from "./cam.types";
+import { Layer, Outcome, Pose, TransitionMode, Winding } from "./cam.types";
+import nearestAngle from "@/shared/utils/nearestAngle";
 
 // Corresponds to the speed/acceleration curve for the damp function
 const LAMBDA = 4;
@@ -19,12 +20,19 @@ function settled(current: Pose, target: Pose) {
         && Math.abs(current.pitch - target.pitch) < ANG_EPS
 }
 
+export const resolveYaw = (angle: number, ref: number, w: Winding = 'short') => {
+    const near = nearestAngle(angle, ref);
+    return w === 'short'
+        ? near
+        : near >= ref ? near - 360 : near + 360;
+};
+
 export default function createCamera(
     init: Partial<Pose> = {}
 ) {
 
     const initial: Pose = {
-        ...{pos: [0,0,0], yaw: 0, pitch: 0},
+        ...{ pos: [0, 0, 0], yaw: 0, pitch: 0 },
         ...init
     }
 
@@ -42,8 +50,6 @@ export default function createCamera(
 
     let inflight: ((o: Outcome) => void) | null = null;
 
-    // -- logic & helpers
-
     // "head for whatever is on top now"
     const retarget = (t: TransitionMode) => {
         inflight?.('diverted');
@@ -52,17 +58,26 @@ export default function createCamera(
         return new Promise<Outcome>(r => (inflight = r));
     }
 
-    // -- api --
-    const goto = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
-        stack[0].pose = { ...stack[0].pose, ...to };
-        return stack.length > 1 ? Promise.resolve<Outcome>('unchanged') : retarget(t);
+    const goto = (to: Partial<Pose>, t: TransitionMode = 'ease', w: Winding = 'short') => {
+        const base = stack[0].pose;
+        stack[0].pose = {
+            ...base, ...to,
+            yaw: to.yaw === undefined
+                ? base.yaw
+                : resolveYaw(to.yaw, base.yaw, w)
+        }
+        return stack.length > 1 
+            ? Promise.resolve<Outcome>('unchanged') 
+            : retarget(t);
     }
 
     const override = (to: Partial<Pose>, t: TransitionMode = 'ease') => {
         const layer: Layer = { pose: null!, trans: t };
         return {
             commit() {
-                if (stack[stack.length - 1] === layer) return Promise.resolve<Outcome>('unchanged');
+                if (stack[stack.length - 1] === layer) 
+                    return Promise.resolve<Outcome>('unchanged');
+
                 layer.pose = { ...top(), ...to };
                 stack.push(layer);
                 return retarget(t);
@@ -71,6 +86,7 @@ export default function createCamera(
                 const i = stack.indexOf(layer);
                 if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
                 stack.splice(i, 1);
+
                 return i === stack.length // was at top?
                     ? retarget(rt)
                     : Promise.resolve<Outcome>('unchanged');
@@ -91,12 +107,12 @@ export default function createCamera(
         } else {
             next = {
                 pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
-                yaw: damp(current.yaw, target.yaw, LAMBDA, dt), // todo replace with shortest path + "winding" handle
-                pitch: damp(current.pitch, target.pitch, LAMBDA, dt) // todo replace with shortest path + "winding" handle
+                yaw: damp(current.yaw, target.yaw, LAMBDA, dt),
+                pitch: damp(current.pitch, target.pitch, LAMBDA, dt)
             };
         }
 
-        if(inflight && settled(next, target)) {
+        if (inflight && settled(next, target)) {
             setCur(target);
             inflight('arrived');
             inflight = null;

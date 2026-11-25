@@ -8,6 +8,8 @@ export type Pose = {
 
 export type TransitionMode = 'ease' | 'cut';
 
+export type Winding = 'short' | 'long';
+
 export type Layer = {
     pose: Pose,
     trans: TransitionMode
