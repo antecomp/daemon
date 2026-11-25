@@ -5,6 +5,8 @@ import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
 import { Layer, Outcome, Pose, TransitionMode, Winding } from "./cam.types";
 import nearestAngle from "@/shared/utils/nearestAngle";
+import { Vector2 } from "three";
+import trackMouse from "./trackMouse";
 
 // Corresponds to the speed/acceleration curve for the damp function
 const LAMBDA = 4;
@@ -36,8 +38,7 @@ export default function createCamera(
         ...init
     }
 
-    // hoisted for passing to other hooks...
-    let scene: Scene;
+    const mouse = new Vector2();
 
     // -- state --
     const [cur, setCur] = createSignal<Pose>(initial);
@@ -68,8 +69,8 @@ export default function createCamera(
         stack[0].pose = {
             ...base, ...to,
             yaw: resolveYaw(
-                to.yaw ?? base.yaw, 
-                referenceYaw, 
+                to.yaw ?? base.yaw,
+                referenceYaw,
                 to.yaw === undefined ? 'short' : w
             )
         }
@@ -101,7 +102,7 @@ export default function createCamera(
                 if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
                 stack.splice(i, 1);
 
-                if(i !== stack.length) return Promise.resolve<Outcome>('unchanged');
+                if (i !== stack.length) return Promise.resolve<Outcome>('unchanged');
 
                 // pass winding to retarget so it can settle path without modifying the layer.
                 return retarget(rt, rw);
@@ -144,18 +145,22 @@ export default function createCamera(
             // Hoist if/when needed.
             let camRef!: PerspectiveCamera;
             let bodyRef!: Element3D;
+            let scene: Scene;
 
             let task: RenderTask;
+            let untrackMouse: VoidFunction;
 
             onMount(() => {
                 scene = camRef.scene!;
-
                 task = Motor.addRenderTask((_t, dtMs) => { step(dtMs / 1000) });
+                untrackMouse = trackMouse(scene, mouse);
+
             });
 
             onCleanup(() => {
                 Motor.removeRenderTask(task);
                 inflight?.('killed');
+                untrackMouse?.();
             });
 
             return (
