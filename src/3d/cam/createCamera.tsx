@@ -51,21 +51,27 @@ export default function createCamera(
     let inflight: ((o: Outcome) => void) | null = null;
 
     // "head for whatever is on top now"
-    const retarget = (t: TransitionMode) => {
+    const retarget = (t: TransitionMode, w?: Winding) => {
         inflight?.('diverted');
-        target = top();
+        const pose = top();
+        target = w === undefined
+            ? pose // winding prepared by caller
+            : { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) };
         trans = t;
         return new Promise<Outcome>(r => (inflight = r));
     }
 
     const goto = (to: Partial<Pose>, t: TransitionMode = 'ease', w: Winding = 'short') => {
         const base = stack[0].pose;
+        // edge: have correct reference while releasing the last override.
+        const referenceYaw = stack.length === 1 ? target.yaw : base.yaw;
         stack[0].pose = {
             ...base, ...to,
-            // Based on target, rather than current position, so updates stack cleanly.
-            yaw: to.yaw === undefined
-                ? base.yaw
-                : resolveYaw(to.yaw, base.yaw, w)
+            yaw: resolveYaw(
+                to.yaw ?? base.yaw, 
+                referenceYaw, 
+                to.yaw === undefined ? 'short' : w
+            )
         }
         return stack.length > 1
             ? Promise.resolve<Outcome>('unchanged')
@@ -95,12 +101,8 @@ export default function createCamera(
 
                 if(i !== stack.length) return Promise.resolve<Outcome>('unchanged');
 
-                // code so rotten it's hosting a whole ecosystem of edge cases.
-                // write wind into layer below.
-                const below = top();
-                below.yaw = resolveYaw(below.yaw, cur().yaw, rw);
-
-                return retarget(rt);
+                // pass winding to retarget so it can settle path without modifying the layer.
+                return retarget(rt, rw);
             }
         }
     }
