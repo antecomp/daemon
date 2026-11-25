@@ -3,18 +3,20 @@ import { XYZ } from "@/shared/types/3d.types";
 import { Motor, onCleanup, onMount, RenderTask, type Element3D, type PerspectiveCamera, type Scene } from "lume";
 import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
-import { Layer, Outcome, Pose, TransitionMode, Winding } from "./cam.types";
+import { Layer, Outcome, Pose, Sway, TransitionMode, Winding } from "./cam.types";
 import nearestAngle from "@/shared/utils/nearestAngle";
 import { Vector2 } from "three";
 import trackMouse from "./trackMouse";
+import { sceneLock } from "@/app/shell/locks/UILockManager";
 
 // Corresponds to the speed/acceleration curve for the damp function
 const LAMBDA = 4;
+const SWAY_LAMBDA = 4;
 
 const POS_EPS = 0.05;
 const ANG_EPS = 0.1;
 
-function settled(current: Pose, target: Pose) {
+function settled(current: Omit<Pose, 'sway'>, target: Omit<Pose, 'sway'>) {
     return Math.hypot(
         ...current.pos.map((ci, i) => ci - target.pos[i])
     ) < POS_EPS
@@ -32,24 +34,20 @@ export const resolveYaw = (angle: number, ref: number, w: Winding = 'short') => 
 export default function createCamera(
     init: Partial<Pose> = {}
 ) {
-
     const initial: Pose = {
-        ...{ pos: [0, 0, 0], yaw: 0, pitch: 0 },
+        ...{ pos: [0, 0, 0], yaw: 0, pitch: 0, sway: false },
         ...init
     }
-
-    const mouse = new Vector2();
-
-    // -- state --
+    
     const [cur, setCur] = createSignal<Pose>(initial);
     let target: Pose = initial;
-
     let trans: TransitionMode = 'ease';
-
     const stack: Layer[] = [{ pose: initial, trans }];
     const top = () => stack[stack.length - 1].pose;
-
     let inflight: ((o: Outcome) => void) | null = null;
+    const mouse = new Vector2();
+    const [sway, setSway] = createSignal<Sway>({yaw: 0, pitch: 0});
+
 
     // "head for whatever is on top now"
     const retarget = (t: TransitionMode, w?: Winding) => {
@@ -87,7 +85,9 @@ export default function createCamera(
                     throw new Error('Override is already committed.');
 
                 layer.trans = t;
-                const com = { ...top(), ...to };
+                // no sway by default, irregardless of config below...
+                // also fuck off typescript.
+                const com = { ...top(), sway: false as false, ...to };
                 layer.pose = {
                     ...com,
                     // based on current position, for clean diversions
@@ -114,7 +114,7 @@ export default function createCamera(
     DGDEV.attach(goto, 'tgoto');
     DGDEV.attach(override, 'tover');
 
-    // -- ticker --
+    // -- tickers --
     const step = (dt: number) => {
         let next: Pose;
         const current = cur();
@@ -124,7 +124,8 @@ export default function createCamera(
             next = {
                 pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
                 yaw: damp(current.yaw, target.yaw, LAMBDA, dt),
-                pitch: damp(current.pitch, target.pitch, LAMBDA, dt)
+                pitch: damp(current.pitch, target.pitch, LAMBDA, dt),
+                sway: target.sway
             };
         }
 
@@ -135,8 +136,20 @@ export default function createCamera(
         } else {
             setCur(next);
         }
+
+        swayStep(dt);
     };
 
+    const swayStep = (dt: number) => {
+        const ts = target.sway;
+        const live = ts && !sceneLock.isLocked();
+        const goalYaw = live ? -mouse.x * ts.maxYaw : 0;
+        const goalPitch = live ? -mouse.y * ts.maxPitch : 0;
+        setSway(prev => ({
+            yaw: damp(prev.yaw, goalYaw, SWAY_LAMBDA, dt),
+            pitch: damp(prev.pitch, goalPitch, SWAY_LAMBDA, dt)
+        }));
+    }
 
     return {
         goto, override,
@@ -168,13 +181,13 @@ export default function createCamera(
                     id="cam_body"
                     align-point="0.5 0.5"
                     ref={bodyRef}
-                    rotation={`0 ${cur().yaw} 0`}
+                    rotation={`0 ${cur().yaw + sway().yaw} 0`}
                     position={cur().pos.join(' ')}
                 >
                     <lume-perspective-camera id="
                         cam_head" active ref={camRef}
                         far="9999" // for dev purposes, see everything. Remove for prod.
-                        rotation={`${cur().pitch}`}
+                        rotation={`${cur().pitch + sway().pitch}`}
                     />
                 </lume-element3d>
             )

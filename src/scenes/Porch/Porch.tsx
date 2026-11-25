@@ -72,7 +72,7 @@ export default function Porch() {
         }
     )
 
-    const c = createCamera({pos: [-100, -300, 100]});
+    const c = createCamera({pos: [-100, -300, 100], sway: {maxPitch: 30, maxYaw: 45}});
 
     return (
         <lume-scene
