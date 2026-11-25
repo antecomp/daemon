@@ -78,13 +78,14 @@ export default function createCamera(
             : retarget(t);
     }
 
-    const override = (to: Partial<Pose>, t: TransitionMode = 'ease', w: Winding = 'short') => {
-        const layer: Layer = { pose: null!, trans: t };
+    const override = (to: Partial<Pose>) => {
+        const layer: Layer = { pose: null!, trans: 'ease' };
         return {
-            commit() {
+            commit(t: TransitionMode = 'ease', w: Winding = 'short') {
                 if (stack.includes(layer))
                     throw new Error('Override is already committed.');
 
+                layer.trans = t;
                 const com = { ...top(), ...to };
                 layer.pose = {
                     ...com,
@@ -94,7 +95,7 @@ export default function createCamera(
                 stack.push(layer);
                 return retarget(t);
             },
-            release(rt: TransitionMode = t, rw: Winding = 'short') {
+            release(rt: TransitionMode = layer.trans, rw: Winding = 'short') {
                 const i = stack.indexOf(layer);
                 if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
                 stack.splice(i, 1);
