@@ -15,4 +15,4 @@ export type Layer = {
     trans: TransitionMode
 }
 
-export type Outcome = 'arrived' | 'diverted' | 'unchanged';
+export type Outcome = 'arrived' | 'diverted' | 'unchanged' | 'killed';

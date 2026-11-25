@@ -151,7 +151,10 @@ export default function createCamera(
                 task = Motor.addRenderTask((_t, dtMs) => { step(dtMs / 1000) });
             });
 
-            onCleanup(() => Motor.removeRenderTask(task));
+            onCleanup(() => {
+                Motor.removeRenderTask(task);
+                inflight?.('killed');
+            });
 
             return (
                 <lume-element3d
