@@ -98,12 +98,20 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
+                        // const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
 
-                        const ovr = c.override({ pos: [-183, -322, 34], yaw: -84, pitch: 0 });
+                        const ovr = c.override({ 
+                            pos: [-183, -322, 34], 
+                            yaw: -84, 
+                            pitch: 0, 
+                            sway: {maxYaw: 10, maxPitch: 10}
+                            // sway: false
+                        });
                         ovr.commit('cut');
                         startDialogue(viya_dialogue,
                             {
+                                blockBehind: false,
+
                                 yieldHandlers: {
                                     battle: createBattleYieldHandler(OPPONENT_MIMICRY)
                                 },
@@ -116,7 +124,7 @@ export default function Porch() {
                             }
                         ).finally(() => {
                             ovr.release();
-                            MusicManager.removeTrack(dialogueMusic);
+                            // MusicManager.removeTrack(dialogueMusic);
                         })
                     },
                     //() => addLogMessage(`She is smoking a cigarette.`)

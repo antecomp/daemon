@@ -149,7 +149,7 @@ export default function createCamera(
     const swayStep = (dt: number, snap: boolean) => {
         const ts = target.sway;
         if (ts === 'hold') return;
-        if (ts !== false && sceneLock.isLocked()) return;
+        // if (ts !== false && sceneLock.isLocked()) return;
 
         const goalYaw = ts ? -mouse.x * ts.maxYaw : 0;
         const goalPitch = ts ? -mouse.y * ts.maxPitch : 0;
