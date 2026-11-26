@@ -23,6 +23,7 @@ import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { startDialogue } from "@/core/dialogue/dialogueSession";
 import pickRandom from "@/shared/utils/pickRandom";
 import createCamera from "@/3d/cam/createCamera";
+import createDialogueWithCamOverride from "@/3d/cam/dialogueCam";
 
 export default function Porch() {
     let sceneRef!: Scene;
@@ -46,6 +47,22 @@ export default function Porch() {
     }, 30000);
 
     const c = createCamera({ pos: [-230, -317, 128], sway: { maxPitch: 30, maxYaw: 45 }, yaw: -72 });
+    const viyaDialogue = createDialogueWithCamOverride(
+        c,
+        viya_dialogue,
+        { pos: [-183, -322, 34], yaw: -84, pitch: 0 },
+        {
+            blockBehind: false,
+            yieldHandlers: {
+                battle: createBattleYieldHandler(OPPONENT_MIMICRY)
+            },
+            signalHandlers: {
+                get_question_prompt(_, runtime) {
+                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
+                }
+            }
+        }
+    );
 
     return (
         <lume-scene
@@ -99,33 +116,7 @@ export default function Porch() {
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
                         const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
-
-                        const ovr = c.override({ 
-                            pos: [-183, -322, 34], 
-                            yaw: -84, 
-                            pitch: 0, 
-                            // sway: {maxYaw: 10, maxPitch: 10}
-                            // sway: false
-                        });
-                        ovr.commit();
-                        startDialogue(viya_dialogue,
-                            {
-                                blockBehind: false,
-
-                                yieldHandlers: {
-                                    battle: createBattleYieldHandler(OPPONENT_MIMICRY)
-                                },
-
-                                signalHandlers: {
-                                    get_question_prompt(_, runtime) {
-                                        runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
-                                    }
-                                }
-                            }
-                        ).finally(() => {
-                            ovr.release();
-                            MusicManager.removeTrack(dialogueMusic);
-                        })
+                        viyaDialogue.start().finally(() => MusicManager.removeTrack(dialogueMusic));
                     },
                     //() => addLogMessage(`She is smoking a cigarette.`)
                     () => setViyaTex(pallasTexture)
