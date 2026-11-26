@@ -104,7 +104,7 @@ export default function TheGem() {
                     scale={100}
                     interactions={[
                         () => addLogMessage("The man is too far to reach. Besides, I should probably talk to him instead."),
-                        () => manDialogue.start(),
+                        () => manDialogue.start('ease_then'),
                         () => addLogMessage("A man in a suit. He has something I need.") // simple message for "observe" interaction
                     ]}
                 />
