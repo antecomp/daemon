@@ -12,19 +12,22 @@ export default function createDialogueWithCamOverride(
     const ovrMgr = cam.override(ovr);
 
     return {
-        // todo: consider an "ease_then" the awaits the ease before starting
-        start: async (mode: 'fade' | 'cut' | 'ease' = 'ease') => {
+        start: async (mode: 'fade' | 'cut' | 'ease' | 'ease_then' = 'ease') => {
             if (dialogueOngoing()) return; // dialogue already active. Prevent double commit.
+            const transition = mode === 'cut' ? 'cut' : 'ease';
             if (mode == 'fade')
                 await SceneFadeManager.fadeTransition(() => ovrMgr.commit('cut'));
-            else ovrMgr.commit(mode);
+            else {
+                const arrival = ovrMgr.commit(transition);
+                if (mode === 'ease_then') await arrival;
+            }
 
             try {
                 return await startDialogue(program, dialogueOptions);
             } finally {
                 if (mode == 'fade')
                     await SceneFadeManager.fadeTransition(() => ovrMgr.release('cut'));
-                else ovrMgr.release(mode)
+                else ovrMgr.release(transition)
             }
         },
         ovrMgr
