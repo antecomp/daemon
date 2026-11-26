@@ -50,6 +50,9 @@ export default function createCamera(
     const mouse = new Vector2();
     const [sway, setSway] = createSignal<Sway>({yaw: 0, pitch: 0});
 
+    // Overrides default to sway: false, so limits on an override are an explicit opt-in.
+    const allowSwayInput = () => !sceneLock.isLocked()
+        || (stack.length > 1 && typeof target.sway === 'object');
 
     // "head for whatever is on top now"
     const retarget = (t: TransitionMode, w?: Winding) => {
@@ -149,7 +152,9 @@ export default function createCamera(
     const swayStep = (dt: number, snap: boolean) => {
         const ts = target.sway;
         if (ts === 'hold') return;
-        // if (ts !== false && sceneLock.isLocked()) return;
+        // if sway is set, but 
+        // we're on base with a scene lock, hold.
+        if (ts && !allowSwayInput()) return;
 
         const goalYaw = ts ? -mouse.x * ts.maxYaw : 0;
         const goalPitch = ts ? -mouse.y * ts.maxPitch : 0;
@@ -185,7 +190,7 @@ export default function createCamera(
                     hoverRaycast();
                 });
                 scene.addEventListener('click', clickRaycast);
-                untrackMouse = trackMouse(scene, mouse);
+                untrackMouse = trackMouse(scene, mouse, allowSwayInput);
                 onCleanup(() => {
                     cleanup();
                     scene.removeEventListener('click', clickRaycast)

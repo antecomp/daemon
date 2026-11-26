@@ -107,7 +107,7 @@ export default function Porch() {
                             sway: {maxYaw: 10, maxPitch: 10}
                             // sway: false
                         });
-                        ovr.commit('cut');
+                        ovr.commit();
                         startDialogue(viya_dialogue,
                             {
                                 blockBehind: false,

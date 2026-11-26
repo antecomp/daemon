@@ -1,10 +1,11 @@
 import { Vector2 } from "three";
 
-/** Writes the pointer position over `el` into `out` as NDC (-1..1, y up). 
+/** Writes enabled pointer movement over `el` into `out` as NDC (-1..1, y up).
  * @returns a disposer. 
  */
-export default function trackMouse(el: HTMLElement, out: Vector2) {
+export default function trackMouse(el: HTMLElement, out: Vector2, enabled: () => boolean = () => true) {
     const onMove = (e: MouseEvent) => {
+        if (!enabled()) return;
         const r = el.getBoundingClientRect();
         out.set(
             ((e.clientX - r.left) / r.width) * 2 - 1,
