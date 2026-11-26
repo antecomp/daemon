@@ -8,6 +8,7 @@ import nearestAngle from "@/shared/utils/nearestAngle";
 import { Vector2 } from "three";
 import trackMouse from "./trackMouse";
 import { sceneLock } from "@/app/shell/locks/UILockManager";
+import createRaycaster from "./createRaycaster";
 
 // Corresponds to the speed/acceleration curve for the damp function
 const LAMBDA = 4;
@@ -165,9 +166,22 @@ export default function createCamera(
 
             onMount(() => {
                 scene = camRef.scene!;
-                task = Motor.addRenderTask((_t, dtMs) => { step(dtMs / 1000) });
+                const {hoverRaycast, cleanup, clickRaycast} = createRaycaster(camRef, scene, mouse, Infinity);
+                task = Motor.addRenderTask((_t, dtMs) => { 
+                    step(dtMs / 1000);
+                    // TODO: this feels messy and unideal. Change?
+                    if(cur().disablePointer) {
+                        cleanup();
+                    } else {
+                        hoverRaycast();
+                    }
+                });
+                scene.addEventListener('click', clickRaycast);
                 untrackMouse = trackMouse(scene, mouse);
-
+                onCleanup(() => {
+                    cleanup();
+                    scene.removeEventListener('click', clickRaycast)
+                });
             });
 
             onCleanup(() => {

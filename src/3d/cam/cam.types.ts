@@ -7,7 +7,9 @@ export type Pose = {
     pos: XYZ;
     yaw: number;
     pitch: number;
+    // Todo: Move these to layer?
     sway: SwayLimits | false;
+    disablePointer?: boolean;
 }
 
 export type TransitionMode = 'ease' | 'cut';

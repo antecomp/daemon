@@ -72,7 +72,7 @@ export default function Porch() {
         }
     )
 
-    const c = createCamera({pos: [-100, -300, 100], sway: {maxPitch: 30, maxYaw: 45}});
+    const c = createCamera({pos: [-230, -317, 128], sway: {maxPitch: 30, maxYaw: 45}, yaw: -72});
 
     return (
         <lume-scene
@@ -144,6 +144,8 @@ export default function Porch() {
                     texture={friendTexture}
                     scale={50}
                     position="-70 -266 200"
+                    onHover={(uv, mouse) => console.log('rabbit hover: ' + uv.toArray() + mouse.toArray())}
+                    onHoverLeave={() => console.log('rabbit hover end')}
                     interactions={[
                         //() => addLogMessage(`Best not to pet the rabbit. He is in a precarious spot.`),
                         () => addLogMessage('You pet the rabbit.'),
