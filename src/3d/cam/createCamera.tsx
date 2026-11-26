@@ -43,6 +43,7 @@ export default function createCamera(
     const [cur, setCur] = createSignal<Pose>(initial);
     let target: Pose = initial;
     let trans: TransitionMode = 'ease';
+    let snapSway = false;
     const stack: Layer[] = [{ pose: initial, trans }];
     const top = () => stack[stack.length - 1].pose;
     let inflight: ((o: Outcome) => void) | null = null;
@@ -58,6 +59,7 @@ export default function createCamera(
             ? pose // winding prepared by caller
             : { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) };
         trans = t;
+        snapSway = t === 'cut';
         return new Promise<Outcome>(r => (inflight = r));
     }
 
@@ -86,9 +88,8 @@ export default function createCamera(
                     throw new Error('Override is already committed.');
 
                 layer.trans = t;
-                // no sway by default, irregardless of config below...
-                // also fuck off typescript.
-                const com = { ...top(), sway: false as false, ...to };
+                // Overrides center sway by default; pass 'hold' to freeze its current offset.
+                const com: Pose = { ...top(), sway: false, ...to };
                 layer.pose = {
                     ...com,
                     // based on current position, for clean diversions
@@ -117,6 +118,10 @@ export default function createCamera(
 
     // -- tickers --
     const step = (dt: number) => {
+        // snap for one frame only, 
+        // so sway resumes as normal after.
+        const snap = snapSway;
+        snapSway = false;
         let next: Pose;
         const current = cur();
         if (trans === 'cut') {
@@ -138,14 +143,21 @@ export default function createCamera(
             setCur(next);
         }
 
-        swayStep(dt);
+        swayStep(dt, snap);
     };
 
-    const swayStep = (dt: number) => {
+    const swayStep = (dt: number, snap: boolean) => {
         const ts = target.sway;
-        const live = ts && !sceneLock.isLocked();
-        const goalYaw = live ? -mouse.x * ts.maxYaw : 0;
-        const goalPitch = live ? -mouse.y * ts.maxPitch : 0;
+        if (ts === 'hold') return;
+        if (ts !== false && sceneLock.isLocked()) return;
+
+        const goalYaw = ts ? -mouse.x * ts.maxYaw : 0;
+        const goalPitch = ts ? -mouse.y * ts.maxPitch : 0;
+        if (snap) {
+            setSway({ yaw: goalYaw, pitch: goalPitch });
+            return;
+        }
+
         setSway(prev => ({
             yaw: damp(prev.yaw, goalYaw, SWAY_LAMBDA, dt),
             pitch: damp(prev.pitch, goalPitch, SWAY_LAMBDA, dt)

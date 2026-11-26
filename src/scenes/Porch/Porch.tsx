@@ -40,10 +40,10 @@ export default function Porch() {
         }
     });
 
-    const test = createMusicTrack({ src: "PWL/erokia-786215.wav" })
-    setTimeout(() => { // Will crossfade between tracks
-        test.src = "PWL/erokia-496757.wav"
-    }, 30000);
+    // const test = createMusicTrack({ src: "PWL/erokia-786215.wav" })
+    // setTimeout(() => { // Will crossfade between tracks
+    //     test.src = "PWL/erokia-496757.wav"
+    // }, 30000);
 
     const c = createCamera({ pos: [-230, -317, 128], sway: { maxPitch: 30, maxYaw: 45 }, yaw: -72 });
 
