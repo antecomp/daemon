@@ -4,9 +4,6 @@ import { addLogMessage } from "@/app/shell/hud/EventLog";
 import applyShadows from "@/3d/pipeline/applyShadows";
 import Billboard from "@/3d/components/Billboard";
 import { useDGShader } from '@/3d/pipeline/dgRender';
-import PlayerCam from '@/3d/camera/PlayerCam';
-import createCameraController from '@/3d/camera/createCameraController';
-import { createDialogueWithCamOvr } from '@/3d/camera/dialogueCamera';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
 import { MusicManager } from '@/core/audio/musicManager';
 import red from '@/assets/placeholders/red.png';
@@ -21,7 +18,6 @@ import mapmtl from './models/map.mtl';
 import viya_dialogue from './dialogues/viya.bny';
 import rabbit_dialogue from './dialogues/porch_rabbit.bny';
 
-import { DGDEV } from "@/devtools/dev";
 import { createBattleYieldHandler } from "@/features/battle/createBattleYieldHandler";
 import { OPPONENT_MIMICRY } from "@/data/battles/mimic";
 import { startDialogue } from "@/core/dialogue/dialogueSession";
@@ -36,12 +32,6 @@ export default function Porch() {
 
     const [viyaTex, setViyaTex] = createSignal(viyaTexture);
 
-    const { cameraControlSignals, cameraController } = createCameraController(
-        [-230, -317, 128],
-        { yaw: -72, pitch: 0 },
-        { maxYaw: 45, maxPitch: 30 }
-    );
-
     let mapRef: ObjModel | undefined;
 
     onMount(() => {
@@ -55,24 +45,7 @@ export default function Porch() {
         test.src = "PWL/erokia-496757.wav"
     }, 30000);
 
-    const viyaDialogue = createDialogueWithCamOvr(
-        cameraController,
-        { pos: [-183, -322, 34], ori: { yaw: -84, pitch: 0 }, anim: true },
-        viya_dialogue,
-        {
-            yieldHandlers: {
-                battle: createBattleYieldHandler(OPPONENT_MIMICRY)
-            },
-
-            signalHandlers: {
-                get_question_prompt(_, runtime) {
-                    runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
-                }
-            }
-        }
-    )
-
-    const c = createCamera({pos: [-230, -317, 128], sway: {maxPitch: 30, maxYaw: 45}, yaw: -72});
+    const c = createCamera({ pos: [-230, -317, 128], sway: { maxPitch: 30, maxYaw: 45 }, yaw: -72 });
 
     return (
         <lume-scene
@@ -84,10 +57,7 @@ export default function Porch() {
             shadowmap-type="pcf"
         >
 
-            {/* <PlayerCam
-                {...cameraControlSignals()}
-            /> */}
-            <c.Camera/>
+            <c.Camera />
 
             <lume-ambient-light intensity={4} />
 
@@ -129,9 +99,24 @@ export default function Porch() {
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
                         const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
-                        viyaDialogue.start().finally(() => {
-                            DGDEV.log("Viya dialogue done!");
-                            MusicManager.removeTrack(dialogueMusic)
+
+                        const ovr = c.override({ pos: [-183, -322, 34], yaw: -84, pitch: 0 });
+                        ovr.commit('cut');
+                        startDialogue(viya_dialogue,
+                            {
+                                yieldHandlers: {
+                                    battle: createBattleYieldHandler(OPPONENT_MIMICRY)
+                                },
+
+                                signalHandlers: {
+                                    get_question_prompt(_, runtime) {
+                                        runtime.memory.set('question_prompt', pickRandom(['Go for it.', 'I\'ll try my best', 'Alright.']))
+                                    }
+                                }
+                            }
+                        ).finally(() => {
+                            ovr.release();
+                            MusicManager.removeTrack(dialogueMusic);
                         })
                     },
                     //() => addLogMessage(`She is smoking a cigarette.`)

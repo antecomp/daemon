@@ -7,6 +7,7 @@ export default function createRaycaster(
     cam: PerspectiveCamera, 
     scene: Scene, 
     mouse: Vector2, 
+    enabled: () => boolean,
     distance: number = Infinity
 ) {
     const raycaster = new Raycaster();
@@ -16,6 +17,11 @@ export default function createRaycaster(
     let prevUV: Vector2 | null = null;
 
     function hoverRaycast() {
+        if (!enabled()) {
+            cleanup();
+            return;
+        }
+
         raycaster.setFromCamera(mouse, cam.three);
         const intersects = raycaster.intersectObjects(scene.three.children, true);
         const hoveredIntersection = intersects.length > 0 ? intersects[0] : null;
@@ -45,6 +51,8 @@ export default function createRaycaster(
     }
 
     function cleanup() {
+        if (!prevHoveredObj && !prevUV) return;
+
         if (prevHoveredObj) {
             prevHoveredObj.userData.onHoverLeave?.();
             prevHoveredObj.traverseAncestors(a => {
@@ -57,6 +65,8 @@ export default function createRaycaster(
     }
 
     function clickRaycast() {
+        if (!enabled()) return;
+
         raycaster.setFromCamera(mouse, cam.three);
         const intersects = raycaster.intersectObjects(scene.three.children, true);
         if (intersects.length > 0) {
