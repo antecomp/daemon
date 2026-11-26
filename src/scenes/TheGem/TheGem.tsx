@@ -1,11 +1,8 @@
 import { Scene } from "lume";
 import { createSignal, Show } from 'solid-js';
-import PlayerCam from "@/3d/camera/PlayerCam";
 import Interactable from "@/3d/components/Interactable";
 import { useDGShader } from "@/3d/pipeline/dgRender";
 import Billboard from "@/3d/components/Billboard";
-import createCameraController from "@/3d/camera/createCameraController";
-import { createDialogueWithCamOvr } from "@/3d/camera/dialogueCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
@@ -18,6 +15,8 @@ import bar_model from './assets/GEM.glb'
 import cache_model from '@/assets/3d/models/cache.fbx'
 
 import dia from './data/man.bny';
+import createCamera from "@/3d/cam/createCamera";
+import createDialogueWithCamOverride from "@/3d/cam/dialogueCam";
 
 export default function TheGem() {
     let sceneRef!: Scene;
@@ -26,25 +25,23 @@ export default function TheGem() {
 
     const { spawnMenu } = useSceneMenu();
 
-    const { cameraControlSignals, cameraController } = createCameraController(
-        [-1028, -135, 667],
-        { yaw: 30, pitch: 3 },
-        { maxPitch: 20, maxYaw: 60 }
-    );
+    const cam = createCamera({
+        pos: [-1028, -135, 667],
+        yaw: 30, pitch: 3,
+        sway: { maxPitch: 20, maxYaw: 60 }
+    })
 
     const [hasManDeparted, setManDeparted] = createSignal(false);
     const [cacheOnTable, setCacheOnTable] = createSignal(false);
 
-    const showCacheCamera = cameraController.createOverride(
-        { pos: [-1061, -138, 636], ori: { yaw: 0, pitch: 55 }, anim: true }
+    const showCacheCamera = cam.override(
+        { pos: [-1061, -138, 636], yaw: 0, pitch: 55 }
     );
 
-    const manDialogue = createDialogueWithCamOvr(
-        cameraController,
-        { pos: [-1061, -138, 636], ori: { yaw: 6, pitch: 0 }, anim: true },
-        dia,
+    const manDialogue = createDialogueWithCamOverride(
+        cam, dia, { pos: [-1061, -138, 636], yaw: 6, pitch: 0 },
         {
-            speakerNames: {MAN: "The Man"},
+            speakerNames: { MAN: "The Man" },
             initialOverlay: dia_overlay,
             signalHandlers: {
                 cache_handover_animation() {
@@ -57,7 +54,7 @@ export default function TheGem() {
                 depart_man() {
                     SceneFadeManager.fadeTransition(() => {
                         setManDeparted(true);
-                        manDialogue.ovrMgr.release();
+                        manDialogue.ovrMgr.release('cut');
                     })
                 }
             }
@@ -98,10 +95,7 @@ export default function TheGem() {
                 align-point="0.5 0.5"
             />
 
-            <PlayerCam
-                {...cameraControlSignals()}
-                sceneRef={sceneRef}
-            />
+            <cam.Camera />
 
             <Show when={!hasManDeparted()}>
                 <Billboard
