@@ -40,10 +40,10 @@ export default function Porch() {
         }
     });
 
-    // const test = createMusicTrack({ src: "PWL/erokia-786215.wav" })
-    // setTimeout(() => { // Will crossfade between tracks
-    //     test.src = "PWL/erokia-496757.wav"
-    // }, 30000);
+    const test = createMusicTrack({ src: "PWL/erokia-786215.wav" })
+    setTimeout(() => { // Will crossfade between tracks
+        test.src = "PWL/erokia-496757.wav"
+    }, 30000);
 
     const c = createCamera({ pos: [-230, -317, 128], sway: { maxPitch: 30, maxYaw: 45 }, yaw: -72 });
 
@@ -98,13 +98,13 @@ export default function Porch() {
                 interactions={[
                     () => addLogMessage(`She doesn't take too kindly to your prodding.`, 'red'),
                     () => {
-                        // const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
+                        const dialogueMusic = MusicManager.pushTrack({ src: 'PWL/pw_celesta_meloD.mp3' }).id
 
                         const ovr = c.override({ 
                             pos: [-183, -322, 34], 
                             yaw: -84, 
                             pitch: 0, 
-                            sway: {maxYaw: 10, maxPitch: 10}
+                            // sway: {maxYaw: 10, maxPitch: 10}
                             // sway: false
                         });
                         ovr.commit();
@@ -124,7 +124,7 @@ export default function Porch() {
                             }
                         ).finally(() => {
                             ovr.release();
-                            // MusicManager.removeTrack(dialogueMusic);
+                            MusicManager.removeTrack(dialogueMusic);
                         })
                     },
                     //() => addLogMessage(`She is smoking a cigarette.`)
