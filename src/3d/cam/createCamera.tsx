@@ -103,7 +103,6 @@ export default function createCamera(
             },
             release(rt: TransitionMode = layer.trans, rw: Winding = 'short') {
                 const i = stack.indexOf(layer);
-                // todo: consider changing this to a throw of "not committed";
                 if (i === -1) return Promise.resolve<Outcome>('arrived');   // never committed, or already released
                 stack.splice(i, 1);
 
