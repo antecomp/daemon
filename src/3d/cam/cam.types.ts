@@ -3,7 +3,7 @@ import type { Component } from "solid-js";
 
 export type SwayLimits = {maxYaw: number, maxPitch: number};
 export type Sway = {yaw: number, pitch: number};
-export type SwaySetting = SwayLimits | false | 'hold';
+export type SwaySetting = SwayLimits | 'center' | 'hold';
 
 export type Pose = {
     pos: XYZ;
@@ -12,7 +12,7 @@ export type Pose = {
 }
 
 export type LayerOpts = {
-    /** Mouse tracking limits, false to center, or 'hold' to preserve the current offset. */
+    /** Mouse tracking limits, 'center' to recenter, or 'hold' to preserve the current offset. */
     sway: SwaySetting;
     disablePointer?: boolean;
 }

@@ -39,7 +39,7 @@ export default function createCamera(
     const base: Layer = {
         pose: { pos: [0, 0, 0], yaw: 0, pitch: 0, ...initPose },
         trans: 'ease',
-        sway: initSway ?? false,
+        sway: initSway ?? 'center',
         disablePointer: initDisablePointer,
     };
 
@@ -52,7 +52,7 @@ export default function createCamera(
     const mouse = new Vector2();
     const [sway, setSway] = createSignal<Sway>({yaw: 0, pitch: 0});
 
-    // Overrides default to sway: false, so limits on an override are an explicit opt-in.
+    // Overrides default to sway: 'center', so limits on an override are an explicit opt-in.
     const allowSwayInput = () => !sceneLock.isLocked()
         || (stack.length > 1 && typeof target.sway === 'object');
 
@@ -96,7 +96,7 @@ export default function createCamera(
 
     const override = (update: CamUpdate) => {
         const { sway, disablePointer, ...to } = update;
-        const layer: Layer = { pose: null!, trans: 'ease', sway: false };
+        const layer: Layer = { pose: null!, trans: 'ease', sway: 'center' };
         return {
             commit(t: TransitionMode = 'ease', w: Winding = 'short') {
                 if (stack.includes(layer))
@@ -107,7 +107,7 @@ export default function createCamera(
                 Object.assign(layer, {
                     trans: t,
                     // Overrides center sway by default; pass 'hold' to freeze its current offset.
-                    sway: sway ?? false,
+                    sway: sway ?? 'center',
                     disablePointer: disablePointer ?? below.disablePointer,
                     // based on current position, for clean diversions
                     pose: { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) },
@@ -164,13 +164,14 @@ export default function createCamera(
 
     const swayStep = (dt: number, snap: boolean) => {
         const ts = target.sway;
+        const limits = typeof ts === 'object' ? ts : null;
         if (ts === 'hold') return;
         // if sway is set, but 
         // we're on base with a scene lock, hold.
-        if (ts && !allowSwayInput()) return;
+        if (limits && !allowSwayInput()) return;
 
-        const goalYaw = ts ? -mouse.x * ts.maxYaw : 0;
-        const goalPitch = ts ? -mouse.y * ts.maxPitch : 0;
+        const goalYaw = limits ? -mouse.x * limits.maxYaw : 0;
+        const goalPitch = limits ? -mouse.y * limits.maxPitch : 0;
         if (snap) {
             setSway({ yaw: goalYaw, pitch: goalPitch });
             return;

@@ -50,7 +50,7 @@ export default function Porch() {
     const viyaDialogue = createDialogueWithCamOverride(
         c,
         viya_dialogue,
-        { pos: [-183, -322, 34], yaw: -84, pitch: 0, sway: 'hold' },
+        { pos: [-183, -322, 34], yaw: -84, pitch: 0, sway: 'center' },
         {
             yieldHandlers: {
                 battle: createBattleYieldHandler(OPPONENT_MIMICRY)
