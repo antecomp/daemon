@@ -1,12 +1,10 @@
 import { BnyProgram } from "@bunnarray/vm";
-import { Pose } from "./cam.types";
+import { CameraController, Pose } from "./cam.types";
 import { dialogueOngoing, startDialogue, StartDialogueOptions } from "@/core/dialogue/dialogueSession";
-import createCamera from "./createCamera";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 
 export default function createDialogueWithCamOverride(
-    // todo: write proper type declaration for createCamera
-    cam: ReturnType<typeof createCamera>,
+    cam: CameraController,
     program: BnyProgram,
     ovr: Partial<Pose>,
     dialogueOptions?: StartDialogueOptions

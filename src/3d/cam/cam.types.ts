@@ -1,4 +1,5 @@
 import { XYZ } from "@/shared/types/3d.types"
+import type { Component } from "solid-js";
 
 export type SwayLimits = {maxYaw: number, maxPitch: number};
 export type Sway = {yaw: number, pitch: number};
@@ -24,3 +25,14 @@ export type Layer = {
 }
 
 export type Outcome = 'arrived' | 'diverted' | 'unchanged' | 'killed';
+
+export type CameraOverride = {
+    commit(transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
+    release(transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
+};
+
+export type CameraController = {
+    goto(pose: Partial<Pose>, transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
+    override(pose: Partial<Pose>): CameraOverride;
+    Camera: Component;
+};

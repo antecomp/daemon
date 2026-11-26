@@ -3,7 +3,7 @@ import { XYZ } from "@/shared/types/3d.types";
 import { Motor, onCleanup, onMount, RenderTask, type Element3D, type PerspectiveCamera, type Scene } from "lume";
 import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
-import { Layer, Outcome, Pose, Sway, TransitionMode, Winding } from "./cam.types";
+import { Layer, Outcome, Pose, Sway, TransitionMode, Winding, type CameraController } from "./cam.types";
 import nearestAngle from "@/shared/utils/nearestAngle";
 import { Vector2 } from "three";
 import trackMouse from "./trackMouse";
@@ -34,7 +34,7 @@ export const resolveYaw = (angle: number, ref: number, w: Winding = 'short') => 
 
 export default function createCamera(
     init: Partial<Pose> = {}
-) {
+): CameraController {
     const initial: Pose = {
         ...{ pos: [0, 0, 0], yaw: 0, pitch: 0, sway: false },
         ...init
