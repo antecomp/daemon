@@ -1,12 +1,12 @@
 import { BnyProgram } from "@bunnarray/vm";
-import { CameraController, Pose } from "./cam.types";
+import { CamUpdate, CameraController } from "./cam.types";
 import { dialogueOngoing, startDialogue, StartDialogueOptions } from "@/core/dialogue/dialogueSession";
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 
 export default function createDialogueWithCamOverride(
     cam: CameraController,
     program: BnyProgram,
-    ovr: Partial<Pose>,
+    ovr: CamUpdate,
     dialogueOptions?: StartDialogueOptions
 ) {
     const ovrMgr = cam.override(ovr);

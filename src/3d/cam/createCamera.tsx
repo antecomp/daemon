@@ -3,7 +3,7 @@ import { XYZ } from "@/shared/types/3d.types";
 import { Motor, onCleanup, onMount, RenderTask, type Element3D, type PerspectiveCamera, type Scene } from "lume";
 import { damp } from "three/src/math/MathUtils.js";
 import { createSignal } from 'solid-js';
-import { Layer, Outcome, Pose, Sway, TransitionMode, Winding, type CameraController } from "./cam.types";
+import { CamUpdate, Layer, Outcome, Pose, Sway, TransitionMode, Winding, type CameraController } from "./cam.types";
 import nearestAngle from "@/shared/utils/nearestAngle";
 import { Vector2 } from "three";
 import trackMouse from "./trackMouse";
@@ -17,7 +17,7 @@ const SWAY_LAMBDA = 4;
 const POS_EPS = 0.05;
 const ANG_EPS = 0.1;
 
-function settled(current: Omit<Pose, 'sway'>, target: Omit<Pose, 'sway'>) {
+function settled(current: Pose, target: Pose) {
     return Math.hypot(
         ...current.pos.map((ci, i) => ci - target.pos[i])
     ) < POS_EPS
@@ -33,19 +33,21 @@ export const resolveYaw = (angle: number, ref: number, w: Winding = 'short') => 
 };
 
 export default function createCamera(
-    init: Partial<Pose> = {}
+    init: CamUpdate = {}
 ): CameraController {
-    const initial: Pose = {
-        ...{ pos: [0, 0, 0], yaw: 0, pitch: 0, sway: false },
-        ...init
-    }
-    
-    const [cur, setCur] = createSignal<Pose>(initial);
-    let target: Pose = initial;
-    let trans: TransitionMode = 'ease';
+    const { sway: initSway, disablePointer: initDisablePointer, ...initPose } = init;
+    const base: Layer = {
+        pose: { pos: [0, 0, 0], yaw: 0, pitch: 0, ...initPose },
+        trans: 'ease',
+        sway: initSway ?? false,
+        disablePointer: initDisablePointer,
+    };
+
+    const [cur, setCur] = createSignal<Pose>(base.pose);
+    let target: Layer = base;
     let snapSway = false;
-    const stack: Layer[] = [{ pose: initial, trans }];
-    const top = () => stack[stack.length - 1].pose;
+    const stack: Layer[] = [base];
+    const top = () => stack[stack.length - 1];
     let inflight: ((o: Outcome) => void) | null = null;
     const mouse = new Vector2();
     const [sway, setSway] = createSignal<Sway>({yaw: 0, pitch: 0});
@@ -57,47 +59,59 @@ export default function createCamera(
     // "head for whatever is on top now"
     const retarget = (t: TransitionMode, w?: Winding) => {
         inflight?.('diverted');
-        const pose = top();
-        target = w === undefined
-            ? pose // winding prepared by caller
-            : { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) };
-        trans = t;
+        const layer = top();
+        target = {
+            ...layer,
+            trans: t,
+            pose: w === undefined
+                ? layer.pose // winding prepared by caller
+                : { ...layer.pose, yaw: resolveYaw(layer.pose.yaw, cur().yaw, w) },
+        };
         snapSway = t === 'cut';
         return new Promise<Outcome>(r => (inflight = r));
     }
 
-    const goto = (to: Partial<Pose>, t: TransitionMode = 'ease', w: Winding = 'short') => {
-        const base = stack[0].pose;
+    const goto = (update: CamUpdate, t: TransitionMode = 'ease', w: Winding = 'short') => {
+        const { sway, disablePointer, ...to } = update;
+        const prev = stack[0];
         // edge: have correct reference while releasing the last override.
-        const referenceYaw = stack.length === 1 ? target.yaw : base.yaw;
-        stack[0].pose = {
-            ...base, ...to,
-            yaw: resolveYaw(
-                to.yaw ?? base.yaw,
-                referenceYaw,
-                to.yaw === undefined ? 'short' : w
-            )
-        }
+        const referenceYaw = stack.length === 1 ? target.pose.yaw : prev.pose.yaw;
+        stack[0] = {
+            ...prev,
+            sway: sway ?? prev.sway,
+            disablePointer: disablePointer ?? prev.disablePointer,
+            pose: {
+                ...prev.pose, ...to,
+                yaw: resolveYaw(
+                    to.yaw ?? prev.pose.yaw,
+                    referenceYaw,
+                    to.yaw === undefined ? 'short' : w
+                )
+            }
+        };
         return stack.length > 1
             ? Promise.resolve<Outcome>('unchanged')
             : retarget(t);
     }
 
-    const override = (to: Partial<Pose>) => {
-        const layer: Layer = { pose: null!, trans: 'ease' };
+    const override = (update: CamUpdate) => {
+        const { sway, disablePointer, ...to } = update;
+        const layer: Layer = { pose: null!, trans: 'ease', sway: false };
         return {
             commit(t: TransitionMode = 'ease', w: Winding = 'short') {
                 if (stack.includes(layer))
                     throw new Error('Override is already committed.');
 
-                layer.trans = t;
-                // Overrides center sway by default; pass 'hold' to freeze its current offset.
-                const com: Pose = { ...top(), sway: false, ...to };
-                layer.pose = {
-                    ...com,
+                const below = top();
+                const pose: Pose = { ...below.pose, ...to };
+                Object.assign(layer, {
+                    trans: t,
+                    // Overrides center sway by default; pass 'hold' to freeze its current offset.
+                    sway: sway ?? false,
+                    disablePointer: disablePointer ?? below.disablePointer,
                     // based on current position, for clean diversions
-                    yaw: resolveYaw(com.yaw, cur().yaw, w)
-                }
+                    pose: { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) },
+                } satisfies Layer);
                 stack.push(layer);
                 return retarget(t);
             },
@@ -124,21 +138,21 @@ export default function createCamera(
         // so sway resumes as normal after.
         const snap = snapSway;
         snapSway = false;
+        const goal = target.pose;
         let next: Pose;
-        const current = cur();
-        if (trans === 'cut') {
-            next = target;
+        if (target.trans === 'cut') {
+            next = goal;
         } else {
+            const current = cur();
             next = {
-                pos: current.pos.map((cv, i) => damp(cv, target.pos[i], LAMBDA, dt)) as XYZ,
-                yaw: damp(current.yaw, target.yaw, LAMBDA, dt),
-                pitch: damp(current.pitch, target.pitch, LAMBDA, dt),
-                sway: target.sway
+                pos: current.pos.map((cv, i) => damp(cv, goal.pos[i], LAMBDA, dt)) as XYZ,
+                yaw: damp(current.yaw, goal.yaw, LAMBDA, dt),
+                pitch: damp(current.pitch, goal.pitch, LAMBDA, dt),
             };
         }
 
-        if (inflight && settled(next, target)) {
-            setCur(target);
+        if (inflight && settled(next, goal)) {
+            setCur(goal);
             inflight('arrived');
             inflight = null;
         } else {
@@ -182,7 +196,7 @@ export default function createCamera(
 
             onMount(() => {
                 scene = camRef.scene!;
-                const enabled = () => !cur().disablePointer && !sceneLock.isLocked();
+                const enabled = () => !target.disablePointer && !sceneLock.isLocked();
                 const {hoverRaycast, cleanup, clickRaycast} = createRaycaster(camRef, scene, mouse, enabled);
                 task = Motor.addRenderTask((_t, dtMs) => { 
                     step(dtMs / 1000);

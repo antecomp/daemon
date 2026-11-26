@@ -9,7 +9,9 @@ export type Pose = {
     pos: XYZ;
     yaw: number;
     pitch: number;
-    // Todo: Move these to layer?
+}
+
+export type LayerOpts = {
     /** Mouse tracking limits, false to center, or 'hold' to preserve the current offset. */
     sway: SwaySetting;
     disablePointer?: boolean;
@@ -20,9 +22,12 @@ export type TransitionMode = 'ease' | 'cut';
 export type Winding = 'short' | 'long';
 
 export type Layer = {
-    pose: Pose,
-    trans: TransitionMode
-}
+    pose: Pose;
+    trans: TransitionMode;
+} & LayerOpts;
+
+/** What callers pass to goto/override. */
+export type CamUpdate = Partial<Pose & LayerOpts>;
 
 export type Outcome = 'arrived' | 'diverted' | 'unchanged' | 'killed';
 
@@ -32,7 +37,7 @@ export type CameraOverride = {
 };
 
 export type CameraController = {
-    goto(pose: Partial<Pose>, transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
-    override(pose: Partial<Pose>): CameraOverride;
+    goto(update: CamUpdate, transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
+    override(update: CamUpdate): CameraOverride;
     Camera: Component;
 };
