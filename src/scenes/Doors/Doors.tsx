@@ -5,8 +5,6 @@ import { createSignal, onMount } from "solid-js"
 
 import door_l from "./assets/door_l.png"
 import door_r from "./assets/door_r.png"
-import createCameraController from "@/3d/camera/createCameraController";
-import PlayerCam from "@/3d/camera/PlayerCam";
 import { useSceneMenu } from "@/app/shell/scene-menu/SceneMenuContext";
 import { Vector2 } from "three";
 import lerp from "@/shared/utils/lerp"
@@ -16,18 +14,20 @@ import friendTexture from "@/assets/artwork/characters/friend.png"
 import { addLogMessage } from "@/app/shell/hud/EventLog";
 import { setCurrentScene } from "@/app/shell/scene-container/SceneContainer";
 import { DGDEV } from "@/devtools/dev";
+import createCamera from "@/3d/cam/createCamera";
 
 export default function Doors() {
     let sceneRef!: Scene;
     let doorsOpenedBefore = false;
 
-    const {cameraControlSignals} = createCameraController(
-        [-50, -22, 354],
-        {pitch: -2, yaw: 0},
-        {maxPitch: 20, maxYaw: 20}
-    )
+    const cam = createCamera({
+        pos: [-50, -22, 354],
+        yaw: 0,
+        pitch: -2,
+        sway: { maxPitch: 20, maxYaw: 20 }
+    })
 
-    const {spawnMenu} = useSceneMenu();
+    const { spawnMenu } = useSceneMenu();
 
     onMount(() => {
         requestAnimationFrame(() => applyDGShader(sceneRef))
@@ -38,10 +38,10 @@ export default function Doors() {
     const doorClickHandler = (_uv: any, mouse: Vector2) => {
         if (!isDoorOpen()) {
             spawnMenu(
-                "Open the doors?", 
+                "Open the doors?",
                 [
-                    {label: "Yes", onSelect: () => {setDoorOpen(true); if(!doorsOpenedBefore) {addLogMessage("The doors sqeak loudly as they swing open"); doorsOpenedBefore = true}}},
-                    {label: "No"}
+                    { label: "Yes", onSelect: () => { setDoorOpen(true); if (!doorsOpenedBefore) { addLogMessage("The doors sqeak loudly as they swing open"); doorsOpenedBefore = true } } },
+                    { label: "No" }
                 ],
                 mouse
             )
@@ -49,8 +49,8 @@ export default function Doors() {
             spawnMenu(
                 "Close the doors?",
                 [
-                    {label: "Yes", onSelect: () => setDoorOpen(false)},
-                    {label: "No"}
+                    { label: "Yes", onSelect: () => setDoorOpen(false) },
+                    { label: "No" }
                 ],
                 mouse
             )
@@ -62,10 +62,8 @@ export default function Doors() {
             webgl
             ref={sceneRef}
         >
-            <PlayerCam
-                {...cameraControlSignals()}
-                sceneRef={sceneRef}
-            />
+
+            <cam.Camera />
 
             <Interactable onClick={doorClickHandler} showHoverBorder>
                 <lume-plane
@@ -79,8 +77,8 @@ export default function Doors() {
                     texture={door_r}
 
                     //@ts-expect-error
-                    rotation={(x,y,z, _t, dt) => [
-                        x, isDoorOpen() ? lerp(y, -90, 5 * (dt/1000)) : lerp(y, 0, 5 * (dt/1000)) , z
+                    rotation={(x, y, z, _t, dt) => [
+                        x, isDoorOpen() ? lerp(y, -90, 5 * (dt / 1000)) : lerp(y, 0, 5 * (dt / 1000)), z
                     ]}
                 />
             </Interactable>
@@ -97,14 +95,14 @@ export default function Doors() {
                     texture={door_l}
 
                     //@ts-expect-error
-                    rotation={(x,y,z, _t, dt) => [
-                        x, isDoorOpen() ? lerp(y, 90, 5 * (dt/1000)) : lerp(y, 0, 5 * (dt/1000)) , z
+                    rotation={(x, y, z, _t, dt) => [
+                        x, isDoorOpen() ? lerp(y, 90, 5 * (dt / 1000)) : lerp(y, 0, 5 * (dt / 1000)), z
                     ]}
                 />
             </Interactable>
 
             <Billboard
-                interactions={[() => {DGDEV.log("egg"); setCurrentScene("Porch")}]}
+                interactions={[() => { DGDEV.log("egg"); setCurrentScene("Porch") }]}
                 texture={friendTexture}
                 scale={70}
                 position="-50 0 -100"
