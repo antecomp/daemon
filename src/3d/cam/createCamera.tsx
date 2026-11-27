@@ -187,6 +187,8 @@ export default function createCamera(
     return {
         goto, 
         override,
+
+        currentStack: () => [...stack],
         isOverridden: () => stack.length > 1,
 
         Camera: () => {
