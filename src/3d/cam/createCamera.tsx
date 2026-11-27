@@ -109,7 +109,7 @@ export default function createCamera(
                     trans: t,
                     // Overrides center sway by default; pass 'hold' to freeze its current offset.
                     sway: sway ?? 'center',
-                    disablePointer: disablePointer ?? below.disablePointer,
+                    disablePointer: disablePointer ?? true,
                     // based on current position, for clean diversions
                     pose: { ...pose, yaw: resolveYaw(pose.yaw, cur().yaw, w) },
                 } satisfies Layer);
