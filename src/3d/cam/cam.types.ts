@@ -39,5 +39,6 @@ export type CameraOverride = {
 export type CameraController = {
     goto(update: CamUpdate, transition?: TransitionMode, winding?: Winding): Promise<Outcome>;
     override(update: CamUpdate): CameraOverride;
+    isOverridden: () => boolean,
     Camera: Component;
 };

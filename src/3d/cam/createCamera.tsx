@@ -184,7 +184,9 @@ export default function createCamera(
     }
 
     return {
-        goto, override,
+        goto, 
+        override,
+        isOverridden: () => stack.length > 1,
 
         Camera: () => {
             // Hoist if/when needed.
