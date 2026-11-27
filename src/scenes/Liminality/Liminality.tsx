@@ -7,12 +7,11 @@ import { onMount } from "solid-js";
 import applyShadows from '@/3d/pipeline/applyShadows';
 import Interactable from '@/3d/components/Interactable';
 import applyDGShader from '@/3d/pipeline/dgRender';
-import PlayerCam from '@/3d/camera/PlayerCam';
-import createCameraController from '@/3d/camera/createCameraController';
 import sleep from '@/shared/utils/sleep';
 import { useSceneMenu } from '@/app/shell/scene-menu/SceneMenuContext';
 import { createMusicTrack } from '@/core/audio/createMusicTrack';
-import NavigationGraph from '@/3d/components/navigation/NavigationGraph';
+import createCamera from '@/3d/cam/createCamera';
+import NavGraph from '@/3d/components/navigation/NavGraph';
 
 export default function Liminality() {
     let sceneRef: Scene | undefined;
@@ -21,13 +20,13 @@ export default function Liminality() {
 
     const lightIntensity = "300";
 
-    const {spawnMenu} = useSceneMenu()!;
+    const { spawnMenu } = useSceneMenu()!;
 
-    const { cameraControlSignals, cameraController } = createCameraController(
-        [0, -512, 350],
-        { pitch: 0, yaw: 0 },
-        { maxPitch: 20, maxYaw: 20 },
-    )
+    const cam = createCamera({
+        pos: [0, -512, 350],
+        pitch: 0, yaw: 0,
+        sway: { maxPitch: 20, maxYaw: 20 }
+    })
 
     onMount(() => {
         requestAnimationFrame(() => {
@@ -38,7 +37,7 @@ export default function Liminality() {
         });
     });
 
-    createMusicTrack({src: "PWL/loop_a.wav"})
+    createMusicTrack({ src: "PWL/loop_a.wav" })
 
     return (
         <lume-scene
@@ -53,10 +52,7 @@ export default function Liminality() {
         >
             <lume-ambient-light intensity={0.0} />
 
-            <PlayerCam
-                {...cameraControlSignals()}
-                sceneRef={sceneRef!}
-            />
+            <cam.Camera />
 
             <lume-obj-model
                 id="base"
@@ -77,13 +73,12 @@ export default function Liminality() {
                             {
                                 label: "Yes",
                                 onSelect: () => {
-                                    const {commit, release} = cameraController.createOverride({
+                                    const { commit, release } = cam.override({
                                         pos: [200, -712, 350],
-                                        ori: { pitch: 20, yaw: 30 },
-                                        anim: true
+                                        pitch: 20, yaw: 30,
                                     });
-                                    commit();
-                                    sleep(2000).then(() => release(true));
+                                    commit('ease');
+                                    sleep(2000).then(() => release('ease'));
                                 }
                             },
                             {
@@ -91,7 +86,7 @@ export default function Liminality() {
                                 // implicit just close.
                             }
                         ]
-                    , mouse, 150)
+                        , mouse, 150)
                 }]}
             >
                 <lume-obj-model
@@ -110,41 +105,34 @@ export default function Liminality() {
                 />
             </Interactable>
 
-            <NavigationGraph
+            <NavGraph
                 initial="init"
-                cameraController={cameraController}
+                cam={cam}
                 graph={{
                     init: {
-                        planePosition:[0, -512, 350],
-                        planeRotation:{pitch: 0, yaw: -90},
-                        // show:true,
-                        anim:true,
+                        pos: [0, -512, 350],
+                        ori: { pitch: 0, yaw: -90 },
                         show: true,
-                        planeSize:200,
-                        newPos:[0, -512, 350],
-                        newOri:{yaw: 0, pitch: 0},
-                        sidedness:'double',
+                        size: 200,
+                        goto: {pos: [0, -512, 350], yaw: 0, pitch: 0},
+                        sidedness: 'double',
                         connected: ["l", "r"]
                     },
                     l: {
-                        planePosition:[250, -500, 0],
-                        newPos:[217, -512, 0],
-                        newOri:{yaw: 109, pitch: -8},
-                        planeSize:[450, 100],
-                        anim:true,
-                        show:true,
-                        planeRotation:{pitch: 0, yaw: 0},
-                        connected: ["init", "r"] // try commenting this out to verify init not shown (deadend)
+                        pos: [250, -500, 0],
+                        goto: {pos: [217, -512, 0], yaw: 109, pitch: -8},
+                        size: [450, 100],
+                        show: true,
+                        ori: { pitch: 0, yaw: 0 },
+                        connected: ["init"] // try commenting this out to verify init not shown (deadend)
                     },
                     r: {
-                        planePosition:[-250, -500, 0],
-                        newPos:[-217, -512, 0],
-                        newOri:{yaw: -109, pitch: -8},
-                        planeSize:[450, 100],
-                        anim:true,
-                        show:true,
-                        planeRotation:{pitch: 0, yaw: 0},
-                        connected: []
+                        pos: [-250, -500, 0],
+                        goto: {pos: [-217, -512, 0], yaw: -109, pitch: -8},
+                        size: [450, 100],
+                        show: true,
+                        ori: { pitch: 0, yaw: 0 },
+                        connected: ['init']
                     }
                 }}
             />
