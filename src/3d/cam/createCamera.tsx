@@ -33,7 +33,8 @@ export const resolveYaw = (angle: number, ref: number, w: Winding = 'short') => 
 };
 
 export default function createCamera(
-    init: CamUpdate = {}
+    init: CamUpdate = {},
+    distance: number = Infinity
 ): CameraController {
     const { sway: initSway, disablePointer: initDisablePointer, ...initPose } = init;
     const base: Layer = {
@@ -200,7 +201,7 @@ export default function createCamera(
             onMount(() => {
                 scene = camRef.scene!;
                 const enabled = () => !target.disablePointer && !sceneLock.isLocked();
-                const {hoverRaycast, cleanup, clickRaycast} = createRaycaster(camRef, scene, mouse, enabled);
+                const {hoverRaycast, cleanup, clickRaycast} = createRaycaster(camRef, scene, mouse, enabled, distance);
                 task = Motor.addRenderTask((_t, dtMs) => { 
                     step(dtMs / 1000);
                     hoverRaycast();
