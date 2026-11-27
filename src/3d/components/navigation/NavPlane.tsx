@@ -17,7 +17,7 @@ export interface NavPlaneData {
     sidedness?: 'front' | 'double' | 'back'
 }
 
-export default function NavigationPlane(props: NavPlaneData) {
+export default function NavPlane(props: NavPlaneData) {
     let plane!: Plane;
 
     onMount(() => {
