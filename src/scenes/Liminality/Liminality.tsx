@@ -129,6 +129,7 @@ export default function Liminality() {
                     r: {
                         pos: [-250, -500, 0],
                         goto: {pos: [-217, -512, 0], yaw: -109, pitch: -8},
+                        trans: 'cut',
                         size: [450, 100],
                         show: true,
                         ori: { pitch: 0, yaw: 0 },

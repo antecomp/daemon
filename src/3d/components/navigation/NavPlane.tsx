@@ -1,4 +1,4 @@
-import { CameraController, LayerOpts, Pose } from "@/3d/cam/cam.types";
+import { CameraController, LayerOpts, Pose, TransitionMode } from "@/3d/cam/cam.types";
 import { InteractableObject3D } from "@/core/interaction/interactable.types";
 import { Orientation, XYZ } from "@/shared/types/3d.types";
 import { Plane, toDegrees } from "lume";
@@ -15,6 +15,7 @@ export interface NavPlaneData {
     ori: Orientation
     // raycasts pass through back/non-visible portion!
     sidedness?: 'front' | 'double' | 'back'
+    trans?: TransitionMode
 }
 
 export default function NavPlane(props: NavPlaneData) {
@@ -22,7 +23,7 @@ export default function NavPlane(props: NavPlaneData) {
 
     onMount(() => {
         (plane.three as InteractableObject3D).userData.onClick = () => {
-            props.cam.goto(props.goto);
+            props.cam.goto(props.goto, props.trans);
             props.onClick?.();
         }
 
