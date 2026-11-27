@@ -4,7 +4,7 @@ import { dialogueOngoing, startDialogue, StartDialogueOptions } from "@/core/dia
 import { SceneFadeManager } from "@/app/shell/scene-fade-overlay/SceneFade";
 
 export default function createDialogueWithCamOverride(
-    cam: CameraController,
+    cam: Pick<CameraController, 'override'>,
     program: BnyProgram,
     ovr: CamUpdate,
     dialogueOptions?: StartDialogueOptions
